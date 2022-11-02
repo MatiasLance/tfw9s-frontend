@@ -1,0 +1,16 @@
+$body-font-family: 'Atkinson Hyperlegible';
+$heading-font-family: 'Montserrat';
+$font-size-root: 18px;
+
+$btn-border-radius: 0px;
+
+.v-application ul,
+.v-application ol {
+  padding-left: 0;
+}
+
+.v-application p {
+  margin-bottom: 0;
+}
+
+// @import '~vuetify/src/styles/styles.sass';

@@ -1,0 +1,16 @@
+FROM node:16.14-buster
+
+LABEL maintainer="tech1@sumomedia.co"
+LABEL app_environment="production"
+
+WORKDIR /home/node
+COPY . /home/node/
+
+RUN npm i -g npm \
+    && npm install
+
+USER node
+
+CMD sh -c "npm run build && npm run start"
+
+EXPOSE 3000

@@ -1,0 +1,20 @@
+image: node:16.14-buster
+
+clone:
+  depth: 1 # get only latest commit
+
+options:
+  max-time: 8 # minutes
+
+pipelines:
+  pull-requests:
+    '**':
+      - parallel:
+        - step:
+            name: 'Lint and Build'
+            caches:
+              - node
+            script:
+              - npm install
+              - npm run lint:js
+              - npm run build
