@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="relative min-h-[97vh] w-full bg-swd-slate bg-cover py-10">
+    <section class="relative min-h-[97vh] w-full bg-brand-slate bg-cover py-10">
       <div class="container mx-auto max-w-screen-md px-4">
 
         <div class="mx-auto mt-10 mb-20 rounded bg-white p-4 shadow-lg md:p-7">
@@ -37,13 +37,13 @@
                 inline-block
                 w-full
                 border border-transparent
-                bg-swd-blue
+                bg-brand-black
                 py-3
                 px-5
                 text-center
                 font-bold
                 text-white
-                hover:bg-swd-dblue
+                hover:bg-brand-dblue
               "
             >
               Request new password
@@ -63,7 +63,7 @@ export default {
     return { email: '' };
   },
   head() {
-    return { title: 'Forgot Password - Straddie World' };
+    return { title: 'Forgot Password - Revamped' };
   },
   methods: {
     sendPasswordLink() {

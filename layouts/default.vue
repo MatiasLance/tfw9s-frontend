@@ -24,14 +24,14 @@ export default {
 
 <style>
 * {
-    font-family: 'Atkinson Hyperlegible';
+    font-family: 'Courier Prime';
 }
 h1, h2, h3, h4, h5, h6 {
-    font-family: "Montserrat",Arial, Helvetica, sans-serif;
+    font-family: "Courier Prime", monospace;
 }
 
 .font-montserrat {
-    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    font-family: "Courier Prime", Arial, Helvetica, monospace;
 }
 
 .btn.disabled, .btn:disabled {
@@ -41,7 +41,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .superheadline:before {
     width: 3.125rem;
-    border-top: 2px solid #3981da;
+    border-top: 2px solid grey;
     margin-right: 10px;
     content: ' ';
 }

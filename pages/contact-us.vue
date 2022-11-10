@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-swd-grey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
       <div
         class="
           col-span-12
@@ -53,7 +53,7 @@
                   text-[#3981da]
                 "
               >
-                Contact Straddie World
+                Contact Revamped
               </span>
             </h2>
             <h1 class="text-[3.75rem] leading-[1]">
@@ -130,16 +130,16 @@ export default {
     return {
       address: 'Point Lookout, 4183 North Stradbroke Island',
       mobile: '0438 098 059',
-      email: 'admin@straddieworld.com',
+      email: 'admin@revampedofficial.com',
       pageSEO: {
-        title: 'Contact Us - Straddie World',
+        title: 'Contact Us - Revamped',
         description: 'How can we help? Reach out to us for more information. Point Lookout, 4183 North Stradbroke Island Mobile: 0438 098 059',
       }
     }
   },
   head() {
     return {
-      title: 'Contact Us - Straddie World',
+      title: 'Contact Us - Revamped',
       meta: [
         {
           hid: 'description',

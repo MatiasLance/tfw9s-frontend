@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-swd-dgrey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
       <div
         class="
           col-span-12
@@ -103,7 +103,7 @@
                     w-full
                     select-none
                     border border-transparent
-                    bg-swd-green
+                    bg-brand-green
                     py-3
                     px-4
                     text-center text-lg
@@ -147,7 +147,7 @@
                   px-4
                   text-center text-lg
                   font-medium
-                  text-swd-green
+                  text-brand-green
                   shadow-sm
                   hover:bg-gray-100
                 "

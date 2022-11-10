@@ -20,9 +20,9 @@
                 <button
                   type="button"
                   class="my-2 inline-block w-full border
-                  border-transparent bg-swd-blue py-3
+                  border-transparent bg-brand-black py-3
                   px-5 text-center
-                  font-bold text-white hover:bg-swd-grey lg:mx-4 lg:w-48"
+                  font-bold text-white hover:bg-brand-grey lg:mx-4 lg:w-48"
                   @click="$emit('close')"
                 >OK</button>
               </div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-swd-dgrey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
       <div
         class="
           col-span-12
@@ -56,7 +56,7 @@
                 rounded
                 border border-solid border-gray-500
                 py-1 pl-2 pr-3
-                hover:border-swd-blue hover:bg-swd-blue hover:text-white
+                hover:border-brand-black hover:bg-brand-black hover:text-white
               "
             >
               <i class="ri-add-fill"></i>
@@ -102,7 +102,7 @@
                 border border-solid border-gray-500
                 py-1 pl-2 pr-3
                 mr-2
-                hover:border-swd-blue hover:bg-swd-blue hover:text-white
+                hover:border-brand-black hover:bg-brand-black hover:text-white
             `"
             @click="goToPartsList"
           >
@@ -162,7 +162,7 @@ export default {
     };
   },
   head() {
-    return { title: 'Categories - Straddie World' };
+    return { title: 'Categories - Revamped' };
   },
   computed: {
     selectedCategories: {
@@ -181,7 +181,7 @@ export default {
           return 'bg-gray-200 border-gray-200 cursor-not-allowed';
         }
 
-        return 'hover:border-swd-blue hover:bg-swd-blue hover:text-white border-gray-500 cursor-pointer';
+        return 'hover:border-brand-black hover:bg-brand-black hover:text-white border-gray-500 cursor-pointer';
       },
     },
   },

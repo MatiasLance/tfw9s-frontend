@@ -96,9 +96,9 @@
                 <button
                 type="submit"
                 class="my-2 inline-block w-full border border-transparent
-                bg-swd-blue py-3 px-5
+                bg-brand-black py-3 px-5
                 text-center font-bold
-                text-white hover:bg-swd-grey"
+                text-white hover:bg-brand-grey"
                 >
                  Register
                 </button>
@@ -116,7 +116,7 @@
                     border-[3px]
                     border-gray-300
                     bg-transparent
-                    text-swd-blue
+                    text-brand-black
                     hover:border-gray-700
                     focus:border-transparent focus:bg-gray-200
                     focus:ring-1 focus:ring-gray-500 focus:ring-offset-2
@@ -124,7 +124,7 @@
                     >
                     <span class="ml-2 inline-block">
                         I agree with <a
-                        class="decoration-none hover:text-swd-blue
+                        class="decoration-none hover:text-brand-black
                         hover:underline"
                         href="/terms"
                         target="_blank"
@@ -136,7 +136,7 @@
 
                 <p class="mt-5 text-center">
                     Already have an account?
-                    <a class="text-swd-blue" href="/login">Login</a>
+                    <a class="text-brand-black" href="/login">Login</a>
                 </p>
             </form>
         </div>

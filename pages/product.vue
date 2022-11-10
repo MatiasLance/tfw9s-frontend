@@ -21,7 +21,7 @@
                     <a
                       :href="`${$config.baseURL}/storage/${photo.path}`"
                       class="mx-1 inline-block border border-gray-200 p-1 py-2
-                      px-1 text-center hover:border-swd-blue"
+                      px-1 text-center hover:border-brand-black"
                       @click.prevent="setActiveMedia(photo)"
                       @mouseover="setActiveMedia(photo)"
                     >
@@ -132,7 +132,7 @@
                       w-full
                       cursor-pointer
                       border
-                      bg-swd-blue
+                      bg-brand-black
                       py-4
                       px-5
                       font-bold

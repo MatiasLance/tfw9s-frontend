@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-swd-grey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
       <div
         class="
           col-span-12
@@ -50,7 +50,7 @@ import BaseHeader from '../components/base/BaseHeader.vue';
 export default {
   components: { BaseHeader },
   data() {
-    return { adminEmail: 'admin@straddieworld.com.au' };
+    return { adminEmail: 'admin@revampedofficial.com.au' };
   },
 };
 </script>

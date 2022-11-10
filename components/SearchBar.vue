@@ -35,7 +35,7 @@
         flex
         h-12
         items-center
-        bg-swd-blue
+        bg-brand-black
         py-2.5
         px-6
         text-xs
@@ -48,8 +48,8 @@
         duration-150
         ease-in-out
         hover:bg-blue-500 hover:shadow-lg
-        focus:bg-swd-grey focus:shadow-lg focus:outline-none focus:ring-0
-        active:bg-swd-grey active:shadow-lg
+        focus:bg-brand-grey focus:shadow-lg focus:outline-none focus:ring-0
+        active:bg-brand-grey active:shadow-lg
       "
       type="submit"
     >

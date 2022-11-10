@@ -8,19 +8,20 @@ module.exports = {
     },
     extend: {
       colors: {
-        'swd-blue': '#3981da',
-        'swd-mblue': '#2b64a6',
-        'swd-dblue': '#1e4573',
-        'swd-grey': '#424242',
-        'swd-red': '#fb0d2b',
-        'swd-mred': '#e73538',
-        'swd-dgrey': '#191919',
-        'swd-midnight': '#121063',
-        'swd-dred': '#8d0303',
-        'swd-lgrey': '#efefef',
-        'swd-mgrey': '#181818',
-        'swd-slate': '#abb8c3',
-        'swd-green': '#4cbe5c'
+        'brand-black': '#1a1d18',
+        'brand-blue': '#3981da',
+        'brand-mblue': '#2b64a6',
+        'brand-dblue': '#1e4573',
+        'brand-grey': '#424242',
+        'brand-red': '#fb0d2b',
+        'brand-mred': '#e73538',
+        'brand-dgrey': '#191919',
+        'brand-midnight': '#121063',
+        'brand-dred': '#8d0303',
+        'brand-lgrey': '#efefef',
+        'brand-mgrey': '#181818',
+        'brand-slate': '#abb8c3',
+        'brand-green': '#4cbe5c'
       },
       maxHeight: {
         'xs': '20rem',

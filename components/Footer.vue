@@ -1,7 +1,7 @@
 <template>
   <!-- Footer -->
   <footer class="bt-site-footer relative z-10 my-auto">
-    <section class="w-full bg-[#424242] pt-[80px] lg:pt-[120px]">
+    <section class="w-full bg-brand-lgrey pt-[80px] lg:pt-[120px]">
       <div
         class="
           flex flex-wrap
@@ -13,7 +13,7 @@
           <div class="mx-auto block w-80 max-w-full px-11 lg:mx-0">
             <NuxtLink to="/" class="py-5">
               <img
-                src="~/assets/images/logo_straddie_header.svg"
+                src="~/assets/images/logo_revamped_01.svg"
                 class="footer-logo w-full"
               />
             </NuxtLink>
@@ -24,15 +24,15 @@
               mt-20
               block
               max-w-full
-              text-center text-[16px] text-white
+              text-center text-[16px] text-brand-black
               lg:text-start
             "
           >
-            &copy; Copyright 2022, Straddie World. | Built by
+            &copy; Copyright 2022, Revamped. | Built by
                 <a
                   href="https://pageone247.com/"
                   target="_blank"
-                  class="swlink underline hover:text-[#3981da]"
+                  class="swlink underline hover:text-brand-grey"
                 >
                   PageOne247
                 </a>
@@ -54,12 +54,12 @@
                   inline-block
                   text-center text-lg
                   leading-loose
-                  text-white
+                  text-brand-black
                   transition
                   duration-300
                   ease-in-out
                   hover:underline
-                  hover:decoration-swd-blue
+                  hover:decoration-brand-grey
                   hover:decoration-4
                   hover:underline-offset-8
                 "
@@ -118,12 +118,28 @@ export default {
           text: 'Home',
         },
         {
-          to: '/shop',
-          text: 'Shop',
+          to: '/brands',
+          text: 'Brands',
+        },
+        {
+          to: '/categories',
+          text: 'Categories',
         },
         {
           to: '/contact-us',
           text: 'Contact Us',
+        },
+        {
+          to: '/about-us',
+          text: 'About Us',
+        },
+        {
+          to: '/our-mission',
+          text: 'Our Mission',
+        },
+        {
+          to: '/reviews',
+          text: 'Reviews',
         },
         {
           to: '/admin',
@@ -140,9 +156,9 @@ export default {
   position: relative;
 }
 .swlink {
-  color: white !important;
+  color: black !important;
 }
 .swlink:hover {
-  color: #3981da !important;
+  color: #424242 !important;
 }
 </style>

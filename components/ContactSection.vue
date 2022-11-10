@@ -121,13 +121,13 @@
           <button
             class="
               focus:shadow-outline
-              bg-swd-blue
+              bg-brand-black
               py-3
               px-7
               font-bold
               text-white
               shadow
-              hover:bg-swd-blue
+              hover:bg-brand-black
               focus:outline-none
             "
             type="submit"

@@ -2,7 +2,7 @@
     <div>
         <section
             class="relative min-h-[97vh] w-full
-            bg-swd-slate
+            bg-brand-slate
             bg-cover
             py-10"
         >

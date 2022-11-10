@@ -86,7 +86,7 @@
               justify-center
               rounded-md
               border border-gray-200
-              bg-swd-mred
+              bg-brand-mred
               py-2
               px-4
               text-white

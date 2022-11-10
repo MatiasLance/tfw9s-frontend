@@ -35,9 +35,9 @@ export default {
   computed: {
     activeClass() {
       if (this.active) {
-        return 'bg-swd-blue text-white'
+        return 'bg-brand-black text-white'
       } else {
-        return 'text-gray-800 hover:bg-swd-blue hover:text-white'
+        return 'text-gray-800 hover:bg-brand-black hover:text-white'
       }
     },
   },

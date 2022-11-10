@@ -16,7 +16,7 @@
                 rounded-full
                 border border-transparent
                 bg-gray-200
-                hover:border-swd-blue
+                hover:border-brand-black
               "
               aria-label="Button name"
               @click="toggle"
@@ -88,7 +88,7 @@
         </div>
       </Transition>
     </header>
-    <BaseHeader class="bg-gradient-to-r from-swd-dgrey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
       <div
         class="
           space-y-3
@@ -192,13 +192,13 @@
                 inline-block
                 w-full
                 border border-transparent
-                bg-swd-blue
+                bg-brand-black
                 py-3
                 px-5
                 text-center
                 font-bold
                 text-white
-                hover:bg-swd-dblue
+                hover:bg-brand-dblue
               "
             >
               Apply changes
@@ -209,8 +209,8 @@
                 class="
                   mx-auto
                   flex items-center
-                  text-swd-mred
-                  hover:text-swd-blue hover:underline hover:decoration-swd-blue
+                  text-brand-mred
+                  hover:text-brand-black hover:underline hover:decoration-brand-black
                 "
               >
                 <i class="ri-arrow-left-line mr-2"></i>

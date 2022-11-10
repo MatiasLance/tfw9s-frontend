@@ -28,7 +28,7 @@ export default {
     titleActiveClass: {
       get() {
         if (this.active) {
-          return 'text-swd-blue'
+          return 'text-brand-black'
         }
         return 'text-gray-400'
       },
@@ -36,7 +36,7 @@ export default {
     itemActiveClass: {
       get() {
         if (this.active) {
-          return 'border-b-4 border-b-swd-blue'
+          return 'border-b-4 border-b-brand-black'
         }
 
         return 'border-b-4 border-b-transparent'
