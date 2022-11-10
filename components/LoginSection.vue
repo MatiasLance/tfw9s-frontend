@@ -87,7 +87,7 @@
             rounded-full
             border-[3px] border-gray-300
             bg-transparent
-            text-swd-blue
+            text-brand-black
             hover:border-gray-700
             focus:border-transparent
             focus:bg-gray-200
@@ -105,13 +105,13 @@
           inline-block
           w-full
           border border-transparent
-          bg-swd-blue
+          bg-brand-black
           py-3
           px-5
           text-center
           font-bold
           text-white
-          hover:bg-swd-grey
+          hover:bg-brand-grey
         "
         @click="authenticate"
       >
@@ -119,7 +119,7 @@
       </button>
       <p class="mt-5 text-center font-semibold">
         <a
-          class="text-swd-blue hover:underline hover:decoration-swd-blue"
+          class="text-brand-black hover:underline hover:decoration-brand-black"
           href="/forgot-password"
         >
           Lost your password ?

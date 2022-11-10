@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-swd-dgrey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
       <div
         class="
           col-span-12

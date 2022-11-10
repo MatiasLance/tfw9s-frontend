@@ -43,8 +43,8 @@
             px-2
             py-1
             font-bold
-            text-swd-blue
-            hover:bg-swd-blue
+            text-brand-black
+            hover:bg-brand-black
             hover:text-white
           "
           @click="confirmAction"

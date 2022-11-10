@@ -11,28 +11,28 @@ export default {
       {
         hid: 'description',
         name: 'description',
-        content: 'Photo images of North Stradbroke Island (Minjerribah), and other places. Canvas art for wall decoration. Home to Mal-apause Surf Wear.'
+        content: 'Gold Coast\'s finest sneaker, clothing and accessories store'
       },
       { name: 'format-detection', content: 'telephone=no' },
       {
         hid: 'og:title',
         name: 'og:title',
-        content: 'Revamp Official',
+        content: 'Revamped - GC\'S Finest Store: NIKE DUNKS, JORDANS, YEEZYS & MORE! | Revamped Official',
       },
       {
         hid: 'og:description',
         name: 'og:description',
-        content: 'Photo images of North Stradbroke Island (Minjerribah), and other places. Canvas art for wall decoration. Home to Mal-apause Surf Wear.',
+        content: 'Gold Coast\'s finest sneaker, clothing and accessories store',
       },
       {
         hid: 'og:image',
         property: 'og:image',
-        content: 'https://i.imgur.com/1fUeNUK.jpg',
+        content: 'https://i.imgur.com/tcuaeC4.png',
       },
       {
         hid: 'og:site_name',
         name: 'og:site_name',
-        content: 'Revamp Official',
+        content: 'Revamp Official Website',
       },
     ],
     link: [
@@ -47,7 +47,7 @@ export default {
       },
       {
         rel: 'stylesheet', 
-        href: 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;700&display=swap'
+        href: 'https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;700&display=swap'
       }
     ],
     script: [
@@ -60,7 +60,9 @@ export default {
   target: 'server',
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: [
+    '@/assets/css/main.css'
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [

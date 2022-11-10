@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-swd-dgrey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
       <div
         class="
           col-span-12
@@ -64,7 +64,7 @@
         <div class="mt-4 flex items-center justify-center">
           <NuxtLink to="/shop">
             <span
-              class="mx-2 cursor-pointer bg-swd-blue px-4 py-2 text-white"
+              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
             >
               Shop
             </span>
@@ -85,7 +85,7 @@
         </div>
         <div class="mt-4 flex items-center justify-center">
           <span
-            class="mx-2 cursor-pointer bg-swd-blue px-4 py-2 text-white"
+            class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
             @click="verify"
           >
             Refresh
@@ -107,14 +107,14 @@
         <div class="mt-4 flex items-center justify-center">
           <NuxtLink to="/shop">
             <span
-              class="mx-2 cursor-pointer bg-swd-blue px-4 py-2 text-white"
+              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
             >
               Shop
             </span>
           </NuxtLink>
           <NuxtLink to="/checkout">
             <span
-              class="mx-2 cursor-pointer bg-swd-blue px-4 py-2 text-white"
+              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
             >
               Checkout
             </span>

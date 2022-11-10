@@ -3,20 +3,9 @@
     class="ud-header top-0 left-0 z-40 flex w-full items-center bg-transparent"
   >
     <div class="container">
-      <div class="relative -mx-4 flex items-center justify-between">
-        <div class="w-72 max-w-full px-4">
-          <NuxtLink to="/">
-            <span class="navbar-logo block w-full py-5">
-              <img
-                src="~/assets/images/logo_straddie_header.svg"
-                alt="logo"
-                class="header-logo w-full"
-              />
-            </span>
-          </NuxtLink>
-        </div>
-        <div class="flex w-full items-center justify-between px-4">
-          <div>
+      <div class="relative -mx-4">
+        <div class="flex w-full items-center justify-between">
+          <div class="custom-pl-16 lg:custom-pl-0 self-center">
             <button
               id="navbarToggler"
               type="button"
@@ -25,7 +14,7 @@
                 ring-primary
                 absolute
                 top-1/2
-                right-4
+                left-4
                 block
                 -translate-y-1/2
                 rounded-lg
@@ -51,7 +40,7 @@
               class="
                 absolute
                 top-full
-                right-4
+                left-4
                 hidden
                 w-full
                 max-w-[250px]
@@ -89,20 +78,103 @@
                         duration-300
                         ease-in-out
                         group-hover:underline
-                        group-hover:decoration-swd-blue
-                        group-hover:decoration-4
+                        group-hover:decoration-slate-600
+                        group-hover:decoration-2
                         group-hover:underline-offset-8
                         lg:mr-0
                         lg:inline-flex
-                        lg:py-6
+                        lg:py-4
                         lg:px-0
                         lg:text-[#181818]
-                        lg:group-hover:text-[#181818] lg:group-hover:opacity-70
+                        lg:group-hover:text-slate-800 lg:group-hover:opacity-70
                       "
                     >
                       {{ link.text }}
                     </span>
                   </NuxtLink>
+                </li>
+                <li class="group submenu-item relative">
+                  <span
+                    class="
+                      text-dark
+                      group-hover:text-primary
+                      font-montserrat
+                      relative
+                      mx-8
+                      flex
+                      cursor-pointer
+                      py-2
+                      text-base
+                      after:absolute
+                      after:top-1/2
+                      after:right-1
+                      after:mt-[-2px]
+                      after:h-2
+                      after:w-2
+                      after:-translate-y-1/2
+                      after:rotate-45
+                      after:border-r-2
+                      after:border-b-2
+                      after:border-current
+                      lg:mr-0
+                      lg:ml-8
+                      lg:inline-flex
+                      lg:py-6
+                      lg:pr-4
+                      lg:pl-0
+                      lg:text-[#181818]
+                      lg:after:right-0
+                      lg:group-hover:text-[#181818]
+                      lg:group-hover:opacity-70
+                      xl:ml-12
+                    "
+                  >
+                    More
+                  </span>
+                  <div
+                    class="
+                      submenu
+                      relative
+                      top-full
+                      left-0
+                      hidden
+                      w-[250px]
+                      rounded-sm
+                      bg-white
+                      p-4
+                      transition-[top]
+                      duration-300
+                      group-hover:opacity-100
+                      lg:invisible
+                      lg:absolute
+                      lg:top-[110%]
+                      lg:block
+                      lg:opacity-0
+                      lg:shadow-lg
+                      lg:group-hover:visible
+                      lg:group-hover:top-full
+                    "
+                  >
+                    <a
+                      v-for="(link, linkIndex) in more"
+                      :key="`link-mobile-${linkIndex}`"
+                      :href="link.to"
+                    >
+                      <span
+                        class="
+                          text-body-color
+                          block
+                          rounded
+                          py-[10px]
+                          px-4
+                          text-sm
+                          hover:text-gray-500 hover:underline
+                        "
+                      >
+                        {{ link.text }}
+                      </span>
+                    </a>
+                  </div>
                 </li>
               </ul>
             </nav>
@@ -112,14 +184,14 @@
               class="
                 menuDropdown
                 absolute
-                top-full
-                right-4
-                w-full
+                top-full left-4 w-full
                 max-w-[250px]
                 rounded-lg
                 bg-white
-                py-5
+                py-2
                 shadow-lg
+                transition-all
+                duration-300
                 lg:static
                 lg:block
                 lg:w-full
@@ -131,7 +203,7 @@
                 xl:px-6
               "
             >
-              <ul class="blcok lg:flex">
+              <ul class="block lg:flex">
                 <li
                   v-for="(link, linkIndex) in links"
                   :key="`link-mobile-${linkIndex}`"
@@ -161,20 +233,115 @@
                     </span>
                   </NuxtLink>
                 </li>
+                <li class="group submenu-item relative">
+                  <span
+                    href="javascript:void(0)"
+                    class="
+                      text-dark
+                      group-hover:text-primary
+                      font-montserrat
+                      relative
+                      mx-8
+                      flex
+                      py-2
+                      text-base
+                      after:absolute
+                      after:top-1/2
+                      after:right-1
+                      after:mt-[-2px]
+                      after:h-2
+                      after:w-2
+                      after:-translate-y-1/2
+                      after:rotate-45
+                      after:border-r-2
+                      after:border-b-2
+                      after:border-current
+                      lg:mr-0
+                      lg:ml-8
+                      lg:inline-flex
+                      lg:py-6
+                      lg:pr-4
+                      lg:pl-0
+                      lg:text-[#181818]
+                      lg:after:right-0
+                      lg:group-hover:text-[#181818]
+                      lg:group-hover:opacity-70
+                      xl:ml-12
+                    "
+                    @click="toggle2"
+                  >
+                    More
+                  </span>
+                  <div
+                    v-show="isOpen2"
+                    class="
+                      submenu
+                      relative
+                      top-full
+                      left-0
+                      w-[250px]
+                      rounded-sm
+                      bg-white
+                      p-4
+                      transition-[top]
+                      duration-300
+                      group-hover:opacity-100
+                      lg:invisible
+                      lg:absolute
+                      lg:top-[110%]
+                      lg:block
+                      lg:opacity-0
+                      lg:shadow-lg
+                      lg:group-hover:visible
+                      lg:group-hover:top-full
+                    "
+                  >
+                    <a
+                      v-for="(link, linkIndex) in more"
+                      :key="`link-mobile-${linkIndex}`"
+                      :href="link.to"
+                    >
+                      <span
+                        class="
+                          text-body-color
+                          block
+                          rounded
+                          py-[10px]
+                          px-4
+                          text-sm
+                          hover:text-gray-500 hover:underline
+                        "
+                      >
+                        {{ link.text }}
+                      </span>
+                    </a>
+                  </div>
+                </li>
               </ul>
             </nav>
           </div>
+          <div class="w-80 max-w-full px-4">
+            <NuxtLink to="/">
+              <span class="navbar-logo block w-full py-2">
+                <img
+                  src="~/assets/images/logo_brand.svg"
+                  alt="logo"
+                  class="header-logo w-full"
+                />
+              </span>
+            </NuxtLink>
+          </div>
           <div class="topBarInMenuCell hidden lg:flex"></div>
-          <div class="justify-end pr-16 sm:flex lg:pr-0">
+          <div class="justify-end self-center sm:flex lg:pr-0">
             <NuxtLink to="/cart">
               <button
                 type="button"
                 class="
                   relative
-                  flex
-                  cursor-pointer
-                  items-center
-                  hover:text-[#3981da]
+                  flex cursor-pointer
+                  flex-row-reverse
+                  items-center px-3
+                  hover:text-slate-300
                 "
               >
                 <div
@@ -185,7 +352,7 @@
                     viewBox="0 0 24 24"
                     width="40"
                     height="40"
-                    class="fill-[#3981da]"
+                    class="fill-black"
                   >
                     <path fill="none" d="M0 0h24v24H0z" />
                     <path
@@ -198,7 +365,7 @@
                     />
                   </svg>
                 </div>
-                <span class="ml-[0.35em] opacity-50">
+                <span class="mx-[0.35em] opacity-50">
                   {{ cartCount }}
                 </span>
               </button>
@@ -216,20 +383,39 @@ export default {
   data() {
     return {
       isOpen: false,
+      isOpen2: false,
       links: [
-        {
-          to: '/',
-          text: 'Home',
-        },
         {
           to: '/shop',
           text: 'Shop',
         },
         {
-          to: '/contact-us',
-          text: 'Contact Us',
+          to: '/brands',
+          text: 'Brands',
         },
       ],
+      more: [
+        {
+          to: '/categories',
+          text: 'Categories'
+        },
+        {
+          to: '/contact-us',
+          text: 'Contact us'
+        },
+        {
+          to: '/about-us',
+          text: 'About us'
+        },
+        {
+          to: '/our-mission',
+          text: 'Our Mission'
+        },
+        {
+          to: '/reviews',
+          text: 'Reviews'
+        },
+      ]
     };
   },
   computed: {
@@ -264,6 +450,9 @@ export default {
       const navbarToggler = document.querySelector('#navbarToggler');
       navbarToggler.classList.toggle('navbarTogglerActive');
     },
+    toggle2() {
+      this.isOpen2 = !this.isOpen2;
+    },
     cart() {
       this.$router.push('/checkout');
     },
@@ -282,6 +471,19 @@ export default {
 </script>
 
 <style lang="postcss">
+  .custom-pl-16 {
+    @apply pl-16
+  }
+  .custom-pl-0 {
+    @apply pl-0
+  }
+
+  @media (min-width: 1024px) {
+    .lg\:custom-pl-0 {
+      @apply pl-0
+    }
+}
+
   .sticky {
     @apply fixed z-[9999] bg-white bg-opacity-80 transition;
     backdrop-filter: blur(5px);
@@ -293,23 +495,23 @@ export default {
   }
 
   .sticky #navbarToggler span {
-    @apply bg-swd-dgrey;
+    @apply bg-brand-dgrey;
   }
 
   .sticky #navbarCollapse li a {
-    @apply text-swd-dgrey hover:text-swd-blue hover:opacity-100;
+    @apply text-brand-dgrey hover:text-brand-black hover:opacity-100;
   }
   #navbarCollapse li .ud-menu-scroll.active {
     @apply opacity-70;
   }
   .sticky #navbarCollapse li .ud-menu-scroll.active {
-    @apply text-swd-blue opacity-100;
+    @apply text-brand-black opacity-100;
   }
   .sticky .loginBtn {
-    @apply text-swd-dgrey hover:text-swd-blue hover:opacity-100;
+    @apply text-brand-dgrey hover:text-brand-black hover:opacity-100;
   }
   .sticky .signUpBtn {
-    @apply bg-swd-blue text-white hover:bg-swd-dgrey hover:text-white;
+    @apply bg-brand-black text-white hover:bg-brand-dgrey hover:text-white;
   }
   .navbarTogglerActive > span:nth-child(1) {
     @apply top-[7px] rotate-45 transform;

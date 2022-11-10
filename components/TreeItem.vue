@@ -20,9 +20,9 @@
           type="checkbox"
           class="
             cursor-pointer
-            border border-swd-blue
-            text-swd-blue
-            outline-1 outline-swd-blue
+            border border-brand-black
+            text-brand-black
+            outline-1 outline-brand-black
           "
           @click.stop="selected = !selected"
         >
@@ -140,8 +140,8 @@
           justify-center
           rounded
           text-sm
-          text-swd-red
-          hover:bg-swd-red
+          text-brand-red
+          hover:bg-brand-red
           hover:text-white
           sm:w-6
         "
@@ -165,7 +165,7 @@
           <div class="p-4">
             <div class="text-lg leading-tight">
               Are you sure you want to delete
-              <span class="font-bold text-swd-blue">{{ item.name }}</span>
+              <span class="font-bold text-brand-black">{{ item.name }}</span>
               category along with all its subcategories?
             </div>
           </div>
@@ -198,8 +198,8 @@
                 rounded
                 px-2
                 py-1
-                text-swd-blue
-                hover:bg-swd-blue
+                text-brand-black
+                hover:bg-brand-black
                 hover:text-white
               "
               @click="deleteCategory"

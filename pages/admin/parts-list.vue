@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-swd-dgrey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
       <div
         class="
           space-y-3
@@ -48,14 +48,14 @@
               class="
                 w-40
                 rounded-md
-                border border-solid border-swd-blue
-                bg-swd-blue
+                border border-solid border-brand-black
+                bg-brand-black
                 px-4
                 py-2
                 text-center
                 text-white
-                hover:bg-swd-mblue
-                focus:bg-swd-blue
+                hover:bg-brand-mblue
+                focus:bg-brand-black
               "
               @click="addPr"
             >
@@ -68,14 +68,14 @@
               type="button"
               class="
                 block w-40 rounded-md
-                border border-solid border-swd-blue
-                bg-swd-blue
+                border border-solid border-brand-black
+                bg-brand-black
                 px-4
                 py-2
                 text-center
                 text-white
-                hover:bg-swd-mblue
-                focus:bg-swd-blue
+                hover:bg-brand-mblue
+                focus:bg-brand-black
                 md:inline-block
               "
               @click="categoriesLink"
@@ -157,16 +157,21 @@
                 class="flex flex-wrap items-center"
               >
                 <span class="pr-1 text-[16px]">
-                  <i class="ri-price-tag-3-line text-swd-blue"></i>
+                  <i class="ri-price-tag-3-line text-brand-black"></i>
                 </span>
                 <span
-                  class="text-[16px] selection:bg-swd-blue selection:text-white"
+                  class="text-[16px]
+                  selection:bg-brand-black selection:text-white"
                 >
                   {{ category.name }}
                 </span>
               </div>
             </div>
-            <span class="text-2xl selection:bg-swd-blue selection:text-white">
+            <span
+              class="text-2xl
+              selection:bg-brand-black
+              selection:text-white"
+            >
               <a
                 :href="`/product/?id=${prod.id}`"
                 target="_self"
@@ -175,7 +180,7 @@
                   font-montserrat font-bold
                   transition
                   duration-200
-                  hover:text-swd-blue
+                  hover:text-brand-black
                 "
               >
                 {{ prod.name }}
@@ -205,8 +210,8 @@
                   flex
                   cursor-pointer
                   items-center
-                  hover:text-swd-dblue
-                  hover:underline hover:decoration-swd-dblue
+                  hover:text-brand-dblue
+                  hover:underline hover:decoration-brand-dblue
                 "
                 @click="editPr(prod.id)"
               >
@@ -219,8 +224,8 @@
                   flex
                   cursor-pointer
                   items-center
-                  hover:text-swd-dblue
-                  hover:underline hover:decoration-swd-dblue
+                  hover:text-brand-dblue
+                  hover:underline hover:decoration-brand-dblue
                 "
                 @click="duplicate(prod.id)"
               >
@@ -233,9 +238,9 @@
                   flex
                   cursor-pointer
                   items-center
-                  text-swd-red
-                  hover:text-swd-dblue
-                  hover:underline hover:decoration-swd-dblue
+                  text-brand-red
+                  hover:text-brand-dblue
+                  hover:underline hover:decoration-brand-dblue
                 "
                 @click="removePr(prod.id)"
               >
@@ -253,7 +258,7 @@
      <!-- showAddProduct modal component -->
      <OModal :active="showAddProductModal" @close="showAddProductModal = false">
       <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-        <h3 class="mb-3 font-bold text-swd-blue">
+        <h3 class="mb-3 font-bold text-brand-black">
           Add Product
         </h3>
         <hr class="my-3">
@@ -295,7 +300,7 @@
                   cursor-pointer border
                   border-gray-200
                   bg-transparent p-3
-                  hover:border-swd-blue
+                  hover:border-brand-black
                   hover:bg-blue-50
                 "
                 >
@@ -306,8 +311,8 @@
                     name="stockRadio"
                     type="radio"
                     class="
-                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-swd-blue
-                    focus:ring-swd-blue"
+                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                    focus:ring-brand-black"
                     @change="toggleStock"
                   />
                 </span>
@@ -320,7 +325,7 @@
                 cursor-pointer border
                 border-gray-200
                 bg-transparent p-3
-                hover:border-swd-blue
+                hover:border-brand-black
                 hover:bg-blue-50
                 "
               >
@@ -332,8 +337,8 @@
                   type="radio"
                   :checked="inStock === 0"
                   class="
-                  mt-1 mr-1 h-4 w-4 bg-gray-200 text-swd-blue
-                  focus:ring-swd-blue"
+                  mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                  focus:ring-brand-black"
                   @change="toggleStock"
                 />
               </span>
@@ -374,8 +379,8 @@
                   flex
                   items-center
                   justify-center
-                  border border-solid border-swd-blue
-                  bg-swd-blue
+                  border border-solid border-brand-black
+                  bg-brand-black
                   px-4
                   py-2
                   text-white
@@ -401,8 +406,8 @@
                   class="
                     my-4
                     h-6 w-6
-                    text-swd-blue
-                    hover:bg-swd-blue hover:text-white
+                    text-brand-black
+                    hover:bg-brand-black hover:text-white
                   "
                   @click="removeCategoryPicker(categoryPickerIndex)"
                 >
@@ -464,7 +469,7 @@
               v-if="showGenerateCreatedImageBtn"
               dark
               large
-              class="bg-gradient-to-r from-swd-blue to-swd-blue"
+              class="bg-gradient-to-r from-brand-black to-brand-black"
               @click="generateImage"
             >
               GENERATE
@@ -488,9 +493,9 @@
                     absolute
                     left-0 my-2
                     h-6
-                    w-6 text-swd-lgrey
+                    w-6 text-brand-lgrey
                     shadow-sm
-                    hover:bg-swd-blue
+                    hover:bg-brand-black
                     hover:text-white
                   "
                   @click="removeImage(photoIndex)"
@@ -510,7 +515,7 @@
               inline-block
               w-full
               border border-transparent
-              bg-swd-green
+              bg-brand-green
               py-3
               px-5
               text-center
@@ -530,13 +535,13 @@
               inline-block
               w-full
               border border-transparent
-              bg-swd-red
+              bg-brand-red
               py-3
               px-5
               text-center
               font-bold
               text-white
-              hover:bg-swd-dblue
+              hover:bg-brand-dblue
               lg:mx-4 lg:w-48
             "
             @click="close"
@@ -552,7 +557,7 @@
       @close="showEditProductModal = false"
     >
       <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-        <h3 class="mb-3 font-bold text-swd-blue">
+        <h3 class="mb-3 font-bold text-brand-black">
           Edit Product
         </h3>
         <hr class="my-3">
@@ -594,7 +599,7 @@
                   cursor-pointer border
                   border-gray-200
                   bg-transparent p-3
-                  hover:border-swd-blue
+                  hover:border-brand-black
                   hover:bg-blue-50
                 "
                 >
@@ -606,8 +611,8 @@
                     name="stockRadio"
                     type="radio"
                     class="
-                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-swd-blue
-                    focus:ring-swd-blue"
+                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                    focus:ring-brand-black"
                     @change="toggleStock"
                   />
                 </span>
@@ -620,7 +625,7 @@
                 cursor-pointer border
                 border-gray-200
                 bg-transparent p-3
-                hover:border-swd-blue
+                hover:border-brand-black
                 hover:bg-blue-50
                 "
               >
@@ -632,8 +637,8 @@
                   name="stockRadio"
                   type="radio"
                   class="
-                  mt-1 mr-1 h-4 w-4 bg-gray-200 text-swd-blue
-                  focus:ring-swd-blue"
+                  mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                  focus:ring-brand-black"
                   @change="toggleStock"
                 />
               </span>
@@ -674,8 +679,8 @@
                   flex
                   items-center
                   justify-center
-                  border border-solid border-swd-blue
-                  bg-swd-blue
+                  border border-solid border-brand-black
+                  bg-brand-black
                   px-4
                   py-2
                   text-white
@@ -702,8 +707,8 @@
                   class="
                     my-4
                     h-6 w-6
-                    text-swd-blue
-                    hover:bg-swd-blue hover:text-white
+                    text-brand-black
+                    hover:bg-brand-black hover:text-white
                   "
                   @click="removeCategoryPicker(categoryPickerIndex)"
                 >
@@ -766,7 +771,7 @@
             <VBtn
               v-if="showGenerateEditedImageBtn"
               dark
-              class="mt-2 bg-gradient-to-r from-swd-blue to-swd-blue"
+              class="mt-2 bg-gradient-to-r from-brand-black to-brand-black"
               @click="generateEditedImage"
             >
               GENERATE
@@ -788,9 +793,9 @@
                     absolute
                     left-0 my-2
                     h-6
-                    w-6 text-swd-lgrey
+                    w-6 text-brand-lgrey
                     shadow-sm
-                    hover:bg-swd-blue
+                    hover:bg-brand-black
                     hover:text-white
                   "
                   @click="removeEditedImage(photoIndex)"
@@ -810,7 +815,7 @@
               inline-block
               w-full
               border border-transparent
-              bg-swd-green
+              bg-brand-green
               py-3
               px-5
               text-center
@@ -830,13 +835,13 @@
               inline-block
               w-full
               border border-transparent
-              bg-swd-red
+              bg-brand-red
               py-3
               px-5
               text-center
               font-bold
               text-white
-              hover:bg-swd-dblue
+              hover:bg-brand-dblue
               lg:mx-4 lg:w-48
             "
             @click="closeEdit"
@@ -852,7 +857,7 @@
       @close="showRemoveProductModal = false"
     >
       <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-        <h3 class="mb-3 font-bold text-swd-blue">
+        <h3 class="mb-3 font-bold text-brand-black">
           Remove Product
         </h3>
         <hr class="my-3">
@@ -867,7 +872,7 @@
             inline-block
             w-full
             border border-transparent
-            bg-swd-green
+            bg-brand-green
             py-3
             px-5
             text-center
@@ -887,13 +892,13 @@
             inline-block
             w-full
             border border-transparent
-            bg-swd-red
+            bg-brand-red
             py-3
             px-5
             text-center
             font-bold
             text-white
-            hover:bg-swd-dblue
+            hover:bg-brand-dblue
             lg:mx-4 lg:w-48
           "
           @click="closeRemove"
@@ -985,8 +990,8 @@ export default {
       newCategoryName: '',
       moveDialog: false,
       pageSEO: {
-        title: 'Products Admin - Straddie World',
-        description: 'Page for creating product items for Straddie World',
+        title: 'Products Admin - Revamped',
+        description: 'Page for creating product items for Revamped',
       }
     };
   },

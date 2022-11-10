@@ -10,7 +10,7 @@
                 type="button"
                 class="flex h-10 w-10 items-center
                 justify-center overflow-hidden rounded-full border
-                border-transparent bg-gray-200 hover:border-swd-blue"
+                border-transparent bg-gray-200 hover:border-brand-black"
                 aria-label="Button name"
                 @click="toggle"
             >
@@ -84,7 +84,7 @@
         >
         <article
             class="relative mb-6 overflow-hidden rounded
-            bg-swd-mblue p-4 sm:p-6"
+            bg-brand-mblue p-4 sm:p-6"
         >
           <div class="" aria-hidden="true">
             <h1 class="mb-1 text-2xl font-bold text-white md:text-3xl">
@@ -113,7 +113,10 @@ Here is what's happening with your shop today:
                     </h4>
                   </div>
                   <hr class="my-4">
-                  <NuxtLink to="/admin/parts-list" class="hover:text-swd-blue">
+                  <NuxtLink
+                    to="/admin/parts-list"
+                    class="hover:text-brand-black"
+                  >
                     See all products
                   </NuxtLink>
               </div>
@@ -135,7 +138,7 @@ Here is what's happening with your shop today:
                   <hr class="my-4">
                   <NuxtLink
                   to="/admin/categories"
-                  class="hover:text-swd-blue"
+                  class="hover:text-brand-black"
                   >See all categories</NuxtLink>
               </div>
             </article>
@@ -162,7 +165,7 @@ export default {
       lastname: '',
       email: '',
       pageSEO: {
-        title: 'Admin Page - Straddie World',
+        title: 'Admin Page - Revamped',
         description: 'Admin Page',
         url: 'admin',
       }
@@ -170,7 +173,7 @@ export default {
   },
   head() {
     return {
-      title: 'Admin Page - Straddie World',
+      title: 'Admin Page - Revamped',
       meta: [
         {
           hid: 'description',

@@ -1,7 +1,7 @@
 <!-- eslint-disable tailwindcss/classnames-order -->
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-swd-grey to-swd-blue">
+    <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
       <div
         class="
           col-span-12

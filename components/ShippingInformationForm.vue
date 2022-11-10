@@ -121,7 +121,7 @@
           rounded-full
           border-[3px] border-gray-300
           bg-gray-400
-          text-swd-blue
+          text-brand-black
           hover:border-gray-700
           focus:border-transparent
           focus:bg-gray-200
@@ -134,7 +134,7 @@
       <span class="ml-2 inline-block cursor-pointer text-gray-500">
         I agree with
         <a
-          class="decoration-none hover:text-swd-blue hover:underline"
+          class="decoration-none hover:text-brand-black hover:underline"
           href="#"
           @click="showTermsModal = true"
         >
@@ -154,7 +154,7 @@
           border border-gray-200
           bg-gray-50
           p-3
-          hover:border-swd-blue hover:bg-blue-50
+          hover:border-brand-black hover:bg-blue-50
         "
       >
         <span>
@@ -163,7 +163,7 @@
             value="delivery"
             name="shipping"
             type="radio"
-            class="mt-1 h-4 w-4 bg-gray-200 text-swd-blue focus:ring-swd-blue"
+            class="mt-1 h-4 w-4 bg-gray-200 text-brand-black focus:ring-brand-black"
           />
         </span>
         <p class="ml-2">
@@ -181,7 +181,7 @@
           border border-gray-200
           bg-gray-50
           p-3
-          hover:border-swd-blue hover:bg-blue-50
+          hover:border-brand-black hover:bg-blue-50
         "
       >
         <span>
@@ -190,7 +190,7 @@
             value="pickup"
             name="shipping"
             type="radio"
-            class="mt-1 h-4 w-4 bg-gray-200 text-swd-blue focus:ring-swd-blue"
+            class="mt-1 h-4 w-4 bg-gray-200 text-brand-black focus:ring-brand-black"
           />
         </span>
         <p class="ml-2">
@@ -270,7 +270,7 @@
     <div class="flex w-full items-center justify-end">
       <button
         type="submit"
-        class="mx-2 w-24 cursor-pointer bg-swd-blue py-2 text-white"
+        class="mx-2 w-24 cursor-pointer bg-brand-black py-2 text-white"
         :disabled="isLoading"
       >
         <span v-if="!isLoading">

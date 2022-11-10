@@ -53,8 +53,8 @@ export default {
   data() {
     return {
       pageSEO: {
-        title: 'Shop - Straddie World',
-        description: 'Featuring our exclusive Straddie World Products. Shop with us here.'
+        title: 'Shop - Revamped',
+        description: 'Featuring our exclusive Revamped Products. Shop with us here.'
       }
     }
   },

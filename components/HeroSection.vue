@@ -1,5 +1,14 @@
 <template>
-  <section id="hero" class="w-full">
+  <section id="hero" class="relative w-full overflow-hidden">
+    <img
+      class="absolute inset-0 h-full w-full bg-fixed object-cover"
+      src="/img/1.webp"
+      alt=""
+    />
+    <div
+    class="absolute inset-0 bg-gradient-to-r
+      from-slate-800/50 to-black/50 bg-fixed"
+    ></div>
     <BaseSection>
       <div
         class="
@@ -8,22 +17,34 @@
           space-y-4
           px-6
           sm:space-y-6
-          md:text-left
-          lg:col-span-6
-          xl:mt-10
+          md:text-center
+          lg:col-span-12
         "
       >
+        <span
+          data-aos="fade-right"
+          data-aos-once="true"
+          class="
+            pb-3
+            text-base
+            font-semibold
+            uppercase
+            text-white
+          "
+        >
+          {{ superheadline }}
+        </span>
         <h1
           data-aos="fade-right"
           data-aos-once="true"
           class="
             font-montserrat
             break-words
-            text-[2rem] font-black
-            uppercase
+            text-center text-[2rem]
+            font-black uppercase
             leading-snug
             tracking-wider
-            text-black
+            text-white
             sm:pr-8 sm:text-5xl
              xl:pr-10 xl:text-6xl
           "
@@ -34,7 +55,7 @@
           data-aos="fade-down"
           data-aos-once="true"
           data-aos-delay="300"
-          class="paragraph hidden sm:block"
+          class="hidden text-white sm:block"
         >
           {{ contentblurb }}
         </p>
@@ -46,43 +67,28 @@
             shop-cta
             sm:shop-cta-sm
             flex
-            flex-col
-            items-center space-y-4
+            flex-col items-center
+            justify-center space-y-4
             sm:flex-row
             sm:space-y-0
             sm:space-x-4 md:mt-2 md:mb-10
-            md:items-start md:justify-start
           "
         >
           <NuxtLink to="/shop">
             <BaseButton
               class="
                 max-w-full
-                border border-[#fb0d2b]
-                bg-gradient-to-r
-                from-[#3981da]
-                to-[#3981da]
+                rounded-lg
+                bg-black
                 py-8
                 px-14
                 font-bold
-                uppercase
-                text-white
+                 uppercase text-white
               "
             >
               {{ cta }}
             </BaseButton>
           </NuxtLink>
-        </div>
-      </div>
-      <div class="col-span-12 sm:block lg:col-span-6">
-        <div class="mt-[30px] w-full">
-          <img
-            data-aos="fade-up"
-            data-aos-once="true"
-            :src="require('~/assets/images/home.jpg')"
-            class="p-7 shadow-lg lg:-mt-4"
-            alt=""
-          />
         </div>
       </div>
     </BaseSection>
@@ -97,10 +103,10 @@ export default {
   components: { BaseSection, BaseButton },
   data() {
     return {
-      superheadline: 'Stradbroke Island Art',
-      headline: 'Keep a piece of Straddy Forever',
-      cta: 'Shop',
-      contentblurb: '',
+      superheadline: 'Welcome to',
+      headline: 'Gold Coast\'s Finest RETAIL BOUTIQUE',
+      cta: 'Browse Products',
+      contentblurb: 'A BRAND NEW 1-OF-1 RETAIL STORE',
     };
   },
 };
