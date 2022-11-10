@@ -130,7 +130,7 @@ export default {
     return {
       address: 'Point Lookout, 4183 North Stradbroke Island',
       mobile: '0438 098 059',
-      email: 'admin@straddieworld.com',
+      email: 'admin@revampedofficial.com',
       pageSEO: {
         title: 'Contact Us - Revamped',
         description: 'How can we help? Reach out to us for more information. Point Lookout, 4183 North Stradbroke Island Mobile: 0438 098 059',

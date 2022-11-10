@@ -50,7 +50,7 @@ import BaseHeader from '../components/base/BaseHeader.vue';
 export default {
   components: { BaseHeader },
   data() {
-    return { adminEmail: 'admin@straddieworld.com.au' };
+    return { adminEmail: 'admin@revampedofficial.com.au' };
   },
 };
 </script>

@@ -13,7 +13,7 @@
 <script>
 export default {
   data() {
-    return { adminEmail: 'admin@straddieworld.com' }
+    return { adminEmail: 'admin@revampedofficial.com' }
   }
 }
 </script>

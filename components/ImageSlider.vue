@@ -3,21 +3,21 @@
         <VueSlickCarousel class="mb-4" v-bind="slickSettings">
             <div class="my-auto">
         <img
-    src="~/assets/images/products/straddieworld_item_placeholder_thumbnail.png"
+    src="~/assets/images/products/revamped_item_placeholder_thumbnail.png"
     alt="logo"
     class="w-full"
         />
     </div>
     <div class="my-auto">
         <img
-    src="~/assets/images/products/straddieworld_item_placeholder_thumbnail.png"
+    src="~/assets/images/products/revamped_item_placeholder_thumbnail.png"
     alt="logo"
     class="w-full"
         />
     </div>
     <div class="my-auto">
         <img
-    src="~/assets/images/products/straddieworld_item_placeholder_thumbnail.png"
+    src="~/assets/images/products/revamped_item_placeholder_thumbnail.png"
     alt="logo"
     class="w-full"
         />
