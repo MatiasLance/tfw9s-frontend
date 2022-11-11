@@ -16,8 +16,8 @@
           mt-12
           space-y-4
           px-6
+          text-center
           sm:space-y-6
-          md:text-center
           lg:col-span-12
         "
       >
