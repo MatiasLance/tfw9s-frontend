@@ -128,12 +128,12 @@ export default {
   components: { BaseHeader, ContactSection },
   data() {
     return {
-      address: 'Point Lookout, 4183 North Stradbroke Island',
-      mobile: '0438 098 059',
-      email: 'admin@revampedofficial.com',
+      address: 'Shop 1.11, Level 1\nOasis Shopping Centre\n75 Surf Parade\nBroadbeach QLD 4218',
+      mobile: '*TBC*',
+      email: 'finn@revampedofficial.com',
       pageSEO: {
         title: 'Contact Us - Revamped',
-        description: 'How can we help? Reach out to us for more information. Point Lookout, 4183 North Stradbroke Island Mobile: 0438 098 059',
+        description: 'How can we help? Reach out to us for more information.',
       }
     }
   },
