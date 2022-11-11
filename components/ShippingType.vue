@@ -6,7 +6,7 @@
       border border-gray-200
       bg-gray-50
       p-3
-      hover:border-brand-black hover:bg-blue-50
+      hover:border-brand-black hover:bg-slate-100
     "
   >
     <span>

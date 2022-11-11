@@ -3,21 +3,21 @@
         <VueSlickCarousel class="mb-4" v-bind="slickSettings">
             <div class="my-auto">
         <img
-    src="~/assets/images/products/revamped_item_placeholder_thumbnail.png"
+    src="~/assets/images/products/brand_item_placeholder_thumbnail.png"
     alt="logo"
     class="w-full"
         />
     </div>
     <div class="my-auto">
         <img
-    src="~/assets/images/products/revamped_item_placeholder_thumbnail.png"
+    src="~/assets/images/products/brand_item_placeholder_thumbnail.png"
     alt="logo"
     class="w-full"
         />
     </div>
     <div class="my-auto">
         <img
-    src="~/assets/images/products/revamped_item_placeholder_thumbnail.png"
+    src="~/assets/images/products/brand_item_placeholder_thumbnail.png"
     alt="logo"
     class="w-full"
         />
@@ -92,14 +92,14 @@ export default {
 
 <style>
 .slick-prev:before, .slick-next:before {
-    color:#3981da !important;
+    color:#1a1d18 !important;
     font-size: 1.15rem;
     height: 3fr;
     width: 3fr;
 }
 
 .selected {
-  background: #3981da;
+  background: #1a1d18;
   color: #ffffff;
   border: 1px solid transparent;
 }

@@ -101,7 +101,7 @@
                   px-[12px]
                   text-center text-gray-700
                   shadow-sm
-                  hover:bg-gray-100 hover:text-[#3981da]
+                  hover:bg-gray-100 hover:text-[#1a1d18]
                 "
                 href="/cart"
               >
@@ -194,7 +194,7 @@ export default {
         theme: 'stripe',
         labels: 'floating',
         variables: {
-          colorPrimary: '#3981da',
+          colorPrimary: '#1a1d18',
           colorBackground: '#ffffff',
           colorText: '#191919',
           colorDanger: '#e73538',
@@ -309,7 +309,7 @@ form#payment-form {
 
 /* Buttons and links */
 button#stripeSubmit {
-  background: #3981da;
+  background: #1a1d18;
   color: #ffffff;
   border-radius: 4px;
   border: 0;

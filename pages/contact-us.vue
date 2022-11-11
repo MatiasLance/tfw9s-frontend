@@ -50,7 +50,7 @@
                   text-[1rem]
                   font-bold
                   capitalize
-                  text-[#3981da]
+                  text-[#1a1d18]
                 "
               >
                 Contact Revamped
@@ -86,7 +86,7 @@
           <div class="mb-[40px]"></div>
           <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
             <div class="col-span-12 md:col-span-6">
-              <h5 class="text-[1.563rem] font-bold leading-[1] text-[#3981da]">
+              <h5 class="text-[1.563rem] font-bold leading-[1] text-[#1a1d18]">
                 Social
               </h5>
               <div class="mb-3"></div>
@@ -101,7 +101,7 @@
                       items-center
                       justify-center
                       bg-gray-200
-                      hover:bg-blue-400 hover:text-white
+                      hover:bg-slate-400 hover:text-white
                     "
                   >
                     <i class="ri-facebook-line text-2xl"></i>
@@ -155,7 +155,7 @@ export default {
 <style>
 .superheadline:before {
   width: 3.125rem;
-  border-top: 2px solid #3981da;
+  border-top: 2px solid #1a1d18;
   margin-right: 10px;
   content: ' ';
 }

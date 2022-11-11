@@ -2,37 +2,38 @@
   <div>
     <div
       id="sky"
-      class="flex fixed top-0 z-50
-      justify-center items-center
-      w-screen h-screen"
+      class="fixed top-0 z-50 flex
+      h-screen w-screen
+      items-center justify-center"
     >
       <div
         class="hidden
-        flex-col justify-center
-        items-center w-screen h-screen text-white bg-slate-600 md:flex"
+        h-screen w-screen
+        flex-col items-center justify-center
+        bg-gradient-to-r from-slate-800 to-brand-black text-white md:flex"
       >
         <div id="stars" class="z-30 self-start"></div>
         <div id="stars2" class="z-40 self-start"></div>
         <div id="stars3" class="z-20 self-start"></div>
 
-        <div class="pb-4 my-5">
+        <div class="my-5 pb-4">
           <span
-          class="text-xl font-medium text-white
-          superheadline"
+          class="superheadline text-xl font-medium
+          text-white"
   >
               We can't find the page you're looking for.
           </span>
         </div>
         <h2
         v-if="error.statusCode === 404"
-        class="block z-50 space-y-5 text-8xl font-bold text-white"
+        class="z-50 block space-y-5 text-8xl font-bold text-white"
         >
           <span class="font-montserrat">Error {{ error.statusCode }}.</span>
         </h2>
         <h2
         v-else
-        class="block z-50 space-y-5 text-6xl font-bold
-        text-white font-montserrat"
+        class="font-montserrat z-50 block space-y-5 text-6xl
+        font-bold text-white"
         >
          <span class="font-montserrat">
           An error occured. {{ error.statusCode }}.
@@ -41,17 +42,17 @@
         <div class="mt-[2em] text-2xl">
           <NuxtLink
             to="/"
-            class="flex z-50 flex-col justify-center
-            items-center px-8 pt-4
-             hover:text-white
-            rounded-md duration-150 ease-in
-            hover:scale-105 cursor-pointer space"
+            class="space z-50 flex cursor-pointer
+            flex-col items-center justify-center
+             rounded-md
+            px-8 pt-4 duration-150
+            ease-in hover:scale-105 hover:text-white"
           >
             <BaseButton
-                class="py-[1.25em] px-[1.563em] max-w-full
-                font-bold text-white
-                uppercase bg-gradient-to-r from-[#3981da]
-                to-[#fe0e2e] border border-[#3981da]"
+                class="max-w-full border border-[#1a1d18]
+                bg-gradient-to-r from-[#1a1d18]
+                to-slate-700 py-[1.25em] px-[1.563em]
+                font-bold uppercase text-white"
               >
                 Go back to homepage
               </BaseButton>

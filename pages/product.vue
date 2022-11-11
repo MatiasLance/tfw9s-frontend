@@ -20,8 +20,9 @@
                   >
                     <a
                       :href="`${$config.baseURL}/storage/${photo.path}`"
-                      class="mx-1 inline-block border border-gray-200 p-1 py-2
-                      px-1 text-center hover:border-brand-black"
+                      class="hover:border-brand-black mx-1
+                      inline-block border border-gray-200 p-1
+                      py-2 px-1 text-center"
                       @click.prevent="setActiveMedia(photo)"
                       @mouseover="setActiveMedia(photo)"
                     >
@@ -56,7 +57,7 @@
                   :key="category.id"
                   class="font-medium text-black"
                 >
-                  <i class="ri-price-tag-3-line text-[#3981da]"></i>
+                  <i class="ri-price-tag-3-line text-[#1a1d18]"></i>
                   <span>{{ category.name }}</span>
                 </span>
               </span>
@@ -128,11 +129,11 @@
                   <BaseButton
                     type="button"
                     class="
+                      bg-brand-black
                       h-14
                       w-full
                       cursor-pointer
                       border
-                      bg-brand-black
                       py-4
                       px-5
                       font-bold
@@ -140,7 +141,7 @@
                       text-white
                       transition
                       duration-300
-                      hover:shadow-[#3981da]/50
+                      hover:shadow-[#1a1d18]/50
                       lg:w-auto
                     "
                     :disabled="!product.stock > 0"
@@ -316,14 +317,14 @@ export default {
   min-height: 1.5rem;
 }
 .slick-prev:before, .slick-next:before {
-      color:#3981da !important;
+      color:#1a1d18 !important;
       font-size: 1.15rem;
       height: 2fr;
       width: 2fr;
 }
 
 .selected {
-  background: #3981da;
+  background: #1a1d18;
   color: #ffffff;
   border: 1px solid transparent;
 }

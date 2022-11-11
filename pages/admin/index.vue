@@ -297,6 +297,6 @@ export default {
     background-color: #4cbe5c !important;
   }
   .o-notification--danger {
-    background-color: #3981da !important;
+    background-color: #1a1d18 !important;
   }
 </style>

@@ -85,7 +85,7 @@ export default {
 }
 .superheadline:before {
   width: 3.125rem;
-  border-top: 2px solid #3981da;
+  border-top: 2px solid #1a1d18;
   margin-right: 10px;
   content: ' ';
 }

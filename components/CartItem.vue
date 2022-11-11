@@ -24,7 +24,7 @@
             <p>
               <NuxtLink
                 :to="'/product/?id=' + uid"
-                class="hover:text-[#3981da]"
+                class="hover:text-[#1a1d18]"
               >
                 {{ name }}
               </NuxtLink>
@@ -35,7 +35,7 @@
                 :key="category.id"
                 class="mt-1 text-gray-400"
               >
-              <i class="ri-price-tag-3-line mr-1 text-[#3981da]"></i>
+              <i class="ri-price-tag-3-line mr-1 text-[#1a1d18]"></i>
               {{ category.name }}
               </span>
             </div>
@@ -91,7 +91,7 @@
               px-4
               text-white
               shadow-sm
-              hover:bg-blue-800
+              hover:bg-slate-700
             "
             @click="removeItem"
           >
