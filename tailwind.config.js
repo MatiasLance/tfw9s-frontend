@@ -21,7 +21,7 @@ module.exports = {
         'brand-lgrey': '#efefef',
         'brand-mgrey': '#181818',
         'brand-slate': '#abb8c3',
-        'brand-green': '#4cbe5c'
+        'brand-green': '#4cbe5c',
       },
       maxHeight: {
         'xs': '20rem',

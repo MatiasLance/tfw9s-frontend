@@ -79,21 +79,21 @@
 
       <VBtn
         dark
-        small
+        large
         color="black"
-        elevation="2"
         class="
           relative
           cursor-pointer
+          rounded-lg
           py-2
           text-xs
-          leading-3
-          text-white
+          leading-3 text-white
           transition
           duration-300
           hover:shadow-[#1a1d18]/50
           sm:px-3
-          lg:px-5
+          lg:px-7
+          lg:py-5
           lg:text-base
         "
         :disabled="!stock > 0"

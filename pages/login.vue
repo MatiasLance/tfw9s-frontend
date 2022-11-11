@@ -2,8 +2,8 @@
     <div>
         <section
             class="relative min-h-[97vh] w-full
-            bg-brand-slate
-            bg-cover
+            bg-[url('/img/2.JPG')]
+            bg-cover bg-fixed
             py-10"
         >
             <div class="container mx-auto max-w-screen-md px-4">

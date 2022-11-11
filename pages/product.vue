@@ -20,9 +20,9 @@
                   >
                     <a
                       :href="`${$config.baseURL}/storage/${photo.path}`"
-                      class="hover:border-brand-black mx-1
-                      inline-block border border-gray-200 p-1
-                      py-2 px-1 text-center"
+                      class="mx-1 inline-block
+                      border border-gray-200 p-1 py-2
+                      px-1 text-center hover:border-brand-black"
                       @click.prevent="setActiveMedia(photo)"
                       @mouseover="setActiveMedia(photo)"
                     >
@@ -129,11 +129,11 @@
                   <BaseButton
                     type="button"
                     class="
-                      bg-brand-black
                       h-14
                       w-full
                       cursor-pointer
-                      border
+                      rounded-lg border
+                      bg-brand-black
                       py-4
                       px-5
                       font-bold

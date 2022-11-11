@@ -93,11 +93,10 @@
                     </span>
                   </NuxtLink>
                 </li>
-                <li class="group submenu-item relative">
+                <li class="group submenu-item relative hover:bg-slate-100">
                   <span
                     class="
                       text-dark
-                      group-hover:text-primary
                       font-montserrat
                       relative
                       mx-8
@@ -116,6 +115,7 @@
                       after:border-r-2
                       after:border-b-2
                       after:border-current
+                      group-hover:text-slate-200
                       lg:mr-0
                       lg:ml-8
                       lg:inline-flex
@@ -159,6 +159,7 @@
                       v-for="(link, linkIndex) in more"
                       :key="`link-mobile-${linkIndex}`"
                       :href="link.to"
+                      class="hover:bg-slate-100"
                     >
                       <span
                         class="
@@ -220,13 +221,14 @@
                         flex
                         py-2
                         text-base
+                        hover:text-gray-500
+                        hover:underline
                         lg:mr-0
                         lg:inline-flex
                         lg:py-6
                         lg:px-0
                         lg:text-[#181818]
-                        lg:group-hover:text-[#181818]
-                        lg:group-hover:opacity-70
+                        lg:group-hover:text-[#181818] lg:group-hover:opacity-70
                       "
                     >
                       {{ link.text }}
@@ -243,6 +245,7 @@
                       relative
                       mx-8
                       flex
+                      cursor-pointer
                       py-2
                       text-base
                       after:absolute
@@ -256,6 +259,8 @@
                       after:border-r-2
                       after:border-b-2
                       after:border-current
+                      hover:text-gray-500
+                      hover:underline
                       lg:mr-0
                       lg:ml-8
                       lg:inline-flex
@@ -263,12 +268,11 @@
                       lg:pr-4
                       lg:pl-0
                       lg:text-[#181818]
-                      lg:after:right-0
-                      lg:group-hover:text-[#181818]
-                      lg:group-hover:opacity-70
-                      xl:ml-12
+                      lg:after:right-0 lg:group-hover:text-[#181818]
+                      lg:group-hover:opacity-70 xl:ml-12
                     "
                     @click="toggle2"
+                    @mouseover="toggle2"
                   >
                     More
                   </span>
@@ -300,6 +304,7 @@
                       v-for="(link, linkIndex) in more"
                       :key="`link-mobile-${linkIndex}`"
                       :href="link.to"
+                      class="hover:bg-slate-100"
                     >
                       <span
                         class="

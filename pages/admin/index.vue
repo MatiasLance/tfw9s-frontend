@@ -84,7 +84,7 @@
         >
         <article
             class="relative mb-6 overflow-hidden rounded
-            bg-brand-mblue p-4 sm:p-6"
+            bg-brand-black p-4 sm:p-6"
         >
           <div class="" aria-hidden="true">
             <h1 class="mb-1 text-2xl font-bold text-white md:text-3xl">

@@ -151,12 +151,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.superheadline:before {
-  width: 3.125rem;
-  border-top: 2px solid #1a1d18;
-  margin-right: 10px;
-  content: ' ';
-}
-</style>
