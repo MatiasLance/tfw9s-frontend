@@ -301,7 +301,7 @@
                   border-gray-200
                   bg-transparent p-3
                   hover:border-brand-black
-                  hover:bg-blue-50
+                  hover:bg-slate-100
                 "
                 >
                 <span>
@@ -326,7 +326,7 @@
                 border-gray-200
                 bg-transparent p-3
                 hover:border-brand-black
-                hover:bg-blue-50
+                hover:bg-slate-50
                 "
               >
               <span>
@@ -600,7 +600,7 @@
                   border-gray-200
                   bg-transparent p-3
                   hover:border-brand-black
-                  hover:bg-blue-50
+                  hover:bg-slate-50
                 "
                 >
                 <span>
@@ -626,7 +626,7 @@
                 border-gray-200
                 bg-transparent p-3
                 hover:border-brand-black
-                hover:bg-blue-50
+                hover:bg-slate-50
                 "
               >
               <span>
@@ -1574,7 +1574,7 @@ export default {
 <style>
 .croppa-container {
   background-color: #abb8c3;
-  border: 3px solid #3981da;
+  border: 3px solid #1a1d18;
 }
 .o-inputit__item--danger {
   background-color: #e73538 !important;

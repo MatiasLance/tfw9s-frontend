@@ -9,7 +9,7 @@
             data-aos="fade-right"
             data-aos-once="true"
             class="font-montserrat text-base font-semibold
-            capitalize text-[#3981da]"
+            capitalize text-[#1a1d18]"
 >
             {{ superheadline }}
         </span>

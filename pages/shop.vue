@@ -83,10 +83,4 @@ export default {
   background-image: url('~/assets/images/shop.jpg');
   background-position: 50% -298.006px;
 }
-.superheadline:before {
-  width: 3.125rem;
-  border-top: 2px solid #3981da;
-  margin-right: 10px;
-  content: ' ';
-}
 </style>

@@ -154,7 +154,7 @@
           border border-gray-200
           bg-gray-50
           p-3
-          hover:border-brand-black hover:bg-blue-50
+          hover:border-brand-black hover:bg-slate-50
         "
       >
         <span>
@@ -163,7 +163,8 @@
             value="delivery"
             name="shipping"
             type="radio"
-            class="mt-1 h-4 w-4 bg-gray-200 text-brand-black focus:ring-brand-black"
+            class="mt-1 h-4 w-4 bg-gray-200
+            text-brand-black focus:ring-slate-500"
           />
         </span>
         <p class="ml-2">
@@ -181,7 +182,7 @@
           border border-gray-200
           bg-gray-50
           p-3
-          hover:border-brand-black hover:bg-blue-50
+          hover:border-brand-black hover:bg-slate-50
         "
       >
         <span>
@@ -190,7 +191,8 @@
             value="pickup"
             name="shipping"
             type="radio"
-            class="mt-1 h-4 w-4 bg-gray-200 text-brand-black focus:ring-brand-black"
+            class="mt-1 h-4 w-4 bg-gray-200
+            text-brand-black focus:ring-slate-500"
           />
         </span>
         <p class="ml-2">

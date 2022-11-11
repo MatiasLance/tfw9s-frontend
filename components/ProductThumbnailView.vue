@@ -36,13 +36,13 @@
           class="flex items-center justify-start"
         >
           <span class="flex items-center pr-1 text-[16px]">
-            <i class="ri-price-tag-3-line text-[#3981da]"></i>
+            <i class="ri-price-tag-3-line text-[#1a1d18]"></i>
           </span>
           <span
             class="
               break-words
               text-start text-xs
-              selection:bg-[#3981da] selection:text-white
+              selection:bg-[#1a1d18] selection:text-white
               hover:text-[#00000080]
             "
           >
@@ -54,7 +54,7 @@
         class="
           break-words
           text-sm
-          selection:bg-[#3981da]
+          selection:bg-[#1a1d18]
           selection:text-white md:text-lg lg:text-2xl
         "
       >
@@ -65,35 +65,35 @@
               whitespace-normal
               font-bold
               transition duration-200
-              hover:text-[#3981da]
+              hover:text-[#1a1d18]
             "
           >
             {{ name }}
           </span>
         </NuxtLink>
       </span>
-      <span class="w-9 border-t-2 border-blue-600"></span>
+      <span class="w-9 border-t-2 border-slate-600"></span>
       <span class="pt-2 pb-4 text-[17px] font-bold text-gray-900">
         <span>{{ formatCurrency(price) }}</span>
       </span>
 
       <VBtn
         dark
-        small
-        color="#3981da"
-        elevation="2"
+        large
+        color="black"
         class="
           relative
           cursor-pointer
+          rounded-lg
           py-2
           text-xs
-          leading-3
-          text-white
+          leading-3 text-white
           transition
           duration-300
-          hover:shadow-[#3981da]/50
+          hover:shadow-[#1a1d18]/50
           sm:px-3
-          lg:px-5
+          lg:px-7
+          lg:py-5
           lg:text-base
         "
         :disabled="!stock > 0"
