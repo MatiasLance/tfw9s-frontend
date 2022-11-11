@@ -50,7 +50,7 @@
                   text-[1rem]
                   font-bold
                   capitalize
-                  text-[#3981da]
+                  text-[#1a1d18]
                 "
               >
                 Contact Revamped
@@ -86,7 +86,7 @@
           <div class="mb-[40px]"></div>
           <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
             <div class="col-span-12 md:col-span-6">
-              <h5 class="text-[1.563rem] font-bold leading-[1] text-[#3981da]">
+              <h5 class="text-[1.563rem] font-bold leading-[1] text-[#1a1d18]">
                 Social
               </h5>
               <div class="mb-3"></div>
@@ -101,7 +101,7 @@
                       items-center
                       justify-center
                       bg-gray-200
-                      hover:bg-blue-400 hover:text-white
+                      hover:bg-slate-400 hover:text-white
                     "
                   >
                     <i class="ri-facebook-line text-2xl"></i>
@@ -128,12 +128,12 @@ export default {
   components: { BaseHeader, ContactSection },
   data() {
     return {
-      address: 'Point Lookout, 4183 North Stradbroke Island',
-      mobile: '0438 098 059',
-      email: 'admin@revampedofficial.com',
+      address: 'Shop 1.11, Level 1\nOasis Shopping Centre\n75 Surf Parade\nBroadbeach QLD 4218',
+      mobile: '*TBC*',
+      email: 'finn@revampedofficial.com',
       pageSEO: {
         title: 'Contact Us - Revamped',
-        description: 'How can we help? Reach out to us for more information. Point Lookout, 4183 North Stradbroke Island Mobile: 0438 098 059',
+        description: 'How can we help? Reach out to us for more information.',
       }
     }
   },
@@ -151,12 +151,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.superheadline:before {
-  width: 3.125rem;
-  border-top: 2px solid #3981da;
-  margin-right: 10px;
-  content: ' ';
-}
-</style>

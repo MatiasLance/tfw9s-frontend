@@ -47,7 +47,7 @@
         transition
         duration-150
         ease-in-out
-        hover:bg-blue-500 hover:shadow-lg
+        hover:bg-slate-400 hover:shadow-lg
         focus:bg-brand-grey focus:shadow-lg focus:outline-none focus:ring-0
         active:bg-brand-grey active:shadow-lg
       "

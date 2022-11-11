@@ -122,10 +122,6 @@ export default {
           text: 'Brands',
         },
         {
-          to: '/categories',
-          text: 'Categories',
-        },
-        {
           to: '/contact-us',
           text: 'Contact Us',
         },

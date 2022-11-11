@@ -1,13 +1,13 @@
 <template>
-  <section id="hero" class="relative w-full overflow-hidden">
+  <section id="hero" class="relative w-full">
     <img
-      class="absolute inset-0 h-full w-full bg-fixed object-cover"
+      class="absolute inset-0 h-full w-full object-cover"
       src="/img/1.webp"
       alt=""
     />
     <div
     class="absolute inset-0 bg-gradient-to-r
-      from-slate-800/50 to-black/50 bg-fixed"
+      from-slate-800/50 to-black/50"
     ></div>
     <BaseSection>
       <div
@@ -16,8 +16,8 @@
           mt-12
           space-y-4
           px-6
+          text-center
           sm:space-y-6
-          md:text-center
           lg:col-span-12
         "
       >
@@ -79,11 +79,12 @@
               class="
                 max-w-full
                 rounded-lg
-                bg-black
-                py-8
-                px-14
+                bg-gray-600 py-8 px-14
                 font-bold
-                 uppercase text-white
+                uppercase
+                text-white
+                hover:bg-brand-slate hover:text-black
+                focus:ring-1 focus:ring-white focus:ring-offset-2
               "
             >
               {{ cta }}
@@ -113,13 +114,6 @@ export default {
 </script>
 
 <style>
-.superheadline:before {
-  width: 3.125rem;
-  border-top: 2px solid #3981da;
-  margin-right: 10px;
-  content: ' ';
-}
-
 .shop-cta{
   @apply mt-16 mb-8
 }

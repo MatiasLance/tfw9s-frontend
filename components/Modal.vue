@@ -79,7 +79,7 @@ export default { props: { show: Boolean } }
 
 .modal-header h3 {
   margin-top: 0;
-  color: #3981da;
+  color: #1a1d18;
   font-weight: 700;
 }
 
