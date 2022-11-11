@@ -159,7 +159,7 @@
                 </p>
                 <span
                     class="block rounded-lg bg-brand-black px-5
-                    py-2 text-center text-2xl"
+                    py-3 text-center text-2xl text-white"
                 >
                     {{ emphasis1 }}
                 </span>
