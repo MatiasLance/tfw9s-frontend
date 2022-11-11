@@ -401,10 +401,6 @@ export default {
       ],
       more: [
         {
-          to: '/categories',
-          text: 'Categories'
-        },
-        {
           to: '/contact-us',
           text: 'Contact us'
         },
