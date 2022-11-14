@@ -43,7 +43,7 @@
                 </h2>
             </div>
             <div class="mb-3">
-                <p class="text-sm">
+                <p class="text-base">
                     {{ statements[0].description1 }}
                 </p>
             </div>
@@ -55,12 +55,12 @@
                 </h2>
             </div>
             <div class="mb-3">
-                <p class="text-sm">
+                <p class="text-base">
                     {{ statements[1].description1 }}
                 </p>
             </div>
             <div class="mb-3">
-                <p class="text-sm">
+                <p class="text-base">
                     {{ statements[1].description2 }}
                 </p>
             </div>
@@ -72,19 +72,19 @@
                 </h2>
             </div>
             <div class="mb-3">
-                <p class="text-sm">
+                <p class="text-base">
                     {{ statements[2].subtitle }}
                 </p>
-                <p class="text-sm">
+                <p class="text-base">
                     {{ statements[2].description1 }}
                 </p>
             </div>
             <div class="mb-3">
                 <!-- eslint-disable-next-line vue/no-v-html -->
-        <p class="text-sm" v-html="statements[2].description2"/>
+        <p class="text-base" v-html="statements[2].description2"/>
             </div>
             <div class="mb-3">
-                <p class="text-sm font-bold">
+                <p class="text-base font-bold">
                     {{ statements[2].description3 }}
                 </p>
             </div>
