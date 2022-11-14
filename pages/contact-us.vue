@@ -80,9 +80,55 @@
               <span class="mr-2 font-bold">Mobile:</span>
               <span class="mb-2 block">{{ mobile }}</span>
               <span class="mr-2 font-bold">Email:</span>
-              <span class="mb-2 block">{{ email }}</span>
+              <a
+                class="mb-2 block hover:text-slate-400
+                hover:decoration-slate-700
+                hover:underline-offset-4"
+                :href="toemail"
+              >
+                {{ email }}
+              </a>
+              <h5
+                class="my-3 text-[1.563rem] font-bold
+                leading-[1] text-[#1a1d18]"
+              >
+                Location
+              </h5>
+              <div class="my-4">
+                <iframe src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=addead40-60cc-11ed-ac71-7911be0fba12&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-28.02964&amp;long=153.43256&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="75 Surf Parade Broadbeach QLD 4218" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a="" style="width: 100%; height: 350px;"></iframe>
+              </div>
+              <button
+                type="button"
+                class="rounded-xl
+                bg-brand-black px-6 py-3
+                text-base text-white hover:bg-slate-200
+                hover:text-black"
+                @click="window.open('https://www.google.com/maps/dir/?api=1&destination=75+Surf+Parade+Broadbeach+QLD+4218', '_blank')"
+              >
+              Get directions
+            </button>
             </div>
           </header>
+          <div class="mb-[40px]"></div>
+          <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
+            <div class="col-span-12 md:col-span-6">
+              <h5 class="text-[1.563rem] font-bold leading-[1] text-[#1a1d18]">
+                Hours
+              </h5>
+              <div class="mb-3"></div>
+              <div class="flex justify-start gap-2">
+                <small class="paragraph my-3 block text-sm">
+                  MONDAY: {{ time1 }}<br>
+                  TUESDAY: {{ time1 }}<br>
+                  WEDNESDAY: {{ time1 }}<br>
+                  THURSDAY: {{ time2 }}<br>
+                  FRIDAY: {{ time3 }}<br>
+                  SATURDAY: {{ time3 }}<br>
+                  SUNDAY: {{ time4 }}
+                </small>
+              </div>
+            </div>
+          </div>
           <div class="mb-[40px]"></div>
           <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
             <div class="col-span-12 md:col-span-6">
@@ -125,17 +171,25 @@ import BaseHeader from '../components/base/BaseHeader.vue';
 import ContactSection from '../components/ContactSection.vue';
 export default {
   name: 'contact-us',
-  components: { BaseHeader, ContactSection },
+  components: {
+    BaseHeader,
+    ContactSection,
+  },
   data() {
     return {
       address: 'Shop 1.11, Level 1\nOasis Shopping Centre\n75 Surf Parade\nBroadbeach QLD 4218',
       mobile: '*TBC*',
       email: 'finn@revampedofficial.com',
+      toemail: 'mailto:finn@revampedoffical.com',
       headline: 'How can we help?',
       pageSEO: {
         title: 'Contact Us - Revamped',
         description: 'How can we help? Reach out to us for more information.',
-      }
+      },
+      time1: '9:00AM - 4:00PM',
+      time2: '9:00AM - 7:00PM',
+      time3: '9:00AM - 5:00PM',
+      time4: '10:00AM - 3:00PM',
     }
   },
   head() {
