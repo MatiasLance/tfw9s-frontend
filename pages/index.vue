@@ -4,14 +4,17 @@
     <HeroSection
       class="flex min-h-screen items-center justify-center py-24"
     />
+    <ReviewSection />
   </div>
 </template>
 
 <script>
+import ReviewSection from '../components/ReviewSection.vue';
 import aosMixin from '@/mixins/aos';
 
 export default {
   name: 'index',
+  components: { ReviewSection },
   mixins: [ aosMixin ],
   data() {
     return {};
