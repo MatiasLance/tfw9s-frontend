@@ -12,9 +12,9 @@
         w-full
         min-w-0
         flex-auto
-        border border-solid border-gray-300
-        bg-white bg-clip-padding
-        py-[13.008px]
+        rounded-l-xl border border-solid
+        border-gray-300 bg-white
+        bg-clip-padding py-[13.008px]
         pr-[60px]
         pl-[15px]
         text-base
@@ -35,13 +35,13 @@
         flex
         h-12
         items-center
+        rounded-r-xl
         bg-brand-black
         py-2.5
         px-6
         text-xs
         font-medium
-        uppercase
-        leading-tight
+        uppercase leading-tight
         text-white
         shadow-md
         transition
