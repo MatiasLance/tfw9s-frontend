@@ -75,20 +75,19 @@
           "
         >
           <NuxtLink to="/shop">
-            <BaseButton
+            <BaseButtonLight
               class="
                 max-w-full
                 rounded-lg
-                bg-gray-600 py-8 px-14
-                font-bold
+                bg-white py-8 px-14
                 uppercase
-                text-white
-                hover:bg-brand-slate hover:text-black
+                text-black
+                hover:bg-brand-slate hover:text-white
                 focus:ring-1 focus:ring-white focus:ring-offset-2
               "
             >
               {{ cta }}
-            </BaseButton>
+            </BaseButtonLight>
           </NuxtLink>
         </div>
       </div>
@@ -98,10 +97,13 @@
 
 <script>
 import BaseSection from './base/BaseSection.vue';
-import BaseButton from './base/BaseButton.vue';
+import BaseButtonLight from './base/BaseButtonLight.vue';
 export default {
   name: 'HeroSection',
-  components: { BaseSection, BaseButton },
+  components: {
+    BaseSection,
+    BaseButtonLight
+  },
   data() {
     return {
       superheadline: 'Welcome to',
