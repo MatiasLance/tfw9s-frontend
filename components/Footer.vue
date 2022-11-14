@@ -81,28 +81,6 @@
           text-base
         "
       >
-        <NuxtLink to="/privacy-policy">
-          <span
-            class="
-              swlink
-              mb-2 px-3
-              hover:opacity-[.6]
-            "
-          >
-            Privacy policy
-          </span>
-        </NuxtLink>
-        <NuxtLink to="/terms">
-          <span
-            class="
-              swlink
-              mb-2 px-3
-              hover:opacity-[.6]
-            "
-          >
-            Terms of service
-          </span>
-        </NuxtLink>
       </div>
     </section>
   </footer>
