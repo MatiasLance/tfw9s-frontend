@@ -2,8 +2,7 @@
   <div
     class="relative
     mx-auto grid
-    max-w-screen-xl grid-cols-12 gap-x-6
-    overflow-hidden px-4
+    max-w-screen-xl grid-cols-12 gap-x-6 px-4
     sm:px-8"
     v-bind="$attrs"
 >
