@@ -57,16 +57,16 @@
             space-y-6 p-5
             md:text-left lg:col-span-6 lg:space-y-8"
             >
-                <p class="paragraph text-xs">
+                <p class="paragraph text-sm">
                     {{ contentblurb3 }}
                 </p>
-                <p class="paragraph text-xs">
+                <p class="paragraph text-sm">
                     {{ contentblurb4 }}
                 </p>
-                <p class="paragraph text-xs">
+                <p class="paragraph text-sm">
                     {{ contentblurb5 }}
                 </p>
-                <p class="paragraph text-xs">
+                <p class="paragraph text-sm">
                     {{ contentblurb6 }}
                 </p>
             </div>
@@ -102,17 +102,17 @@
             space-y-6 p-5
             md:text-left lg:col-span-6 lg:space-y-8"
             >
-                <p class="paragraph text-xs">
+                <p class="paragraph text-sm">
                     {{ contentblurb7 }}
                 </p>
-                <p class="paragraph text-xs">
+                <p class="paragraph text-sm">
                     {{ contentblurb8 }}
                 </p>
-                <p class="paragraph text-xs">
+                <p class="paragraph text-sm">
                     {{ contentblurb9 }}
                 </p>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="paragraph text-xs" v-html="contentblurb10" />
+                <p class="paragraph text-sm" v-html="contentblurb10" />
             </div>
             <div class="col-span-12 mt-8 sm:hidden">
                 <div class="w-full">
@@ -192,33 +192,52 @@
                 A True Story of the Come-Up
                 </h2>
                 <div class="paragraph text-lg">
-                    <blockquote class="my-7">
-                        It's so easy to judge someone and make
-                        assumptions without actually knowing their
-                        whole story, their background, or speaking to
-                        them directly.
+                    <blockquote class="relative my-7">
+                        <QuoteIcon />
+                        <div class="relative z-10">
+                            <p class="text-gray-800 dark:text-white sm:text-xl">
+                            <em>
+                                It's so easy to judge someone and make
+                                assumptions without actually knowing their
+                                whole story, their background, or speaking to
+                                them directly.
+                            </em>
+                            </p>
+                        </div>
                     </blockquote>
                     <address class="my-3">
-                        For years, I've just been doing my own thing;
+                        <p class="my-3 text-gray-800 dark:text-white">
+                            For years, I've just been doing my own thing;
                         staying in my own lane, trying to make my own path
                         to success.
-                        I try avoid all distractions that do not seek to
+                        </p>
+                        <p class="my-3 text-gray-800 dark:text-white">
+                            I try avoid all distractions that do not seek to
                         better me mentally, physically, spiritually or
                         financially.
-                        As corny as that sounds - it's true. I don't
+                        </p>
+                        <p class="my-3 text-gray-800 dark:text-white">
+                            As corny as that sounds - it's true. I don't
                         care enough to follow society or adhere to new trends,
-                        and so paying attention to all the garbage onlin
-                         media puts out... sometimes I feel like ignorance is
-                         bliss. And all
-                        that BS doesn't only come from media/news channels.
+                        and so paying attention to all the garbage online
+                        media puts out... sometimes I feel like ignorance is
+                        bliss.
+                        </p>
+                        <p class="my-3 text-gray-800 dark:text-white">
+                        And all that BS doesn't only come
+                        from media/news channels.
                         It comes from your friends, celebrities and
                         self-proclaimed 'influencers', just to name a few.
+                        </p>
+                        <p class="my-3 text-gray-800 dark:text-white">
                         Especially because nothing online is real these
                         days anyway. Everything is either fake, forced,
                         edited, or set up for attention. I'm not interested in
                         things that aren't authentic.
+                        </p>
                     </address>
                     <address class="my-3">
+                        <p class="text-gray-800 dark:text-white">
                         Over the years I have worked really hard,
                         absorbed as much knowledge and experience
                         I can, and have invested my money into
@@ -228,9 +247,11 @@
                         risks. As every entrepreneur knows, it's
                         part of the job, and it can easily fail,
                         at any given time.
+                        </p>
                     </address>
                     <address class="my-3">
-                        Buying and selling is something I've
+                        <p class="text-gray-800 dark:text-white">
+                            Buying and selling is something I've
                         done since 12 years old. It started with
                         shirts on Gumtree, then selling Old Skool
                         Vans and other cheap miscellaneous items
@@ -245,8 +266,10 @@
                         despite knowing little about them, and since
                         16 years old, I have flipped 4 cars up to my current
                         car, an Audi TT Quattro S Line.
+                        </p>
                     </address>
                     <address class="my-3">
+                        <p class="text-gray-800 dark:text-white">
                         My come-up is nothing without the mention of
                         my supportive parents, who have been with me
                         every step of the way. Coming from a stable household,
@@ -262,28 +285,37 @@
                         I couldn't do, and so I tried to capitalise on
                         the opportunity at hand, and hustle everyday
                         like it's my last.
+                        </p>
                     </address>
 <address class="my-3">
-I've done everything up until this point.
-Working in warehouses, factories, logistics, driving
-forklifts, retail, hospitality, fast food - you name it.
-It's not all glitter and gold. I worked hard for
-everything I have, but there is still so much more to
-be done; I'm barely past the surface.
+    <p>
+        I've done everything up until this point.
+    Working in warehouses, factories, logistics, driving
+    forklifts, retail, hospitality, fast food - you name it.
+    It's not all glitter and gold. I worked hard for
+    everything I have, but there is still so much more to
+    be done; I'm barely past the surface.
+    </p>
 </address>
 <address class="my-3">
-    I've done anything and everything to try and
-    make something for myself so far. No matter what I'm doing,
-    I always put in 100%,
-    and I think that's why I see myself going further than some
-    others who don't have that drive. Although I have a long way to go,
-    there is hopefully, a bright future ahead.
+    <p>
+        I've done anything and everything to try and
+        make something for myself so far. No matter what I'm doing,
+        I always put in 100%,
+        and I think that's why I see myself going further than some
+        others who don't have that drive. Although I have a long way to go,
+        there is hopefully, a bright future ahead.
+    </p>
 </address>
                     <address class="my-3">
-                        And this store is just the start of it.
+                        <p>
+                            And this store is just the start of it.
+                        </p>
                     </address>
                     <address class="my-6">
-                        Stay true. Stay real. Just Be Yourself.
+                        <p>
+                            Stay true. Stay real. Just Be Yourself.
+                        </p>
                     </address>
                 </div>
                 <span class="my-12 block text-lg font-bold">
@@ -298,13 +330,16 @@ be done; I'm barely past the surface.
 </template>
 
 <script>
+import QuoteIcon from '../components/QuoteIcon.vue';
 import aosMixin from '@/mixins/aos'
 import BaseSection from '~/components/base/BaseSection.vue';
 import BaseHeader from '~/components/base/BaseHeader.vue';
 
 export default {
   name: 'about-us',
-  components: { BaseSection, BaseHeader },
+  components: {
+    BaseSection, BaseHeader, QuoteIcon
+  },
   mixins: [ aosMixin ],
   data() {
     return {
