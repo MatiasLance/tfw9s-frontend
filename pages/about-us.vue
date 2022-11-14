@@ -3,7 +3,7 @@
         <BaseHeader
         class="
         h-screen
-        bg-[url('/img/1.webp')] md:h-96
+        bg-[url('/img/1.jpg')] md:h-96
         "
         >
         </BaseHeader>
@@ -41,7 +41,7 @@
                 class="col-span-12 hidden sm:block lg:col-span-6"
             >
                 <img
-                    src="img/3.webp"
+                    src="img/3.jpg"
                     class="mt-4 w-full sm:-mt-4"
                     alt="Finn Johnson Photo"
                 />
@@ -73,7 +73,7 @@
             <div class="col-span-12 mt-8 sm:hidden">
                 <div class="w-full">
                     <img
-                        src="img/3.webp"
+                        src="img/3.jpg"
                         class="mt-4 w-full sm:-mt-4"
                     />
                 </div>
@@ -86,7 +86,7 @@
                 class="col-span-12 hidden sm:block lg:col-span-6"
             >
                 <img
-                    src="img/2.webp"
+                    src="img/2.jpg"
                     class="mt-4 w-full sm:-mt-4"
                     alt="A mini warehouse"
                 />
@@ -117,7 +117,7 @@
             <div class="col-span-12 mt-8 sm:hidden">
                 <div class="w-full">
                     <img
-                        src="img/2.webp"
+                        src="img/2.jpg"
                         class="mt-4 w-full sm:-mt-4"
                     />
                 </div>
@@ -168,7 +168,7 @@
         <BaseHeader
             class="
             h-screen
-            bg-[url('/img/4.webp')] md:h-96
+            bg-[url('/img/4.jpg')] md:h-96
             "
         >
         </BaseHeader>
