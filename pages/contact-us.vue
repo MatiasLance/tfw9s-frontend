@@ -70,7 +70,7 @@
                   xl:pr-10 xl:text-6xl
                 "
               >
-                how can we help ?
+                {{ headline }}
               </span>
             </h1>
             <div class="mt-0 pt-3 text-[1.125rem] leading-[1.5em]">
@@ -131,6 +131,7 @@ export default {
       address: 'Shop 1.11, Level 1\nOasis Shopping Centre\n75 Surf Parade\nBroadbeach QLD 4218',
       mobile: '*TBC*',
       email: 'finn@revampedofficial.com',
+      headline: 'How can we help?',
       pageSEO: {
         title: 'Contact Us - Revamped',
         description: 'How can we help? Reach out to us for more information.',

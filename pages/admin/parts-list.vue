@@ -47,15 +47,15 @@
               type="button"
               class="
                 w-40
-                rounded-md
+                rounded-xl
                 border border-solid border-brand-black
                 bg-brand-black
                 px-4
                 py-2
                 text-center
                 text-white
-                hover:bg-brand-mblue
-                focus:bg-brand-black
+                hover:bg-slate-400
+                focus:bg-brand-grey
               "
               @click="addPr"
             >
@@ -67,15 +67,15 @@
             <button
               type="button"
               class="
-                block w-40 rounded-md
+                block w-40 rounded-xl
                 border border-solid border-brand-black
                 bg-brand-black
                 px-4
                 py-2
                 text-center
                 text-white
-                hover:bg-brand-mblue
-                focus:bg-brand-black
+                hover:bg-slate-400
+                focus:bg-brand-grey
                 md:inline-block
               "
               @click="categoriesLink"
@@ -210,8 +210,8 @@
                   flex
                   cursor-pointer
                   items-center
-                  hover:text-brand-dblue
-                  hover:underline hover:decoration-brand-dblue
+                  hover:text-brand-slate
+                  hover:underline hover:decoration-brand-slate
                 "
                 @click="editPr(prod.id)"
               >
@@ -224,8 +224,8 @@
                   flex
                   cursor-pointer
                   items-center
-                  hover:text-brand-dblue
-                  hover:underline hover:decoration-brand-dblue
+                  hover:text-brand-slate
+                  hover:underline hover:decoration-brand-slate
                 "
                 @click="duplicate(prod.id)"
               >
@@ -239,8 +239,8 @@
                   cursor-pointer
                   items-center
                   text-brand-red
-                  hover:text-brand-dblue
-                  hover:underline hover:decoration-brand-dblue
+                  hover:text-red-900
+                  hover:underline hover:decoration-brand-slate
                 "
                 @click="removePr(prod.id)"
               >
@@ -521,7 +521,7 @@
               text-center
               font-bold
               text-white
-              hover:bg-green-700
+              hover:bg-brand-green/30
               lg:mx-4 lg:w-48
             "
             @click="create"
@@ -541,7 +541,7 @@
               text-center
               font-bold
               text-white
-              hover:bg-brand-dblue
+              hover:bg-brand-red/30
               lg:mx-4 lg:w-48
             "
             @click="close"
@@ -821,7 +821,7 @@
               text-center
               font-bold
               text-white
-              hover:bg-green-800
+              hover:bg-brand-green/30
               lg:mx-4 lg:w-48
             "
             @click="edit(editingNo)"
@@ -841,7 +841,7 @@
               text-center
               font-bold
               text-white
-              hover:bg-brand-dblue
+              hover:bg-brand-red/30
               lg:mx-4 lg:w-48
             "
             @click="closeEdit"
@@ -878,7 +878,7 @@
             text-center
             font-bold
             text-white
-            hover:bg-green-800
+            hover:bg-brand-green/30
             lg:mx-4 lg:w-48
           "
           @click="remove(editingNo)"
@@ -898,7 +898,7 @@
             text-center
             font-bold
             text-white
-            hover:bg-brand-dblue
+            hover:bg-brand-red/30
             lg:mx-4 lg:w-48
           "
           @click="closeRemove"
