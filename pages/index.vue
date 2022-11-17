@@ -5,8 +5,10 @@
       class="min-h-screen"
     />
     <BrandsSection />
-    <!-- todo: FeaturedProductsSection -->
+    <!-- todo: FeaturedProductsSection dynamic wip -->
+    <FeaturedProductsSection />
     <ReviewSection />
+    <!-- todo: BeforeFooter wip -->
   </div>
 </template>
 
@@ -14,12 +16,16 @@
 import ReviewSection from '../components/ReviewSection.vue';
 import BrandsSection from '../components/BrandsSection.vue';
 import HomeSliderSection from '../components/HomeSliderSection.vue';
+import FeaturedProductsSection from '../components/FeaturedProductsSection.vue';
 import aosMixin from '@/mixins/aos';
 
 export default {
   name: 'index',
   components: {
-    ReviewSection, BrandsSection, HomeSliderSection
+    ReviewSection,
+    BrandsSection,
+    HomeSliderSection,
+    FeaturedProductsSection
   },
   mixins: [ aosMixin ],
   data() {
