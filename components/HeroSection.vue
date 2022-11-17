@@ -115,7 +115,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="postcss">
 .shop-cta{
   @apply mt-16 mb-8
 }
