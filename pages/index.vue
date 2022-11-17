@@ -1,10 +1,11 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <template>
   <div>
-    <HeroSection
-      class="flex min-h-screen items-center justify-center py-24"
+    <HomeSliderSection
+      class="min-h-screen"
     />
     <BrandsSection />
+    <!-- todo: FeaturedProductsSection -->
     <ReviewSection />
   </div>
 </template>
@@ -12,11 +13,14 @@
 <script>
 import ReviewSection from '../components/ReviewSection.vue';
 import BrandsSection from '../components/BrandsSection.vue';
+import HomeSliderSection from '../components/HomeSliderSection.vue';
 import aosMixin from '@/mixins/aos';
 
 export default {
   name: 'index',
-  components: { ReviewSection, BrandsSection },
+  components: {
+    ReviewSection, BrandsSection, HomeSliderSection
+  },
   mixins: [ aosMixin ],
   data() {
     return {};
