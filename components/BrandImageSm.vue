@@ -6,13 +6,13 @@ px-9 py-3"
         <img
             :src="`/img/brands/${img}`"
             class="
-                mx-auto
-                w-28
-                cursor-pointer
-                object-cover
+                mx-auto h-52 w-full
+                cursor-pointer object-contain
                 transition
                 duration-200
                 hover:scale-125
+                sm:h-36
+                sm:w-36
             "
             alt=""
         />

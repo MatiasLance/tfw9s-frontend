@@ -74,26 +74,6 @@
               </span>
             </h1>
             <div class="mt-0 pt-3 text-[1.125rem] leading-[1.5em]">
-              <address class="mb-4">
-                {{ address }}
-              </address>
-              <span class="mr-2 font-bold">Mobile:</span>
-              <span class="mb-2 block">{{ mobile }}</span>
-              <span class="mr-2 font-bold">Email:</span>
-              <a
-                class="mb-2 block hover:text-slate-400
-                hover:decoration-slate-700
-                hover:underline-offset-4"
-                :href="toemail"
-              >
-                {{ email }}
-              </a>
-              <h5
-                class="my-3 text-[1.563rem] font-bold
-                leading-[1] text-[#1a1d18]"
-              >
-                Location
-              </h5>
               <div class="my-4">
                 <iframe src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=addead40-60cc-11ed-ac71-7911be0fba12&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-28.02964&amp;long=153.43256&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="75 Surf Parade Broadbeach QLD 4218" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a="" style="width: 100%; height: 350px;"></iframe>
               </div>
@@ -107,6 +87,18 @@
               >
               Get directions
             </button>
+              <address class="my-4">
+                  {{ address }}
+              </address>
+              <span class="mb-2 block">{{ mobile }}</span>
+              <a
+                class="mb-2 block hover:text-slate-400
+                hover:decoration-slate-700
+                hover:underline-offset-4"
+                :href="toemail"
+              >
+                {{ email }}
+              </a>
             </div>
           </header>
           <div class="mb-[40px]"></div>
@@ -178,7 +170,7 @@ export default {
   data() {
     return {
       address: 'Shop 1.11, Level 1\nOasis Shopping Centre\n75 Surf Parade\nBroadbeach QLD 4218',
-      mobile: '*TBC*',
+      mobile: '0451 620 707',
       email: 'finn@revampedofficial.com',
       toemail: 'mailto:finn@revampedoffical.com',
       headline: 'How can we help?',
