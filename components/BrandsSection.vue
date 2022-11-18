@@ -1,6 +1,6 @@
 <template>
     <section
-        class="relative my-9 max-w-full
+        class="relative my-9 w-full
         bg-white sm:mx-6
         sm:rounded-2xl"
     >

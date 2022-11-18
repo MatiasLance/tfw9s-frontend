@@ -1,5 +1,5 @@
 <template>
-    <section id="featuredProducts" class="my-36">
+    <section id="featuredProducts" class="my-36 w-full">
         <BaseSection>
             <div class="col-span-12 my-4">
                 <h2
