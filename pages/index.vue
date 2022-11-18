@@ -1,11 +1,8 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <template>
   <div>
-    <HomeSliderSection
-      class="min-h-screen"
-    />
+    <HomeSliderSection />
     <BrandsSection />
-    <!-- todo: FeaturedProductsSection dynamic wip -->
     <FeaturedProductsSection />
     <ReviewSection />
     <!-- todo: BeforeFooter wip -->

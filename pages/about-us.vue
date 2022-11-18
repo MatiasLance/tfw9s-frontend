@@ -187,7 +187,9 @@
                 </small>
                 <h2
                     class="mb-9
-                    break-words text-4xl font-bold sm:pr-8 xl:pr-12"
+                    break-words text-4xl font-bold
+                    sm:pr-8
+                    xl:pr-12"
                 >
                 A True Story of the Come-Up
                 </h2>
@@ -195,7 +197,7 @@
                     <blockquote class="relative my-7">
                         <QuoteIcon />
                         <div class="relative z-10">
-                            <p class="text-gray-800 dark:text-white sm:text-xl">
+                            <p class="text-gray-800 sm:text-xl">
                             <em>
                                 It's so easy to judge someone and make
                                 assumptions without actually knowing their
@@ -206,30 +208,30 @@
                         </div>
                     </blockquote>
                     <address class="my-3">
-                        <p class="my-3 text-gray-800 dark:text-white">
+                        <p class="my-3 text-gray-800">
                             For years, I've just been doing my own thing;
                         staying in my own lane, trying to make my own path
                         to success.
                         </p>
-                        <p class="my-3 text-gray-800 dark:text-white">
+                        <p class="my-3 text-gray-800">
                             I try avoid all distractions that do not seek to
                         better me mentally, physically, spiritually or
                         financially.
                         </p>
-                        <p class="my-3 text-gray-800 dark:text-white">
+                        <p class="my-3 text-gray-800">
                             As corny as that sounds - it's true. I don't
                         care enough to follow society or adhere to new trends,
                         and so paying attention to all the garbage online
                         media puts out... sometimes I feel like ignorance is
                         bliss.
                         </p>
-                        <p class="my-3 text-gray-800 dark:text-white">
+                        <p class="my-3 text-gray-800">
                         And all that BS doesn't only come
                         from media/news channels.
                         It comes from your friends, celebrities and
                         self-proclaimed 'influencers', just to name a few.
                         </p>
-                        <p class="my-3 text-gray-800 dark:text-white">
+                        <p class="my-3 text-gray-800">
                         Especially because nothing online is real these
                         days anyway. Everything is either fake, forced,
                         edited, or set up for attention. I'm not interested in
@@ -237,7 +239,7 @@
                         </p>
                     </address>
                     <address class="my-3">
-                        <p class="text-gray-800 dark:text-white">
+                        <p class="text-gray-800">
                         Over the years I have worked really hard,
                         absorbed as much knowledge and experience
                         I can, and have invested my money into
@@ -250,7 +252,7 @@
                         </p>
                     </address>
                     <address class="my-3">
-                        <p class="text-gray-800 dark:text-white">
+                        <p class="text-gray-800">
                             Buying and selling is something I've
                         done since 12 years old. It started with
                         shirts on Gumtree, then selling Old Skool
@@ -269,7 +271,7 @@
                         </p>
                     </address>
                     <address class="my-3">
-                        <p class="text-gray-800 dark:text-white">
+                        <p class="text-gray-800">
                         My come-up is nothing without the mention of
                         my supportive parents, who have been with me
                         every step of the way. Coming from a stable household,

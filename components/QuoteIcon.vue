@@ -1,5 +1,5 @@
 <template>
-    <svg class="absolute top-0 left-0 h-16 w-16 -translate-x-6 -translate-y-8 text-gray-100 dark:text-gray-700" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg class="absolute top-0 left-0 h-16 w-16 -translate-x-6 -translate-y-8 text-gray-100" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path
             d="M7.39762 10.3C7.39762 11.0733 7.14888 11.7
             6.6514 12.18C6.15392 12.6333 5.52552 12.86
