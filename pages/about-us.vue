@@ -57,16 +57,16 @@
             space-y-6 p-5
             md:text-left lg:col-span-6 lg:space-y-8"
             >
-                <p class="paragraph text-sm">
+                <p class="paragraph text-base">
                     {{ contentblurb3 }}
                 </p>
-                <p class="paragraph text-sm">
+                <p class="paragraph text-base">
                     {{ contentblurb4 }}
                 </p>
-                <p class="paragraph text-sm">
+                <p class="paragraph text-base">
                     {{ contentblurb5 }}
                 </p>
-                <p class="paragraph text-sm">
+                <p class="paragraph text-base">
                     {{ contentblurb6 }}
                 </p>
             </div>
@@ -102,17 +102,17 @@
             space-y-6 p-5
             md:text-left lg:col-span-6 lg:space-y-8"
             >
-                <p class="paragraph text-sm">
+                <p class="paragraph text-base">
                     {{ contentblurb7 }}
                 </p>
-                <p class="paragraph text-sm">
+                <p class="paragraph text-base">
                     {{ contentblurb8 }}
                 </p>
-                <p class="paragraph text-sm">
+                <p class="paragraph text-base">
                     {{ contentblurb9 }}
                 </p>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="paragraph text-sm" v-html="contentblurb10" />
+                <p class="paragraph text-base" v-html="contentblurb10" />
             </div>
             <div class="col-span-12 mt-8 sm:hidden">
                 <div class="w-full">
@@ -354,7 +354,7 @@ export default {
       contentblurb7: 'On top of this, reseller stores started popping up everywhere and sabotaging the market, by artificially raising their prices to over 3X as much as what the product\'s retail value is. For customers, it was a lose-lose situation.',
       contentblurb8: '"I hated the thought of innocent people getting ripped off by greedy, reseller stores. It\'s just not morally right. You shouldn\'t take advantage of someone just because they are clueless on what they are buying. It comes down to ethics."',
       contentblurb9: 'This is a small, unique, retail boutique, serving eager customers everything they\'ve been looking for. A small business based on the Gold Coast, for the Gold Coast.',
-      contentblurb10: 'A Mini Warehouse: Starting To Stock Sneakers became difficult. A growing inventory piled into a small room within the house.<br>It couldn\'t be sustained for long...',
+      contentblurb10: 'A mini warehouse: Starting To Stock Sneakers became difficult. A growing inventory piled into a small room within the house.<span class="block my-3 font-bold">It couldn\'t be sustained for long...</span>',
       headline2: 'The hottest global brands',
       subheadline2: 'JAPAN | USA | ITALY | FRANCE',
       contentblurb11: 'We provide you a platform that retails popular products from major brands such as Nike, Jordan, Adidas, New Balance, Reebok, Puma and Asics.',

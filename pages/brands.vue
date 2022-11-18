@@ -35,34 +35,10 @@
       </div>
     </BaseHeader>
 
-    <div class="mx-auto max-w-screen-xl px-4 py-28">
+    <div class="mx-auto max-w-screen-xl px-4 py-7 lg:py-28">
       <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-12 my-8 md:my-16 lg:my-24">
-            <h3 class="text-left leading-[1]">
-              <span
-                class="
-                  font-montserrat
-                  block
-                  text-[2.5rem]
-                  font-bold
-                  leading-tight
-                  text-black
-                  sm:pr-8 sm:text-lg
-                  xl:pr-10 xl:text-3xl
-                "
-              >
-                {{ headline }}
-              </span>
-            </h3>
-        </div>
-        <div class="col-span-12 my-9">
-            <div class="grid grid-cols-2 gap-12 lg:grid-cols-3">
-                <BrandImage
-                    v-for="img in brandsList"
-                    :key="img"
-                    :img="img"
-                />
-            </div>
+        <div class="col-span-12 my-11 lg:my-24">
+          <BrandsSlider />
         </div>
         <div class="col-span-12 my-8 md:my-16 lg:my-24">
             <h3 class="text-center leading-[1]">
@@ -78,7 +54,7 @@
                   xl:pr-10 xl:text-3xl
                 "
               >
-                {{ headline }}
+                {{ headline2 }}
               </span>
             </h3>
         </div>
@@ -100,12 +76,11 @@
 
 <script>
 import 'remixicon/fonts/remixicon.css'
-import BaseHeader from '../components/base/BaseHeader.vue';
-import BrandImage from '../components/BrandImage.vue';
+import BaseHeader from '../components/base/BaseHeader.vue'
 
 export default {
   name: 'brands',
-  components: { BaseHeader, BrandImage },
+  components: { BaseHeader },
   data() {
     return {
       headline: 'Major Footwear Brands',

@@ -29,7 +29,7 @@ const slickSettings = {
   focusOnSelect: true,
   infinite: true,
   autoplay: true,
-  speed: 500,
+  speed: 600,
   swipe: true,
   swipeToSlide: true,
   responsive: [
@@ -54,7 +54,7 @@ const slickSettings = {
     {
       breakpoint: 480,
       settings: {
-        slidesToShow: 2,
+        slidesToShow: 1,
         slidesToScroll: 1,
         infinite: true,
         focusOnSelect: true,
