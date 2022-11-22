@@ -5,7 +5,6 @@
     <BrandsSection />
     <FeaturedProductsSection />
     <ReviewSection />
-    <!-- todo: BeforeFooter wip -->
     <BeforeFooterSection />
   </div>
 </template>

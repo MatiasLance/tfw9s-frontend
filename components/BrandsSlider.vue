@@ -32,6 +32,8 @@ const slickSettings = {
   speed: 600,
   swipe: true,
   swipeToSlide: true,
+  pauseOnFocus: true,
+  pauseOnHover: true,
   responsive: [
     {
       breakpoint: 1024,
