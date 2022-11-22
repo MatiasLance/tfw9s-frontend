@@ -90,7 +90,18 @@
               <address class="my-4">
                   {{ address }}
               </address>
-              <span class="mb-2 block">{{ mobile }}</span>
+              <span class="mb-2 block">
+                <a
+                  :href="`tel:${mobile}`"
+                  class="
+                  hover:underline
+                  hover:decoration-gray-400
+                  hover:decoration-4
+                  hover:underline-offset-8"
+                >
+                  {{ mobile }}
+                </a>
+              </span>
               <a
                 class="mb-2 block hover:text-slate-400
                 hover:decoration-slate-700
@@ -113,8 +124,8 @@
                   MONDAY: {{ time1 }}<br>
                   TUESDAY: {{ time1 }}<br>
                   WEDNESDAY: {{ time1 }}<br>
-                  THURSDAY: {{ time2 }}<br>
-                  FRIDAY: {{ time3 }}<br>
+                  THURSDAY: {{ time1 }}<br>
+                  FRIDAY: {{ time1 }}<br>
                   SATURDAY: {{ time3 }}<br>
                   SUNDAY: {{ time4 }}
                 </small>
@@ -169,7 +180,7 @@ export default {
   },
   data() {
     return {
-      address: 'Shop 1.11, Level 1\nOasis Shopping Centre\n75 Surf Parade\nBroadbeach QLD 4218',
+      address: '280 Brisbane Road\nLabrador, Queensland 4215',
       mobile: '0451 620 707',
       email: 'finn@revampedofficial.com',
       toemail: 'mailto:finn@revampedoffical.com',
@@ -180,8 +191,8 @@ export default {
       },
       time1: '9:00AM - 4:00PM',
       time2: '9:00AM - 7:00PM',
-      time3: '9:00AM - 5:00PM',
-      time4: '10:00AM - 3:00PM',
+      time3: '10:00AM - 3:00PM',
+      time4: 'CLOSED',
     }
   },
   head() {
