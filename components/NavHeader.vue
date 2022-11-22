@@ -3,9 +3,12 @@
     class="ud-header top-0 left-0 z-40 flex w-full items-center bg-transparent"
   >
     <div class="container">
-      <div class="relative -mx-4">
-        <div class="flex w-full items-center justify-between">
-          <div class="custom-pl-16 lg:custom-pl-0 self-center">
+      <div class="relative max-w-full">
+        <div
+        class="flex w-full items-stretch
+        justify-evenly justify-items-center"
+        >
+          <div class="custom-pl-16 lg:custom-pl-0">
             <button
               id="navbarToggler"
               type="button"
@@ -54,9 +57,7 @@
                 lg:max-w-full
                 lg:bg-transparent
                 lg:py-0
-                lg:px-4
                 lg:shadow-none
-                xl:px-6
               "
             >
               <ul class="block lg:flex">
@@ -99,7 +100,7 @@
                       text-dark
                       font-montserrat
                       relative
-                      mx-8
+                      mx-6
                       flex
                       cursor-pointer
                       py-2
@@ -235,6 +236,36 @@
                     </span>
                   </NuxtLink>
                 </li>
+                <li
+                  v-for="(link, linkIndex) in rightMenu"
+                  :key="`link-mobile-${linkIndex}`"
+                  class="group"
+                >
+                  <NuxtLink :to="link.to">
+                    <span
+                      class="
+                        ud-menu-scroll
+                        text-dark
+                        group-hover:text-primary
+                        font-montserrat
+                        mx-8
+                        flex
+                        py-2
+                        text-base
+                        hover:text-gray-500
+                        hover:underline
+                        lg:mr-0
+                        lg:inline-flex
+                        lg:py-6
+                        lg:px-0
+                        lg:text-[#181818]
+                        lg:group-hover:text-[#181818] lg:group-hover:opacity-70
+                      "
+                    >
+                      {{ link.text }}
+                    </span>
+                  </NuxtLink>
+                </li>
                 <li class="group submenu-item relative">
                   <span
                     href="javascript:void(0)"
@@ -325,7 +356,8 @@
               </ul>
             </nav>
           </div>
-          <div class="w-80 max-w-full px-4">
+          <div class="topBarInMenuCell hidden px-2 lg:block"></div>
+          <div class="w-80 self-center px-4 lg:w-64">
             <NuxtLink to="/">
               <span class="navbar-logo block w-full py-2">
                 <img
@@ -336,9 +368,58 @@
               </span>
             </NuxtLink>
           </div>
-          <div class="topBarInMenuCell hidden lg:flex"></div>
-          <div class="justify-end self-center sm:flex lg:pr-0">
-            <NuxtLink to="/cart">
+          <div class="justify-end sm:flex lg:pr-0">
+            <div class="topBarInMenuCell px-3">
+              <nav
+                class="
+                hidden
+                w-full
+                py-5
+                lg:static
+                lg:block
+                lg:w-full
+                lg:max-w-full
+                "
+              >
+                <ul class="block lg:flex">
+                  <li
+                    v-for="(link, linkIndex) in rightMenu"
+                    :key="`link-desktop-${linkIndex}`"
+                    class="group"
+                  >
+                  <NuxtLink :to="link.to">
+                      <span
+                        class="
+                          ud-menu-scroll
+                          text-dark
+                          group-hover:text-primary
+                          font-montserrat mx-6
+                          flex
+                          py-2
+                          text-base transition
+                          duration-300
+                          ease-in-out
+                          group-hover:underline
+                          group-hover:decoration-slate-600
+                          group-hover:decoration-2
+                          group-hover:underline-offset-8
+                          lg:mr-0
+                          lg:inline-flex
+                          lg:py-4
+                          lg:px-0
+                          lg:text-[#181818]
+                          lg:group-hover:text-slate-800
+                          lg:group-hover:opacity-70
+                        "
+                      >
+                        {{ link.text }}
+                      </span>
+                    </NuxtLink>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <NuxtLink to="/cart" class="self-center">
               <button
                 type="button"
                 class="
@@ -401,22 +482,40 @@ export default {
       ],
       more: [
         {
-          to: '/contact-us',
-          text: 'Contact us'
-        },
-        {
           to: '/about-us',
           text: 'About us'
         },
+        {
+          to: '/location',
+          text: 'Location'
+        },
+        {
+          to: '/market-days',
+          text: 'Market Days'
+        },
+        {
+          to: '/our-partners',
+          text: 'Our Partners'
+        },
+        {
+          to: '/united-nations',
+          text: 'United Nations SDG\'s'
+        },
+        {
+          to: '/chosen-charities',
+          text: 'Chosen Charities'
+        }
+      ],
+      rightMenu: [
         {
           to: '/our-mission',
           text: 'Our Mission'
         },
         {
-          to: '/reviews',
-          text: 'Reviews'
+          to: '/contact-us',
+          text: 'Contact us'
         },
-      ]
+      ],
     };
   },
   computed: {

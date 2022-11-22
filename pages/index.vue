@@ -1,11 +1,11 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <template>
-  <div>
+  <div class="mx-auto max-w-full overflow-hidden">
     <HomeSliderSection />
     <BrandsSection />
     <FeaturedProductsSection />
     <ReviewSection />
-    <!-- todo: BeforeFooter wip -->
+    <BeforeFooterSection />
   </div>
 </template>
 
@@ -14,6 +14,7 @@ import ReviewSection from '../components/ReviewSection.vue';
 import BrandsSection from '../components/BrandsSection.vue';
 import HomeSliderSection from '../components/HomeSliderSection.vue';
 import FeaturedProductsSection from '../components/FeaturedProductsSection.vue';
+import BeforeFooterSection from '../components/BeforeFooterSection.vue';
 import aosMixin from '@/mixins/aos';
 
 export default {
@@ -22,7 +23,8 @@ export default {
     ReviewSection,
     BrandsSection,
     HomeSliderSection,
-    FeaturedProductsSection
+    FeaturedProductsSection,
+    BeforeFooterSection
   },
   mixins: [ aosMixin ],
   data() {

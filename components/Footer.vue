@@ -1,86 +1,146 @@
 <template>
   <!-- Footer -->
-  <footer class="bt-site-footer relative z-10 my-auto">
-    <section class="w-full bg-brand-lgrey pt-[80px] lg:pt-[120px]">
-      <div
-        class="
-          flex flex-wrap
-          items-center justify-around
-          gap-12 px-12
-        "
-      >
-        <div class="order-[2] grow sm:order-[1]">
-          <div class="mx-auto block w-80 max-w-full px-11 lg:mx-0">
-            <NuxtLink to="/" class="py-5">
+  <footer class="bg-gray-300">
+    <!-- section footer top -->
+    <section class="py-12 text-white">
+			<div class="container mx-auto max-w-screen-xl px-4">
+				<div class="flex flex-wrap sm:space-x-8 md:space-x-16 lg:space-x-24">
+					<aside class="mx-auto mb-5 w-full self-center md:w-1/3 lg:w-1/4">
+						<NuxtLink to="/" class="mx-auto py-5">
               <img
                 src="~/assets/images/logo_revamped_01.svg"
-                class="footer-logo w-full"
+                class="footer-logo" height="38"
               />
             </NuxtLink>
-          </div>
-          <div
-            class="
+            <div
+              class="
               mx-auto
-              mt-20
+              my-4
               block
               max-w-full
               text-center text-[16px] text-brand-black
               lg:text-start
-            "
-          >
-            &copy; Copyright 2022, Revamped. | Built by
+              "
+            >
+              &copy; Copyright 2022, Revamped. | Built by
                 <a
-                  href="https://pageone247.com/"
-                  target="_blank"
-                  class="swlink underline hover:text-brand-grey"
+                href="https://pageone247.com/"
+                target="_blank"
+                class="swlink underline hover:text-brand-grey"
                 >
-                  PageOne247
+                PageOne247
                 </a>
+            </div>
+					</aside> <!-- col .// -->
+					<aside class="mb-5 w-1/2 flex-auto sm:w-auto">
+						<ul class="mt-2 space-y-1 text-center sm:text-left">
+ 							<li
+                v-for="(link, linkIndex) in links"
+                :key="`link-${linkIndex}`"
+              >
+								<NuxtLink
+                  :to="link.to"
+                  class="
+                    hover:text-primary
+                    swlink
+                    mb-2
+                    inline-block
+                    text-center
+                    text-base
+                    leading-loose text-brand-black
+                    opacity-70
+                    transition
+                    duration-300
+                    ease-in-out
+                    hover:underline
+                    hover:decoration-brand-grey
+                    hover:decoration-4
+                    hover:underline-offset-8
+                    hover:opacity-100
+                  "
+                >
+                  {{ link.text }}
+                </NuxtLink>
+							</li>
+						</ul>
+					</aside> <!-- col .// -->
+					<aside  class="mb-5 w-1/2 flex-auto  sm:w-auto">
+						<ul class="mt-2 space-y-1 text-center sm:text-left">
+ 							<li
+                v-for="(link, linkIndex) in links2"
+                :key="`link-${linkIndex}`"
+              >
+							  <NuxtLink :to="link.to">
+                  <span
+                    class="
+                    hover:text-primary
+                    swlink
+                    mb-2
+                    inline-block
+                    text-center text-base
+                    leading-loose
+                    text-brand-black
+                    opacity-70 transition
+                    duration-300
+                    ease-in-out
+                    hover:underline
+                    hover:decoration-brand-grey
+                    hover:decoration-4
+                    hover:underline-offset-8
+                    hover:opacity-100
+                    "
+                  >
+                    {{ link.text }}
+                  </span>
+                </NuxtLink>
+							</li>
+						</ul>
+					</aside> <!-- col .// -->
+				</div>  <!-- grid .// -->
+			</div> <!-- container .// -->
+		</section>
+
+    <!-- section footer bottom -->
+    <section class="bg-gray-400 py-6">
+      <div class="container mx-auto max-w-screen-xl px-4">
+        <div class="justify-between lg:flex">
+          <div class="mb-3 flex flex-wrap gap-2">
+            <img
+              v-for="paymentimg in paymentchannels"
+              :key="paymentimg"
+              :src="`/img/misc/${paymentimg}`"
+              height="24"
+              class="h-6"
+              :alt="`Payment method - ${paymentimg}`"
+            />
+          </div>
+          <div class="space-x-6">
+            <nav class="space-x-4">
+              <a
+                style="color:#fff;"
+                href="#" class="text-xs
+                opacity-70 hover:opacity-100"
+              >
+                Support
+              </a>
+              <a
+                style="color:#fff;"
+                href="#" class="text-xs
+                opacity-70 hover:opacity-100"
+              >
+                Privacy &amp; Cookies
+              </a>
+              <a
+                style="color:#fff;"
+                href="#"
+                class="text-xs
+                opacity-70 hover:opacity-100"
+              >
+                Accessibility
+              </a>
+            </nav>
           </div>
         </div>
-
-        <div class="order-[1] grow sm:order-[2]">
-          <ul class="mx-auto text-center">
-            <li
-              v-for="(link, linkIndex) in links"
-              :key="`link-${linkIndex}`"
-            >
-            <NuxtLink :to="link.to">
-              <span
-                class="
-                  hover:text-primary
-                  swlink
-                  mb-2
-                  inline-block
-                  text-center text-lg
-                  leading-loose
-                  text-brand-black
-                  transition
-                  duration-300
-                  ease-in-out
-                  hover:underline
-                  hover:decoration-brand-grey
-                  hover:decoration-4
-                  hover:underline-offset-8
-                "
-              >
-                {{ link.text }}
-              </span>
-            </NuxtLink>
-            </li>
-          </ul>
-        </div>
-
-      </div>
-
-      <div
-        class="
-          flex flex-wrap
-          items-center justify-center
-          py-12 px-4
-          text-base
-        "
-      >
       </div>
     </section>
   </footer>
@@ -120,6 +180,33 @@ export default {
           text: 'Admin',
         },
       ],
+      links2: [
+        {
+          to: '/faq',
+          text: 'FAQs'
+        },
+        {
+          to: '/shipping',
+          text: 'Shipping'
+        },
+        {
+          to: '/terms',
+          text: 'Terms & Conditions'
+        },
+        {
+          to: '/returns-refunds',
+          text: 'Returns & Refunds'
+        }
+      ],
+      paymentchannels: [
+        'afterpay.svg',
+        'americanexpress.svg',
+        'applepay.svg',
+        'googlepay.svg',
+        'jcb.svg',
+        'mastercard.svg',
+        'visa.svg'
+      ]
     }
   },
 }
