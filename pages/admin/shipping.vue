@@ -210,7 +210,8 @@
                   mx-auto
                   flex items-center
                   text-brand-mred
-                  hover:text-brand-black hover:underline hover:decoration-brand-black
+                  hover:text-brand-black
+                  hover:underline hover:decoration-brand-black
                 "
               >
                 <i class="ri-arrow-left-line mr-2"></i>
