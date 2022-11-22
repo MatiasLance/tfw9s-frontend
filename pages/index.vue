@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <template>
-  <div>
+  <div class="mx-auto max-w-full overflow-hidden">
     <HomeSliderSection />
     <BrandsSection />
     <FeaturedProductsSection />
