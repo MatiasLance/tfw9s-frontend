@@ -97,12 +97,84 @@
           </div>
           <div class="grid grid-cols-6 gap-6">
             <div class="col-span-6">
+              <div class="relative my-4 flex justify-start gap-2">
+                  <label class="mx-2 items-center">
+                    Size
+                  </label>
+                  <select
+                    v-model="size"
+                    class="block w-full appearance-none rounded-md border
+                    border-gray-200 bg-gray-100 py-2 px-3 pr-5
+                    text-lg hover:border-gray-400
+                    focus:border-gray-400 focus:outline-none"
+                  >
+                    <option>
+                      Select one
+                    </option>
+                    <option
+                      v-for="size in variants[0].elements"
+                      :key="size.name"
+                    >
+                      {{ size.name }}
+                    </option>
+                  </select>
+                  <i
+                    class="pointer-events-none absolute inset-y-0
+                    right-0 flex items-center px-2 text-gray-500"
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      class="h-5 w-5 fill-current"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M7 10l5 5 5-5H7z"/>
+                    </svg>
+					        </i>
+              </div>
+              <div class="relative my-4 flex justify-start gap-2">
+                  <label class="mx-2 items-center">
+                    Color
+                  </label>
+                  <select
+                    v-model="color"
+                    class="block w-full appearance-none rounded-md border
+                    border-gray-200 bg-gray-100 py-2 px-3 pr-5
+                    text-lg hover:border-gray-400
+                    focus:border-gray-400 focus:outline-none"
+                  >
+                    <option>
+                      Select one
+                    </option>
+                    <option
+                      v-for="color in variants[1].elements"
+                      :key="color.name"
+                    >
+                      {{ color.name }}
+                    </option>
+                  </select>
+                  <i
+                    class="pointer-events-none absolute inset-y-0
+                    right-0 flex items-center px-2 text-gray-500"
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      class="h-5 w-5 fill-current"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M7 10l5 5 5-5H7z"/>
+                    </svg>
+					        </i>
+              </div>
+            </div>
+            <div class="col-span-6">
               <div
               class="flex flex-col
               items-center justify-start lg:flex-row
               lg:gap-2"
               >
-                <div class="my-5 flex justify-start gap-2">
+                <div class="my-4 flex justify-start gap-2">
                   <label class="mx-2 my-auto items-center">
                     Quantity
                   </label>
@@ -219,6 +291,81 @@ export default {
   ],
   data() {
     return {
+      variants: [
+        {
+          name: 'Size',
+          elements: [
+            {
+              name: 'Small',
+              photo: null,
+              price: null
+            },
+            {
+              name: 'Medium',
+              photo: null,
+              price: null
+            },
+            {
+              name: 'Large',
+              photo: null,
+              price: null
+            },
+            {
+              name: 'XLarge',
+              photo: null,
+              price: null
+            },
+            {
+              name: 'XXLarge',
+              photo: null,
+              price: null
+            }
+          ]
+        },
+        {
+          name: 'Color',
+          elements: [
+            {
+              name: 'Black',
+              photo: {
+                type: 'color',
+                value: '#000'
+              },
+              price: null
+            },
+            {
+              name: 'Red White w/ Stripes',
+              photo: {
+                type: 'image',
+                value: null
+              },
+              price: null
+            },
+            {
+              name: 'Blue',
+              photo: {
+                type: 'image',
+                value: null
+              },
+              price: null
+            },
+            {
+              name: 'Green',
+              photo: {
+                type: 'color',
+                value: '#319b5a'
+              }
+            },
+            {
+              name: 'Brown',
+              photo: {
+                type: 'color',
+                value: '#b4844b'
+              }
+            }
+          ]
+        }
+      ],
       product: {
         id: 0,
         name: '',
@@ -226,6 +373,7 @@ export default {
         price: '',
         stock: '',
         categories: [],
+
         tags: [],
       },
       activeImageURL: '',
@@ -260,6 +408,7 @@ export default {
           this.product = response.data.item
           this.activeImageURL = this.getMediaURL(this.product.media[0])
           this.photos = this.product.media
+          console.log(this.product)
         })
     },
     handleHighStockValue() {
