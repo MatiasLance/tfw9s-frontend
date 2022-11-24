@@ -992,7 +992,82 @@ export default {
       pageSEO: {
         title: 'Products Admin - Revamped',
         description: 'Page for creating product items for Revamped',
-      }
+      },
+      variants: [
+        {
+          name: 'Size',
+          elements: [
+            {
+              name: 'Small',
+              photo: null,
+              price: null
+            },
+            {
+              name: 'Medium',
+              photo: null,
+              price: null
+            },
+            {
+              name: 'Large',
+              photo: null,
+              price: null
+            },
+            {
+              name: 'XLarge',
+              photo: null,
+              price: null
+            },
+            {
+              name: 'XXLarge',
+              photo: null,
+              price: null
+            }
+          ]
+        },
+        {
+          name: 'Color',
+          elements: [
+            {
+              name: 'Black',
+              photo: {
+                type: 'color',
+                value: '#000'
+              },
+              price: null
+            },
+            {
+              name: 'Red White w/ Stripes',
+              photo: {
+                type: 'image',
+                value: null
+              },
+              price: null
+            },
+            {
+              name: 'Blue',
+              photo: {
+                type: 'image',
+                value: null
+              },
+              price: null
+            },
+            {
+              name: 'Green',
+              photo: {
+                type: 'color',
+                value: '#319b5a'
+              }
+            },
+            {
+              name: 'Brown',
+              photo: {
+                type: 'color',
+                value: '#b4844b'
+              }
+            }
+          ]
+        }
+      ],
     };
   },
   head() {
