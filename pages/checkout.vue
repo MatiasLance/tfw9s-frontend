@@ -49,7 +49,7 @@
             @submit="toPayStep"
           />
         </div>
-        <div v-else-if="activeStep === 2">
+        <div v-else-if="activeStep === 2" class="w-[320px]">
           <article
             class="flex flex-col justify-center text-gray-600"
           >
@@ -75,8 +75,57 @@
 
             <hr class="my-4" />
           </article>
-
-          <div class="flex gap-3 text-gray-600">
+          <div
+            class="my-7 flex flex-col items-center
+            justify-center md:flex-row md:space-x-4"
+          >
+            <button
+              type="button"
+              class="rounded-xl
+              border
+              border-solid border-brand-slate
+              bg-transparent px-6 py-3
+              text-base text-slate-600 hover:bg-slate-200
+              hover:text-black"
+              :class="selectedClass1"
+              @click="togglePaypal"
+            >
+              Paypal
+            </button>
+            <button
+              type="button"
+              class="rounded-xl
+              border
+              border-solid border-brand-slate
+              bg-transparent px-6 py-3
+              text-base text-slate-600 hover:bg-slate-200
+              hover:text-black"
+              :class="selectedClass2"
+              @click="toggleStripe"
+            >
+              Stripe
+            </button>
+            <button
+              type="button"
+              class="rounded-xl
+              border
+              border-solid border-brand-slate
+              bg-transparent px-6 py-3
+              text-base text-slate-600 hover:bg-slate-200
+              hover:text-black"
+              :class="selectedClass3"
+              @click="toggleAfterPay"
+            >
+              Afterpay
+            </button>
+          </div>
+          <PaypalCheckout
+            v-if="showPaypal"
+            id="paypal-payment-form"
+            class="p-10"
+            :cart-total="total"
+          />
+          <div v-if="showStripe" class="flex gap-3 text-gray-600">
             <form id="payment-form" @submit.prevent="handleSubmit">
               <legend>
                 <h2 class="mb-3 block text-lg font-semibold">
@@ -110,6 +159,32 @@
               <div id="payment-message" class="hidden"></div>
             </form>
           </div>
+          <div v-if="showAfterpay" class="flex gap-3 text-gray-600">
+            <form id="afterpay-form" @submit.prevent="handleSubmitAfterpay">
+              <legend>
+                <h2 class="mb-3 block text-lg font-semibold">
+                  Payment Method (Afterpay)
+                </h2>
+              </legend>
+              <a
+                class="
+                  mt-3
+                  block
+                  w-full
+                  border border-gray-200
+                  bg-white
+                  py-[16px]
+                  px-[12px]
+                  text-center text-gray-700
+                  shadow-sm
+                  hover:bg-gray-100 hover:text-[#1a1d18]
+                "
+                href="/cart"
+              >
+                Return to cart
+              </a>
+            </form>
+          </div>
         </div>
         <!-- col.// -->
       </div>
@@ -120,6 +195,7 @@
 </template>
 
 <script>
+import PaypalCheckout from '../components/PaypalCheckout.vue';
 import BaseHeader from '~/components/base/BaseHeader';
 import ShippingInformationForm from '~/components/ShippingInformationForm';
 import Stepper from '~/components/Stepper/Stepper';
@@ -132,6 +208,7 @@ export default {
     BaseHeader,
     ShippingInformationForm,
     Stepper,
+    PaypalCheckout,
   },
   mixins: [ currencyMixin ],
   data() {
@@ -140,9 +217,24 @@ export default {
       shippingInformation: [],
       activeStep: 1,
       isStepperLoading: false,
+      showPaypal: false,
+      showAfterpay: false,
+      showStripe: false,
+      selectedPaypal: false,
+      selectedStripe: false,
+      selectedAfterpay: false
     };
   },
   computed: {
+    selectedClass1() {
+      return this.selectedPaypal ? 'selected' : ''
+    },
+    selectedClass2() {
+      return this.selectedStripe ? 'selected' : ''
+    },
+    selectedClass3() {
+      return this.selectedAfterpay ? 'selected' : ''
+    },
     subtotal: {
       get() {
         return this.$store.state.cart.subtotal
@@ -169,9 +261,38 @@ export default {
     },
   },
   methods: {
+    togglePaypal() {
+      this.showPaypal = true
+      this.showStripe = false
+      this.showAfterpay = false
+      this.selectedAfterpay = false
+      this.selectedStripe = false
+      this.selectedPaypal = true
+    },
+    toggleStripe() {
+      this.showPaypal = false
+      this.showStripe = true
+      this.showAfterpay = false
+      this.selectedAfterpay = false
+      this.selectedStripe = true
+      this.selectedPaypal = false
+      this.initialize()
+    },
+    toggleAfterPay() {
+      this.showPaypal = false
+      this.showStripe = false
+      this.showAfterpay = true
+      this.selectedAfterpay = true
+      this.selectedStripe = false
+      this.selectedPaypal = false
+    },
     toPayStep(shippingInformation) {
       this.shippingInformation = shippingInformation
-      this.initialize()
+      this.isStepperLoading = true
+      setTimeout(() => {
+        this.activeStep = 2
+        this.isStepperLoading = false
+      }, 3000);
     },
     async initialize() {
       this.isStepperLoading = true
@@ -190,6 +311,10 @@ export default {
           this.isStepperLoading = false
         })
 
+      this.loadStripe(clientSecret)
+
+    },
+    loadStripe(clientSecret) {
       const appearance = {
         theme: 'stripe',
         labels: 'floating',
@@ -293,6 +418,15 @@ form#payment-form {
               0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
   border-radius: 7px;
   padding: 40px;
+}
+
+#paypal-payment-form {
+  width: 100%;
+  align-self: center;
+  box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
+              0px 2px 5px 0px rgba(50, 50, 93, 0.1),
+              0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
+  border-radius: 7px;
 }
 
 #payment-message {
@@ -422,5 +556,11 @@ button#stripeSubmit:disabled {
     width: 80vw;
     min-width: initial;
   }
+}
+
+.selected {
+  background: #1a1d18;
+  color: #ffffff;
+  border: 1px solid transparent;
 }
 </style>
