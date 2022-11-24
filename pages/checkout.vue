@@ -160,19 +160,12 @@
             </form>
           </div>
           <div v-if="showAfterpay" class="flex gap-3 text-gray-600">
-            <form id="payment-form" @submit.prevent="handleSubmitAfterpay">
+            <form id="afterpay-form" @submit.prevent="handleSubmitAfterpay">
               <legend>
                 <h2 class="mb-3 block text-lg font-semibold">
                   Payment Method (Afterpay)
                 </h2>
               </legend>
-              <div id="afterpay-payment-element">
-                <!-- Stripe.js injects the Payment Element -->
-              </div>
-              <button id="afterpaySubmit" type="submit">
-                <div id="spinner" class="spinner hidden"></div>
-                <span id="button-text">Pay now</span>
-              </button>
               <a
                 class="
                   mt-3
@@ -190,7 +183,6 @@
               >
                 Return to cart
               </a>
-              <div id="afterpay-payment-message" class="hidden"></div>
             </form>
           </div>
         </div>
@@ -296,6 +288,11 @@ export default {
     },
     toPayStep(shippingInformation) {
       this.shippingInformation = shippingInformation
+      this.isStepperLoading = true
+      setTimeout(() => {
+        this.activeStep = 2
+        this.isStepperLoading = false
+      }, 3000);
     },
     async initialize() {
       this.isStepperLoading = true
@@ -314,6 +311,10 @@ export default {
           this.isStepperLoading = false
         })
 
+      this.loadStripe(clientSecret)
+
+    },
+    loadStripe(clientSecret) {
       const appearance = {
         theme: 'stripe',
         labels: 'floating',
