@@ -1,8 +1,10 @@
 <template>
-    <div v-if="!paid" id="paypal-button-container"></div>
-    <div v-else id="confirmation">
-Order complete!
-</div>
+    <section class="my-3 w-full">
+        <div v-if="!paid" id="paypal-button-container"></div>
+        <div v-else id="confirmation">
+            Order complete!
+        </div>
+    </section>
 </template>
 
 <script>
@@ -20,13 +22,13 @@ export default {
     return { paid: false }
   },
   beforeCreate() {
-    loadScript({ 'client-id': 'Aa5VVtxELggqu8DPBZAmGU1WfH0VjOQIHheaHsgbXh-PXia-hTb9XmSpfiJlh8nnPy9bWw19xZNI1qOS' }).then((paypal) => {
+    loadScript({ 'client-id': this.$config.paypal.clientId }).then((paypal) => {
       paypal
         .Buttons({
           createOrder: this.createOrder,
           onApprove: this.onApprove,
           style: {
-            layout: 'horizontal',
+            layout: 'vertical',
             color: 'black',
             shape: 'pill',
             label: 'paypal'
