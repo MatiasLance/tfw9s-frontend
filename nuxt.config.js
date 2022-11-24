@@ -109,6 +109,9 @@ export default {
       credentials: true,
       withCredentials: true,
     },
+    paypal: {
+      clientId: process.env.PAYPAL_CLIENT_ID
+    },
     stripe: {
       liveEnvironment: process.env.STRIPE_LIVE_ENVIRONMENT,
       publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,

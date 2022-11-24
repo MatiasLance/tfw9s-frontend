@@ -76,6 +76,11 @@
             <hr class="my-4" />
           </article>
 
+          <div>
+            <PaypalCheckout
+              :cart-total="total"
+            />
+          </div>
           <div class="flex gap-3 text-gray-600">
             <form id="payment-form" @submit.prevent="handleSubmit">
               <legend>
@@ -120,6 +125,7 @@
 </template>
 
 <script>
+import PaypalCheckout from '../components/PaypalCheckout.vue';
 import BaseHeader from '~/components/base/BaseHeader';
 import ShippingInformationForm from '~/components/ShippingInformationForm';
 import Stepper from '~/components/Stepper/Stepper';
@@ -132,6 +138,7 @@ export default {
     BaseHeader,
     ShippingInformationForm,
     Stepper,
+    PaypalCheckout,
   },
   mixins: [ currencyMixin ],
   data() {
