@@ -31,7 +31,7 @@
           </span>
         </span>
         <h1 class="flex flex-row text-3xl font-bold text-white lg:text-6xl">
-          Product / Parts list
+          Product list
         </h1>
       </div>
     </BaseHeader>
@@ -257,7 +257,7 @@
     </div>
      <!-- showAddProduct modal component -->
      <OModal :active="showAddProductModal" @close="showAddProductModal = false">
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <h3 class="mb-3 font-bold text-brand-black">
           Add Product
         </h3>
@@ -370,6 +370,9 @@
             <label class="mb-1 block">Description:</label>
             <Tiptap v-model="description" />
           </div>
+          <!-- variants section -->
+          <VariantSection />
+          <!-- categories section -->
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
               <label class="mb-1 block"> Category: </label>
@@ -556,7 +559,7 @@
       :active="showEditProductModal"
       @close="showEditProductModal = false"
     >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <h3 class="mb-3 font-bold text-brand-black">
           Edit Product
         </h3>
@@ -670,6 +673,8 @@
             <label class="mb-1 block">Description:</label>
             <Tiptap v-model="description" />
           </div>
+          <!-- variants section -->
+          <VariantSection />
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
               <label class="mb-1 block"> Category: </label>
@@ -856,7 +861,7 @@
       :active="showRemoveProductModal"
       @close="showRemoveProductModal = false"
     >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <h3 class="mb-3 font-bold text-brand-black">
           Remove Product
         </h3>
@@ -913,6 +918,7 @@
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
+import VariantSection from '~/components/VariantSection.vue';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
@@ -929,6 +935,7 @@ export default {
     BasePagination,
     SearchBar,
     Tiptap,
+    VariantSection,
   },
   mixins: [
     aosMixin,

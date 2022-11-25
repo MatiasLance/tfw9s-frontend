@@ -8,10 +8,91 @@ export const state = () => ({
   inStock: '',
   tags: [],
   tagData: [],
-  photo: ''
+  photo: '',
+  variants: [
+    {
+      name: 'Size',
+      elements: [
+        {
+          name: 'Small',
+          photo: null,
+          price: 0,
+          isTicked: true
+        },
+        {
+          name: 'Medium',
+          photo: null,
+          price: 0,
+          isTicked: true
+        },
+        {
+          name: 'Large',
+          photo: null,
+          price: 0,
+          isTicked: false
+        }
+      ]
+    },
+    {
+      name: 'Color',
+      elements: [
+        {
+          name: 'Black',
+          photo: {
+            type: 'color',
+            value: '#000'
+          },
+          price: 0,
+          isTicked: true
+        },
+        {
+          name: 'Red White w/ Stripes',
+          photo: {
+            type: 'image',
+            value: null
+          },
+          price: 0,
+          isTicked: true
+        },
+        {
+          name: 'Blue',
+          photo: {
+            type: 'image',
+            value: null
+          },
+          price: 0,
+          isTicked: true
+        },
+        {
+          name: 'Brown',
+          photo: {
+            type: 'color',
+            value: '#b4844b'
+          },
+          price: 0,
+          isTicked: false
+        }
+      ]
+    }
+  ]
 })
 
 export const mutations = {
+  addVariants(state, variants) {
+    state.variants.push(Object.assign({}, variants))
+  },
+  removeVariants(state, { index }) {
+    state.variants.splice(index, 1)
+  },
+  setVariants(state, variants) {
+    state.variants = variants
+  },
+  addElements(state, elements) {
+    state.variants.elements.push(Object.assign({}, elements))
+  },
+  setElements(state, elements) {
+    state.variants.elements = elements
+  },
   addCategory(state, categories) {
     state.categories.push(Object.assign({}, categories))
   },
