@@ -31,7 +31,7 @@
           </span>
         </span>
         <h1 class="flex flex-row text-3xl font-bold text-white lg:text-6xl">
-          Product / Parts list
+          Product list
         </h1>
       </div>
     </BaseHeader>
@@ -370,6 +370,9 @@
             <label class="mb-1 block">Description:</label>
             <Tiptap v-model="description" />
           </div>
+          <!-- variants section -->
+          <VariantSection />
+          <!-- categories section -->
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
               <label class="mb-1 block"> Category: </label>
@@ -670,6 +673,8 @@
             <label class="mb-1 block">Description:</label>
             <Tiptap v-model="description" />
           </div>
+          <!-- variants section -->
+          <VariantSection />
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
               <label class="mb-1 block"> Category: </label>
@@ -913,6 +918,7 @@
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
+import VariantSection from '~/components/VariantSection.vue';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
@@ -929,6 +935,7 @@ export default {
     BasePagination,
     SearchBar,
     Tiptap,
+    VariantSection,
   },
   mixins: [
     aosMixin,
