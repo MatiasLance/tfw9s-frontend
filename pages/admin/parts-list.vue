@@ -257,7 +257,7 @@
     </div>
      <!-- showAddProduct modal component -->
      <OModal :active="showAddProductModal" @close="showAddProductModal = false">
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <h3 class="mb-3 font-bold text-brand-black">
           Add Product
         </h3>
@@ -559,7 +559,7 @@
       :active="showEditProductModal"
       @close="showEditProductModal = false"
     >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <h3 class="mb-3 font-bold text-brand-black">
           Edit Product
         </h3>
@@ -861,7 +861,7 @@
       :active="showRemoveProductModal"
       @close="showRemoveProductModal = false"
     >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <h3 class="mb-3 font-bold text-brand-black">
           Remove Product
         </h3>

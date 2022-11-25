@@ -75,14 +75,8 @@ export default {
       this.$emit('close')
     },
     confirmAction() {
-      this.$emit('submit', this.variantName)
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in progress',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true,
-      });
+      this.$emit('confirm', this.variantName)
+      this.closeDialog()
     },
   },
 }

@@ -31,12 +31,12 @@
         />
         <!-- todo: showAddElement modal wip -->
         <!-- show variants -->
-        <div class="mb-5 gap-4 sm:flex">
+        <div class="mb-5 gap-4 sm:grid sm:grid-cols-2">
             <figure
-            v-for="variant in variants"
+            v-for="variant in variantsDemo"
             :key="variant.name"
-            class="relative flex flex-col items-start rounded-md
-            bg-gray-100 p-4 md:w-1/2"
+            class="relative
+            rounded-md bg-gray-100 p-4 sm:col-span-2 md:col-span-1"
             >
                 <div class="flex w-full justify-between">
                     <label for="size" class="mb-2 block text-xl font-semibold">
@@ -120,8 +120,8 @@ export default {
     return {
       showAddVariant: false,
       showAddElement: false,
-      variantsNew: [],
-      variants: [
+      variantsList: [],
+      variantsDemo: [
         {
           name: 'Size',
           elements: [
@@ -211,11 +211,41 @@ export default {
       variantSize: ''
     }
   },
+  computed: {
+    variants: {
+      get() {
+        return this.$store.state.product.variants;
+      },
+      set(value) {
+        this.$store.commit('product/setVariants', value)
+      }
+    },
+    elements: {
+      get(id) {
+        return this.$store.state.product.variants[id].elements
+      },
+      set(value) {
+        this.$store.commit('product/setElements', value)
+      }
+    }
+  },
+  mounted() {
+    this.retrieveVariants()
+  },
   methods: {
+    retrieveVariants() {
+      this.variantsList = this.$store.state.product.variants
+    },
     addVariantOpt() {
       this.showAddVariant = true
     },
-    addVariant() {
+    addVariant(variantName) {
+      const newVariant = {
+        'name': variantName,
+        'elements': []
+      }
+      this.$store.commit('product/addVariants', newVariant)
+      console.log(`${variantName} has been added locally`)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
@@ -223,6 +253,7 @@ export default {
         variant: 'warning',
         queue: true,
       });
+      this.retrieveVariants()
     },
     closeAddVariantDialog() {
       this.showAddVariant = false
