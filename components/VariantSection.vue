@@ -24,6 +24,12 @@
             </button>
         </div>
         <!-- todo: showAddVariant modal wip -->
+        <AddVariantModal
+            :active="showAddVariant"
+            @close="closeAddVariantDialog"
+            @confirm="addVariant"
+        />
+        <!-- todo: showAddElement modal wip -->
         <!-- show variants -->
         <div class="mb-5 gap-4 sm:flex">
             <figure
@@ -112,6 +118,8 @@ export default {
   mixins: [ currencyMixin ],
   data() {
     return {
+      showAddVariant: false,
+      showAddElement: false,
       variantsNew: [],
       variants: [
         {
@@ -205,6 +213,9 @@ export default {
   },
   methods: {
     addVariantOpt() {
+      this.showAddVariant = true
+    },
+    addVariant() {
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
@@ -212,6 +223,9 @@ export default {
         variant: 'warning',
         queue: true,
       });
+    },
+    closeAddVariantDialog() {
+      this.showAddVariant = false
     },
     addElementOpt() {
       this.$oruga.notification.open({
