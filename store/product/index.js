@@ -140,6 +140,7 @@ export const actions = {
     commit('setCategories', product.categories)
     commit('setTags', product.tags)
     commit('setPhoto', product.photo)
+    commit('setVariants', product.variants)
   },
   clearProduct({ commit }) {
     commit('setName', '')
@@ -148,5 +149,6 @@ export const actions = {
     commit('setInStock', '')
     commit('setTags', [])
     commit('setPhoto', '')
+    commit('setVariants', [])
   }
 }

@@ -23,7 +23,6 @@
             Add Variant
             </button>
         </div>
-        <!-- todo: showAddVariant modal wip -->
         <AddVariantModal
             :active="showAddVariant"
             @close="closeAddVariantDialog"
@@ -33,8 +32,8 @@
         <!-- show variants -->
         <div class="mb-5 gap-4 sm:grid sm:grid-cols-2">
             <figure
-            v-for="variant in variantsDemo"
-            :key="variant.name"
+            v-for="variant in options"
+            :key="variant.id"
             class="relative
             rounded-md bg-gray-100 p-4 sm:col-span-2 md:col-span-1"
             >
@@ -62,8 +61,8 @@
                     "
                     >
                     <input
-                        v-model="element.isTicked"
                         :name="variant.name"
+                        :value="element.name"
                         type="checkbox"
                         class="
                         mt-1 mr-3 h-4 w-4 bg-gray-200 text-brand-black
@@ -79,7 +78,6 @@
                         <span>
                             <VTextField
                                 v-model="element.price"
-                                :disabled="!element.isTicked"
                                 solo
                                 prefix="$"
                                 class="w-1/2"
@@ -116,98 +114,17 @@ import currencyMixin from '@/mixins/currency';
 export default {
   name: 'VariantSection',
   mixins: [ currencyMixin ],
+  props: {
+    options: {
+      type: Array,
+      required: true,
+    }
+  },
   data() {
     return {
       showAddVariant: false,
       showAddElement: false,
       variantsList: [],
-      variantsDemo: [
-        {
-          name: 'Size',
-          elements: [
-            {
-              name: 'Small',
-              photo: null,
-              price: 0,
-              isTicked: true
-            },
-            {
-              name: 'Medium',
-              photo: null,
-              price: 0,
-              isTicked: true
-            },
-            {
-              name: 'Large',
-              photo: null,
-              price: 0,
-              isTicked: false
-            },
-            {
-              name: 'XLarge',
-              photo: null,
-              price: 0,
-              isTicked: true
-            },
-            {
-              name: 'XXLarge',
-              photo: null,
-              price: 0,
-              isTicked: false
-            }
-          ]
-        },
-        {
-          name: 'Color',
-          elements: [
-            {
-              name: 'Black',
-              photo: {
-                type: 'color',
-                value: '#000'
-              },
-              price: 0,
-              isTicked: true
-            },
-            {
-              name: 'Red White w/ Stripes',
-              photo: {
-                type: 'image',
-                value: null
-              },
-              price: 0,
-              isTicked: true
-            },
-            {
-              name: 'Blue',
-              photo: {
-                type: 'image',
-                value: null
-              },
-              price: 0,
-              isTicked: true
-            },
-            {
-              name: 'Green',
-              photo: {
-                type: 'color',
-                value: '#319b5a'
-              },
-              price: 0,
-              isTicked: false
-            },
-            {
-              name: 'Brown',
-              photo: {
-                type: 'color',
-                value: '#b4844b'
-              },
-              price: 0,
-              isTicked: false
-            }
-          ]
-        }
-      ],
       variantSize: ''
     }
   },
@@ -240,11 +157,7 @@ export default {
       this.showAddVariant = true
     },
     addVariant(variantName) {
-      const newVariant = {
-        'name': variantName,
-        'elements': []
-      }
-      this.$store.commit('product/addVariants', newVariant)
+      console.log(variantName)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
@@ -252,7 +165,6 @@ export default {
         variant: 'warning',
         queue: true,
       });
-      this.retrieveVariants()
     },
     closeAddVariantDialog() {
       this.showAddVariant = false
