@@ -245,7 +245,6 @@ export default {
         'elements': []
       }
       this.$store.commit('product/addVariants', newVariant)
-      console.log(`${variantName} has been added locally`)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
