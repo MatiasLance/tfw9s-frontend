@@ -371,7 +371,10 @@
             <Tiptap v-model="description" />
           </div>
           <!-- variants section -->
-          <VariantSection />
+          <VariantSection
+            ref="newVariant"
+            :options="variantsDemo"
+          />
           <!-- categories section -->
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
@@ -674,7 +677,9 @@
             <Tiptap v-model="description" />
           </div>
           <!-- variants section -->
-          <VariantSection />
+          <VariantSection
+            :options="variants"
+          />
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
               <label class="mb-1 block"> Category: </label>
@@ -964,6 +969,7 @@ export default {
       subcategory: '',
       inStock: '',
       categoryLineages: [],
+      variants: [],
       tags: [
         { id: 1, name: 'foo' },
         { id: 2, name: 'bar' },
@@ -1000,34 +1006,34 @@ export default {
         title: 'Products Admin - Revamped',
         description: 'Page for creating product items for Revamped',
       },
-      variants: [
+      variantsDemo: [
         {
           name: 'Size',
           elements: [
             {
               name: 'Small',
               photo: null,
-              price: null
+              price: 0
             },
             {
               name: 'Medium',
               photo: null,
-              price: null
+              price: 0
             },
             {
               name: 'Large',
               photo: null,
-              price: null
+              price: 0
             },
             {
               name: 'XLarge',
               photo: null,
-              price: null
+              price: 0
             },
             {
               name: 'XXLarge',
               photo: null,
-              price: null
+              price: 0
             }
           ]
         },
@@ -1040,7 +1046,7 @@ export default {
                 type: 'color',
                 value: '#000'
               },
-              price: null
+              price: 0
             },
             {
               name: 'Red White w/ Stripes',
@@ -1048,7 +1054,7 @@ export default {
                 type: 'image',
                 value: null
               },
-              price: null
+              price: 0
             },
             {
               name: 'Blue',
@@ -1056,21 +1062,23 @@ export default {
                 type: 'image',
                 value: null
               },
-              price: null
+              price: 0
             },
             {
               name: 'Green',
               photo: {
                 type: 'color',
                 value: '#319b5a'
-              }
+              },
+              price: 0
             },
             {
               name: 'Brown',
               photo: {
                 type: 'color',
                 value: '#b4844b'
-              }
+              },
+              price: 0
             }
           ]
         }
@@ -1211,6 +1219,7 @@ export default {
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
+          console.log(response.data.items)
         })
         .finally(() => {
           this.isProductsLoading = false;
@@ -1396,9 +1405,11 @@ export default {
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
         .then((response) => {
+          console.log(response.data.item)
           this.name = response.data.item.name;
           this.price = response.data.item.price;
           this.description = response.data.item.description;
+          this.variants = response.data.item.variants;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
           this.imgUrlEdit = response.data.item.media.map((x) =>

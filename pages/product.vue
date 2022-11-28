@@ -106,44 +106,23 @@
                     <label class="flex items-start font-semibold">
                       {{ variant.name }}
                     </label>
-                    <div class="grid w-full grid-cols-2 gap-3 lg:grid-cols-4">
-                      <label
+                    <select
+                      :name="variant.name"
+                      class="block w-full appearance-none rounded-md
+                      border border-gray-200
+                      bg-gray-100 py-2 px-4 text-lg
+                      hover:border-gray-400 focus:border-gray-400
+                      focus:outline-none lg:w-1/2"
+                    >
+                      <option
                         v-for="(element, elementKey) in variant.elements"
                         :key="elementKey"
-                        class="
-                        col-span-4
-                        flex w-full
-                        cursor-pointer flex-wrap border
-                        border-gray-200 bg-transparent
-                        p-3
-                        hover:border-brand-slate hover:bg-slate-100
-                        sm:col-span-2
-                        "
+                        class="w-full"
+                        :value="element.name"
                       >
-                        <input
-                            v-model="element.isSelected"
-                            :name="variant.name"
-                            :value="element.name"
-                            type="radio"
-                            class="
-                            mt-1 mr-3 h-4 w-4 bg-gray-200 text-brand-black
-                            focus:ring-brand-black"
-                        />
-                        <figcaption class="text-sm text-gray-600">
-                            <span class="my-0 mx-2 text-sm">
-                                {{ element.name }}
-                            </span>
-                            <span
-                            v-if="element.price !== 0"
-                            class="text-sm"
-                          >
-                            - {{ formatCurrency(element.price) }}
-                            </span>
-                            <span>
-                            </span>
-                        </figcaption>
-                      </label>
-                    </div>
+                        {{ element.name }}
+                      </option>
+                    </select>
                   </div>
               </div>
             </div>
@@ -269,7 +248,8 @@ export default {
   data() {
     return {
       isSelected: '',
-      variants: [
+      variants: [],
+      variantsDemo: [
         {
           name: 'Size',
           elements: [
@@ -277,33 +257,29 @@ export default {
               name: 'Small',
               photo: null,
               price: 0,
-              isSelected: true
             },
             {
               name: 'Medium',
               photo: null,
               price: 0,
-              isSelected: false
             },
             {
               name: 'Large',
               photo: null,
               price: 0,
-              isSelected: false
             },
             {
               name: 'XLarge',
               photo: null,
               price: 0,
-              isSelected: false
             },
             {
               name: 'XXLarge',
               photo: null,
               price: 0,
-              isSelected: false
             }
-          ]
+          ],
+          selectedValue: ''
         },
         {
           name: 'Color',
@@ -315,7 +291,6 @@ export default {
                 value: '#000'
               },
               price: 0,
-              isSelected: true
             },
             {
               name: 'Red White w/ Stripes',
@@ -324,7 +299,6 @@ export default {
                 value: null
               },
               price: 0,
-              isSelected: false
             },
             {
               name: 'Blue',
@@ -333,7 +307,6 @@ export default {
                 value: null
               },
               price: 0,
-              isSelected: false
             },
             {
               name: 'Green',
@@ -342,7 +315,6 @@ export default {
                 value: '#319b5a'
               },
               price: 0,
-              isSelected: false
             },
             {
               name: 'Brown',
@@ -351,9 +323,9 @@ export default {
                 value: '#b4844b'
               },
               price: 0,
-              isSelected: false
             }
-          ]
+          ],
+          selectedValue: ''
         }
       ],
       product: {
@@ -363,8 +335,8 @@ export default {
         price: '',
         stock: '',
         categories: [],
-
         tags: [],
+        variants: []
       },
       activeImageURL: '',
       photos: [],
@@ -397,6 +369,7 @@ export default {
         .then((response) => {
           this.product = response.data.item
           this.activeImageURL = this.getMediaURL(this.product.media[0])
+          this.variants = this.product.variants
           this.photos = this.product.media
           console.log(this.product)
         })
