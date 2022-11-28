@@ -201,8 +201,6 @@ export default {
       paymentchannels: [
         'afterpay.svg',
         'americanexpress.svg',
-        'applepay.svg',
-        'googlepay.svg',
         'jcb.svg',
         'mastercard.svg',
         'visa.svg'
