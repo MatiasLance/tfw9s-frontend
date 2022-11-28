@@ -26,9 +26,13 @@
         <AddVariantModal
             :active="showAddVariant"
             @close="closeAddVariantDialog"
-            @confirm="addVariant"
+            @confirm="createVariant"
         />
-        <!-- todo: showAddElement modal wip -->
+        <AddElementModal
+          :active="showAddElement"
+          @close="closeAddElementDialog"
+          @confirm="createElement"
+        />
         <!-- show variants -->
         <div class="mb-5 gap-4 sm:grid sm:grid-cols-2">
             <figure
@@ -109,10 +113,12 @@
 
 <script>
 import 'remixicon/fonts/remixicon.css';
+import AddElementModal from './AddElementModal.vue';
 import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'VariantSection',
+  components: { AddElementModal },
   mixins: [ currencyMixin ],
   props: {
     options: {
@@ -153,11 +159,18 @@ export default {
     retrieveVariants() {
       this.variantsList = this.$store.state.product.variants
     },
-    addVariantOpt() {
-      this.showAddVariant = true
-    },
-    addVariant(variantName) {
+    createVariant(variantName) {
       console.log(variantName)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true,
+      });
+    },
+    createElement(element) {
+      console.log(element)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
@@ -169,14 +182,14 @@ export default {
     closeAddVariantDialog() {
       this.showAddVariant = false
     },
+    closeAddElementDialog() {
+      this.showAddElement = false
+    },
+    addVariantOpt() {
+      this.showAddVariant = true
+    },
     addElementOpt() {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in progress',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true
-      });
+      this.showAddElement = true
     },
     assignImage(elementId) {
       console.log(`Assigning image to Element# ${elementId}`)
