@@ -199,13 +199,15 @@ export default {
         }
       ],
       paymentchannels: [
-        'afterpay.svg',
-        'americanexpress.svg',
-        'applepay.svg',
-        'googlepay.svg',
-        'jcb.svg',
+        'stripe-purple.svg',
+        'visa.svg',
         'mastercard.svg',
-        'visa.svg'
+        'maestro.svg',
+        'americanexpress.svg',
+        'jcb.svg',
+        'unionpay.svg',
+        'paypal.jpg',
+        'afterpay.svg',
       ]
     }
   },

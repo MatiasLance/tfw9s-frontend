@@ -97,84 +97,61 @@
           </div>
           <div class="grid grid-cols-6 gap-6">
             <div class="col-span-6">
-              <div class="relative my-4 flex justify-start gap-2">
-                  <label class="mx-2 items-center">
-                    Size
-                  </label>
-                  <select
-                    v-model="size"
-                    class="block w-full appearance-none rounded-md border
-                    border-gray-200 bg-gray-100 py-2 px-3 pr-5
-                    text-lg hover:border-gray-400
-                    focus:border-gray-400 focus:outline-none"
+              <div class="my-4 flex flex-col flex-wrap">
+                  <div
+                    v-for="variant in variants"
+                    :key="variant.name"
+                    class="relative mr-2 mb-4 w-full"
                   >
-                    <option>
-                      Select one
-                    </option>
-                    <option
-                      v-for="size in variants[0].elements"
-                      :key="size.name"
-                    >
-                      {{ size.name }}
-                    </option>
-                  </select>
-                  <i
-                    class="pointer-events-none absolute inset-y-0
-                    right-0 flex items-center px-2 text-gray-500"
-                  >
-                    <svg
-                      width="24"
-                      height="24"
-                      class="h-5 w-5 fill-current"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M7 10l5 5 5-5H7z"/>
-                    </svg>
-					        </i>
-              </div>
-              <div class="relative my-4 flex justify-start gap-2">
-                  <label class="mx-2 items-center">
-                    Color
-                  </label>
-                  <select
-                    v-model="color"
-                    class="block w-full appearance-none rounded-md border
-                    border-gray-200 bg-gray-100 py-2 px-3 pr-5
-                    text-lg hover:border-gray-400
-                    focus:border-gray-400 focus:outline-none"
-                  >
-                    <option>
-                      Select one
-                    </option>
-                    <option
-                      v-for="color in variants[1].elements"
-                      :key="color.name"
-                    >
-                      {{ color.name }}
-                    </option>
-                  </select>
-                  <i
-                    class="pointer-events-none absolute inset-y-0
-                    right-0 flex items-center px-2 text-gray-500"
-                  >
-                    <svg
-                      width="24"
-                      height="24"
-                      class="h-5 w-5 fill-current"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M7 10l5 5 5-5H7z"/>
-                    </svg>
-					        </i>
+                    <label class="flex items-start font-semibold">
+                      {{ variant.name }}
+                    </label>
+                    <div class="grid w-full grid-cols-2 gap-3 lg:grid-cols-4">
+                      <label
+                        v-for="(element, elementKey) in variant.elements"
+                        :key="elementKey"
+                        class="
+                        col-span-4
+                        flex w-full
+                        cursor-pointer flex-wrap border
+                        border-gray-200 bg-transparent
+                        p-3
+                        hover:border-brand-slate hover:bg-slate-100
+                        sm:col-span-2
+                        "
+                      >
+                        <input
+                            v-model="element.isSelected"
+                            :name="variant.name"
+                            :value="element.name"
+                            type="radio"
+                            class="
+                            mt-1 mr-3 h-4 w-4 bg-gray-200 text-brand-black
+                            focus:ring-brand-black"
+                        />
+                        <figcaption class="text-sm text-gray-600">
+                            <span class="my-0 mx-2 text-sm">
+                                {{ element.name }}
+                            </span>
+                            <span
+                            v-if="element.price !== 0"
+                            class="text-sm"
+                          >
+                            - {{ formatCurrency(element.price) }}
+                            </span>
+                            <span>
+                            </span>
+                        </figcaption>
+                      </label>
+                    </div>
+                  </div>
               </div>
             </div>
             <div class="col-span-6">
               <div
-              class="flex flex-col
-              items-center justify-start lg:flex-row
-              lg:gap-2"
+                class="flex flex-col items-start justify-start gap-2"
               >
-                <div class="my-4 flex justify-start gap-2">
+                <div class="my-4">
                   <label class="mx-2 my-auto items-center">
                     Quantity
                   </label>
@@ -182,13 +159,13 @@
                     v-model="quantity"
                     type="number"
                     class="
+                      my-auto
                       h-14
                       w-28
                       border-transparent
                       bg-gray-100
                       py-[13.008px]
-                      pl-[15px]
-                      text-lg
+                      pl-[15px] text-lg
                       focus:border-gray-500 focus:bg-white focus:ring-0
                     "
                     step="1"
@@ -198,30 +175,30 @@
                     name="quantity"
                     @keyup="handleHighStockValue"
                   />
-                  <BaseButton
-                    type="button"
-                    class="
-                      h-14
-                      w-full
-                      cursor-pointer
-                      rounded-lg border
-                      bg-brand-black
-                      py-4
-                      px-5
-                      font-bold
-                      leading-3
-                      text-white
-                      transition
-                      duration-300
-                      hover:shadow-[#1a1d18]/50
-                      lg:w-auto
-                    "
-                    :disabled="!product.stock > 0"
-                    @click="addToCart"
-                  >
-                    Add to Cart
-                  </BaseButton>
                 </div>
+                <BaseButton
+                  type="button"
+                  class="
+                    h-14
+                    w-full
+                    cursor-pointer
+                    rounded-lg border
+                    bg-brand-black
+                    py-4
+                    px-5
+                    font-bold
+                    leading-3
+                    text-white
+                    transition
+                    duration-300
+                    hover:shadow-[#1a1d18]/50
+                    lg:w-auto
+                  "
+                  :disabled="!product.stock > 0"
+                  @click="addToCart"
+                >
+                  Add to Cart
+                </BaseButton>
               </div>
             </div>
           </div>
@@ -291,6 +268,7 @@ export default {
   ],
   data() {
     return {
+      isSelected: '',
       variants: [
         {
           name: 'Size',
@@ -298,27 +276,32 @@ export default {
             {
               name: 'Small',
               photo: null,
-              price: null
+              price: 0,
+              isSelected: true
             },
             {
               name: 'Medium',
               photo: null,
-              price: null
+              price: 0,
+              isSelected: false
             },
             {
               name: 'Large',
               photo: null,
-              price: null
+              price: 0,
+              isSelected: false
             },
             {
               name: 'XLarge',
               photo: null,
-              price: null
+              price: 0,
+              isSelected: false
             },
             {
               name: 'XXLarge',
               photo: null,
-              price: null
+              price: 0,
+              isSelected: false
             }
           ]
         },
@@ -331,7 +314,8 @@ export default {
                 type: 'color',
                 value: '#000'
               },
-              price: null
+              price: 0,
+              isSelected: true
             },
             {
               name: 'Red White w/ Stripes',
@@ -339,7 +323,8 @@ export default {
                 type: 'image',
                 value: null
               },
-              price: null
+              price: 0,
+              isSelected: false
             },
             {
               name: 'Blue',
@@ -347,21 +332,26 @@ export default {
                 type: 'image',
                 value: null
               },
-              price: null
+              price: 0,
+              isSelected: false
             },
             {
               name: 'Green',
               photo: {
                 type: 'color',
                 value: '#319b5a'
-              }
+              },
+              price: 0,
+              isSelected: false
             },
             {
               name: 'Brown',
               photo: {
                 type: 'color',
                 value: '#b4844b'
-              }
+              },
+              price: 0,
+              isSelected: false
             }
           ]
         }
