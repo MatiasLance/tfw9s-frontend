@@ -114,13 +114,17 @@
                       "
                       @click="removeImage()"
                     >
-                  <div class="ri-close-fill ri-lg"></div>
-                </button>
+                      <div class="ri-close-fill ri-lg"></div>
+                    </button>
                 </div>
             </div>
         </template>
         <template v-if="element.photo.type === 'colour'">
-            <span>Work in progress.</span>
+          <div
+          class="mx-auto my-4 flex items-center justify-center"
+          >
+            <ChromePicker v-model="colors" :color="colors" />
+          </div>
         </template>
     </div>
       <hr>
@@ -194,6 +198,20 @@ export default {
         'image',
         'colour'
       ],
+      colors: {
+        hex: '#194d33',
+        hex8: '#194D33A8',
+        hsl: {
+          h: 150, s: 0.5, l: 0.2, a: 1
+        },
+        hsv: {
+          h: 150, s: 0.66, v: 0.30, a: 1
+        },
+        rgba: {
+          r: 25, g: 77, b: 51, a: 1
+        },
+        a: 1
+      },
       thumbnail: '',
       showGenerateBtn: false,
       isImagePreview: false
@@ -207,11 +225,22 @@ export default {
       this.$emit('confirm', this.element)
       this.closeDialog()
     },
+    setColour() {
+      this.element.photo.value = this.colors.hex
+    },
+    setImage() {
+      this.elementCroppa.generateBlob(
+        (blob) => {
+          this.element.photo.value = blob
+        }
+      )
+    },
     generateElementImage() {
       this.elementCroppa.generateBlob(
         (blob) => {
           this.element.photo.imgValue.push(blob)
           this.thumbnail = URL.createObjectURL(blob)
+          this.element.photo.value = blob
         }
       );
       this.elementCroppa.refresh();
