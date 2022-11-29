@@ -90,7 +90,6 @@
                         </span>
                     </figcaption>
                     <div class="ml-11 flex items-end justify-end">
-                        <!-- todo: showAssignImage and showAssignColour -->
                         <VBtn
                             class="self-end text-right text-base"
                             @click="assignImage(elementKey)"
@@ -108,17 +107,37 @@
                 </div>
             </figure>
         </div>
+        <!-- todo: showAssignImage and showAssignColour -->
+        <AssignImageModal
+          :active="showAssignImage"
+          :element-key="selectedElement"
+          @close="closeAssignImageDialog"
+          @confirm="createImageToElement"
+        />
+        <AssignColourModal
+          :active="showAssignColour"
+          :element-key="selectedElement"
+          @close="closeAssignColourDialog"
+          @confirm="createColourToElement"
+        />
     </div>
 </template>
 
 <script>
 import 'remixicon/fonts/remixicon.css';
 import AddElementModal from './AddElementModal.vue';
+import AssignImageModal from './AssignImageModal.vue';
+import AssignColourModal from './AssignColourModal.vue';
 import currencyMixin from '@/mixins/currency';
 
+const toNumber = (str) => +str;
 export default {
   name: 'VariantSection',
-  components: { AddElementModal },
+  components: {
+    AddElementModal,
+    AssignImageModal,
+    AssignColourModal
+  },
   mixins: [ currencyMixin ],
   props: {
     options: {
@@ -130,8 +149,11 @@ export default {
     return {
       showAddVariant: false,
       showAddElement: false,
+      showAssignImage: false,
+      showAssignColour: false,
       variantsList: [],
-      variantSize: ''
+      variantSize: '',
+      selectedElement: -1
     }
   },
   computed: {
@@ -179,11 +201,37 @@ export default {
         queue: true,
       });
     },
+    createImageToElement(imgValue) {
+      console.log(imgValue)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true,
+      });
+    },
+    createColourToElement(colourValue) {
+      console.log(colourValue)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true
+      })
+    },
     closeAddVariantDialog() {
       this.showAddVariant = false
     },
     closeAddElementDialog() {
       this.showAddElement = false
+    },
+    closeAssignImageDialog() {
+      this.showAssignImage = false
+    },
+    closeAssignColourDialog() {
+      this.showAssignColour = false
     },
     addVariantOpt() {
       this.showAddVariant = true
@@ -192,24 +240,14 @@ export default {
       this.showAddElement = true
     },
     assignImage(elementId) {
-      console.log(`Assigning image to Element# ${elementId}`)
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in progress',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true
-      })
+      this.selectedElement = toNumber(elementId)
+      console.log(`Assigning image to Element# ${this.selectedElement}`)
+      this.showAssignImage = true
     },
     assignColour(elementId) {
-      console.log(`Assigning colour to Element# ${elementId}`)
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in progress',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true
-      })
+      this.selectedElement = toNumber(elementId)
+      console.log(`Assigning colour to Element# ${this.selectedElement}`)
+      this.showAssignColour = true
     }
   }
 }
