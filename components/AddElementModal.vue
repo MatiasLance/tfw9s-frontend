@@ -8,6 +8,7 @@
       </div>
       <hr>
       <div class="my-1 p-2">
+        <label>Element Name:</label>
         <VTextField
           v-model="element.name"
           solo
@@ -16,6 +17,7 @@
         ></VTextField>
     </div>
     <div class="my-1 p-2">
+      <label>Element Price:</label>
       <VTextField
         v-model="element.price"
         solo
@@ -25,11 +27,13 @@
       ></VTextField>
     </div>
     <div class="my-1 p-2">
+        <label>Element Type:</label>
         <VSelect
             v-model="element.photo.type"
             :items="items"
             label="Element Type"
             solo
+            color="black"
         ></VSelect>
     </div>
     <div class="my-4 block p-2">
@@ -38,13 +42,19 @@
                 <div class="mx-auto my-9 flex items-center justify-center">
                     <Croppa
                         v-model="elementCroppa"
+                        auto-sizing="true"
+                        placeholder="Attach image"
                         :quality="2"
                         accept=".png, .webp, .jpeg, .jpg"
                         :image-border-radius="60"
                         :zoom-speed="3"
-                        :placeholder-font-size="10"
+                        :placeholder-font-size="18"
                         :prevent-white-space="true"
                         initial-size="contain"
+                        show-loading="true"
+                        @file-type-mismatch="handleFileTypeMismatch"
+                        @new-image-drawn="handleNewImage"
+                        @image-remove="handleRemoveImage"
                     >
                     </Croppa>
                 </div>
@@ -72,6 +82,7 @@
                         </VBtn>
                     </div>
                     <VBtn
+                      v-if="showGenerateBtn"
                       dark
                       large
                       class="my-4 bg-gradient-to-r
@@ -86,8 +97,25 @@
             <div class="grid grid-cols-1 gap-3">
                 <div class="relative col-span-1 flex justify-center">
                     <VImg
+                        v-if="isImagePreview"
                         :src="thumbnail"
                     ></VImg>
+                    <button
+                      v-if="isImagePreview"
+                      type="button"
+                      class="
+                        absolute
+                        left-0 my-2
+                        h-6
+                        w-6 text-brand-lgrey
+                        shadow-sm
+                        hover:bg-brand-black
+                        hover:text-white
+                      "
+                      @click="removeImage()"
+                    >
+                  <div class="ri-close-fill ri-lg"></div>
+                </button>
                 </div>
             </div>
         </template>
@@ -162,10 +190,13 @@ export default {
       },
       elementCroppa: {},
       items: [
+        'Select one',
         'image',
         'colour'
       ],
-      thumbnail: ''
+      thumbnail: '',
+      showGenerateBtn: false,
+      isImagePreview: false
     }
   },
   methods: {
@@ -182,7 +213,10 @@ export default {
           this.element.photo.imgValue.push(blob)
           this.thumbnail = URL.createObjectURL(blob)
         }
-      )
+      );
+      this.elementCroppa.refresh();
+      this.isImagePreview = true
+      this.showGenerateBtn = false
     },
     zoomIn() {
       this.elementCroppa.zoomIn();
@@ -202,6 +236,26 @@ export default {
     flipy() {
       this.elementCroppa.flipY();
     },
+    handleFileTypeMismatch(file) {
+      console.log(file)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Invalid file type. Please choose a jpeg, png or webp file.',
+        position: 'bottom',
+        variant: 'danger',
+        queue: true,
+      });
+    },
+    handleNewImage() {
+      this.showGenerateBtn = true
+    },
+    handleRemoveImage() {
+      this.showGenerateBtn = false
+    },
+    removeImage() {
+      this.thumbnail = ''
+      this.isImagePreview = false;
+    }
   }
 }
 </script>
