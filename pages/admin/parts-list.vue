@@ -371,10 +371,39 @@
             <Tiptap v-model="description" />
           </div>
           <!-- variants section -->
-          <VariantSection
-            ref="newVariant"
-            :options="variantsDemo"
-          />
+          <div class="col-span-3 mb-4 w-full">
+            <label class="mb-1 block">Variants:</label>
+            <select
+              v-model="selectedVariant"
+              class="block w-full rounded-md border
+              border-gray-200 bg-gray-100 py-2 px-4 text-lg"
+            >
+              <option
+                v-for="(variant, variantKey) in variantsDemo"
+                :key="variant.name"
+                :value="variantKey"
+              >
+                {{ variant.name }}
+              </option>
+            </select>
+          </div>
+          <div v-if="selectedVariant !== ''" class="col-span-3 mb-4 w-full">
+            <div class="grid grid-cols-6 gap-2">
+              <SingleElement
+                v-for="(element, elementKey) in
+                  variantsDemo[selectedVariant].elements"
+                :key="elementKey"
+                :eid="elementKey"
+                :variant-name="name"
+                :name="element.name"
+                :price="element.price"
+                :stock="element.stock"
+                :photo="element.photo"
+                @assign-image="assignImage"
+                @assign-colour="assignColour"
+                />
+            </div>
+          </div>
           <!-- categories section -->
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
@@ -676,10 +705,40 @@
             <label class="mb-1 block">Description:</label>
             <Tiptap v-model="description" />
           </div>
-          <!-- variants section -->
-          <VariantSection
-            :options="variants"
-          />
+           <!-- variants section -->
+          <div class="col-span-3 mb-4 w-full">
+            <label class="mb-1 block">Variants:</label>
+            <select
+              v-model="selectedVariant02"
+              class="block w-full rounded-md border
+              border-gray-200 bg-gray-100 py-2 px-4 text-lg"
+            >
+              <option
+                v-for="(variant, variantKey) in variants"
+                :key="variant.name"
+                :value="variantKey"
+              >
+                {{ variant.name }}
+              </option>
+            </select>
+          </div>
+          <div v-if="selectedVariant02 !== ''" class="col-span-3 mb-4 w-full">
+            <div class="grid grid-cols-6 gap-2">
+              <SingleElement
+                v-for="(element, elementKey) in
+                  variants[selectedVariant02].elements"
+                :key="elementKey"
+                :eid="elementKey"
+                :variant-name="name"
+                :name="element.name"
+                :price="element.price"
+                :stock="element.stock"
+                :photo="element.photo"
+                @assign-image="assignImage"
+                @assign-colour="assignColour"
+                />
+            </div>
+          </div>
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
               <label class="mb-1 block"> Category: </label>
@@ -917,13 +976,25 @@
         </button>
       </div>
     </OModal>
+    <AssignImageModal
+      :active="showAssignImage"
+      :element-key="selectedElement"
+      @close="closeAssignImageDialog"
+      @confirm="createImageToElement"
+    />
+    <AssignColourModal
+      :active="showAssignColour"
+      :element-key="selectedElement"
+      @close="closeAssignColourDialog"
+      @confirm="createColourToElement"
+    />
   </div>
 </template>
 
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
-import VariantSection from '~/components/VariantSection.vue';
+import SingleElement from '~/components/SingleElement.vue';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
@@ -940,7 +1011,7 @@ export default {
     BasePagination,
     SearchBar,
     Tiptap,
-    VariantSection,
+    SingleElement,
   },
   mixins: [
     aosMixin,
@@ -989,6 +1060,9 @@ export default {
       filteredTags: [],
       selectedList: [],
       selectedCategory: {},
+      selectedElement: -1,
+      showAssignImage: false,
+      showAssignColour: false,
       flag: false,
       categoryId: '',
       categoryParentId: '',
@@ -1006,33 +1080,50 @@ export default {
         title: 'Products Admin - Revamped',
         description: 'Page for creating product items for Revamped',
       },
+      selectedVariant: '',
+      selectedVariant02: '',
       variantsDemo: [
         {
           name: 'Size',
           elements: [
             {
               name: 'Small',
-              photo: null,
+              photo: {
+                type: '',
+                value: '',
+              },
               price: 0
             },
             {
               name: 'Medium',
-              photo: null,
+              photo: {
+                type: '',
+                value: '',
+              },
               price: 0
             },
             {
               name: 'Large',
-              photo: null,
+              photo: {
+                type: '',
+                value: '',
+              },
               price: 0
             },
             {
               name: 'XLarge',
-              photo: null,
+              photo: {
+                type: '',
+                value: '',
+              },
               price: 0
             },
             {
               name: 'XXLarge',
-              photo: null,
+              photo: {
+                type: '',
+                value: '',
+              },
               price: 0
             }
           ]
@@ -1043,7 +1134,7 @@ export default {
             {
               name: 'Black',
               photo: {
-                type: 'color',
+                type: 'colour',
                 value: '#000'
               },
               price: 0
@@ -1067,7 +1158,7 @@ export default {
             {
               name: 'Green',
               photo: {
-                type: 'color',
+                type: 'colour',
                 value: '#319b5a'
               },
               price: 0
@@ -1075,7 +1166,7 @@ export default {
             {
               name: 'Brown',
               photo: {
-                type: 'color',
+                type: 'colour',
                 value: '#b4844b'
               },
               price: 0
@@ -1659,7 +1750,43 @@ export default {
         this.inStock = value
       }
       this.$forceUpdate()
-    }
+    },
+    assignImage(elementId) {
+      this.selectedElement = toNumber(elementId)
+      console.log(`Assigning image to Element# ${this.selectedElement}`)
+      this.showAssignImage = true
+    },
+    assignColour(elementId) {
+      this.selectedElement = toNumber(elementId)
+      console.log(`Assigning colour to Element# ${this.selectedElement}`)
+      this.showAssignColour = true
+    },
+    closeAssignImageDialog() {
+      this.showAssignImage = false
+    },
+    closeAssignColourDialog() {
+      this.showAssignColour = false
+    },
+    createImageToElement(imgValue) {
+      console.log(imgValue)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true,
+      });
+    },
+    createColourToElement(colourValue) {
+      console.log(colourValue)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true
+      })
+    },
   },
 };
 </script>

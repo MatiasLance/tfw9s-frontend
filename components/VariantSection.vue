@@ -35,77 +35,15 @@
         />
         <!-- show variants -->
         <div class="mb-5 gap-4 sm:grid sm:grid-cols-2">
-            <figure
+          <SingleVariant
             v-for="variant in options"
             :key="variant.id"
-            class="relative
-            rounded-md bg-gray-100 p-4 sm:col-span-2 md:col-span-1"
-            >
-                <div class="flex w-full justify-between">
-                    <label for="size" class="mb-2 block text-xl font-semibold">
-                        {{ variant.name }}
-                    </label>
-                    <VBtn plain elevation="2" small @click="addElementOpt">
-                        <i class="ri-add-fill mr-2"></i>
-                        Add Element
-                    </VBtn>
-                </div>
-                <div class="grid w-full grid-cols-2 gap-2">
-                    <label
-                    v-for="(element, elementKey) in variant.elements"
-                    :key="elementKey"
-                    class="
-                    col-span-2
-                    flex w-full cursor-pointer
-                    flex-wrap border
-                    border-gray-200
-                    bg-transparent p-3
-                    hover:border-brand-slate
-                    hover:bg-slate-100
-                    "
-                    >
-                    <input
-                        :name="variant.name"
-                        :value="element.name"
-                        type="checkbox"
-                        class="
-                        mt-1 mr-3 h-4 w-4 bg-gray-200 text-brand-black
-                        focus:ring-brand-black"
-                    />
-                    <figcaption class="text-gray-600">
-                        <span class="my-0 mx-2">
-                            {{ element.name }}
-                        </span>
-                        <span>
-                        - {{ formatCurrency(element.price) }}
-                        </span>
-                        <span>
-                            <VTextField
-                                v-model="element.price"
-                                solo
-                                prefix="$"
-                                class="w-1/2"
-                            >
-                            </VTextField>
-                        </span>
-                    </figcaption>
-                    <div class="ml-11 flex items-end justify-end">
-                        <VBtn
-                            class="self-end text-right text-base"
-                            @click="assignImage(elementKey)"
-                        >
-                        <i class="ri-image-add-fill"></i>
-                        </VBtn>
-                        <VBtn
-                            class="self-end text-right text-base"
-                            @click="assignColour(elementKey)"
-                        >
-                        <i class="ri-sip-line"></i>
-                        </VBtn>
-                    </div>
-                    </label>
-                </div>
-            </figure>
+            :name="variant.name"
+            :elements="variant.elements"
+            @assign-image="assignImage"
+            @assign-colour="assignColour"
+            @show-element-dialog="addElementOpt"
+          />
         </div>
         <!-- todo: showAssignImage and showAssignColour -->
         <AssignImageModal
@@ -128,6 +66,7 @@ import 'remixicon/fonts/remixicon.css';
 import AddElementModal from './AddElementModal.vue';
 import AssignImageModal from './AssignImageModal.vue';
 import AssignColourModal from './AssignColourModal.vue';
+import SingleVariant from './SingleVariant.vue';
 import currencyMixin from '@/mixins/currency';
 
 const toNumber = (str) => +str;
@@ -136,7 +75,8 @@ export default {
   components: {
     AddElementModal,
     AssignImageModal,
-    AssignColourModal
+    AssignColourModal,
+    SingleVariant
   },
   mixins: [ currencyMixin ],
   props: {
