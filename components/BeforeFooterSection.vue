@@ -4,7 +4,10 @@
     bg-gradient-to-r from-brand-dgrey to-brand-grey"
   >
     <div class="container relative mx-auto max-w-screen-xl px-4 sm:px-8">
-        <div class="flex flex-wrap items-center justify-center">
+        <div
+            class="flex flex-wrap items-center
+                justify-center"
+        >
             <div class="cta-info">
                 <h2 class="mb-8 text-3xl font-semibold">
                     {{ title1 }}
@@ -27,13 +30,22 @@
                     </li>
                     <li class="cta-address flex">
                         <i class="ri-map-pin-fill mr-2"></i>
-                        {{ address }}
+                        {{ address }}*
                     </li>
                     <li class="cta-time flex">
                         <i class="ri-time-fill mr-2"></i>
                         {{ hours }}
                     </li>
                 </ul>
+                <div class="my-7">
+                    <p
+                        v-for="note in importantNotes"
+                        :key="note"
+                        class="text-[16px] sm:text-xs"
+                    >
+                        * {{ note }}
+                    </p>
+                </div>
             </div>
             <div class="cta-newsletter">
                 <h2 class="text-3xl font-semibold">
@@ -76,6 +88,10 @@ export default {
       title1: 'Visit our store',
       phone: '0451 620 707',
       address: '280 Brisbane Road\nLabrador, Queensland 4215',
+      importantNotes: [
+        'For local (Gold Coast) customers and order pickups only.',
+        'Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.'
+      ],
       email: 'finn@revampedofficial.com',
       hours: 'Mon - Fri: 9am-4pm, Sat: 10am-3pm, Sun: CLOSED',
       title2: 'Join our mailing list',
@@ -96,7 +112,7 @@ export default {
 .cta-info {
     flex: 0 0 50%;
     color: #fff;
-    padding: 70px 0;
+    padding: 70px 15px;
     z-index: 1;
 }
 .cta-info ul {
@@ -126,5 +142,11 @@ export default {
     max-width: 420px;
     margin: 0 auto;
     align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+    .cta-info {
+        flex: 0 0 90%;
+    }
 }
 </style>
