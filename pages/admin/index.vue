@@ -142,6 +142,19 @@ Here is what's happening with your shop today:
                   >See all categories</NuxtLink>
               </div>
             </article>
+
+            <article class="rounded border border-gray-200 bg-white shadow-sm">
+              <div class="p-5">
+                  <h2 class="text-lg font-semibold text-black">
+                    Variants
+                  </h2>
+                  <hr class="my-4">
+                  <NuxtLink
+                  to="/admin/variants"
+                  class="hover:text-brand-black"
+                  >See all variants</NuxtLink>
+              </div>
+            </article>
         </div> <!-- grid.// -->
 
     </section> <!-- container -->

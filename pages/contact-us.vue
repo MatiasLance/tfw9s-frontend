@@ -83,12 +83,17 @@
                 bg-brand-black px-6 py-3
                 text-base text-white hover:bg-slate-200
                 hover:text-black"
-                @click="window.open('https://www.google.com/maps/dir/?api=1&destination=75+Surf+Parade+Broadbeach+QLD+4218', '_blank')"
+                @click="getDirectionsLink"
               >
               Get directions
             </button>
               <address class="my-4">
-                  {{ address }}
+                  <!-- eslint-disable-next-line vue/no-v-html -->
+                  <p v-html="address">
+                  </p>
+                  <p class="my-3 text-[16px] sm:text-sm">
+                    Note: {{ importantNotes }}
+                  </p>
               </address>
               <span class="mb-2 block">
                 <a
@@ -140,7 +145,7 @@
               </h5>
               <div class="mb-3"></div>
               <div class="flex justify-start gap-2">
-                <a href="#">
+                <a :href="socials.fb">
                   <div
                     class="
                       flex
@@ -154,6 +159,54 @@
                     "
                   >
                     <i class="ri-facebook-line text-2xl"></i>
+                  </div>
+                </a>
+                <a :href="socials.ig">
+                  <div
+                    class="
+                      flex
+                      h-[48px]
+                      w-[48px]
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      bg-gray-200
+                      hover:bg-slate-400 hover:text-white
+                    "
+                  >
+                    <i class="ri-instagram-line text-2xl"></i>
+                  </div>
+                </a>
+                <a :href="socials.youtube">
+                  <div
+                    class="
+                      flex
+                      h-[48px]
+                      w-[48px]
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      bg-gray-200
+                      hover:bg-slate-400 hover:text-white
+                    "
+                  >
+                    <i class="ri-youtube-line text-2xl"></i>
+                  </div>
+                </a>
+                <a :href="socials.tiktok">
+                  <div
+                    class="
+                      flex
+                      h-[48px]
+                      w-[48px]
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      bg-gray-200
+                      hover:bg-slate-400 hover:text-white
+                    "
+                  >
+                    <i class="ri-music-line text-2xl"></i>
                   </div>
                 </a>
               </div>
@@ -180,7 +233,9 @@ export default {
   },
   data() {
     return {
-      address: '280 Brisbane Road\nLabrador, Queensland 4215',
+      address: '280 Brisbane Road<br>Labrador, Queensland 4215<br>Australia',
+      importantNotes: 'For local (Gold Coast) customers and order pickups only. Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.',
+      mapslink: 'https://www.google.com/maps/dir/?api=1&destination=280+Brisbane+Road+Labrador+QLD+4215',
       mobile: '0451 620 707',
       email: 'finn@revampedofficial.com',
       toemail: 'mailto:finn@revampedoffical.com',
@@ -193,6 +248,12 @@ export default {
       time2: '9:00AM - 7:00PM',
       time3: '10:00AM - 3:00PM',
       time4: 'CLOSED',
+      socials: {
+        fb: 'https://www.facebook.com/RevampedAustralia/',
+        ig: 'https://www.instagram.com/RevampedAustralia/',
+        tiktok: 'https://www.tiktok.com/@finnyboiflayva',
+        youtube: 'https://www.youtube.com/channel/UCZir79EizOj5uzzgSoSfljQ'
+      }
     }
   },
   head() {
@@ -206,6 +267,11 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    getDirectionsLink() {
+      window.open(this.mapslink, '_blank')
+    }
   }
 };
 </script>
