@@ -22,7 +22,7 @@
                     </span>
                     </div>
             <div class="flex items-center justify-center gap-0.5">
-                <a :href="fb" target="_blank">
+                <a :href="socials.fb" target="_blank">
                     <button
                         type="button"
                         class="
@@ -45,7 +45,7 @@
                         <i class="ri-facebook-fill text-2xl md:text-sm"></i>
                     </button>
                     </a>
-                    <a :href="ig" target="_blank">
+                    <a :href="socials.ig" target="_blank">
                     <button
                         type="button"
                         class="
@@ -69,7 +69,7 @@
                         <i class="ri-instagram-line text-2xl md:text-sm"></i>
                     </button>
                     </a>
-                    <a :href="tiktok" target="_blank">
+                    <a :href="socials.tiktok" target="_blank">
                     <button
                         type="button"
                         class="
@@ -84,12 +84,13 @@
                         py-4
                         font-light
                         text-[#fff] transition
-                        duration-300 hover:bg-[#000000]
+                        duration-300 hover:bg-gradient-to-b hover:from-[#00f2ea]
+                        hover:via-[#010101] hover:to-[#ee1d52]
                         hover:text-white
                         hover:shadow-md hover:shadow-[#0c66ee]/50
                         "
                     >
-                        <i class="ri-music-fill text-1xl md:text-sm"></i>
+                        <i class="ri-music-fill text-2xl md:text-sm"></i>
                     </button>
                     </a>
             </div>
