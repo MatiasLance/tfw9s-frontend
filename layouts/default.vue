@@ -4,6 +4,7 @@
     >
         <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
         <v-app>
+            <TopHeader />
             <NavHeader class="font-montserrat relative py-4 font-semibold"/>
             <Nuxt />
             <Footer />
@@ -12,7 +13,9 @@
 </template>
 
 <script>
+import TopHeader from '../components/TopHeader.vue'
 export default {
+  components: { TopHeader },
   mounted() {
     document.addEventListener('click', this.close)
   },

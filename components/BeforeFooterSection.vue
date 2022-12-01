@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       title1: 'Visit our store',
-      phone: '+61 451 620 707',
+      phone: '0451 620 707',
       address: '280 Brisbane Road\nLabrador, Queensland 4215',
       email: 'finn@revampedofficial.com',
       hours: 'Mon - Fri: 9am-4pm, Sat: 10am-3pm, Sun: CLOSED',
