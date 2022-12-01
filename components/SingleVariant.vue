@@ -1,7 +1,7 @@
 <template>
     <figure
         class="relative
-        rounded-md bg-gray-100 p-4 sm:col-span-2 md:col-span-1"
+        my-9 rounded-md bg-gray-100 p-4 sm:col-span-2 md:col-span-1"
     >
         <div class="flex w-full justify-between">
             <label
@@ -17,7 +17,7 @@
         </div>
         <div class="grid w-full grid-cols-2 gap-2">
             <!-- todo: change elementKey to element.id -->
-            <SingleElement
+            <SingleElementEdit
                 v-for="(element, elementKey) in elements"
                 :key="elementKey"
                 :eid="elementKey"
@@ -34,11 +34,11 @@
 </template>
 
 <script>
-import SingleElement from './SingleElement.vue'
+import SingleElementEdit from './SingleElementEdit.vue';
 const toNumber = (str) => +str;
 export default {
   name: 'SingleVariant',
-  components: { SingleElement },
+  components: { SingleElementEdit },
   props: {
     name: {
       type: String,

@@ -37,6 +37,26 @@
                             class="w-1/2"
                         >
                         </VTextField>
+                        <div class="my-3 flex justify-start">
+                          <input
+                            v-model="newStock"
+                            type="number"
+                            min="0"
+                            class="
+                              form-input
+                              block
+                              w-24
+                              appearance-none
+                              border border-gray-100
+                              bg-gray-200
+                              py-2
+                              px-3
+                              hover:border-gray-400
+                              focus:border-gray-400 focus:outline-none
+                            "
+                            @keyup="handleNegativeValue"
+                          /><small class="self-center text-xs">in Stock</small>
+                        </div>
                     </span>
                 </figcaption>
                 <div class="ml-11 flex flex-col items-center justify-center">
@@ -45,13 +65,17 @@
                     >
                     <template v-if="photo.type === 'image'">
                         <!-- todo: change this to photo.value -->
-                        <VImg
-                        :width="100"
-                        :height="100"
-                        class="rounded-circle"
-                        :src="demoImgPath"
+                        <div
+                        class="mx-auto my-4 flex items-end justify-end"
                         >
-                        </VImg>
+                          <VImg
+                          :width="100"
+                          :height="100"
+                          class="rounded-circle"
+                          :src="demoImgPath"
+                          >
+                          </VImg>
+                        </div>
                     </template>
                     <template v-if="photo.type === 'colour'">
                         <div
@@ -130,10 +154,11 @@ export default {
       editablePhoto: '',
       editableColour: '',
       editablePrice: 0,
+      newStock: 0,
       selectedElement: -1,
       showAssignImage: false,
       showAssignColour: false,
-      demoImgPath: '~/img/sample/colour/stripes.png'
+      demoImgPath: '/img/sample/colour/stripes4.png'
     }
   },
   methods: {
@@ -144,7 +169,7 @@ export default {
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
       this.$emit('assign-colour', this.selectedElement)
-    }
+    },
   }
 }
 </script>

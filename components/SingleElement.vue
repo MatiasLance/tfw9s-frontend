@@ -36,13 +36,17 @@
                     >
                     <template v-if="photo.type === 'image'">
                         <!-- todo: change this to photo.value -->
-                        <VImg
-                        :width="100"
-                        :height="100"
-                        class="rounded-circle"
-                        :src="demoImgPath"
+                        <div
+                        class="mx-auto my-4 flex items-end justify-end"
                         >
-                        </VImg>
+                          <VImg
+                          :width="100"
+                          :height="100"
+                          class="rounded-circle"
+                          :src="demoImgPath"
+                          >
+                          </VImg>
+                        </div>
                     </template>
                     <template v-if="photo.type === 'colour'">
                         <div
