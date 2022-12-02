@@ -39,9 +39,6 @@
         </BaseHeader>
         <section class="container mx-auto max-w-screen-lg px-2 sm:px-4">
             <div class="my-8 w-full py-7 sm:px-12">
-                <p>
-                    This is a test.
-                </p>
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <VariantSection
                         :options="variantsDemo"
