@@ -207,13 +207,17 @@ export default {
           text: 'Shipping'
         },
         {
+          to: '/returns-refunds',
+          text: 'Returns & Refunds'
+        },
+        {
           to: '/terms',
           text: 'Terms & Conditions'
         },
         {
-          to: '/returns-refunds',
-          text: 'Returns & Refunds'
-        }
+          to: '/privacy-policy',
+          text: 'Privacy'
+        },
       ],
       links3: [
         {
