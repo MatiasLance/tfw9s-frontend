@@ -27,9 +27,6 @@
                 <NuxtLink to="/">
                 <VBtn text color="white">Home</VBtn>
                 </NuxtLink>
-                <NuxtLink to="/admin">
-                <VBtn text color="white">Admin</VBtn>
-                </NuxtLink>
             </span>
             </span>
             <h1 class="flex flex-row text-4xl font-bold text-white lg:text-6xl">
@@ -64,12 +61,15 @@
 
 <script>
 import BaseAccordion from '../components/base/BaseAccordion.vue'
+import aosMixin from '@/mixins/aos'
+
 export default {
   name: 'faq',
   components: { BaseAccordion },
+  mixins: [ aosMixin ],
   data() {
     return {
-      pageName: 'Frequently Asked Questions',
+      pageName: 'FAQs',
       blurb: 'Content',
       accordions: [
         {
@@ -101,7 +101,7 @@ export default {
   },
   head() {
     return {
-      title: 'Frequently Asked Questions | Revamped Official',
+      title: 'FAQs | Revamped Official',
       meta: [
         {
           hid: 'description',

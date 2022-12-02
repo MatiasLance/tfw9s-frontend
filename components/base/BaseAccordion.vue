@@ -11,14 +11,14 @@
             size="25" color="black"
             class="rotate-180 transition duration-300"
         >
-            mdi-expand-more
+            mdi-chevron-down
         </VIcon>
         <VIcon
             v-else
             size="25"
             class="rotate-0 transition duration-300"
         >
-            mdi-expand-more
+            mdi-chevron-down
         </VIcon>
       </div>
     </button>
