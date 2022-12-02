@@ -36,16 +36,16 @@
         </BaseHeader>
 
         <div class="container mx-auto md:max-w-6xl">
-            <div class="content-block py-24">
+            <div class="content-block py-9 lg:py-24">
                 <article class="space-y-9">
                     <section
                         v-for="(content, contentKey) in contents"
                         :key="contentKey"
-                        class="my-11"
+                        class="my-16"
                     >
                         <h2
                             v-if="content.title !== ''"
-                            class="mb-5 text-2xl font-bold lg:text-3xl"
+                            class="mb-11 text-2xl font-bold lg:text-3xl"
                         >
                             {{ content.title }}
                         </h2>
