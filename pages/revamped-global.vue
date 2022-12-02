@@ -159,17 +159,18 @@ export default {
             as possible, to provide the best experience for shoppers.
             This business process is no different from what other giant,
             online retailers do. In simpler terms, these are products
-            stocked at our interstate and intercity associate retail
-            stores, but not currently in-hand at our shop. We do this
+            stocked at our overseas affiliate retail stores,
+            but not currently in-hand at our shop.  We do this
             because it enables a larger range of products to buy. 
             `,
             `
             Depending on the product ordered, each product is held by a
-            specific supplier in different states around Australia, which
+            specific supplier (over 100 suppliers!) in different countries
+            all over the world in 20 countries, which
             the shipping times may vary. In some cases, we receive the
             product from some suppliers within 2 – 4 days. In other
             cases, the longest time it will take to touch down at
-            our store is 7 days. 
+            our store is 14 days. 
             `,
             `
             We will try our best to advise the shipping times for
