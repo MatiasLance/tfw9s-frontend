@@ -486,24 +486,24 @@ export default {
           text: 'About us'
         },
         {
-          to: '/location',
-          text: 'Location'
+          to: '/reviews',
+          text: 'Reviews',
         },
         {
-          to: '/market-days',
-          text: 'Market Days'
+          to: '/admin',
+          text: 'Admin',
         },
         {
-          to: '/our-partners',
-          text: 'Our Partners'
+          to: '/revamped-intercity',
+          text: 'REVAMPED X INTERCITY'
         },
         {
-          to: '/united-nations',
-          text: 'United Nations SDG\'s'
+          to: '/revamped-express',
+          text: 'REVAMPED X EXPRESS'
         },
         {
-          to: '/chosen-charities',
-          text: 'Chosen Charities'
+          to: '/revamped-global',
+          text: 'REVAMPED X GLOBAL'
         }
       ],
       rightMenu: [

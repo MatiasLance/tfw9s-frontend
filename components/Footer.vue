@@ -146,15 +146,6 @@
           </div>
           <div class="space-x-6">
             <nav class="space-x-4">
-              <NuxtLink
-                v-for="(link, linkIndex) in links3"
-                :key="`links3-${linkIndex}`"
-                style="color:#fff;"
-                :to="link.to" class="text-xs
-                opacity-70 hover:opacity-100"
-              >
-                {{ link.text }}
-              </NuxtLink>
             </nav>
           </div>
         </div>
@@ -215,7 +206,7 @@ export default {
           text: 'Terms & Conditions'
         },
         {
-          to: '/privacy-policy',
+          to: '/privacy',
           text: 'Privacy'
         },
       ],
