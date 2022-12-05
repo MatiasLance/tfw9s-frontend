@@ -3,13 +3,13 @@
     <div
       v-for="slider in sliders"
       :key="slider.id"
-      class="h-[400px] w-full bg-cover sm:h-[600px] lg:h-[900px]"
+      class="h-[400px] w-full bg-cover bg-top sm:h-[600px] lg:h-[900px]"
     >
       <NuxtLink to="/shop" class="cursor-pointer">
         <img
            :src="`/img/hero/${slider.path}`"
-           class="min-h-full w-full object-cover
-           object-center lg:my-0"
+           class="h-[400px] w-full
+           object-cover lg:my-0 lg:h-[900px]"
            alt=""
          />
       </NuxtLink>
