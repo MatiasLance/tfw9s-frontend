@@ -17,22 +17,13 @@
         ></VTextField>
     </div>
     <div class="my-1 p-2">
-      <label>Element Price:</label>
-      <VTextField
-        v-model="element.price"
-        solo
-        label="Element Price"
-        prefix="$"
-        @keyup.enter="confirmAction"
-      ></VTextField>
-    </div>
-    <div class="my-1 p-2">
         <label>Element Type:</label>
         <VSelect
             v-model="element.photo.type"
             :items="items"
             label="Element Type"
             solo
+            required
             color="black"
         ></VSelect>
     </div>
@@ -51,7 +42,7 @@
                         :placeholder-font-size="18"
                         :prevent-white-space="true"
                         initial-size="contain"
-                        show-loading="true"
+                        :show-loading="true"
                         @file-type-mismatch="handleFileTypeMismatch"
                         @new-image-drawn="handleNewImage"
                         @image-remove="handleRemoveImage"
@@ -119,11 +110,15 @@
                 </div>
             </div>
         </template>
-        <template v-if="element.photo.type === 'colour'">
+        <template v-if="element.photo.type === 'color'">
           <div
-          class="mx-auto my-4 flex items-center justify-center"
+          class="mx-auto my-4 flex flex-col items-center justify-center"
           >
+            <small class="text-sm">Selected: {{ element.photo.value }}</small>
             <ChromePicker v-model="colors" :color="colors" />
+            <VBtn class="my-3 uppercase" @click="setColour">
+              Generate
+            </VBtn>
           </div>
         </template>
     </div>
@@ -161,7 +156,7 @@
             hover:bg-brand-black
             hover:text-white
           "
-          @click="confirmAction"
+          @click="confirmAction(uid)"
         >
           Confirm
         </button>
@@ -176,6 +171,10 @@ import 'remixicon/fonts/remixicon.css';
 export default {
   name: 'AddElementModal',
   props: {
+    uid: {
+      type: Number,
+      required: true
+    },
     active: {
       type: Boolean,
       required: true,
@@ -185,7 +184,6 @@ export default {
     return {
       element: {
         name: '',
-        price: 0,
         photo: {
           type: '',
           value: '',
@@ -196,7 +194,7 @@ export default {
       items: [
         'Select one',
         'image',
-        'colour'
+        'color'
       ],
       colors: {
         hex: '#194d33',
@@ -221,8 +219,15 @@ export default {
     closeDialog() {
       this.$emit('close')
     },
-    confirmAction() {
-      this.$emit('confirm', this.element)
+    confirmAction(uid) {
+      const submitValue = {
+        variantId: uid,
+        name: this.element.name,
+        thumbnailType: this.element.photo.type,
+        thumbnail: this.element.photo.value,
+        order: ''
+      }
+      this.$emit('confirm', submitValue)
       this.closeDialog()
     },
     setColour() {

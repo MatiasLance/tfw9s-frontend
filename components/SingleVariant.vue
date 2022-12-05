@@ -10,7 +10,10 @@
             >
                 {{ name }}
             </label>
-            <div class="flex flex-col justify-end lg:flex-row">
+            <div
+              class="flex flex-col justify-end space-y-4
+              lg:flex-row lg:space-y-0"
+            >
               <VBtn plain elevation="2" x-small @click="editVariantOpt">
                   <i class="ri-pencil-fill mr-2"></i>
               </VBtn>
@@ -24,18 +27,19 @@
             </div>
         </div>
         <div class="grid w-full grid-cols-2 gap-2">
-            <!-- todo: change elementKey to element.id -->
             <SingleElementEdit
-                v-for="(element, elementKey) in elements"
-                :key="elementKey"
-                :eid="elementKey"
+                v-for="element in elements"
+                :key="element.id"
+                :eid="element.id"
                 :variant-name="name"
                 :name="element.name"
                 :price="element.price"
                 :stock="element.stock"
-                :photo="element.photo"
+                :photo="element.thumbnail"
+                :photo-type="element.thumbnail_type"
                 @assign-image="assignImage"
                 @assign-colour="assignColour"
+                @remove-element="removeElement"
             />
         </div>
         <EditVariantModal
@@ -96,6 +100,12 @@
         </div>
       </OModal>
     </div>
+    <AddElementModal
+        :active="showAddElement"
+        :uid="uid"
+        @close="closeAddElementDialog"
+        @confirm="createElement"
+      />
     </figure>
 </template>
 
@@ -125,6 +135,7 @@ export default {
       editableVariant: '',
       selectedElement: -1,
       newVariantName: '',
+      showAddElement: false,
       showEditVariant: false,
       showDeleteVariant: false,
       showDeleteVariantDialog: false
@@ -139,14 +150,50 @@ export default {
       this.selectedElement = toNumber(elementId)
       this.$emit('assign-colour', this.selectedElement)
     },
+    createElement(element) {
+      console.log(element)
+      const form = new FormData()
+      form.append('name', element.name)
+      form.append('thumbnail_type', element.thumbnailType)
+      form.append('thumbnail', element.thumbnail)
+      form.append('order', element.order)
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+
+      this.$axios
+        .$post(`v1/variants/${element.variantId}`, form, config)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: response.title,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true
+          })
+          this.$emit('retrieve')
+        })
+      this.$oruga.notification.open({
+        duration: 3000,
+        message: 'Creating element...',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true,
+      });
+    },
+    removeElement(elementId) {
+      this.$emit('remove-element', elementId)
+    },
     addElementOpt() {
-      this.$emit('show-element-dialog', true)
+      this.showAddElement = true
     },
     deleteVariantOpt() {
       this.showDeleteVariant = true
     },
     editVariantOpt() {
       this.showEditVariant = true
+    },
+    closeAddElementDialog() {
+      this.showAddElement = false
     },
     closeEditVariantDialog() {
       this.showEditVariant = false
