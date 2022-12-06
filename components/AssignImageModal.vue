@@ -177,7 +177,7 @@ export default {
       const editedElement = {
         id: this.elementKey,
         name: this.elementName,
-        thumbnail: this.thumbnail,
+        thumbnail: this.imgValue,
         thumbnailType: this.thumbnailType
       }
       this.$emit('confirm', editedElement)

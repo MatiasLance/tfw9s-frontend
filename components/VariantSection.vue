@@ -53,6 +53,7 @@
           @confirm="createImageToElement"
         />
         <AssignColourModal
+          ref="assignCol"
           :active="showAssignColour"
           :element-key="selectedElement"
           @close="closeAssignColourDialog"
@@ -233,14 +234,29 @@ export default {
       form.append('name', editedElement.name)
       form.append('thumbnail_type', editedElement.thumbnailType)
       form.append('thumbnail', editedElement.thumbnail)
-      console.log(form)
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in progress',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true
-      })
+
+      this.$axios
+        .$post(`/v1/variants/elements/${editedElement.id}`, form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: response.title,
+            position: 'bottom',
+            variant: 'success',
+            queue: true
+          })
+          this.$emit('retrieve')
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to update element',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true
+          })
+        })
     },
     removeElementProceed(elementId) {
       const id = toNumber(elementId)
@@ -332,8 +348,10 @@ export default {
     },
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
-      console.log(`Assigning colour to Element# ${this.selectedElement}`)
-      this.showAssignColour = true
+      this.$refs.assignCol.retrieveElement(this.selectedElement)
+      setTimeout(() => {
+        this.showAssignColour = true
+      }, 2000)
     },
     removeElement(elementId) {
       this.selectedElement = toNumber(elementId)
