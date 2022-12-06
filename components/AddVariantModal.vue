@@ -70,13 +70,20 @@ export default {
   data() {
     return { variantName: '' }
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.variantName = ''
+    })
+  },
   methods: {
     closeDialog() {
       this.$emit('close')
+      this.variantName = ''
     },
     confirmAction() {
       this.$emit('confirm', this.variantName)
       this.closeDialog()
+      this.variantName = ''
     },
   },
 }
