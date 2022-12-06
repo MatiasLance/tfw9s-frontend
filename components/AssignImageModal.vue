@@ -3,7 +3,7 @@
     <div class="w-[440px] rounded bg-white">
         <div class="p-5">
             <span class="text-xl font-bold">
-                Assign Image {{ elementKey }}
+                Assign Image for {{ elementName }}
             </span>
         </div>
         <hr>
@@ -131,6 +131,7 @@
 
 <script>
 import 'remixicon/fonts/remixicon.css'
+import 'vue-croppa/dist/vue-croppa.css'
 
 export default {
   name: 'AssignImageModal',
@@ -147,8 +148,10 @@ export default {
   data() {
     return {
       imgValue: '',
+      elementName: '',
       elementCroppa: {},
       thumbnail: '',
+      thumbnailType: 'image',
       showGenerateBtn: false,
       isImagePreview: false
     }
@@ -157,8 +160,27 @@ export default {
     closeDialog() {
       this.$emit('close')
     },
+    retrieveElement(elid) {
+      this.$axios
+        .$get(`/v1/variants/elements/${elid}`)
+        .then((response) => {
+          this.elementName = response.data.element.name
+          this.thumbnail = response.data.element.thumbnail.value
+          this.thumbnailType = response.data.element.thumbnail_type
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
     confirmAction() {
-      this.$emit('confirm', this.imgValue)
+      this.thumbnailType = 'image'
+      const editedElement = {
+        id: this.elementKey,
+        name: this.elementName,
+        thumbnail: this.thumbnail,
+        thumbnailType: this.thumbnailType
+      }
+      this.$emit('confirm', editedElement)
     },
     setImage() {
       this.elementCroppa.generateBlob((blob) => {

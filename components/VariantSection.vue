@@ -45,8 +45,8 @@
             @update-element="updateElement"
           />
         </div>
-        <!-- todo: showAssignImage and showAssignColour -->
         <AssignImageModal
+          ref="assignImg"
           :active="showAssignImage"
           :element-key="selectedElement"
           @close="closeAssignImageDialog"
@@ -196,18 +196,44 @@ export default {
           });
         });
     },
-    createImageToElement(imgValue) {
-      console.log(imgValue)
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in progress',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true,
-      });
+    createImageToElement(editedElement) {
+      console.log(editedElement)
+      const form = new FormData()
+      form.append('_method', 'PATCH')
+      form.append('name', editedElement.name)
+      form.append('thumbnail_type', editedElement.thumbnailType)
+      form.append('thumbnail', editedElement.thumbnail)
+
+      this.$axios
+        .$post(`/v1/variants/elements/${editedElement.id}`, form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: response.title,
+            position: 'bottom',
+            variant: 'success',
+            queue: true
+          })
+          this.$emit('retrieve')
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to update element',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true
+          })
+        })
     },
-    createColourToElement(colourValue) {
-      console.log(colourValue)
+    createColourToElement(editedElement) {
+      const form = new FormData()
+      form.append('_method', 'PATCH')
+      form.append('name', editedElement.name)
+      form.append('thumbnail_type', editedElement.thumbnailType)
+      form.append('thumbnail', editedElement.thumbnail)
+      console.log(form)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
@@ -299,8 +325,10 @@ export default {
     },
     assignImage(elementId) {
       this.selectedElement = toNumber(elementId)
-      console.log(`Assigning image to Element# ${this.selectedElement}`)
-      this.showAssignImage = true
+      this.$refs.assignImg.retrieveElement(this.selectedElement)
+      setTimeout(() => {
+        this.showAssignImage = true
+      }, 2000)
     },
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
