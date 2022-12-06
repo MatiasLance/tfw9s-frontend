@@ -28,21 +28,20 @@
             @close="closeAddVariantDialog"
             @confirm="createVariant"
         />
-        <AddElementModal
-          :active="showAddElement"
-          @close="closeAddElementDialog"
-          @confirm="createElement"
-        />
         <!-- show variants -->
         <div class="mb-5 gap-4 sm:grid sm:grid-cols-2">
           <SingleVariant
             v-for="variant in options"
             :key="variant.id"
+            :uid="variant.id"
             :name="variant.name"
             :elements="variant.elements"
             @assign-image="assignImage"
             @assign-colour="assignColour"
-            @show-element-dialog="addElementOpt"
+            @edit-variant="updateVariant"
+            @delete-variant="removeVariant"
+            @retrieve="retrieveVariants"
+            @remove-element="removeElement"
           />
         </div>
         <!-- todo: showAssignImage and showAssignColour -->
@@ -58,12 +57,62 @@
           @close="closeAssignColourDialog"
           @confirm="createColourToElement"
         />
+        <OModal
+          :active="showRemoveElement"
+          :element-key="selectedElement"
+          @close="closeRemoveElementDialog"
+        >
+        <div class="w-full rounded bg-white sm:w-[440px]">
+          <div class="p-4">
+            <div class="text-lg leading-tight">
+              Are you sure you want to delete this element ?
+            </div>
+          </div>
+          <hr>
+          <div
+            class="
+              flex items-center
+              justify-end
+              gap-2
+              px-4
+              pt-2
+            "
+          >
+            <button
+              type="button"
+              class="
+                rounded
+                px-2
+                py-1
+                hover:bg-gray-500
+                hover:text-white
+              "
+              @click="closeRemoveElementDialog"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="
+                rounded
+                px-2
+                py-1
+                text-brand-black
+                hover:bg-brand-black
+                hover:text-white
+              "
+              @click="removeElementProceed(selectedElement)"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </OModal>
     </div>
 </template>
 
 <script>
 import 'remixicon/fonts/remixicon.css';
-import AddElementModal from './AddElementModal.vue';
 import AssignImageModal from './AssignImageModal.vue';
 import AssignColourModal from './AssignColourModal.vue';
 import SingleVariant from './SingleVariant.vue';
@@ -73,10 +122,9 @@ const toNumber = (str) => +str;
 export default {
   name: 'VariantSection',
   components: {
-    AddElementModal,
     AssignImageModal,
     AssignColourModal,
-    SingleVariant
+    SingleVariant,
   },
   mixins: [ currencyMixin ],
   props: {
@@ -91,20 +139,14 @@ export default {
       showAddElement: false,
       showAssignImage: false,
       showAssignColour: false,
+      showRemoveElement: false,
       variantsList: [],
       variantSize: '',
-      selectedElement: -1
+      selectedElement: -1,
+      selectedVariantId: -1,
     }
   },
   computed: {
-    variants: {
-      get() {
-        return this.$store.state.product.variants;
-      },
-      set(value) {
-        this.$store.commit('product/setVariants', value)
-      }
-    },
     elements: {
       get(id) {
         return this.$store.state.product.variants[id].elements
@@ -114,32 +156,36 @@ export default {
       }
     }
   },
-  mounted() {
-    this.retrieveVariants()
-  },
   methods: {
     retrieveVariants() {
-      this.variantsList = this.$store.state.product.variants
+      this.$emit('retrieve')
     },
     createVariant(variantName) {
-      console.log(variantName)
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in progress',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true,
-      });
-    },
-    createElement(element) {
-      console.log(element)
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in progress',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true,
-      });
+      const form = new FormData();
+      form.append('name', variantName);
+
+      this.$axios
+        .$post('v1/variants/', form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: response.title,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          this.$emit('retrieve')
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.title,
+            position: 'bottom',
+            variant: 'danger',
+            closable: true,
+            queue: true,
+          });
+        });
     },
     createImageToElement(imgValue) {
       console.log(imgValue)
@@ -161,6 +207,32 @@ export default {
         queue: true
       })
     },
+    removeElementProceed(elementId) {
+      const id = toNumber(elementId)
+      this.$axios
+        .$delete(`/v1/variants/elements/${id}`)
+        .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: response.title,
+            position: 'bottom',
+            variant: 'info',
+            queue: true
+          })
+          this.closeRemoveElementDialog()
+          this.retrieveVariants()
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to remove element',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true
+          })
+        })
+    },
     closeAddVariantDialog() {
       this.showAddVariant = false
     },
@@ -172,6 +244,9 @@ export default {
     },
     closeAssignColourDialog() {
       this.showAssignColour = false
+    },
+    closeRemoveElementDialog() {
+      this.showRemoveElement = false
     },
     addVariantOpt() {
       this.showAddVariant = true
@@ -188,6 +263,65 @@ export default {
       this.selectedElement = toNumber(elementId)
       console.log(`Assigning colour to Element# ${this.selectedElement}`)
       this.showAssignColour = true
+    },
+    removeElement(elementId) {
+      this.selectedElement = toNumber(elementId)
+      this.showRemoveElement = true
+    },
+    updateVariant(editedVariant) {
+      console.log(editedVariant)
+      const form = new FormData()
+      form.append('_method', 'PATCH')
+      form.append('name', editedVariant.name)
+      form.append('id', editedVariant.id)
+
+      this.$axios
+        .$post(`v1/variants/${editedVariant.id}`, form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: response.title,
+            position: 'bottom',
+            variant: 'success',
+            queue: true
+          })
+          this.$emit('retrieve')
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.title,
+            position: 'bottom',
+            variant: 'danger',
+            closable: true,
+            queue: true,
+          });
+        });
+    },
+    removeVariant(index) {
+      console.log(index)
+      this.$axios
+        .$delete(`v1/variants/${index}`)
+        .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: response.title,
+            position: 'bottom',
+            variant: 'success',
+            queue: true
+          });
+          this.$emit('retrieve')
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.title,
+            position: 'bottom',
+            variant: 'danger',
+            closable: true,
+            queue: true,
+          });
+        });
     }
   }
 }

@@ -39,12 +39,10 @@
         </BaseHeader>
         <section class="container mx-auto max-w-screen-lg px-2 sm:px-4">
             <div class="my-8 w-full py-7 sm:px-12">
-                <p>
-                    This is a test.
-                </p>
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <VariantSection
-                        :options="variantsDemo"
+                        :options="variantList"
+                        @retrieve="retrieveVariants"
                     />
                 </div>
             </div>
@@ -61,6 +59,7 @@ export default {
   components: { VariantSection },
   data() {
     return {
+      variantList: [],
       variantsDemo: [
         {
           name: 'Size',
@@ -153,7 +152,34 @@ export default {
           ]
         }
       ],
+      query: ''
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.retrieveVariants()
+    })
+  },
+  methods: {
+    retrieveVariants() {
+      const query = { q: this.query }
+
+      // Sanitize and remove null values
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/variants?${queryString}`)
+        .then((response) => {
+          this.variantList = response.data.variants;
+          console.log(this.variantList)
+        })
+    },
   }
 }
 </script>

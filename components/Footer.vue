@@ -36,7 +36,7 @@
 						<ul class="mt-2 space-y-1 text-center sm:text-left">
  							<li
                 v-for="(link, linkIndex) in links"
-                :key="`link-${linkIndex}`"
+                :key="`links-${linkIndex}`"
               >
 								<NuxtLink
                   :to="link.to"
@@ -68,7 +68,37 @@
 						<ul class="mt-2 space-y-1 text-center sm:text-left">
  							<li
                 v-for="(link, linkIndex) in links2"
-                :key="`link-${linkIndex}`"
+                :key="`links2-${linkIndex}`"
+              >
+							  <NuxtLink :to="link.to">
+                  <span
+                    class="
+                    hover:text-primary
+                    swlink
+                    mb-2
+                    inline-block
+                    text-center text-base
+                    leading-loose
+                    text-brand-black
+                    opacity-70 transition
+                    duration-300
+                    ease-in-out
+                    hover:underline
+                    hover:decoration-brand-grey
+                    hover:decoration-4
+                    hover:underline-offset-8
+                    hover:opacity-100
+                    "
+                  >
+                    {{ link.text }}
+                  </span>
+                </NuxtLink>
+							</li>
+						</ul>
+						<ul class="mt-2 space-y-1 text-center sm:text-left">
+ 							<li
+                v-for="(link, linkIndex) in links3"
+                :key="`links2-${linkIndex}`"
               >
 							  <NuxtLink :to="link.to">
                   <span
@@ -116,28 +146,6 @@
           </div>
           <div class="space-x-6">
             <nav class="space-x-4">
-              <a
-                style="color:#fff;"
-                href="#" class="text-xs
-                opacity-70 hover:opacity-100"
-              >
-                Support
-              </a>
-              <a
-                style="color:#fff;"
-                href="#" class="text-xs
-                opacity-70 hover:opacity-100"
-              >
-                Privacy &amp; Cookies
-              </a>
-              <a
-                style="color:#fff;"
-                href="#"
-                class="text-xs
-                opacity-70 hover:opacity-100"
-              >
-                Accessibility
-              </a>
             </nav>
           </div>
         </div>
@@ -190,12 +198,30 @@ export default {
           text: 'Shipping'
         },
         {
+          to: '/returns-refunds',
+          text: 'Returns & Refunds'
+        },
+        {
           to: '/terms',
           text: 'Terms & Conditions'
         },
         {
-          to: '/returns-refunds',
-          text: 'Returns & Refunds'
+          to: '/privacy',
+          text: 'Privacy'
+        },
+      ],
+      links3: [
+        {
+          to: '/revamped-intercity',
+          text: 'REVAMPED X INTERCITY'
+        },
+        {
+          to: '/revamped-express',
+          text: 'REVAMPED X EXPRESS'
+        },
+        {
+          to: '/revamped-global',
+          text: 'REVAMPED X GLOBAL'
         }
       ],
       paymentchannels: [
