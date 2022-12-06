@@ -40,6 +40,7 @@
                 @assign-image="assignImage"
                 @assign-colour="assignColour"
                 @remove-element="removeElement"
+                @edit-element="editElement"
             />
         </div>
         <EditVariantModal
@@ -48,6 +49,14 @@
          @close="closeEditVariantDialog"
          @confirm="updateVariant"
         />
+        <div class="z-auto overflow-hidden">
+          <AddElementModal
+            :active="showAddElement"
+            :uid="uid"
+            @close="closeAddElementDialog"
+            @confirm="createElement"
+          />
+        </div>
         <div>
       <OModal
         :active="showDeleteVariant"
@@ -100,12 +109,6 @@
         </div>
       </OModal>
     </div>
-    <AddElementModal
-        :active="showAddElement"
-        :uid="uid"
-        @close="closeAddElementDialog"
-        @confirm="createElement"
-      />
     </figure>
 </template>
 
@@ -149,6 +152,10 @@ export default {
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
       this.$emit('assign-colour', this.selectedElement)
+    },
+    editElement(elementId) {
+      this.selectedElement = toNumber(elementId)
+      this.$emit('update-element', this.selectedElement)
     },
     createElement(element) {
       console.log(element)

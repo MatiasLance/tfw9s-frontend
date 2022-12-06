@@ -42,6 +42,7 @@
             @delete-variant="removeVariant"
             @retrieve="retrieveVariants"
             @remove-element="removeElement"
+            @update-element="updateElement"
           />
         </div>
         <!-- todo: showAssignImage and showAssignColour -->
@@ -56,6 +57,13 @@
           :element-key="selectedElement"
           @close="closeAssignColourDialog"
           @confirm="createColourToElement"
+        />
+        <UpdateElementModal
+          ref="updateEleme"
+          :active="showEditElement"
+          :element-key="selectedElement"
+          @close="closeEditElementDialog"
+          @confirm="updateElementProceed"
         />
         <OModal
           :active="showRemoveElement"
@@ -140,6 +148,7 @@ export default {
       showAssignImage: false,
       showAssignColour: false,
       showRemoveElement: false,
+      showEditElement: false,
       variantsList: [],
       variantSize: '',
       selectedElement: -1,
@@ -233,6 +242,35 @@ export default {
           })
         })
     },
+    updateElementProceed(editedElement) {
+      console.log(editedElement)
+      const form = new FormData()
+      form.append('_method', 'PATCH')
+      form.append('name', editedElement.name)
+
+      this.$axios
+        .$post(`/v1/variants/elements/${editedElement.id}`, form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: response.title,
+            position: 'bottom',
+            variant: 'success',
+            queue: true
+          })
+          this.$emit('retrieve')
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to update element',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true
+          })
+        })
+    },
     closeAddVariantDialog() {
       this.showAddVariant = false
     },
@@ -247,6 +285,9 @@ export default {
     },
     closeRemoveElementDialog() {
       this.showRemoveElement = false
+    },
+    closeEditElementDialog() {
+      this.showEditElement = false
     },
     addVariantOpt() {
       this.showAddVariant = true
@@ -267,6 +308,13 @@ export default {
     removeElement(elementId) {
       this.selectedElement = toNumber(elementId)
       this.showRemoveElement = true
+    },
+    updateElement(elementId) {
+      this.selectedElement = toNumber(elementId)
+      this.$refs.updateEleme.retrieveElement(this.selectedElement)
+      setTimeout(() => {
+        this.showEditElement = true
+      }, 2000);
     },
     updateVariant(editedVariant) {
       console.log(editedVariant)

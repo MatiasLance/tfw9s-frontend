@@ -215,6 +215,11 @@ export default {
       isImagePreview: false
     }
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.clearEntries()
+    })
+  },
   methods: {
     closeDialog() {
       this.$emit('close')
@@ -228,7 +233,13 @@ export default {
         order: ''
       }
       this.$emit('confirm', submitValue)
+      this.clearEntries()
       this.closeDialog()
+    },
+    clearEntries() {
+      this.element.name = ''
+      this.element.photo.type = ''
+      this.element.photo.value = ''
     },
     setColour() {
       this.element.photo.value = this.colors.hex
