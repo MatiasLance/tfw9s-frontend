@@ -247,6 +247,8 @@ export default {
       const form = new FormData()
       form.append('_method', 'PATCH')
       form.append('name', editedElement.name)
+      form.append('thumbnail_type', editedElement.thumbnailType)
+      form.append('thumbnail', editedElement.thumbnail)
 
       this.$axios
         .$post(`/v1/variants/elements/${editedElement.id}`, form)

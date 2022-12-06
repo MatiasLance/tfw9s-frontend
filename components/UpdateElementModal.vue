@@ -15,6 +15,49 @@
                 label="Element Name"
             ></VTextField>
         </div>
+        <div class="my-1 p-2">
+            <label>Element Type:</label>
+            <select
+                v-model="thumbnailType"
+                class="block w-full appearance-none rounded-md
+                border border-gray-200
+                bg-gray-100 py-2 px-4 text-lg
+                hover:border-gray-400 focus:border-gray-400
+                focus:outline-none"
+            >
+                <option v-for="item in items" :key="item">
+                    {{ item }}
+                </option>
+            </select>
+        </div>
+        <div class="my-4 block p-2">
+            <template v-if="thumbnailType === 'image'">
+                <label class="my-8 block">
+                    <!-- todo: insert croppa here -->
+                    <VImg
+                        :src="thumbnail"
+                    ></VImg>
+                </label>
+            </template>
+            <template v-if="thumbnailType === 'color'">
+                <div
+                class="mx-auto my-4 flex flex-col items-center justify-center"
+                >
+                <VSheet
+                rounded="circle"
+                class="mx-auto"
+                height="100"
+                width="100"
+                :color="thumbnail"
+                ></VSheet>
+            <small class="text-xs">Selected: {{ thumbnail }}</small>
+            <ChromePicker v-model="colors" :color="colors" />
+            <VBtn class="my-3 uppercase" @click="setColour">
+                Set Colour
+            </VBtn>
+                </div>
+            </template>
+        </div>
         <hr>
         <div
             class="
@@ -72,7 +115,32 @@ export default {
     }
   },
   data() {
-    return { elementName: '' }
+    return {
+      elementName: '',
+      thumbnailType: '',
+      thumbnail: '',
+      imgValue: '',
+      elementCroppa: {},
+      items: [
+        'Select one',
+        'image',
+        'color'
+      ],
+      colors: {
+        hex: '#194d33',
+        hex8: '#194D33A8',
+        hsl: {
+          h: 150, s: 0.5, l: 0.2, a: 1
+        },
+        hsv: {
+          h: 150, s: 0.66, v: 0.30, a: 1
+        },
+        rgba: {
+          r: 25, g: 77, b: 51, a: 1
+        },
+        a: 1
+      },
+    }
   },
   methods: {
     closeDialog() {
@@ -82,20 +150,33 @@ export default {
       this.$axios
         .$get(`/v1/variants/elements/${elid}`)
         .then((response) => {
+          console.log(response)
           this.elementName = response.data.element.name
+          this.thumbnail = response.data.element.thumbnail.value
+          this.thumbnailType = response.data.element.thumbnail_type
         })
         .catch((err) => {
           console.log(err)
         })
     },
+    setColour() {
+      this.thumbnail = this.colors.hex
+    },
+    clearValues() {
+      this.elementName = ''
+      this.thumbnail = ''
+      this.thumbnailType = ''
+    },
     confirmAction() {
       const editedElement = {
         id: this.elementKey,
-        name: this.elementName
+        name: this.elementName,
+        thumbnail: this.thumbnail,
+        thumbnailType: this.thumbnailType
       }
       this.$emit('confirm', editedElement)
       this.closeDialog()
-      this.elementName = ''
+      this.clearValues()
     },
   }
 }
