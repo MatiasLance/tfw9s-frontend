@@ -372,37 +372,50 @@
           </div>
           <!-- variants section -->
           <div class="col-span-3 mb-4 w-full">
-            <label class="mb-1 block">Variants:</label>
-            <select
-              v-model="selectedVariant"
-              class="block w-full rounded-md border
-              border-gray-200 bg-gray-100 py-2 px-4 text-lg"
-            >
-              <option
-                v-for="(variant, variantKey) in variants"
-                :key="variant.id"
-                :value="variantKey"
+            <div class="flex items-center justify-between">
+              <label class="mb-1 block">Variants:</label>
+              <button
+                  type="button"
+                  class="
+                    flex
+                    items-center
+                    justify-center
+                    border border-solid border-brand-black
+                    bg-brand-black
+                    px-4
+                    py-2
+                    text-white
+                  "
+                  @click="addVariantPicker"
+                >
+                  <i class="ri-add-fill"></i>
+                  Add Variant
+              </button>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+              <div
+                v-for="variantPickerIndex in multipleVariantBuffer"
+                :key="variantPickerIndex"
+                class="flex justify-start gap-1"
               >
-                {{ variant.name }}
-              </option>
-            </select>
-          </div>
-          <div v-if="selectedVariant !== ''" class="col-span-3 mb-4 w-full">
-            <div class="grid grid-cols-6 gap-2">
-              <SingleElement
-                v-for="(element, elementKey) in
-                  variants[selectedVariant].elements"
-                :key="elementKey"
-                :eid="elementKey"
-                :variant-name="name"
-                :name="element.name"
-                :price="element.price"
-                :stock="element.stock"
-                :photo="element.thumbnail"
-                :photo-type="element.thumbnail_type"
-                @assign-image="assignImage"
-                @assign-colour="assignColour"
+                <button
+                  type="button"
+                  class="
+                    my-4
+                    h-6 w-6
+                    text-brand-black
+                    hover:bg-brand-black hover:text-white
+                  "
+                  @click="removeVariantPicker(variantPickerIndex)"
+                >
+                  <div class="ri-close-fill ri-lg"></div>
+                </button>
+                <MultipleVariants
+                  :ref="`variantPicker-${variantPickerIndex}`"
+                  :options="availableVariants"
+                  @variant-selected="addToVariants"
                 />
+              </div>
             </div>
           </div>
           <!-- categories section -->
@@ -729,7 +742,8 @@
                 v-for="(element, elementKey) in
                   variants[selectedVariant02].elements"
                 :key="elementKey"
-                :eid="elementKey"
+                :refs="`singleElement-${element.id}`"
+                :eid="element.id"
                 :variant-name="name"
                 :name="element.name"
                 :price="element.price"
@@ -738,6 +752,8 @@
                 :photo-type="element.thumbnail_type"
                 @assign-image="assignImage"
                 @assign-colour="assignColour"
+                @checked="recordElementID"
+                @unchecked="removeElementID"
                 />
             </div>
           </div>
@@ -996,6 +1012,7 @@
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
+import MultipleVariants from '~/components/MultipleVariants.vue';
 import SingleElement from '~/components/SingleElement.vue';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
@@ -1014,6 +1031,7 @@ export default {
     SearchBar,
     Tiptap,
     SingleElement,
+    MultipleVariants,
   },
   mixins: [
     aosMixin,
@@ -1045,6 +1063,9 @@ export default {
       categoryLineages: [],
       variants: [],
       variants02: [],
+      elements: [],
+      elements02: [],
+      checkedElementIds: [],
       tags: [
         { id: 1, name: 'foo' },
         { id: 2, name: 'bar' },
@@ -1072,6 +1093,8 @@ export default {
       categoryParentId: '',
       multipleCategoryCounter: 1,
       multipleCategoryBuffer: [ 1 ],
+      multipleVariantCounter: 1,
+      multipleVariantBuffer: [ 1 ],
       inStockRadio: 'Yes',
       isOpen: false,
       fullName: '',
@@ -1084,6 +1107,7 @@ export default {
         title: 'Products Admin - Revamped',
         description: 'Page for creating product items for Revamped',
       },
+      selectedVariants: [],
       selectedVariant: '',
       selectedVariant02: '',
       variantsDemo: [
@@ -1193,6 +1217,12 @@ export default {
     };
   },
   computed: {
+    availableVariants: {
+      get() {
+        return this.variants.filter(
+          (variant) => !this.selectedVariants.includes(variant.id))
+      },
+    },
     categories: {
       get() {
         return this.$store.state.product.categories;
@@ -1256,6 +1286,26 @@ export default {
     },
     categoriesLink() {
       this.$router.push('/admin/categories')
+    },
+    addToVariants(variantId) {
+      if (!this.selectedVariants.includes(variantId)) {
+        this.selectedVariants.push(variantId)
+      }
+    },
+    addVariantPicker() {
+      this.multipleVariantCounter += 1
+      this.multipleVariantBuffer.push(this.multipleVariantCounter)
+    },
+    removeVariantPicker(picker) {
+      this.multipleVariantCounter += 1
+      const index = this.multipleVariantBuffer.indexOf(picker)
+      if (index > -1) {
+        this.multipleVariantBuffer.splice(index, 1)
+      }
+    },
+    resetVariantPicker() {
+      this.multipleVariantCounter = 1
+      this.multipleVariantBuffer = [ 1 ]
     },
     addCategoryPicker() {
       this.multipleCategoryCounter += 1
@@ -1351,6 +1401,23 @@ export default {
         }
       })
       this.selectedCategory = categories;
+
+      // todo: add here for variants and elements
+      const variants = []
+      const elements = []
+      this.multipleVariantBuffer.forEach((picker) => {
+        const selectedVariants =
+          this.$refs[`variantPicker-${picker}`][0].getSelected()
+        const selectedElements =
+          this.$refs[`variantPicker-${picker}`][0].getSelectedElements()
+        if (selectedVariants !== null) {
+          variants.push(selectedVariants)
+        }
+        if (selectedElements !== null) {
+          elements.push(selectedElements)
+        }
+      })
+      this.elements = elements
     },
     getFilteredTags(text) {
       this.filteredTags = this.tagData.map((option) => {
@@ -1519,7 +1586,6 @@ export default {
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
         .then((response) => {
-          console.log(response.data.item)
           this.name = response.data.item.name;
           this.price = response.data.item.price;
           this.description = response.data.item.description;
@@ -1549,6 +1615,13 @@ export default {
     closeEdit() {
       this.showEditProductModal = false;
     },
+    recordElementID(elementId) {
+      this.checkedElementIds.push(elementId)
+    },
+    removeElementID(elementId) {
+      const index = this.checkedElementIds.indexOf(elementId)
+      this.checkedElementIds.splice(index, 1)
+    },
     create() {
       // create item
       this.getSelected();
@@ -1561,7 +1634,8 @@ export default {
             categoryId: this.selectedCategory.map(x => x.id),
             inStock: this.inStock,
             tags: this.tags.map((x) => x.id),
-            photo: this.imgList
+            photo: this.imgList,
+            elements: this.elements
           };
           const form = new FormData();
           form.append('name', product.name);
@@ -1570,6 +1644,9 @@ export default {
           form.append('stock', product.inStock);
           for (let i = 0; i < product.tags.length; i++) {
             form.append('tags[]', product.tags[i]);
+          }
+          for (let i = 0; i < product.elements.length; i++) {
+            form.append('elements[]', product.elements[i]);
           }
           for (let i = 0; i < product.categoryId.length; i++) {
             form.append('categoryId[]', product.categoryId[i]);
@@ -1734,7 +1811,8 @@ export default {
       this.imgUrlEdit = [];
       this.imgListEdit = [];
       this.syncProducts();
-      this.resetCategoryPicker()
+      this.resetVariantPicker();
+      this.resetCategoryPicker();
     },
     syncProducts() {
       this.name = this.$store.state.product.name;
