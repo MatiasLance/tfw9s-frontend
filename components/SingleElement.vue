@@ -12,6 +12,7 @@
             v-bind="$attrs"
             >
                 <input
+                    v-model="eSelected"
                     :name="variantName"
                     :value="eid"
                     type="checkbox"
@@ -23,19 +24,59 @@
                     <span class="my-0 mx-2">
                         {{ name }}
                     </span>
-                    <span>
-                    - {{ formatCurrency(price) }}
+                    <span class="block text-xs">
+                    {{ formatCurrency(price) }}
                     </span>
-                    <span>
-                    - {{ stock }} in stock
+                    <span class="block text-xs">
+                      {{ stock }} in stock
                     </span>
+                    <div
+                      v-if="showChangesPriceStock"
+                      class="my-2 block text-xs"
+                    >
+                      <span class="block">
+                        New price: {{ formatCurrency(newPrice) }}
+                      </span>
+                      <span>New stock: {{ newStock }}</span>
+                    </div>
                 </figcaption>
+                <div class="my-6 flex flex-col">
+                  <VTextField
+                    v-model="newPrice"
+                    solo dense
+                    prefix="$"
+                    class="w-1/2"
+                    label="Price"
+                    @change="toggleChangesPriceStock"
+                    >
+                  </VTextField>
+                  <div class="my-2 flex justify-start">
+                    <input
+                    v-model="newStock"
+                    type="number"
+                    min="0"
+                    class="
+                    form-input
+                    block
+                    w-24
+                    appearance-none
+                    border border-gray-100
+                    bg-gray-200
+                    py-2
+                    px-3
+                    hover:border-gray-400
+                    focus:border-gray-400 focus:outline-none
+                    "
+                    @keyup="handleNegativeValue"
+                    @blur="toggleChangesPriceStock"
+                    /><small class="self-center text-xs">in Stock</small>
+                  </div>
+                </div>
                 <div class="ml-11 flex flex-col items-center justify-center">
                     <div
                         class="flex items-center justify-center"
                     >
                     <template v-if="photoType === 'image'">
-                        <!-- todo: change this to photo.value -->
                         <div
                         class="mx-auto my-4 flex items-end justify-end"
                         >
@@ -63,21 +104,27 @@
                     </template>
                 </div>
                 <div
-                  v-if="showButtons"
+                  v-if="showEditButtons"
                   class="flex items-center justify-start space-x-6"
                 >
-                    <VBtn
-                        class="self-end text-right text-base"
-                        @click="assignImage(eid)"
-                    >
-                    <i class="ri-image-add-fill"></i>
-                    </VBtn>
-                    <VBtn
-                        class="self-end text-right text-base"
-                        @click="assignColour(eid)"
-                    >
-                    <i class="ri-sip-line"></i>
-                    </VBtn>
+                <VBtn
+                  class="self-end text-right text-base"
+                  @click="editElement(eid)"
+                >
+                  <i class="ri-pencil-fill"></i>
+                </VBtn>
+                <VBtn
+                    class="self-end text-right text-base"
+                    @click="assignImage(eid)"
+                >
+                <i class="ri-image-add-fill"></i>
+                </VBtn>
+                <VBtn
+                    class="self-end text-right text-base"
+                    @click="assignColour(eid)"
+                >
+                <i class="ri-sip-line"></i>
+                </VBtn>
                 </div>
             </div>
     </label>
@@ -89,7 +136,7 @@ const toNumber = (str) => +str;
 export default {
   name: 'SingleElement',
   mixins: [ currencyMixin ],
-  showButtons: false,
+  showEditButtons: false,
   props: {
     eid: {
       type: Number,
@@ -129,21 +176,39 @@ export default {
     return {
       editablePhoto: '',
       editableColour: '',
-      editablePrice: 0,
-      selectedElement: -1,
+      newPrice: 0,
+      newStock: 0,
+      eSelected: '',
+      selectedElementId: -1,
       showAssignImage: false,
       showAssignColour: false,
+      showChangesPriceStock: false,
       demoImgPath: '/img/sample/colour/stripes3.png'
     }
   },
   methods: {
     assignImage(elementId) {
-      this.selectedElement = toNumber(elementId)
-      this.$emit('assign-image', this.selectedElement)
+      this.selectedElementId = toNumber(elementId)
+      this.$emit('assign-image', this.selectedElementId)
     },
     assignColour(elementId) {
-      this.selectedElement = toNumber(elementId)
-      this.$emit('assign-colour', this.selectedElement)
+      this.selectedElementId = toNumber(elementId)
+      this.$emit('assign-colour', this.selectedElementId)
+    },
+    handleNegativeValue() {
+      if (this.newStock < 0) {
+        this.newStock = 0
+      }
+      if (String(this.newStock).length > 12) {
+        this.newStock = String(this.newStock).slice(0, 12);
+      }
+    },
+    toggleChangesPriceStock() {
+      if (this.newPrice > 0 && this.newStock > 0) {
+        this.showChangesPriceStock = true
+      } else {
+        this.showChangesPriceStock = false
+      }
     }
   }
 }

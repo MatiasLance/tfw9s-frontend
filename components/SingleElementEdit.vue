@@ -24,41 +24,12 @@
                 <span class="my-0 mx-2">
                   {{ name }}
                 </span>
-                <span>
-                  - {{ formatCurrency(price) }}
+                <span class="block text-xs">
+                {{ formatCurrency(price) }}
                 </span>
-                <span>
-                  - {{ stock }} in stock
+                <span class="block text-xs">
+                {{ stock }} in stock
                 </span>
-                <span>
-                  <VTextField
-                  v-model="editablePrice"
-                  solo
-                  prefix="$"
-                  class="w-1/2"
-                  >
-                </VTextField>
-                <div class="my-3 flex justify-start">
-                  <input
-                  v-model="newStock"
-                  type="number"
-                  min="0"
-                  class="
-                  form-input
-                  block
-                  w-24
-                  appearance-none
-                  border border-gray-100
-                  bg-gray-200
-                  py-2
-                  px-3
-                  hover:border-gray-400
-                  focus:border-gray-400 focus:outline-none
-                  "
-                  @keyup="handleNegativeValue"
-                  /><small class="self-center text-xs">in Stock</small>
-                </div>
-              </span>
             </figcaption>
             <div class="ml-11 flex flex-col items-center justify-center">
               <div
@@ -116,7 +87,6 @@
           my-2
           h-6
           w-6 text-brand-mgrey
-          shadow-sm
           hover:bg-brand-red
           hover:text-white
         "
