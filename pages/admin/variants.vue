@@ -177,7 +177,6 @@ export default {
         .$get(`v1/variants?${queryString}`)
         .then((response) => {
           this.variantList = response.data.variants;
-          console.log(this.variantList)
         })
     },
   }

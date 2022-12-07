@@ -81,7 +81,6 @@
             <div
             class="mx-auto my-4 flex items-end justify-end"
             >
-            <!-- todo: change this to photo.value -->
             <VSheet
             rounded="circle"
             class="mx-auto"
@@ -93,32 +92,38 @@
         </template>
       </div>
       <div class="flex items-center justify-start space-x-6">
-        <VBtn
+      <VBtn
+        class="self-end text-right text-base"
+        @click="editElement(eid)"
+      >
+        <i class="ri-pencil-fill"></i>
+      </VBtn>
+      <VBtn
         class="self-end text-right text-base"
         @click="assignImage(eid)"
-        >
+      >
         <i class="ri-image-add-fill"></i>
       </VBtn>
       <VBtn
-      class="self-end text-right text-base"
-      @click="assignColour(eid)"
+        class="self-end text-right text-base"
+        @click="assignColour(eid)"
       >
-      <i class="ri-sip-line"></i>
-    </VBtn>
-    <button
-      type="button"
-      class="
-        my-2
-        h-6
-        w-6 text-brand-mgrey
-        shadow-sm
-        hover:bg-brand-red
-        hover:text-white
-      "
-      @click="removeElement(eid)"
-    >
-      <div class="ri-close-fill ri-lg"></div>
-    </button>
+        <i class="ri-sip-line"></i>
+      </VBtn>
+      <button
+        type="button"
+        class="
+          my-2
+          h-6
+          w-6 text-brand-mgrey
+          shadow-sm
+          hover:bg-brand-red
+          hover:text-white
+        "
+        @click="removeElement(eid)"
+      >
+        <div class="ri-close-fill ri-lg"></div>
+      </button>
   </div>
             </div>
 </label>
@@ -184,6 +189,17 @@ export default {
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
       this.$emit('assign-colour', this.selectedElement)
+    },
+    editElement(elementId) {
+      this.$oruga.notification.open({
+        message: 'Retrieving...',
+        variant: 'info',
+        duration: 3000,
+        position: 'bottom',
+        queue: true,
+      });
+      this.selectedElement = toNumber(elementId)
+      this.$emit('edit-element', this.selectedElement)
     },
     handleNegativeValue() {
       if (this.newStock < 0) {

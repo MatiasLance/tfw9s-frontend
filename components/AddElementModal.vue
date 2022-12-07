@@ -18,14 +18,19 @@
     </div>
     <div class="my-1 p-2">
         <label>Element Type:</label>
-        <VSelect
+        <select
             v-model="element.photo.type"
-            :items="items"
-            label="Element Type"
-            solo
+            class="block w-full appearance-none rounded-md
+            border border-gray-200
+            bg-gray-100 py-2 px-4 text-lg
+            hover:border-gray-400 focus:border-gray-400
+            focus:outline-none"
             required
-            color="black"
-        ></VSelect>
+        >
+            <option v-for="item in items" :key="item">
+                {{ item }}
+            </option>
+        </select>
     </div>
     <div class="my-4 block p-2">
         <template v-if="element.photo.type === 'image'">
@@ -215,6 +220,11 @@ export default {
       isImagePreview: false
     }
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.clearEntries()
+    })
+  },
   methods: {
     closeDialog() {
       this.$emit('close')
@@ -228,7 +238,13 @@ export default {
         order: ''
       }
       this.$emit('confirm', submitValue)
+      this.clearEntries()
       this.closeDialog()
+    },
+    clearEntries() {
+      this.element.name = ''
+      this.element.photo.type = ''
+      this.element.photo.value = ''
     },
     setColour() {
       this.element.photo.value = this.colors.hex

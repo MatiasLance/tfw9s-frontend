@@ -13,7 +13,7 @@
             >
                 <input
                     :name="variantName"
-                    :value="name"
+                    :value="eid"
                     type="checkbox"
                     class="
                     mt-1 mr-3 mb-2 h-4 w-4 bg-gray-200
@@ -34,7 +34,7 @@
                     <div
                         class="flex items-center justify-center"
                     >
-                    <template v-if="photo.type === 'image'">
+                    <template v-if="photoType === 'image'">
                         <!-- todo: change this to photo.value -->
                         <div
                         class="mx-auto my-4 flex items-end justify-end"
@@ -43,16 +43,15 @@
                           :width="100"
                           :height="100"
                           class="rounded-circle"
-                          :src="demoImgPath"
+                          :src="photo.value"
                           >
                           </VImg>
                         </div>
                     </template>
-                    <template v-if="photo.type === 'colour'">
+                    <template v-if="photoType === 'color'">
                         <div
                         class="mx-auto my-4 flex items-end justify-end"
                         >
-                            <!-- todo: change this to photo.value -->
                             <VSheet
                                 rounded="circle"
                                 class="mx-auto"
@@ -63,7 +62,10 @@
                         </div>
                     </template>
                 </div>
-                <div class="flex items-center justify-start space-x-6">
+                <div
+                  v-if="showButtons"
+                  class="flex items-center justify-start space-x-6"
+                >
                     <VBtn
                         class="self-end text-right text-base"
                         @click="assignImage(eid)"
@@ -87,6 +89,7 @@ const toNumber = (str) => +str;
 export default {
   name: 'SingleElement',
   mixins: [ currencyMixin ],
+  showButtons: false,
   props: {
     eid: {
       type: Number,
@@ -110,15 +113,16 @@ export default {
       default: 0,
       required: true
     },
+    photoType: {
+      type: String,
+      required: true
+    },
     photo: {
       type: Object,
       default() {
-        return {
-          type: 'colour',
-          value: '#194d33'
-        }
+        return { value: '#fa0da1' }
       },
-      required: false
+      required: true
     }
   },
   data() {

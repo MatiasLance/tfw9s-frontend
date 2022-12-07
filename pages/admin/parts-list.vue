@@ -379,8 +379,8 @@
               border-gray-200 bg-gray-100 py-2 px-4 text-lg"
             >
               <option
-                v-for="(variant, variantKey) in variantsDemo"
-                :key="variant.name"
+                v-for="(variant, variantKey) in variants"
+                :key="variant.id"
                 :value="variantKey"
               >
                 {{ variant.name }}
@@ -391,14 +391,15 @@
             <div class="grid grid-cols-6 gap-2">
               <SingleElement
                 v-for="(element, elementKey) in
-                  variantsDemo[selectedVariant].elements"
+                  variants[selectedVariant].elements"
                 :key="elementKey"
                 :eid="elementKey"
                 :variant-name="name"
                 :name="element.name"
                 :price="element.price"
                 :stock="element.stock"
-                :photo="element.photo"
+                :photo="element.thumbnail"
+                :photo-type="element.thumbnail_type"
                 @assign-image="assignImage"
                 @assign-colour="assignColour"
                 />
@@ -733,7 +734,8 @@
                 :name="element.name"
                 :price="element.price"
                 :stock="element.stock"
-                :photo="element.photo"
+                :photo="element.thumbnail"
+                :photo-type="element.thumbnail_type"
                 @assign-image="assignImage"
                 @assign-colour="assignColour"
                 />
@@ -1022,6 +1024,7 @@ export default {
   data() {
     return {
       query: '',
+      query2: '',
       from: 0,
       to: 0,
       totalPages: 0,
@@ -1041,6 +1044,7 @@ export default {
       inStock: '',
       categoryLineages: [],
       variants: [],
+      variants02: [],
       tags: [
         { id: 1, name: 'foo' },
         { id: 2, name: 'bar' },
@@ -1223,6 +1227,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
+      this.retrieveVariants()
       setInterval(() => {
         this.$axios
           .$get('v1/users/me')
@@ -1283,6 +1288,23 @@ export default {
           this.categories = response.data.categories
           this.$store.commit('product/setCategories', response.data.categories);
         });
+    },
+    retrieveVariants() {
+      const query = { q: this.query2 }
+      // Sanitize and remove null values
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/variants?${queryString}`)
+        .then((response) => {
+          this.variants = response.data.variants;
+          console.log(this.variants)
+        })
     },
     retrieveProducts() {
       this.isProductsLoading = true;
@@ -1482,6 +1504,7 @@ export default {
       this.reset();
       this.inStockRadio = 'Yes';
       this.toggleStock();
+      this.retrieveVariants()
       this.showAddProductModal = true;
     },
     editPr(index) {
