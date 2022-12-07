@@ -396,60 +396,25 @@
               <div
                 v-for="variantPickerIndex in multipleVariantBuffer"
                 :key="variantPickerIndex"
-                class="col-span-1 w-full"
+                class="flex justify-start gap-1"
               >
-                <div class="flex justify-center gap-1">
-                  <select
-                    v-model="selectedVariant"
-                    class="block w-full border
-                    border-gray-300 bg-gray-200 py-1 px-3 text-base"
-                    @change="selectVariant"
-                  >
-                    <option
-                      v-for="variant in availableVariants"
-                      :key="variant.id"
-                      :value="variant.id"
-                    >
-                      {{ variant.name }}
-                    </option>
-                  </select>
-                  <button
-                    type="button"
-                    class="
-                      my-4
-                      h-6 w-6
-                      text-brand-black
-                      hover:bg-brand-black hover:text-white
-                    "
-                    @click="removeVariantPicker(variantPickerIndex)"
-                  >
-                    <div class="ri-close-fill ri-lg"></div>
-                  </button>
-                </div>
-                <div
-                  v-if="selectedVariant !== ''"
-                  class="col-span-3 my-4 w-full"
+                <button
+                  type="button"
+                  class="
+                    my-4
+                    h-6 w-6
+                    text-brand-black
+                    hover:bg-brand-black hover:text-white
+                  "
+                  @click="removeVariantPicker(variantPickerIndex)"
                 >
-                  <div class="grid grid-cols-6 gap-2">
-                    <SingleElement
-                      v-for="element in
-                        variants[selectedVariant-1].elements"
-                      :key="element.id"
-                      :eid="element.id"
-                      :refs="`singleElement-${element.id}`"
-                      :variant-name="name"
-                      :name="element.name"
-                      :price="element.price"
-                      :stock="element.stock"
-                      :photo="element.thumbnail"
-                      :photo-type="element.thumbnail_type"
-                      @assign-image="assignImage"
-                      @assign-colour="assignColour"
-                      @checked="recordElementID"
-                      @unchecked="removeElementID"
-                    />
-                  </div>
-                </div>
+                  <div class="ri-close-fill ri-lg"></div>
+                </button>
+                <MultipleVariants
+                  :ref="`variantPicker-${variantPickerIndex}`"
+                  :options="availableVariants"
+                  @variant-selected="addToVariants"
+                />
               </div>
             </div>
           </div>
@@ -1047,6 +1012,7 @@
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
+import MultipleVariants from '~/components/MultipleVariants.vue';
 import SingleElement from '~/components/SingleElement.vue';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
@@ -1065,6 +1031,7 @@ export default {
     SearchBar,
     Tiptap,
     SingleElement,
+    MultipleVariants,
   },
   mixins: [
     aosMixin,
@@ -1252,10 +1219,8 @@ export default {
   computed: {
     availableVariants: {
       get() {
-        const selectedVariantIds = this.selectedVariants.map(
-          (selectedVariant) => selectedVariant.id)
         return this.variants.filter(
-          (variant) => !selectedVariantIds.includes(variant.id))
+          (variant) => !this.selectedVariants.includes(variant.id))
       },
     },
     categories: {
@@ -1322,8 +1287,10 @@ export default {
     categoriesLink() {
       this.$router.push('/admin/categories')
     },
-    selectVariant() {
-      this.selectedVariants.push(this.selectedVariant)
+    addToVariants(variantId) {
+      if (!this.selectedVariants.includes(variantId)) {
+        this.selectedVariants.push(variantId)
+      }
     },
     addVariantPicker() {
       this.multipleVariantCounter += 1
@@ -1434,6 +1401,23 @@ export default {
         }
       })
       this.selectedCategory = categories;
+
+      // todo: add here for variants and elements
+      const variants = []
+      const elements = []
+      this.multipleVariantBuffer.forEach((picker) => {
+        const selectedVariants =
+          this.$refs[`variantPicker-${picker}`][0].getSelected()
+        const selectedElements =
+          this.$refs[`variantPicker-${picker}`][0].getSelectedElements()
+        if (selectedVariants !== null) {
+          variants.push(selectedVariants)
+        }
+        if (selectedElements !== null) {
+          elements.push(selectedElements)
+        }
+      })
+      this.elements = elements
     },
     getFilteredTags(text) {
       this.filteredTags = this.tagData.map((option) => {
@@ -1641,11 +1625,6 @@ export default {
     create() {
       // create item
       this.getSelected();
-      this.checkedElementIds.forEach((elementId) => {
-        const elementData =
-          this.$refs[`singleElement-${elementId}`].retrieveElement()
-        this.elements.push(elementData)
-      })
       this.myCroppa.generateBlob(
         (blob) => {
           const product = {

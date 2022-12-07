@@ -13,7 +13,6 @@
             >
                 <input
                     v-model="isSelected"
-                    :name="variantName"
                     type="checkbox"
                     class="
                     mt-1 mr-3 mb-2 h-4 w-4 bg-gray-200
@@ -140,10 +139,6 @@ export default {
   props: {
     eid: {
       type: Number,
-      required: true
-    },
-    variantName: {
-      type: String,
       required: true
     },
     name: {
