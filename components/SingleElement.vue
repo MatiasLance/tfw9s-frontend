@@ -12,13 +12,13 @@
             v-bind="$attrs"
             >
                 <input
-                    v-model="eSelected"
+                    v-model="isSelected"
                     :name="variantName"
-                    :value="eid"
                     type="checkbox"
                     class="
                     mt-1 mr-3 mb-2 h-4 w-4 bg-gray-200
                     text-brand-black focus:ring-brand-black"
+                    @click="emitCheckStatus(eid)"
                 />
                 <figcaption class="text-gray-600">
                     <span class="my-0 mx-2">
@@ -178,7 +178,7 @@ export default {
       editableColour: '',
       newPrice: 0,
       newStock: 0,
-      eSelected: '',
+      isSelected: false,
       selectedElementId: -1,
       showAssignImage: false,
       showAssignColour: false,
@@ -208,6 +208,22 @@ export default {
         this.showChangesPriceStock = true
       } else {
         this.showChangesPriceStock = false
+      }
+    },
+    emitCheckStatus(elementId) {
+      if (this.isSelected) {
+        this.$emit('unchecked', elementId)
+      } else {
+        this.$emit('checked', elementId)
+      }
+    },
+    retrieveElement() {
+      return {
+        elementId: this.eid,
+        stock: this.newStock,
+        price: this.newPrice,
+        thumbnailType: this.photoType,
+        thumbnail: this.photo.value
       }
     }
   }
