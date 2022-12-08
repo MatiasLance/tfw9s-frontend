@@ -179,6 +179,16 @@ export default {
           })
           this.$emit('retrieve')
         })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: 'Failed to save',
+            variant: 'danger',
+            duration: 5000,
+            position: 'bottom',
+            queue: true
+          })
+        })
       this.$oruga.notification.open({
         duration: 3000,
         message: 'Creating element...',
