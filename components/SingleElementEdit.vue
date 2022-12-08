@@ -43,7 +43,7 @@
                 :width="100"
                 :height="100"
                 class="rounded-circle"
-                :src="photo.path"
+                :src="`${$config.baseURL}/storage/${photo.value}`"
                 >
               </VImg>
             </div>

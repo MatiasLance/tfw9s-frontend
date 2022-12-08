@@ -1475,16 +1475,10 @@ export default {
       this.selectedCategory = categories;
 
       // todo: add here for variants and elements
-      const variants = []
       const elements = []
       this.multipleVariantBuffer.forEach((picker) => {
-        const selectedVariants =
-          this.$refs[`variantPicker-${picker}`][0].getSelected()
         const selectedElements =
           this.$refs[`variantPicker-${picker}`][0].getSelectedElements()
-        if (selectedVariants !== null) {
-          variants.push(selectedVariants)
-        }
         if (selectedElements !== null) {
           elements.push(selectedElements)
         }
@@ -1707,18 +1701,16 @@ export default {
             inStock: this.inStock,
             tags: this.tags.map((x) => x.id),
             photo: this.imgList,
-            elements: this.elements
+            elements: JSON.stringify(this.elements)
           };
           const form = new FormData();
           form.append('name', product.name);
           form.append('description', product.description);
           form.append('price', product.price);
           form.append('stock', product.inStock);
+          form.append('elements', product.elements);
           for (let i = 0; i < product.tags.length; i++) {
             form.append('tags[]', product.tags[i]);
-          }
-          for (let i = 0; i < product.elements.length; i++) {
-            form.append('elements[]', product.elements[i]);
           }
           for (let i = 0; i < product.categoryId.length; i++) {
             form.append('categoryId[]', product.categoryId[i]);

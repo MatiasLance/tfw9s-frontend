@@ -166,7 +166,7 @@ export default {
         .then((response) => {
           this.elementName = response.data.element.name
           this.thumbnail = response.data.element.thumbnail.value
-          this.thumbnailType = response.data.element.thumbnail_type
+          this.thumbnailType = response.data.element.thumbnail.type
         })
         .catch((err) => {
           console.log(err)
@@ -194,9 +194,8 @@ export default {
           this.imgValue = blob
         }
       );
-      this.elementCroppa.refresh();
       this.isImagePreview = true
-      this.showGenerateBtn = false
+      this.elementCroppa.remove()
     },
     zoomIn() {
       this.elementCroppa.zoomIn();

@@ -216,7 +216,7 @@ export default {
             variant: 'success',
             queue: true
           })
-          this.$emit('retrieve')
+          this.retrieveVariants()
         })
         .catch((err) => {
           console.log(err)
@@ -248,7 +248,7 @@ export default {
             variant: 'success',
             queue: true
           })
-          this.$emit('retrieve')
+          this.retrieveVariants()
         })
         .catch((err) => {
           console.log(err)

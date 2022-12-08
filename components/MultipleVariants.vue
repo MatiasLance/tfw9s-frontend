@@ -31,7 +31,7 @@
                 :price="element.price"
                 :stock="element.stock"
                 :photo="element.thumbnail"
-                :photo-type="element.thumbnail_type"
+                :photo-type="element.thumbnail.type"
                 @checked="recordElementID"
                 @unchecked="removeElementID"
             />

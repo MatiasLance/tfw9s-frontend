@@ -153,7 +153,7 @@ export default {
           console.log(response)
           this.elementName = response.data.element.name
           this.thumbnail = response.data.element.thumbnail.value
-          this.thumbnailType = response.data.element.thumbnail_type
+          this.thumbnailType = response.data.element.thumbnail.type
         })
         .catch((err) => {
           console.log(err)
