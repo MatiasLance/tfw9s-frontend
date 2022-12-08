@@ -36,7 +36,7 @@
                 :price="element.price"
                 :stock="element.stock"
                 :photo="element.thumbnail"
-                :photo-type="element.thumbnail_type"
+                :photo-type="element.thumbnail.type"
                 @assign-image="assignImage"
                 @assign-colour="assignColour"
                 @remove-element="removeElement"

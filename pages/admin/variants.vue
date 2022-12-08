@@ -37,7 +37,70 @@
             </h1>
         </div>
         </BaseHeader>
-        <section class="container mx-auto max-w-screen-lg px-2 sm:px-4">
+        <div class="mx-auto max-w-screen-xl px-4 py-7">
+          <div class="-mx-4 flex flex-wrap">
+            <main class="w-full px-4">
+              <div
+                class="my-6 flex flex-wrap items-center
+                justify-between gap-4"
+              >
+                <div
+                  class="flex flex-wrap justify-start gap-2"
+                >
+                <button
+                  type="button"
+                  class="
+                    block w-40 rounded-xl
+                    border border-solid border-brand-black
+                    bg-brand-black
+                    px-4
+                    py-2
+                    text-center
+                    text-white
+                    hover:bg-slate-400
+                    focus:bg-brand-grey
+                    md:inline-block
+                  "
+                  @click="categoriesLink"
+                >
+                  <span
+                    class="flex items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    <i class="ri-arrow-right-line"></i>
+                    Categories
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  class="
+                    block w-40 rounded-xl
+                    border border-solid border-brand-black
+                    bg-brand-black
+                    px-4
+                    py-2
+                    text-center
+                    text-white
+                    hover:bg-slate-400
+                    focus:bg-brand-grey
+                    md:inline-block
+                  "
+                  @click="productsLink"
+                >
+                  <span
+                    class="flex items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    <i class="ri-arrow-right-line"></i>
+                    Products
+                  </span>
+                </button>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+        <section class="container mx-auto max-w-screen-xl px-2 sm:px-4">
             <div class="my-8 w-full py-7 sm:px-12">
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <VariantSection
@@ -178,6 +241,12 @@ export default {
         .then((response) => {
           this.variantList = response.data.variants;
         })
+    },
+    categoriesLink() {
+      this.$router.push('/admin/categories')
+    },
+    productsLink() {
+      this.$router.push('/admin/parts-list')
     },
   }
 }

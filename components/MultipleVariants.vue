@@ -25,8 +25,8 @@
                 v-for="element in
                 options[selectedVariant-1].elements"
                 :key="element.id"
+                :ref="`singleElement-${element.id}`"
                 :eid="element.id"
-                :refs="`singleElement-${element.id}`"
                 :name="element.name"
                 :price="element.price"
                 :stock="element.stock"
@@ -64,12 +64,17 @@ export default {
     getSelectedElements() {
       this.checkedElementIds.forEach((elementId) => {
         const elementData =
-            this.$refs[`singleElement-${elementId}`].retrieveElement()
+            this.$refs[`singleElement-${elementId}`][0].retrieveElement()
         this.selectedElements.push(elementData)
       })
       return this.selectedElements
     },
+    testElements() {
+      this.selectedElements = []
+      this.getSelectedElements()
+    },
     addToSelectedVariants() {
+      this.reset()
       this.$emit('variant-selected', this.selectedVariant)
     },
     recordElementID(elementId) {
@@ -79,6 +84,10 @@ export default {
       const index = this.checkedElementIds.indexOf(elementId)
       this.checkedElementIds.splice(index, 1)
     },
+    reset() {
+      this.checkedElementIds = []
+      this.selectedElements = []
+    }
   }
 }
 </script>

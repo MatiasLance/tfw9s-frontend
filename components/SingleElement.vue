@@ -214,10 +214,12 @@ export default {
     },
     retrieveElement() {
       return {
-        elementId: this.eid,
+        // eslint-disable-next-line camelcase
+        element_id: this.eid,
         stock: this.newStock,
         price: this.newPrice,
-        thumbnailType: this.photoType,
+        // eslint-disable-next-line camelcase
+        thumbnail_type: this.photoType,
         thumbnail: this.photo.value
       }
     }

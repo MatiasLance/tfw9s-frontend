@@ -227,6 +227,8 @@ export default {
             queue: true
           })
         })
+
+      this.closeAssignImageDialog()
     },
     createColourToElement(editedElement) {
       const form = new FormData()
@@ -257,6 +259,7 @@ export default {
             queue: true
           })
         })
+      this.closeAssignColourDialog()
     },
     removeElementProceed(elementId) {
       const id = toNumber(elementId)
