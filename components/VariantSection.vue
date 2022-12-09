@@ -65,6 +65,7 @@
           :element-key="selectedElement"
           @close="closeEditElementDialog"
           @confirm="updateElementProceed"
+          @retrieve="retrieveVariants"
         />
         <OModal
           :active="showRemoveElement"
@@ -306,7 +307,6 @@ export default {
             variant: 'success',
             queue: true
           })
-          this.$emit('retrieve')
         })
         .catch((err) => {
           console.log(err)
@@ -318,6 +318,7 @@ export default {
             queue: true
           })
         })
+      this.retrieveVariants()
     },
     closeAddVariantDialog() {
       this.showAddVariant = false

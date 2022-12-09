@@ -435,6 +435,11 @@
               </button>
             </div>
             <div class="grid grid-cols-1 gap-2">
+              <div v-if="showVariantDebugButtons" class="flex gap-1">
+                <VBtn @click="testcheckDuplicateVariants">
+                  has duplicate variants?
+                </VBtn>
+              </div>
               <div
                 v-for="variantPickerIndex in multipleVariantBuffer"
                 :key="variantPickerIndex"
@@ -785,22 +790,27 @@
             </div>
             <div class="grid grid-cols-1 gap-2">
               <div
-                v-for="variantPickerIndex in multipleVariantBuffer"
-                :key="variantPickerIndex"
-                class="flex justify-start gap-1"
+              v-for="variantPickerIndex in multipleVariantBuffer"
+              :key="variantPickerIndex"
+              class="flex justify-start gap-1"
               >
-                <button
-                  type="button"
-                  class="
-                    my-4
-                    h-6 w-6
-                    text-brand-black
-                    hover:bg-brand-black hover:text-white
-                  "
-                  @click="removeVariantPicker(variantPickerIndex)"
-                >
-                  <div class="ri-close-fill ri-lg"></div>
-                </button>
+              <button
+              type="button"
+              class="
+              my-4
+              h-6 w-6
+              text-brand-black
+              hover:bg-brand-black hover:text-white
+              "
+              @click="removeVariantPicker(variantPickerIndex)"
+              >
+              <div class="ri-close-fill ri-lg"></div>
+            </button>
+<!-- todo: add a prop for receiving elements upon Edit -->
+<!--
+  similar to 'lineage' in categories -
+  point here is to receive fetched elements on edit
+-->
                 <MultipleVariants
                   :ref="`variantPicker-${variantPickerIndex}`"
                   :options="availableVariants"
@@ -1106,6 +1116,7 @@ export default {
       showGenerateCreatedImageBtn: false,
       showModal: false,
       showEmptyVariantNotification: false,
+      showVariantDebugButtons: false,
       name: '',
       price: '',
       description: '',
@@ -1349,11 +1360,22 @@ export default {
       }
     },
     addVariantPicker() {
-      this.multipleVariantCounter += 1
-      this.multipleVariantBuffer.push(this.multipleVariantCounter)
+      const variantLength = this.variants.length;
+      if (this.multipleVariantCounter < variantLength) {
+        this.multipleVariantCounter += 1
+        this.multipleVariantBuffer.push(this.multipleVariantCounter)
+      } else {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Variants has exceeded its length. Cannot add more than allowable.',
+          position: 'bottom',
+          variant: 'info',
+          queue: true,
+        })
+      }
     },
     removeVariantPicker(picker) {
-      this.multipleVariantCounter += 1
+      this.multipleVariantCounter -= 1
       const index = this.multipleVariantBuffer.indexOf(picker)
       if (index > -1) {
         this.multipleVariantBuffer.splice(index, 1)
@@ -1451,9 +1473,32 @@ export default {
       this.page = page;
       this.retrieveProducts();
     },
+    checkDuplicateVariants() {
+      const variantIds = []
+      this.multipleVariantBuffer.forEach((picker) => {
+        const selectedVariant =
+          this.$refs[`variantPicker-${picker}`][0].selectedVariant
+        if (selectedVariant !== null) {
+          variantIds.push(selectedVariant)
+        }
+      })
+
+      return new Set(variantIds).size !== variantIds.length
+    },
+    testcheckDuplicateVariants() {
+      // todo: remove when done
+      let status = ''
+      if (!this.checkDuplicateVariants()) {
+        status = 'create'
+      } else {
+        status = 'stop, make sure variants are unique'
+      }
+      // eslint-disable-next-line no-alert
+      return alert(status)
+    },
     testgetSelectedElements() {
+      // todo: remove test function when done
       this.elements = []
-      // todo: add here for variants and elements
       const elements = []
       this.multipleVariantBuffer.forEach((picker) => {
         const selectedElements =
@@ -1474,7 +1519,6 @@ export default {
       })
       this.selectedCategory = categories;
 
-      // todo: add here for variants and elements
       const elements = []
       this.multipleVariantBuffer.forEach((picker) => {
         const selectedElements =
@@ -1648,6 +1692,7 @@ export default {
         position: 'bottom',
         queue: true,
       });
+      this.retrieveVariants()
       this.editingNo = toNumber(index);
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
@@ -1655,7 +1700,7 @@ export default {
           this.name = response.data.item.name;
           this.price = response.data.item.price;
           this.description = response.data.item.description;
-          this.variants = response.data.item.variants;
+          this.elements = response.data.item.elements;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
           this.imgUrlEdit = response.data.item.media.map((x) =>
@@ -1691,64 +1736,79 @@ export default {
     create() {
       // create item
       this.getSelected();
-      this.myCroppa.generateBlob(
-        (blob) => {
-          const product = {
-            name: this.name,
-            price: this.price,
-            description: this.description,
-            categoryId: this.selectedCategory.map(x => x.id),
-            inStock: this.inStock,
-            tags: this.tags.map((x) => x.id),
-            photo: this.imgList,
-            elements: JSON.stringify(this.elements)
-          };
-          const form = new FormData();
-          form.append('name', product.name);
-          form.append('description', product.description);
-          form.append('price', product.price);
-          form.append('stock', product.inStock);
-          form.append('elements', product.elements);
-          for (let i = 0; i < product.tags.length; i++) {
-            form.append('tags[]', product.tags[i]);
+      const hasDuplicateVariants = this.checkDuplicateVariants();
+      if (!hasDuplicateVariants) {
+        // create
+        const product = {
+          name: this.name,
+          price: this.price,
+          description: this.description,
+          categoryId: this.selectedCategory.map(x => x.id),
+          inStock: this.inStock,
+          tags: this.tags.map((x) => x.id),
+          photo: this.imgList,
+          elements: this.elements
+        };
+        const form = new FormData();
+        form.append('name', product.name);
+        form.append('description', product.description);
+        form.append('price', product.price);
+        form.append('stock', product.inStock);
+        for (let i = 0; i < product.elements[0].length; i++) {
+          for (
+            const [ elementProperty, value ] of
+            Object.entries(product.elements[0][i])
+          ) {
+            form.append(`elements[${i}][${elementProperty}]`, value)
           }
-          for (let i = 0; i < product.categoryId.length; i++) {
-            form.append('categoryId[]', product.categoryId[i]);
-          }
-          for (let i = 0; i < product.photo.length; i++) {
-            form.append('photo[]', product.photo[i], 'itemThumbnail.jpg');
-          }
-          const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+        }
+        for (let i = 0; i < product.tags.length; i++) {
+          form.append('tags[]', product.tags[i]);
+        }
+        for (let i = 0; i < product.categoryId.length; i++) {
+          form.append('categoryId[]', product.categoryId[i]);
+        }
+        for (let i = 0; i < product.photo.length; i++) {
+          form.append('photo[]', product.photo[i], 'itemThumbnail.jpg');
+        }
+        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
-          this.$axios
-            .$post('v1/items/', form, config)
-            .then((response) => {
-              this.showAddProductModal = false;
-              this.isItemAdded = true;
-              this.$oruga.notification.open({
-                message: response.title,
-                variant: 'success',
-                duration: 5000,
-                position: 'bottom',
-                queue: true,
-              });
-              this.reset();
-              this.retrieveProducts();
-            })
-            .catch((err) => {
-              this.$oruga.notification.open({
-                duration: 5000,
-                message: err.title,
-                position: 'bottom',
-                variant: 'danger',
-                closable: true,
-                queue: true,
-              });
+        this.$axios
+          .$post('v1/items/', form, config)
+          .then((response) => {
+            this.showAddProductModal = false;
+            this.isItemAdded = true;
+            this.$oruga.notification.open({
+              message: response.title,
+              variant: 'success',
+              duration: 5000,
+              position: 'bottom',
+              queue: true,
             });
-        },
-        'image/jpeg',
-        0.95
-      );
+            this.reset();
+            this.retrieveProducts();
+          })
+          .catch((err) => {
+            this.$oruga.notification.open({
+              duration: 5000,
+              message: err.message,
+              position: 'bottom',
+              variant: 'danger',
+              closable: true,
+              queue: true,
+            });
+          });
+      } else {
+        // show notification must be unique
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Variants must be unique.',
+          position: 'bottom',
+          variant: 'warning',
+          closable: true,
+          queue: true
+        })
+      }
     },
     edit(index) {
       const editObject = this.productList.find(
@@ -1756,6 +1816,7 @@ export default {
       );
       this.selectedCategory = {};
       this.getSelected();
+      // todo: add elements upon editing
       const editedProduct = {
         name: this.name,
         price: this.price,
@@ -1918,12 +1979,10 @@ export default {
     },
     assignImage(elementId) {
       this.selectedElement = toNumber(elementId)
-      console.log(`Assigning image to Element# ${this.selectedElement}`)
       this.showAssignImage = true
     },
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
-      console.log(`Assigning colour to Element# ${this.selectedElement}`)
       this.showAssignColour = true
     },
     closeAssignImageDialog() {

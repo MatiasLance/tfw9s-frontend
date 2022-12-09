@@ -190,8 +190,8 @@ export default {
       element: {
         name: '',
         photo: {
-          type: '',
-          value: '',
+          type: 'color',
+          value: '#194d33',
           imgValue: []
         },
       },
@@ -230,21 +230,29 @@ export default {
       this.$emit('close')
     },
     confirmAction(uid) {
-      const submitValue = {
-        variantId: uid,
-        name: this.element.name,
-        thumbnailType: this.element.photo.type,
-        thumbnail: this.element.photo.value,
-        order: ''
+      if (this.element.name !== '') {
+        const submitValue = {
+          variantId: uid,
+          name: this.element.name,
+          thumbnailType: this.element.photo.type,
+          thumbnail: this.element.photo.value,
+          order: ''
+        }
+        this.$emit('confirm', submitValue)
+        this.clearEntries()
+        this.closeDialog()
+      } else {
+        this.$oruga.notification.open({
+          duration: 3000,
+          message: 'Please specify an element name.',
+          position: 'bottom',
+          variant: 'warning',
+          queue: true,
+        })
       }
-      this.$emit('confirm', submitValue)
-      this.clearEntries()
-      this.closeDialog()
     },
     clearEntries() {
       this.element.name = ''
-      this.element.photo.type = ''
-      this.element.photo.value = ''
     },
     setColour() {
       this.element.photo.value = this.colors.hex
