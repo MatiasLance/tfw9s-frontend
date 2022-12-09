@@ -214,6 +214,12 @@ export default {
       }
     },
     retrieveElement() {
+      let newThumbnail
+      if (typeof this.photo.value === 'string') {
+        newThumbnail = null
+      } else {
+        newThumbnail = this.photo.value
+      }
       return {
         // eslint-disable-next-line camelcase
         element_id: this.eid,
@@ -221,8 +227,8 @@ export default {
         price: this.newPrice,
         name: this.name,
         // eslint-disable-next-line camelcase
-        thumbnail_type: null,
-        thumbnail: null
+        thumbnail_type: this.photoType,
+        thumbnail: newThumbnail
       }
     }
   }

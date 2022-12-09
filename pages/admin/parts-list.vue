@@ -1373,36 +1373,7 @@ export default {
       }, 2000)
     },
     updateElementProceed(editedElement) {
-      const form = new FormData()
-      form.append('_method', 'PATCH')
-      form.append('name', editedElement.name)
-      form.append('thumbnail_type', editedElement.thumbnailType)
-      form.append('thumbnail', editedElement.thumbnail)
-
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-
-      this.$axios
-        .$post(`/v1/variants/elements/${editedElement.id}`, form, config)
-        .then((response) => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: response.title,
-            position: 'bottom',
-            variant: 'success',
-            queue: true
-          })
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to update element',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true
-          })
-        })
-      this.retrieveVariants()
+      return '';
     },
     addToVariants(variantId) {
       if (!this.selectedVariants.includes(variantId)) {
@@ -1866,7 +1837,7 @@ export default {
           categoryId: this.selectedCategory.map(x => x.id),
           tags: this.tags.map((x) => x.id),
           photo: this.imgListEdit,
-          elements: this.elements
+          elements: this.elements,
         };
 
         const form = new FormData();
