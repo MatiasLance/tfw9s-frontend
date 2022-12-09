@@ -218,9 +218,10 @@ export default {
         element_id: this.eid,
         stock: this.newStock,
         price: this.newPrice,
+        name: this.name,
         // eslint-disable-next-line camelcase
-        thumbnail_type: this.photoType,
-        thumbnail: this.photo.value
+        thumbnail_type: null,
+        thumbnail: null
       }
     }
   }

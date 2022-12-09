@@ -1699,7 +1699,8 @@ export default {
           this.name = response.data.item.name;
           this.price = response.data.item.price;
           this.description = response.data.item.description;
-          this.variants = response.data.item.variants;
+          this.variants = response.data.variants;
+          this.elements = response.data.item.elements;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
           this.imgUrlEdit = response.data.item.media.map((x) =>
@@ -1753,15 +1754,12 @@ export default {
         form.append('description', product.description);
         form.append('price', product.price);
         form.append('stock', product.inStock);
-        for (let i = 0; i < product.elements.length; i++) {
-          for (let j = 0; j < product.elements[i].length; j++) {
-            for (const elementProperty in
-              Object.keys(product.elements[i][j])) {
-              form.append(
-                `elements[${i}][${j}][${elementProperty}]`,
-                Object.values(product.elements[i][j])[elementProperty]
-              )
-            }
+        for (let i = 0; i < product.elements[0].length; i++) {
+          for (
+            const [ elementProperty, value ] of
+            Object.entries(product.elements[0][i])
+          ) {
+            form.append(`elements[${i}][${elementProperty}]`, value)
           }
         }
         for (let i = 0; i < product.tags.length; i++) {

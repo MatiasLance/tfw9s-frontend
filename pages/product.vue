@@ -108,20 +108,22 @@
                       {{ variant.name }}
                     </label>
                     <select
+                      v-model="selectedElementValue"
                       :name="variant.name"
                       class="block w-full appearance-none rounded-md
                       border border-gray-200
                       bg-gray-100 py-2 px-4 text-lg
                       hover:border-gray-400 focus:border-gray-400
                       focus:outline-none lg:w-1/2"
+                      @change="addToSelectedElements"
                     >
                       <option
-                        v-for="(element, elementKey) in variant.elements"
+                        v-for="(element, elementKey) in product.elements"
                         :key="elementKey"
                         class="w-full"
-                        :value="element.name"
+                        :value="element.id"
                       >
-                        {{ element.name }}
+                        {{ element.element.name }}
                       </option>
                     </select>
                   </div>
@@ -249,6 +251,8 @@ export default {
   data() {
     return {
       isSelected: '',
+      selectedElementValue: '',
+      selectedElements: [],
       variants: [],
       variantsDemo: [
         {
@@ -364,15 +368,23 @@ export default {
     setActiveMedia(path) {
       this.activeImageURL = this.getMediaURL(path)
     },
+    addToSelectedElements() {
+      this.resetSelectedElements()
+      if (!this.selectedElements.includes(this.selectedElementValue)) {
+        this.selectedElements.push(this.selectedElementValue)
+      }
+    },
+    resetSelectedElements() {
+      this.selectedElements = []
+    },
     retrieveItem(itemId) {
       this.$axios
         .$get(`v1/items/${itemId}`)
         .then((response) => {
           this.product = response.data.item
           this.activeImageURL = this.getMediaURL(this.product.media[0])
-          this.variants = this.product.variants
+          this.variants = response.data.variants
           this.photos = this.product.media
-          console.log(this.product)
         })
     },
     handleHighStockValue() {
