@@ -98,6 +98,7 @@
           <div class="grid grid-cols-6 gap-6">
             <div class="col-span-6">
               <div class="my-4 flex flex-col flex-wrap">
+                <!-- todo: check if elements are showing here -->
                   <div
                     v-for="variant in variants"
                     :key="variant.name"
