@@ -34,6 +34,7 @@
                 :photo-type="element.thumbnail.type"
                 @checked="recordElementID"
                 @unchecked="removeElementID"
+                @edit-element="editElement"
             />
             </div>
         </div>
@@ -41,6 +42,7 @@
 </template>
 
 <script>
+const toNumber = (str) => +str;
 export default {
   name: 'MultipleVariants',
   props: {
@@ -68,6 +70,10 @@ export default {
         this.selectedElements.push(elementData)
       })
       return this.selectedElements
+    },
+    editElement(elementId) {
+      this.selectedElement = toNumber(elementId)
+      this.$emit('update-element', this.selectedElement)
     },
     testElements() {
       this.selectedElements = []

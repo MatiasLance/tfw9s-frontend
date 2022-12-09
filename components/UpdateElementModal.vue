@@ -8,8 +8,10 @@
         </div>
         <hr>
         <div class="my-1 block p-2">
-            <label>Element Name:</label>
+            <label>Element Name:
+              <span class="font-bold">{{ elementName }}</span></label>
             <VTextField
+                v-if="showElementName"
                 v-model="elementName"
                 solo
                 label="Element Name"
@@ -33,12 +35,17 @@
         <div class="my-4 block p-2">
             <template v-if="thumbnailType === 'image'">
                 <label class="my-8 block">
-                    <!-- todo: insert croppa here -->
+                  <div
+                  class="mx-auto my-4 flex flex-col items-center justify-center"
+                  >
                     <VImg
                       v-if="showInitialImage"
-                      :src="`${$config.baseURL}/storage/${thumbnail}`"
+                      class="mx-auto my-3 rounded-full"
+                      height="100"
+                      width="100"
+                      :src="`/storage/${thumbnail}`"
                     ></VImg>
-                    <br />
+                  </div>
                     <div class="mx-auto my-9 flex items-center justify-center">
                         <Croppa
                             v-model="elementCroppa"
@@ -50,7 +57,7 @@
                             :zoom-speed="4"
                             :placeholder-font-size="18"
                             initial-size="contain"
-                            show-loading="true"
+                            :show-loading="true"
                             @file-type-mismatch="handleFileTypeMismatch"
                             @new-image-drawn="handleNewImage"
                             @image-remove="handleRemoveImage"
@@ -124,12 +131,11 @@
                 >
                 <VSheet
                 rounded="circle"
-                class="mx-auto"
+                class="mx-auto my-3"
                 height="100"
                 width="100"
                 :color="thumbnail"
                 ></VSheet>
-            <small class="text-xs">Selected: {{ thumbnail }}</small>
             <ChromePicker v-model="colors" :color="colors" />
             <VBtn class="my-3 uppercase" @click="setColour">
                 Set Colour
@@ -181,6 +187,9 @@
 </template>
 
 <script>
+import 'remixicon/fonts/remixicon.css'
+import 'vue-croppa/dist/vue-croppa.css'
+
 export default {
   name: 'UpdateElementModal',
   props: {
@@ -191,6 +200,11 @@ export default {
     elementKey: {
       type: Number,
       required: true
+    },
+    showElementName: {
+      type: Boolean,
+      default: true,
+      required: false,
     }
   },
   data() {
@@ -234,7 +248,6 @@ export default {
       this.$axios
         .$get(`/v1/variants/elements/${elid}`)
         .then((response) => {
-          console.log(response)
           this.elementName = response.data.element.name
           this.thumbnail = response.data.element.thumbnail.value
           this.thumbnailType = response.data.element.thumbnail.type

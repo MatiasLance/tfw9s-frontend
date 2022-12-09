@@ -8,6 +8,11 @@
         </div>
         <hr>
             <label class="my-8 block">
+                <VImg
+                  v-if="showInitialImage"
+                  :src="`/storage/${thumbnail}`"
+                ></VImg>
+                <br />
                 <div class="mx-auto my-9 flex items-center justify-center">
                     <Croppa
                         v-model="elementCroppa"
@@ -19,7 +24,7 @@
                         :zoom-speed="4"
                         :placeholder-font-size="18"
                         initial-size="contain"
-                        show-loading="true"
+                        :show-loading="true"
                         @file-type-mismatch="handleFileTypeMismatch"
                         @new-image-drawn="handleNewImage"
                         @image-remove="handleRemoveImage"
@@ -153,7 +158,8 @@ export default {
       thumbnail: '',
       thumbnailType: 'image',
       showGenerateBtn: false,
-      isImagePreview: false
+      isImagePreview: false,
+      showInitialImage: true,
     }
   },
   methods: {
@@ -188,6 +194,7 @@ export default {
       })
     },
     generateElementImage() {
+      this.showInitialImage = false
       this.elementCroppa.generateBlob(
         (blob) => {
           this.thumbnail = URL.createObjectURL(blob)

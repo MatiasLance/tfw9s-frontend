@@ -104,26 +104,14 @@
                 </div>
                 <div
                   v-if="showEditButtons"
-                  class="flex items-center justify-start space-x-6"
+                  class="flex items-center justify-center space-x-6"
                 >
-                <VBtn
-                  class="self-end text-right text-base"
-                  @click="editElement(eid)"
-                >
-                  <i class="ri-pencil-fill"></i>
-                </VBtn>
-                <VBtn
+                  <VBtn
                     class="self-end text-right text-base"
-                    @click="assignImage(eid)"
-                >
-                <i class="ri-image-add-fill"></i>
-                </VBtn>
-                <VBtn
-                    class="self-end text-right text-base"
-                    @click="assignColour(eid)"
-                >
-                <i class="ri-sip-line"></i>
-                </VBtn>
+                    @click="editElement(eid)"
+                  >
+                    <i class="ri-pencil-fill"></i>
+                  </VBtn>
                 </div>
             </div>
     </label>
@@ -135,7 +123,6 @@ const toNumber = (str) => +str;
 export default {
   name: 'SingleElement',
   mixins: [ currencyMixin ],
-  showEditButtons: false,
   props: {
     eid: {
       type: Number,
@@ -169,8 +156,11 @@ export default {
   },
   data() {
     return {
+      showEditButtons: true,
       editablePhoto: '',
       editableColour: '',
+      newItemThumbnailType: '',
+      newItemThumbnail: '',
       newPrice: 0,
       newStock: 0,
       isSelected: false,
@@ -189,6 +179,17 @@ export default {
     assignColour(elementId) {
       this.selectedElementId = toNumber(elementId)
       this.$emit('assign-colour', this.selectedElementId)
+    },
+    editElement(elementId) {
+      this.$oruga.notification.open({
+        message: 'Retrieving...',
+        variant: 'info',
+        duration: 3000,
+        position: 'bottom',
+        queue: true,
+      });
+      this.selectedElement = toNumber(elementId)
+      this.$emit('edit-element', this.selectedElement)
     },
     handleNegativeValue() {
       if (this.newStock < 0) {
