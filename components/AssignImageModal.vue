@@ -15,7 +15,7 @@
                 <br />
                 <div class="mx-auto my-9 flex items-center justify-center">
                     <Croppa
-                        v-model="elementCroppa"
+                        v-model="elementAssignImgCroppa"
                         :auto-sizing="true"
                         placeholder="Attach image"
                         :quality="2"
@@ -154,7 +154,7 @@ export default {
     return {
       imgValue: '',
       elementName: '',
-      elementCroppa: {},
+      elementAssignImgCroppa: {},
       thumbnail: '',
       thumbnailType: 'image',
       showGenerateBtn: false,
@@ -189,38 +189,39 @@ export default {
       this.$emit('confirm', editedElement)
     },
     setImage() {
-      this.elementCroppa.generateBlob((blob) => {
+      this.elementAssignImgCroppa.generateBlob((blob) => {
         this.imgValue = blob
       })
     },
     generateElementImage() {
       this.showInitialImage = false
-      this.elementCroppa.generateBlob(
+      this.elementAssignImgCroppa.generateBlob(
         (blob) => {
           this.thumbnail = URL.createObjectURL(blob)
           this.imgValue = blob
-        }
+        },
+        'image/png'
       );
       this.isImagePreview = true
-      this.elementCroppa.remove()
+      this.elementAssignImgCroppa.remove()
     },
     zoomIn() {
-      this.elementCroppa.zoomIn();
+      this.elementAssignImgCroppa.zoomIn();
     },
     zoomOut() {
-      this.elementCroppa.zoomOut();
+      this.elementAssignImgCroppa.zoomOut();
     },
     rotateAnti() {
-      this.elementCroppa.rotate(-1);
+      this.elementAssignImgCroppa.rotate(-1);
     },
     rotate() {
-      this.elementCroppa.rotate();
+      this.elementAssignImgCroppa.rotate();
     },
     flipx() {
-      this.elementCroppa.flipX();
+      this.elementAssignImgCroppa.flipX();
     },
     flipy() {
-      this.elementCroppa.flipY();
+      this.elementAssignImgCroppa.flipY();
     },
     handleFileTypeMismatch(file) {
       console.log(file)

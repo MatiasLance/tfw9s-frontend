@@ -71,6 +71,16 @@ export default {
       })
       return this.selectedElements
     },
+    getSelectedElement(id) {
+      const elementData = this.$refs[`singleElement-${id}`][0].retrieveElement()
+      return elementData
+    },
+    testModifySelectedElement(editedValue) {
+      const eid = editedValue.id
+      this.$refs[`singleElement-${eid}`][0].photoType =
+        editedValue.thumbnailType
+      this.$refs[`singleElement-${eid}`][0].photo.value = editedValue.thumbnail
+    },
     editElement(elementId) {
       this.selectedElement = toNumber(elementId)
       this.$emit('update-element', this.selectedElement)

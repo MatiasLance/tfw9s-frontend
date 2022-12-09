@@ -1134,7 +1134,12 @@ export default {
       variants: [],
       variants02: [],
       elements: [],
-      elements02: [],
+      editedElement: {
+        id: '',
+        name: '',
+        thumbnailType: '',
+        thumbnail: ''
+      },
       checkedElementIds: [],
       tags: [
         { id: 1, name: 'foo' },
@@ -1372,8 +1377,11 @@ export default {
         this.showEditElement = true
       }, 2000)
     },
-    updateElementProceed(editedElement) {
-      return '';
+    updateElementProceed(editedValue) {
+      this.editedElement.id = editedValue.id
+      this.editedElement.name = editedValue.name
+      this.editedElement.thumbnailType = editedValue.thumbnailType
+      this.editedElement.thumbnail = editedValue.thumbnail
     },
     addToVariants(variantId) {
       if (!this.selectedVariants.includes(variantId)) {

@@ -162,7 +162,12 @@ export default {
       const form = new FormData()
       form.append('name', element.name)
       form.append('thumbnail_type', element.thumbnailType)
-      form.append('thumbnail', element.thumbnail)
+      if (element.thumbnailType === 'image') {
+        form.append('thumbnail', element.thumbnail, 'image.png')
+      }
+      if (element.thumbnailType === 'color') {
+        form.append('thumbnail', element.thumbnail)
+      }
       form.append('order', element.order)
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }

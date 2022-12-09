@@ -48,13 +48,14 @@
                   </div>
                     <div class="mx-auto my-9 flex items-center justify-center">
                         <Croppa
-                            v-model="elementCroppa"
+                            v-model="elementEditCroppa"
                             :auto-sizing="true"
                             placeholder="Attach image"
                             :quality="2"
                             accept=".png, .webp, .jpeg, .jpg"
                             :image-border-radius="60"
                             :zoom-speed="4"
+                            :canvas-color="transparent"
                             :placeholder-font-size="18"
                             initial-size="contain"
                             :show-loading="true"
@@ -214,7 +215,7 @@ export default {
       thumbnail: '',
       initialThumbnail: '',
       imgValue: '',
-      elementCroppa: {},
+      elementEditCroppa: {},
       showGenerateBtn: false,
       isImagePreview: false,
       showInitialImage: true,
@@ -270,7 +271,8 @@ export default {
           id: this.elementKey,
           name: this.elementName,
           thumbnail: this.imgValue,
-          thumbnailType: this.thumbnailType
+          thumbnailType: this.thumbnailType,
+          order: ''
         }
         this.$emit('confirm', editedElement)
       }
@@ -279,7 +281,8 @@ export default {
           id: this.elementKey,
           name: this.elementName,
           thumbnail: this.thumbnail,
-          thumbnailType: this.thumbnailType
+          thumbnailType: this.thumbnailType,
+          order: ''
         }
         this.$emit('confirm', editedElement)
       }
@@ -287,38 +290,35 @@ export default {
       this.clearValues()
     },
     setImage() {
-      this.elementCroppa.generateBlob((blob) => {
+      this.elementEditCroppa.generateBlob((blob) => {
         this.imgValue = blob
-      })
+      }, 'image/png')
     },
-    generateElementImage() {
+    async generateElementImage() {
       this.showInitialImage = false
-      this.elementCroppa.generateBlob(
-        (blob) => {
-          this.thumbnail = URL.createObjectURL(blob)
-          this.imgValue = blob
-        }
-      );
+      const blob = await this.elementEditCroppa.promisedBlob()
+      this.imgValue = blob
+      this.thumbnail = URL.createObjectURL(this.imgValue)
       this.isImagePreview = true
-      this.elementCroppa.remove()
+      this.elementEditCroppa.remove()
     },
     zoomIn() {
-      this.elementCroppa.zoomIn();
+      this.elementEditCroppa.zoomIn();
     },
     zoomOut() {
-      this.elementCroppa.zoomOut();
+      this.elementEditCroppa.zoomOut();
     },
     rotateAnti() {
-      this.elementCroppa.rotate(-1);
+      this.elementEditCroppa.rotate(-1);
     },
     rotate() {
-      this.elementCroppa.rotate();
+      this.elementEditCroppa.rotate();
     },
     flipx() {
-      this.elementCroppa.flipX();
+      this.elementEditCroppa.flipX();
     },
     flipy() {
-      this.elementCroppa.flipY();
+      this.elementEditCroppa.flipY();
     },
     handleFileTypeMismatch(file) {
       this.$oruga.notification.open({

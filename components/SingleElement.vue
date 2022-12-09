@@ -216,7 +216,7 @@ export default {
     retrieveElement() {
       let newThumbnail
       if (typeof this.photo.value === 'string') {
-        newThumbnail = null
+        newThumbnail = ''
       } else {
         newThumbnail = this.photo.value
       }
@@ -230,7 +230,7 @@ export default {
         thumbnail_type: this.photoType,
         thumbnail: newThumbnail
       }
-    }
+    },
   }
 }
 </script>

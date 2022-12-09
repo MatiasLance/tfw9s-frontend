@@ -171,6 +171,7 @@
 </template>
 
 <script>
+import 'vue-croppa/dist/vue-croppa.css'
 import 'remixicon/fonts/remixicon.css';
 
 export default {
