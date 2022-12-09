@@ -1692,6 +1692,7 @@ export default {
         position: 'bottom',
         queue: true,
       });
+      this.retrieveVariants()
       this.editingNo = toNumber(index);
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
@@ -1699,7 +1700,6 @@ export default {
           this.name = response.data.item.name;
           this.price = response.data.item.price;
           this.description = response.data.item.description;
-          this.variants = response.data.variants;
           this.elements = response.data.item.elements;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
