@@ -198,15 +198,16 @@ export default {
         });
     },
     createImageToElement(editedElement) {
-      console.log(editedElement)
       const form = new FormData()
       form.append('_method', 'PATCH')
       form.append('name', editedElement.name)
       form.append('thumbnail_type', editedElement.thumbnailType)
       form.append('thumbnail', editedElement.thumbnail)
 
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+
       this.$axios
-        .$post(`/v1/variants/elements/${editedElement.id}`, form)
+        .$post(`/v1/variants/elements/${editedElement.id}`, form, config)
         .then((response) => {
           this.$oruga.notification.open({
             duration: 5000,
@@ -215,18 +216,20 @@ export default {
             variant: 'success',
             queue: true
           })
-          this.$emit('retrieve')
+          this.retrieveVariants()
         })
         .catch((err) => {
           console.log(err)
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Failed to update element',
+            message: 'Failed to update thumbnail',
             position: 'bottom',
             variant: 'danger',
             queue: true
           })
         })
+
+      this.closeAssignImageDialog()
     },
     createColourToElement(editedElement) {
       const form = new FormData()
@@ -245,7 +248,7 @@ export default {
             variant: 'success',
             queue: true
           })
-          this.$emit('retrieve')
+          this.retrieveVariants()
         })
         .catch((err) => {
           console.log(err)
@@ -257,6 +260,7 @@ export default {
             queue: true
           })
         })
+      this.closeAssignColourDialog()
     },
     removeElementProceed(elementId) {
       const id = toNumber(elementId)

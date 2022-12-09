@@ -85,6 +85,27 @@
                 Categories
               </span>
             </button>
+            <button
+              type="button"
+              class="
+                block w-40 rounded-xl
+                border border-solid border-brand-black
+                bg-brand-black
+                px-4
+                py-2
+                text-center
+                text-white
+                hover:bg-slate-400
+                focus:bg-brand-grey
+                md:inline-block
+              "
+              @click="variantsLink"
+            >
+              <span class="flex items-center justify-center" aria-hidden="true">
+                <i class="ri-arrow-right-line"></i>
+                Variants
+              </span>
+            </button>
             </div>
             <div class="w-full sm:w-80">
               <form @submit.prevent="retrieveProducts">
@@ -94,7 +115,28 @@
           </div>
         </main>
       </div>
-
+      <section v-if="showEmptyVariantNotification" class="my-4">
+        <ONotification
+          closable
+          type="info"
+          variant="warning"
+          aria-close-label="Close notification"
+          class="text-xl"
+        >
+          Variants are currently empty. To create one, proceed to
+          <NuxtLink
+            class="
+            hover:underline
+          hover:decoration-brand-grey
+            hover:decoration-4
+            hover:underline-offset-8
+            "
+            to="/admin/variants"
+          >
+            Variants Page
+          </NuxtLink>
+        </ONotification>
+      </section>
       <section class="mb-8" data-aos="fade-up">
       <div
         class="
@@ -721,40 +763,50 @@
           </div>
            <!-- variants section -->
           <div class="col-span-3 mb-4 w-full">
-            <label class="mb-1 block">Variants:</label>
-            <select
-              v-model="selectedVariant02"
-              class="block w-full rounded-md border
-              border-gray-200 bg-gray-100 py-2 px-4 text-lg"
-            >
-              <option
-                v-for="(variant, variantKey) in variants"
-                :key="variant.name"
-                :value="variantKey"
+            <div class="flex items-center justify-between">
+              <label class="mb-1 block">Variants:</label>
+              <button
+                  type="button"
+                  class="
+                    flex
+                    items-center
+                    justify-center
+                    border border-solid border-brand-black
+                    bg-brand-black
+                    px-4
+                    py-2
+                    text-white
+                  "
+                  @click="addVariantPicker"
+                >
+                  <i class="ri-add-fill"></i>
+                  Add Variant
+              </button>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+              <div
+                v-for="variantPickerIndex in multipleVariantBuffer"
+                :key="variantPickerIndex"
+                class="flex justify-start gap-1"
               >
-                {{ variant.name }}
-              </option>
-            </select>
-          </div>
-          <div v-if="selectedVariant02 !== ''" class="col-span-3 mb-4 w-full">
-            <div class="grid grid-cols-6 gap-2">
-              <SingleElement
-                v-for="(element, elementKey) in
-                  variants[selectedVariant02].elements"
-                :key="elementKey"
-                :refs="`singleElement-${element.id}`"
-                :eid="element.id"
-                :variant-name="name"
-                :name="element.name"
-                :price="element.price"
-                :stock="element.stock"
-                :photo="element.thumbnail"
-                :photo-type="element.thumbnail_type"
-                @assign-image="assignImage"
-                @assign-colour="assignColour"
-                @checked="recordElementID"
-                @unchecked="removeElementID"
+                <button
+                  type="button"
+                  class="
+                    my-4
+                    h-6 w-6
+                    text-brand-black
+                    hover:bg-brand-black hover:text-white
+                  "
+                  @click="removeVariantPicker(variantPickerIndex)"
+                >
+                  <div class="ri-close-fill ri-lg"></div>
+                </button>
+                <MultipleVariants
+                  :ref="`variantPicker-${variantPickerIndex}`"
+                  :options="availableVariants"
+                  @variant-selected="addToVariants"
                 />
+              </div>
             </div>
           </div>
           <div class="col-span-3 mb-4 w-full">
@@ -1013,7 +1065,6 @@
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
 import MultipleVariants from '~/components/MultipleVariants.vue';
-import SingleElement from '~/components/SingleElement.vue';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
@@ -1030,7 +1081,6 @@ export default {
     BasePagination,
     SearchBar,
     Tiptap,
-    SingleElement,
     MultipleVariants,
   },
   mixins: [
@@ -1055,6 +1105,7 @@ export default {
       showGenerateEditedImageBtn: false,
       showGenerateCreatedImageBtn: false,
       showModal: false,
+      showEmptyVariantNotification: false,
       name: '',
       price: '',
       description: '',
@@ -1219,8 +1270,10 @@ export default {
   computed: {
     availableVariants: {
       get() {
+        const selectedVariantIds = this.selectedVariants.map(
+          (selectedVariant) => selectedVariant.id)
         return this.variants.filter(
-          (variant) => !this.selectedVariants.includes(variant.id))
+          (variant) => !selectedVariantIds.includes(variant.id))
       },
     },
     categories: {
@@ -1286,6 +1339,9 @@ export default {
     },
     categoriesLink() {
       this.$router.push('/admin/categories')
+    },
+    variantsLink() {
+      this.$router.push('/admin/variants')
     },
     addToVariants(variantId) {
       if (!this.selectedVariants.includes(variantId)) {
@@ -1353,7 +1409,11 @@ export default {
         .$get(`v1/variants?${queryString}`)
         .then((response) => {
           this.variants = response.data.variants;
-          console.log(this.variants)
+          if (!this.variants.length) {
+            this.showEmptyVariantNotification = true;
+          } else {
+            this.showEmptyVariantNotification = false;
+          }
         })
     },
     retrieveProducts() {
@@ -1382,7 +1442,6 @@ export default {
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
-          console.log(response.data.items)
         })
         .finally(() => {
           this.isProductsLoading = false;
@@ -1391,6 +1450,19 @@ export default {
     setPage(page) {
       this.page = page;
       this.retrieveProducts();
+    },
+    testgetSelectedElements() {
+      this.elements = []
+      // todo: add here for variants and elements
+      const elements = []
+      this.multipleVariantBuffer.forEach((picker) => {
+        const selectedElements =
+          this.$refs[`variantPicker-${picker}`][0].getSelectedElements()
+        if (selectedElements !== null) {
+          elements.push(selectedElements)
+        }
+      })
+      this.elements = elements
     },
     getSelected() {
       const categories = []
@@ -1403,16 +1475,10 @@ export default {
       this.selectedCategory = categories;
 
       // todo: add here for variants and elements
-      const variants = []
       const elements = []
       this.multipleVariantBuffer.forEach((picker) => {
-        const selectedVariants =
-          this.$refs[`variantPicker-${picker}`][0].getSelected()
         const selectedElements =
           this.$refs[`variantPicker-${picker}`][0].getSelectedElements()
-        if (selectedVariants !== null) {
-          variants.push(selectedVariants)
-        }
         if (selectedElements !== null) {
           elements.push(selectedElements)
         }
@@ -1635,18 +1701,16 @@ export default {
             inStock: this.inStock,
             tags: this.tags.map((x) => x.id),
             photo: this.imgList,
-            elements: this.elements
+            elements: JSON.stringify(this.elements)
           };
           const form = new FormData();
           form.append('name', product.name);
           form.append('description', product.description);
           form.append('price', product.price);
           form.append('stock', product.inStock);
+          form.append('elements', product.elements);
           for (let i = 0; i < product.tags.length; i++) {
             form.append('tags[]', product.tags[i]);
-          }
-          for (let i = 0; i < product.elements.length; i++) {
-            form.append('elements[]', product.elements[i]);
           }
           for (let i = 0; i < product.categoryId.length; i++) {
             form.append('categoryId[]', product.categoryId[i]);
@@ -1869,7 +1933,6 @@ export default {
       this.showAssignColour = false
     },
     createImageToElement(imgValue) {
-      console.log(imgValue)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
@@ -1879,7 +1942,6 @@ export default {
       });
     },
     createColourToElement(colourValue) {
-      console.log(colourValue)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',

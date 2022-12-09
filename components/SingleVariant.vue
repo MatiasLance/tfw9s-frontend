@@ -36,7 +36,7 @@
                 :price="element.price"
                 :stock="element.stock"
                 :photo="element.thumbnail"
-                :photo-type="element.thumbnail_type"
+                :photo-type="element.thumbnail.type"
                 @assign-image="assignImage"
                 @assign-colour="assignColour"
                 @remove-element="removeElement"
@@ -178,6 +178,16 @@ export default {
             queue: true
           })
           this.$emit('retrieve')
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: 'Failed to save',
+            variant: 'danger',
+            duration: 5000,
+            position: 'bottom',
+            queue: true
+          })
         })
       this.$oruga.notification.open({
         duration: 3000,

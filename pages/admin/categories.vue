@@ -38,7 +38,7 @@
       </div>
     </BaseHeader>
 
-    <section class="container mx-auto max-w-screen-md px-2 sm:px-4">
+    <section class="container mx-auto max-w-screen-lg px-2 sm:px-4">
       <div class="my-8 w-full py-7 sm:px-12">
         <div class="mb-4 flex flex-wrap items-center pl-4">
           <VEditDialog
@@ -108,6 +108,23 @@
           >
             <i class="ri-arrow-right-line"></i>
             <span class="ml-1">Products</span>
+          </button>
+          <button
+            type="button"
+            :class="`
+                text-bold
+                flex
+                items-center
+                rounded
+                border border-solid border-gray-500
+                py-1 pl-2 pr-3
+                mr-2
+                hover:border-brand-black hover:bg-brand-black hover:text-white
+            `"
+            @click="variantsLink"
+          >
+            <i class="ri-arrow-right-line"></i>
+            <span class="ml-1">Variants</span>
           </button>
         </div>
         <ul class="text-sm sm:text-base">
@@ -266,6 +283,9 @@ export default {
     },
     goToPartsList() {
       this.$router.push('/admin/parts-list');
+    },
+    variantsLink() {
+      this.$router.push('/admin/variants')
     },
     createCategory() {
       this.$axios
