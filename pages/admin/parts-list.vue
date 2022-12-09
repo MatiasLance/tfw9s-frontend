@@ -790,22 +790,27 @@
             </div>
             <div class="grid grid-cols-1 gap-2">
               <div
-                v-for="variantPickerIndex in multipleVariantBuffer"
-                :key="variantPickerIndex"
-                class="flex justify-start gap-1"
+              v-for="variantPickerIndex in multipleVariantBuffer"
+              :key="variantPickerIndex"
+              class="flex justify-start gap-1"
               >
-                <button
-                  type="button"
-                  class="
-                    my-4
-                    h-6 w-6
-                    text-brand-black
-                    hover:bg-brand-black hover:text-white
-                  "
-                  @click="removeVariantPicker(variantPickerIndex)"
-                >
-                  <div class="ri-close-fill ri-lg"></div>
-                </button>
+              <button
+              type="button"
+              class="
+              my-4
+              h-6 w-6
+              text-brand-black
+              hover:bg-brand-black hover:text-white
+              "
+              @click="removeVariantPicker(variantPickerIndex)"
+              >
+              <div class="ri-close-fill ri-lg"></div>
+            </button>
+<!-- todo: add a prop for receiving elements upon Edit -->
+<!--
+  similar to 'lineage' in categories -
+  point here is to receive fetched elements on edit
+-->
                 <MultipleVariants
                   :ref="`variantPicker-${variantPickerIndex}`"
                   :options="availableVariants"
@@ -1741,14 +1746,24 @@ export default {
           inStock: this.inStock,
           tags: this.tags.map((x) => x.id),
           photo: this.imgList,
-          elements: JSON.stringify(this.elements)
+          elements: this.elements
         };
         const form = new FormData();
         form.append('name', product.name);
         form.append('description', product.description);
         form.append('price', product.price);
         form.append('stock', product.inStock);
-        form.append('elements', product.elements);
+        for (let i = 0; i < product.elements.length; i++) {
+          for (let j = 0; j < product.elements[i].length; j++) {
+            for (const elementProperty in
+              Object.keys(product.elements[i][j])) {
+              form.append(
+                `elements[${i}][${j}][${elementProperty}]`,
+                Object.values(product.elements[i][j])[elementProperty]
+              )
+            }
+          }
+        }
         for (let i = 0; i < product.tags.length; i++) {
           form.append('tags[]', product.tags[i]);
         }
@@ -1778,7 +1793,7 @@ export default {
           .catch((err) => {
             this.$oruga.notification.open({
               duration: 5000,
-              message: err.title,
+              message: err.message,
               position: 'bottom',
               variant: 'danger',
               closable: true,
@@ -1803,6 +1818,7 @@ export default {
       );
       this.selectedCategory = {};
       this.getSelected();
+      // todo: add elements upon editing
       const editedProduct = {
         name: this.name,
         price: this.price,
@@ -1965,12 +1981,10 @@ export default {
     },
     assignImage(elementId) {
       this.selectedElement = toNumber(elementId)
-      console.log(`Assigning image to Element# ${this.selectedElement}`)
       this.showAssignImage = true
     },
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
-      console.log(`Assigning colour to Element# ${this.selectedElement}`)
       this.showAssignColour = true
     },
     closeAssignImageDialog() {
