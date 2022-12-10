@@ -1,44 +1,48 @@
 <template>
-    <div class="grow">
-        <select
-          v-model="selectedVariant"
-          class="my-2 block w-full border
-          border-gray-300 bg-gray-200 py-2 px-3 text-base"
-          @change="addToSelectedVariants"
-        >
-          <option
-            v-for="variant in options"
-            :key="variant.id"
-            :value="variant.id"
-            aria-placeholder="Select Variant"
-            selected
-          >
-            {{ variant.name }}
-          </option>
-        </select>
-        <div
-            v-if="selectedVariant !== null"
-            class="col-span-3 my-4 w-full"
-        >
-            <div class="grid grid-cols-6 gap-2">
-            <SingleElement
-                v-for="element in
-                options[selectedVariant-1].elements"
-                :key="element.id"
-                :ref="`singleElement-${element.id}`"
-                :eid="element.id"
-                :name="element.name"
-                :price="element.price"
-                :stock="element.stock"
-                :photo="element.thumbnail"
-                :photo-type="element.thumbnail.type"
-                @checked="recordElementID"
-                @unchecked="removeElementID"
-                @edit-element="editElement"
-            />
-            </div>
-        </div>
+  <div class="grow">
+    <select
+      v-model="selectedVariant"
+      class="
+        my-2
+        block
+        w-full
+        border border-gray-300
+        bg-gray-200
+        py-2
+        px-3
+        text-base
+      "
+      @change="addToSelectedVariants"
+    >
+      <option
+        v-for="variant in options"
+        :key="variant.id"
+        :value="variant.id"
+        aria-placeholder="Select Variant"
+        selected
+      >
+        {{ variant.name }}
+      </option>
+    </select>
+    <div v-if="selectedVariant !== null" class="col-span-3 my-4 w-full">
+      <div class="grid grid-cols-6 gap-2">
+        <SingleElement
+          v-for="element in options[selectedVariant - 1].elements"
+          :key="element.id"
+          :ref="`singleElement-${element.id}`"
+          :eid="element.id"
+          :name="element.name"
+          :price="element.price"
+          :stock="element.stock"
+          :photo="element.thumbnail"
+          :photo-type="element.thumbnail.type"
+          @checked="recordElementID"
+          @unchecked="removeElementID"
+          @edit-element="editElement"
+        />
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -48,62 +52,63 @@ export default {
   props: {
     options: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       selectedVariant: null,
       selectedVariants: [],
       selectedElements: [],
-      checkedElementIds: []
-    }
+      checkedElementIds: [],
+    };
   },
   methods: {
     getSelected() {
-      return this.selectedVariant
+      return this.selectedVariant;
     },
     getSelectedElements() {
       this.checkedElementIds.forEach((elementId) => {
         const elementData =
-            this.$refs[`singleElement-${elementId}`][0].retrieveElement()
-        this.selectedElements.push(elementData)
-      })
-      return this.selectedElements
+          this.$refs[`singleElement-${elementId}`][0].retrieveElement();
+        this.selectedElements.push(elementData);
+      });
+      return this.selectedElements;
     },
     getSelectedElement(id) {
-      const elementData = this.$refs[`singleElement-${id}`][0].retrieveElement()
-      return elementData
+      const elementData =
+        this.$refs[`singleElement-${id}`][0].retrieveElement();
+      return elementData;
     },
     testModifySelectedElement(editedValue) {
-      const eid = editedValue.id
+      const eid = editedValue.id;
       this.$refs[`singleElement-${eid}`][0].photoType =
-        editedValue.thumbnailType
-      this.$refs[`singleElement-${eid}`][0].photo.value = editedValue.thumbnail
+        editedValue.thumbnailType;
+      this.$refs[`singleElement-${eid}`][0].photo.value = editedValue.thumbnail;
     },
     editElement(elementId) {
-      this.selectedElement = toNumber(elementId)
-      this.$emit('update-element', this.selectedElement)
+      this.selectedElement = toNumber(elementId);
+      this.$emit('update-element', this.selectedElement);
     },
     testElements() {
-      this.selectedElements = []
-      this.getSelectedElements()
+      this.selectedElements = [];
+      this.getSelectedElements();
     },
     addToSelectedVariants() {
-      this.reset()
-      this.$emit('variant-selected', this.selectedVariant)
+      this.reset();
+      this.$emit('variant-selected', this.selectedVariant);
     },
     recordElementID(elementId) {
-      this.checkedElementIds.push(elementId)
+      this.checkedElementIds.push(elementId);
     },
     removeElementID(elementId) {
-      const index = this.checkedElementIds.indexOf(elementId)
-      this.checkedElementIds.splice(index, 1)
+      const index = this.checkedElementIds.indexOf(elementId);
+      this.checkedElementIds.splice(index, 1);
     },
     reset() {
-      this.checkedElementIds = []
-      this.selectedElements = []
-    }
-  }
-}
+      this.checkedElementIds = [];
+      this.selectedElements = [];
+    },
+  },
+};
 </script>
