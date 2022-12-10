@@ -152,7 +152,7 @@ export default {
   },
   data() {
     return {
-      showEditButtons: true,
+      showEditButtons: false, // Set to false for now
       editablePhoto: '',
       editableColour: '',
       newItemThumbnailType: '',
