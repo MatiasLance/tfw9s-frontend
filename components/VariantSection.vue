@@ -203,7 +203,7 @@ export default {
       form.append('_method', 'PATCH')
       form.append('name', editedElement.name)
       form.append('thumbnail_type', editedElement.thumbnailType)
-      form.append('thumbnail', editedElement.thumbnail)
+      form.append('thumbnail', editedElement.thumbnail, `${editedElement.name}-thumbnail.png`)
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
 
@@ -295,10 +295,18 @@ export default {
       form.append('_method', 'PATCH')
       form.append('name', editedElement.name)
       form.append('thumbnail_type', editedElement.thumbnailType)
-      form.append('thumbnail', editedElement.thumbnail)
+      if (editedElement.thumbnailType === 'image') {
+        form.append('thumbnail', editedElement.thumbnail, `${editedElement.name}-mediafile.png`)
+      }
+      if (editedElement.thumbnailType === 'color') {
+        form.append('thumbnail', editedElement.thumbnail)
+      }
+      form.append('order', editedElement.order)
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
       this.$axios
-        .$post(`/v1/variants/elements/${editedElement.id}`, form)
+        .$post(`/v1/variants/elements/${editedElement.id}`, form, config)
         .then((response) => {
           this.$oruga.notification.open({
             duration: 5000,
