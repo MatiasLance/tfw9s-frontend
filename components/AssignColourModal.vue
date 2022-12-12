@@ -3,35 +3,12 @@
     <div class="w-[440px] rounded bg-white">
         <div class="p-5">
             <span class="text-xl font-bold">
-                Assign Colour for {{ elementName }}
+                Assign Colour {{ elementKey }}
             </span>
         </div>
         <hr>
-            <div
-            :id="elementKey"
-            class="mx-auto my-4 flex flex-col items-center justify-center"
-            >
-            <template v-if="thumbnailType === 'color'">
-              <VSheet
-              rounded="circle"
-              class="mx-auto my-3"
-              height="100"
-              width="100"
-              :color="thumbnail"
-              ></VSheet>
-            </template>
-                <VSheet
-                v-if="thumbnailType === 'image'"
-                rounded="circle"
-                class="mx-auto my-3"
-                height="100"
-                width="100"
-                :color="colorValue"
-                ></VSheet>
+            <div class="mx-auto my-4 flex items-center justify-center">
                 <ChromePicker v-model="colors" :color="colors" />
-                <VBtn class="my-3 uppercase" @click="setColour">
-                    Set Colour
-                </VBtn>
             </div>
         <hr>
         <div
@@ -92,9 +69,6 @@ export default {
   data() {
     return {
       colorValue: '',
-      thumbnail: '',
-      elementName: '',
-      thumbnailType: 'color',
       colors: {
         hex: '#194d33',
         hex8: '#194D33A8',
@@ -115,32 +89,12 @@ export default {
     closeDialog() {
       this.$emit('close')
     },
-    retrieveElement(elid) {
-      this.$axios
-        .$get(`/v1/variants/elements/${elid}`)
-        .then((response) => {
-          this.elementName = response.data.element.name
-          this.thumbnail = response.data.element.thumbnail.value
-          this.thumbnailType = response.data.element.thumbnail.type
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
     confirmAction() {
-      this.thumbnailType = 'color'
-      const editedElement = {
-        id: this.elementKey,
-        name: this.elementName,
-        thumbnail: this.thumbnail,
-        thumbnailType: this.thumbnailType
-      }
-      this.$emit('confirm', editedElement)
+      this.$emit('confirm', this.colorValue)
       this.closeDialog()
     },
     setColour() {
       this.colorValue = this.colors.hex
-      this.thumbnail = this.colorValue
     }
   }
 }

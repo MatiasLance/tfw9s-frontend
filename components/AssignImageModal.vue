@@ -3,19 +3,14 @@
     <div class="w-[440px] rounded bg-white">
         <div class="p-5">
             <span class="text-xl font-bold">
-                Assign Image for {{ elementName }}
+                Assign Image {{ elementKey }}
             </span>
         </div>
         <hr>
             <label class="my-8 block">
-                <VImg
-                  v-if="showInitialImage"
-                  :src="`/storage/${thumbnail}`"
-                ></VImg>
-                <br />
                 <div class="mx-auto my-9 flex items-center justify-center">
                     <Croppa
-                        v-model="elementAssignImgCroppa"
+                        v-model="elementCroppa"
                         :auto-sizing="true"
                         placeholder="Attach image"
                         :quality="2"
@@ -24,7 +19,7 @@
                         :zoom-speed="4"
                         :placeholder-font-size="18"
                         initial-size="contain"
-                        :show-loading="true"
+                        show-loading="true"
                         @file-type-mismatch="handleFileTypeMismatch"
                         @new-image-drawn="handleNewImage"
                         @image-remove="handleRemoveImage"
@@ -136,7 +131,6 @@
 
 <script>
 import 'remixicon/fonts/remixicon.css'
-import 'vue-croppa/dist/vue-croppa.css'
 
 export default {
   name: 'AssignImageModal',
@@ -153,75 +147,52 @@ export default {
   data() {
     return {
       imgValue: '',
-      elementName: '',
-      elementAssignImgCroppa: {},
+      elementCroppa: {},
       thumbnail: '',
-      thumbnailType: 'image',
       showGenerateBtn: false,
-      isImagePreview: false,
-      showInitialImage: true,
+      isImagePreview: false
     }
   },
   methods: {
     closeDialog() {
       this.$emit('close')
     },
-    retrieveElement(elid) {
-      this.$axios
-        .$get(`/v1/variants/elements/${elid}`)
-        .then((response) => {
-          this.elementName = response.data.element.name
-          this.thumbnail = response.data.element.thumbnail.value
-          this.thumbnailType = response.data.element.thumbnail.type
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
     confirmAction() {
-      this.thumbnailType = 'image'
-      const editedElement = {
-        id: this.elementKey,
-        name: this.elementName,
-        thumbnail: this.imgValue,
-        thumbnailType: this.thumbnailType
-      }
-      this.$emit('confirm', editedElement)
+      this.$emit('confirm', this.imgValue)
     },
     setImage() {
-      this.elementAssignImgCroppa.generateBlob((blob) => {
+      this.elementCroppa.generateBlob((blob) => {
         this.imgValue = blob
       })
     },
     generateElementImage() {
-      this.showInitialImage = false
-      this.elementAssignImgCroppa.generateBlob(
+      this.elementCroppa.generateBlob(
         (blob) => {
           this.thumbnail = URL.createObjectURL(blob)
           this.imgValue = blob
-        },
-        'image/png'
+        }
       );
+      this.elementCroppa.refresh();
       this.isImagePreview = true
-      this.elementAssignImgCroppa.remove()
+      this.showGenerateBtn = false
     },
     zoomIn() {
-      this.elementAssignImgCroppa.zoomIn();
+      this.elementCroppa.zoomIn();
     },
     zoomOut() {
-      this.elementAssignImgCroppa.zoomOut();
+      this.elementCroppa.zoomOut();
     },
     rotateAnti() {
-      this.elementAssignImgCroppa.rotate(-1);
+      this.elementCroppa.rotate(-1);
     },
     rotate() {
-      this.elementAssignImgCroppa.rotate();
+      this.elementCroppa.rotate();
     },
     flipx() {
-      this.elementAssignImgCroppa.flipX();
+      this.elementCroppa.flipX();
     },
     flipy() {
-      this.elementAssignImgCroppa.flipY();
+      this.elementCroppa.flipY();
     },
     handleFileTypeMismatch(file) {
       console.log(file)

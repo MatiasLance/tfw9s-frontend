@@ -28,6 +28,11 @@
             @close="closeAddVariantDialog"
             @confirm="createVariant"
         />
+        <AddElementModal
+          :active="showAddElement"
+          @close="closeAddElementDialog"
+          @confirm="createElement"
+        />
         <!-- show variants -->
         <div class="mb-5 gap-4 sm:grid sm:grid-cols-2">
           <SingleVariant
@@ -38,91 +43,30 @@
             :elements="variant.elements"
             @assign-image="assignImage"
             @assign-colour="assignColour"
+            @show-element-dialog="addElementOpt"
             @edit-variant="updateVariant"
             @delete-variant="removeVariant"
-            @retrieve="retrieveVariants"
-            @remove-element="removeElement"
-            @update-element="updateElement"
           />
         </div>
+        <!-- todo: showAssignImage and showAssignColour -->
         <AssignImageModal
-          ref="assignImg"
           :active="showAssignImage"
           :element-key="selectedElement"
           @close="closeAssignImageDialog"
           @confirm="createImageToElement"
         />
         <AssignColourModal
-          ref="assignCol"
           :active="showAssignColour"
           :element-key="selectedElement"
           @close="closeAssignColourDialog"
           @confirm="createColourToElement"
         />
-        <UpdateElementModal
-          ref="updateEleme"
-          :active="showEditElement"
-          :element-key="selectedElement"
-          @close="closeEditElementDialog"
-          @confirm="updateElementProceed"
-          @retrieve="retrieveVariants"
-        />
-        <OModal
-          :active="showRemoveElement"
-          :element-key="selectedElement"
-          @close="closeRemoveElementDialog"
-        >
-        <div class="w-full rounded bg-white sm:w-[440px]">
-          <div class="p-4">
-            <div class="text-lg leading-tight">
-              Are you sure you want to delete this element ?
-            </div>
-          </div>
-          <hr>
-          <div
-            class="
-              flex items-center
-              justify-end
-              gap-2
-              px-4
-              pt-2
-            "
-          >
-            <button
-              type="button"
-              class="
-                rounded
-                px-2
-                py-1
-                hover:bg-gray-500
-                hover:text-white
-              "
-              @click="closeRemoveElementDialog"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="
-                rounded
-                px-2
-                py-1
-                text-brand-black
-                hover:bg-brand-black
-                hover:text-white
-              "
-              @click="removeElementProceed(selectedElement)"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </OModal>
     </div>
 </template>
 
 <script>
 import 'remixicon/fonts/remixicon.css';
+import AddElementModal from './AddElementModal.vue';
 import AssignImageModal from './AssignImageModal.vue';
 import AssignColourModal from './AssignColourModal.vue';
 import SingleVariant from './SingleVariant.vue';
@@ -132,6 +76,7 @@ const toNumber = (str) => +str;
 export default {
   name: 'VariantSection',
   components: {
+    AddElementModal,
     AssignImageModal,
     AssignColourModal,
     SingleVariant,
@@ -149,8 +94,6 @@ export default {
       showAddElement: false,
       showAssignImage: false,
       showAssignColour: false,
-      showRemoveElement: false,
-      showEditElement: false,
       variantsList: [],
       variantSize: '',
       selectedElement: -1,
@@ -169,7 +112,7 @@ export default {
   },
   methods: {
     retrieveVariants() {
-      this.$emit('retrieve')
+      this.variantsList = this.$store.state.product.variants
     },
     createVariant(variantName) {
       const form = new FormData();
@@ -198,135 +141,35 @@ export default {
           });
         });
     },
-    createImageToElement(editedElement) {
-      const form = new FormData()
-      form.append('_method', 'PATCH')
-      form.append('name', editedElement.name)
-      form.append('thumbnail_type', editedElement.thumbnailType)
-      form.append('thumbnail', editedElement.thumbnail, `${editedElement.name}-thumbnail.png`)
-
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-
-      this.$axios
-        .$post(`/v1/variants/elements/${editedElement.id}`, form, config)
-        .then((response) => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: response.title,
-            position: 'bottom',
-            variant: 'success',
-            queue: true
-          })
-          this.retrieveVariants()
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to update thumbnail',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true
-          })
-        })
-
-      this.closeAssignImageDialog()
+    createElement(element) {
+      console.log(element)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true,
+      });
     },
-    createColourToElement(editedElement) {
-      const form = new FormData()
-      form.append('_method', 'PATCH')
-      form.append('name', editedElement.name)
-      form.append('thumbnail_type', editedElement.thumbnailType)
-      form.append('thumbnail', editedElement.thumbnail)
-
-      this.$axios
-        .$post(`/v1/variants/elements/${editedElement.id}`, form)
-        .then((response) => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: response.title,
-            position: 'bottom',
-            variant: 'success',
-            queue: true
-          })
-          this.retrieveVariants()
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to update element',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true
-          })
-        })
-      this.closeAssignColourDialog()
+    createImageToElement(imgValue) {
+      console.log(imgValue)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true,
+      });
     },
-    removeElementProceed(elementId) {
-      const id = toNumber(elementId)
-      this.$axios
-        .$delete(`/v1/variants/elements/${id}`)
-        .then((response) => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: response.title,
-            position: 'bottom',
-            variant: 'info',
-            queue: true
-          })
-          this.closeRemoveElementDialog()
-          this.retrieveVariants()
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to remove element',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true
-          })
-        })
-    },
-    updateElementProceed(editedElement) {
-      console.log(editedElement)
-      const form = new FormData()
-      form.append('_method', 'PATCH')
-      form.append('name', editedElement.name)
-      form.append('thumbnail_type', editedElement.thumbnailType)
-      if (editedElement.thumbnailType === 'image') {
-        form.append('thumbnail', editedElement.thumbnail, `${editedElement.name}-mediafile.png`)
-      }
-      if (editedElement.thumbnailType === 'color') {
-        form.append('thumbnail', editedElement.thumbnail)
-      }
-      form.append('order', editedElement.order)
-
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-
-      this.$axios
-        .$post(`/v1/variants/elements/${editedElement.id}`, form, config)
-        .then((response) => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: response.title,
-            position: 'bottom',
-            variant: 'success',
-            queue: true
-          })
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to update element',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true
-          })
-        })
-      this.retrieveVariants()
+    createColourToElement(colourValue) {
+      console.log(colourValue)
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true
+      })
     },
     closeAddVariantDialog() {
       this.showAddVariant = false
@@ -340,12 +183,6 @@ export default {
     closeAssignColourDialog() {
       this.showAssignColour = false
     },
-    closeRemoveElementDialog() {
-      this.showRemoveElement = false
-    },
-    closeEditElementDialog() {
-      this.showEditElement = false
-    },
     addVariantOpt() {
       this.showAddVariant = true
     },
@@ -354,28 +191,13 @@ export default {
     },
     assignImage(elementId) {
       this.selectedElement = toNumber(elementId)
-      this.$refs.assignImg.retrieveElement(this.selectedElement)
-      setTimeout(() => {
-        this.showAssignImage = true
-      }, 2000)
+      console.log(`Assigning image to Element# ${this.selectedElement}`)
+      this.showAssignImage = true
     },
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
-      this.$refs.assignCol.retrieveElement(this.selectedElement)
-      setTimeout(() => {
-        this.showAssignColour = true
-      }, 2000)
-    },
-    removeElement(elementId) {
-      this.selectedElement = toNumber(elementId)
-      this.showRemoveElement = true
-    },
-    updateElement(elementId) {
-      this.selectedElement = toNumber(elementId)
-      this.$refs.updateEleme.retrieveElement(this.selectedElement)
-      setTimeout(() => {
-        this.showEditElement = true
-      }, 2000);
+      console.log(`Assigning colour to Element# ${this.selectedElement}`)
+      this.showAssignColour = true
     },
     updateVariant(editedVariant) {
       console.log(editedVariant)

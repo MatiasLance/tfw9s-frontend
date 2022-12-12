@@ -17,20 +17,24 @@
         ></VTextField>
     </div>
     <div class="my-1 p-2">
+      <label>Element Price:</label>
+      <VTextField
+        v-model="element.price"
+        solo
+        label="Element Price"
+        prefix="$"
+        @keyup.enter="confirmAction"
+      ></VTextField>
+    </div>
+    <div class="my-1 p-2">
         <label>Element Type:</label>
-        <select
+        <VSelect
             v-model="element.photo.type"
-            class="block w-full appearance-none rounded-md
-            border border-gray-200
-            bg-gray-100 py-2 px-4 text-lg
-            hover:border-gray-400 focus:border-gray-400
-            focus:outline-none"
-            required
-        >
-            <option v-for="item in items" :key="item">
-                {{ item }}
-            </option>
-        </select>
+            :items="items"
+            label="Element Type"
+            solo
+            color="black"
+        ></VSelect>
     </div>
     <div class="my-4 block p-2">
         <template v-if="element.photo.type === 'image'">
@@ -47,7 +51,7 @@
                         :placeholder-font-size="18"
                         :prevent-white-space="true"
                         initial-size="contain"
-                        :show-loading="true"
+                        show-loading="true"
                         @file-type-mismatch="handleFileTypeMismatch"
                         @new-image-drawn="handleNewImage"
                         @image-remove="handleRemoveImage"
@@ -115,15 +119,11 @@
                 </div>
             </div>
         </template>
-        <template v-if="element.photo.type === 'color'">
+        <template v-if="element.photo.type === 'colour'">
           <div
-          class="mx-auto my-4 flex flex-col items-center justify-center"
+          class="mx-auto my-4 flex items-center justify-center"
           >
-            <small class="text-sm">Selected: {{ element.photo.value }}</small>
             <ChromePicker v-model="colors" :color="colors" />
-            <VBtn class="my-3 uppercase" @click="setColour">
-              Generate
-            </VBtn>
           </div>
         </template>
     </div>
@@ -161,7 +161,7 @@
             hover:bg-brand-black
             hover:text-white
           "
-          @click="confirmAction(uid)"
+          @click="confirmAction"
         >
           Confirm
         </button>
@@ -171,16 +171,11 @@
 </template>
 
 <script>
-import 'vue-croppa/dist/vue-croppa.css'
 import 'remixicon/fonts/remixicon.css';
 
 export default {
   name: 'AddElementModal',
   props: {
-    uid: {
-      type: Number,
-      required: true
-    },
     active: {
       type: Boolean,
       required: true,
@@ -190,9 +185,10 @@ export default {
     return {
       element: {
         name: '',
+        price: 0,
         photo: {
-          type: 'color',
-          value: '#194d33',
+          type: '',
+          value: '',
           imgValue: []
         },
       },
@@ -200,7 +196,7 @@ export default {
       items: [
         'Select one',
         'image',
-        'color'
+        'colour'
       ],
       colors: {
         hex: '#194d33',
@@ -221,39 +217,13 @@ export default {
       isImagePreview: false
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.clearEntries()
-    })
-  },
   methods: {
     closeDialog() {
       this.$emit('close')
     },
-    confirmAction(uid) {
-      if (this.element.name !== '') {
-        const submitValue = {
-          variantId: uid,
-          name: this.element.name,
-          thumbnailType: this.element.photo.type,
-          thumbnail: this.element.photo.value,
-          order: ''
-        }
-        this.$emit('confirm', submitValue)
-        this.clearEntries()
-        this.closeDialog()
-      } else {
-        this.$oruga.notification.open({
-          duration: 3000,
-          message: 'Please specify an element name.',
-          position: 'bottom',
-          variant: 'warning',
-          queue: true,
-        })
-      }
-    },
-    clearEntries() {
-      this.element.name = ''
+    confirmAction() {
+      this.$emit('confirm', this.element)
+      this.closeDialog()
     },
     setColour() {
       this.element.photo.value = this.colors.hex

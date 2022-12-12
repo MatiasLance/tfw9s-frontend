@@ -85,27 +85,6 @@
                 Categories
               </span>
             </button>
-            <button
-              type="button"
-              class="
-                block w-40 rounded-xl
-                border border-solid border-brand-black
-                bg-brand-black
-                px-4
-                py-2
-                text-center
-                text-white
-                hover:bg-slate-400
-                focus:bg-brand-grey
-                md:inline-block
-              "
-              @click="variantsLink"
-            >
-              <span class="flex items-center justify-center" aria-hidden="true">
-                <i class="ri-arrow-right-line"></i>
-                Variants
-              </span>
-            </button>
             </div>
             <div class="w-full sm:w-80">
               <form @submit.prevent="retrieveProducts">
@@ -115,28 +94,7 @@
           </div>
         </main>
       </div>
-      <section v-if="showEmptyVariantNotification" class="my-4">
-        <ONotification
-          closable
-          type="info"
-          variant="warning"
-          aria-close-label="Close notification"
-          class="text-xl"
-        >
-          Variants are currently empty. To create one, proceed to
-          <NuxtLink
-            class="
-            hover:underline
-          hover:decoration-brand-grey
-            hover:decoration-4
-            hover:underline-offset-8
-            "
-            to="/admin/variants"
-          >
-            Variants Page
-          </NuxtLink>
-        </ONotification>
-      </section>
+
       <section class="mb-8" data-aos="fade-up">
       <div
         class="
@@ -414,56 +372,36 @@
           </div>
           <!-- variants section -->
           <div class="col-span-3 mb-4 w-full">
-            <div class="flex items-center justify-between">
-              <label class="mb-1 block">Variants:</label>
-              <button
-                  type="button"
-                  class="
-                    flex
-                    items-center
-                    justify-center
-                    border border-solid border-brand-black
-                    bg-brand-black
-                    px-4
-                    py-2
-                    text-white
-                  "
-                  @click="addVariantPicker"
-                >
-                  <i class="ri-add-fill"></i>
-                  Add Variant
-              </button>
-            </div>
-            <div class="grid grid-cols-1 gap-2">
-              <div v-if="showVariantDebugButtons" class="flex gap-1">
-                <VBtn @click="testcheckDuplicateVariants">
-                  has duplicate variants?
-                </VBtn>
-              </div>
-              <div
-                v-for="variantPickerIndex in multipleVariantBuffer"
-                :key="variantPickerIndex"
-                class="flex justify-start gap-1"
+            <label class="mb-1 block">Variants:</label>
+            <select
+              v-model="selectedVariant"
+              class="block w-full rounded-md border
+              border-gray-200 bg-gray-100 py-2 px-4 text-lg"
+            >
+              <option
+                v-for="(variant, variantKey) in variantsDemo"
+                :key="variant.name"
+                :value="variantKey"
               >
-                <button
-                  type="button"
-                  class="
-                    my-4
-                    h-6 w-6
-                    text-brand-black
-                    hover:bg-brand-black hover:text-white
-                  "
-                  @click="removeVariantPicker(variantPickerIndex)"
-                >
-                  <div class="ri-close-fill ri-lg"></div>
-                </button>
-                <MultipleVariants
-                  :ref="`variantPicker-${variantPickerIndex}`"
-                  :options="availableVariants"
-                  @variant-selected="addToVariants"
-                  @update-element="updateElement"
+                {{ variant.name }}
+              </option>
+            </select>
+          </div>
+          <div v-if="selectedVariant !== ''" class="col-span-3 mb-4 w-full">
+            <div class="grid grid-cols-6 gap-2">
+              <SingleElement
+                v-for="(element, elementKey) in
+                  variantsDemo[selectedVariant].elements"
+                :key="elementKey"
+                :eid="elementKey"
+                :variant-name="name"
+                :name="element.name"
+                :price="element.price"
+                :stock="element.stock"
+                :photo="element.photo"
+                @assign-image="assignImage"
+                @assign-colour="assignColour"
                 />
-              </div>
             </div>
           </div>
           <!-- categories section -->
@@ -769,52 +707,36 @@
           </div>
            <!-- variants section -->
           <div class="col-span-3 mb-4 w-full">
-            <div class="flex items-center justify-between">
-              <label class="mb-1 block">Variants:</label>
-              <button
-                  type="button"
-                  class="
-                    flex
-                    items-center
-                    justify-center
-                    border border-solid border-brand-black
-                    bg-brand-black
-                    px-4
-                    py-2
-                    text-white
-                  "
-                  @click="addVariantPicker"
-                >
-                  <i class="ri-add-fill"></i>
-                  Add Variant
-              </button>
-            </div>
-            <div class="grid grid-cols-1 gap-2">
-              <div
-              v-for="variantPickerIndex in multipleVariantBuffer"
-              :key="variantPickerIndex"
-              class="flex justify-start gap-1"
+            <label class="mb-1 block">Variants:</label>
+            <select
+              v-model="selectedVariant02"
+              class="block w-full rounded-md border
+              border-gray-200 bg-gray-100 py-2 px-4 text-lg"
+            >
+              <option
+                v-for="(variant, variantKey) in variants"
+                :key="variant.name"
+                :value="variantKey"
               >
-              <button
-              type="button"
-              class="
-              my-4
-              h-6 w-6
-              text-brand-black
-              hover:bg-brand-black hover:text-white
-              "
-              @click="removeVariantPicker(variantPickerIndex)"
-              >
-              <div class="ri-close-fill ri-lg"></div>
-            </button>
-<!-- todo: add a prop for receiving elements upon Edit -->
-                <MultipleVariants
-                  :ref="`variantPicker-${variantPickerIndex}`"
-                  :options="availableVariants"
-                  @variant-selected="addToVariants"
-                  @update-element="updateElement"
+                {{ variant.name }}
+              </option>
+            </select>
+          </div>
+          <div v-if="selectedVariant02 !== ''" class="col-span-3 mb-4 w-full">
+            <div class="grid grid-cols-6 gap-2">
+              <SingleElement
+                v-for="(element, elementKey) in
+                  variants[selectedVariant02].elements"
+                :key="elementKey"
+                :eid="elementKey"
+                :variant-name="name"
+                :name="element.name"
+                :price="element.price"
+                :stock="element.stock"
+                :photo="element.photo"
+                @assign-image="assignImage"
+                @assign-colour="assignColour"
                 />
-              </div>
             </div>
           </div>
           <div class="col-span-3 mb-4 w-full">
@@ -1066,22 +988,13 @@
       @close="closeAssignColourDialog"
       @confirm="createColourToElement"
     />
-    <UpdateElementModal
-      ref="updateEleme"
-      :active="showEditElement"
-      :element-key="selectedElement"
-      :show-element-name="false"
-      @close="closeEditElementDialog"
-      @confirm="updateElementProceed"
-      @retrieve="retrieveVariants"
-    />
   </div>
 </template>
 
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
-import MultipleVariants from '~/components/MultipleVariants.vue';
+import SingleElement from '~/components/SingleElement.vue';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
@@ -1098,7 +1011,7 @@ export default {
     BasePagination,
     SearchBar,
     Tiptap,
-    MultipleVariants,
+    SingleElement,
   },
   mixins: [
     aosMixin,
@@ -1109,7 +1022,6 @@ export default {
   data() {
     return {
       query: '',
-      query2: '',
       from: 0,
       to: 0,
       totalPages: 0,
@@ -1122,9 +1034,6 @@ export default {
       showGenerateEditedImageBtn: false,
       showGenerateCreatedImageBtn: false,
       showModal: false,
-      showEmptyVariantNotification: false,
-      showVariantDebugButtons: false,
-      showEditElement: false,
       name: '',
       price: '',
       description: '',
@@ -1132,15 +1041,6 @@ export default {
       inStock: '',
       categoryLineages: [],
       variants: [],
-      variants02: [],
-      elements: [],
-      editedElement: {
-        id: '',
-        name: '',
-        thumbnailType: '',
-        thumbnail: ''
-      },
-      checkedElementIds: [],
       tags: [
         { id: 1, name: 'foo' },
         { id: 2, name: 'bar' },
@@ -1168,8 +1068,6 @@ export default {
       categoryParentId: '',
       multipleCategoryCounter: 1,
       multipleCategoryBuffer: [ 1 ],
-      multipleVariantCounter: 1,
-      multipleVariantBuffer: [ 1 ],
       inStockRadio: 'Yes',
       isOpen: false,
       fullName: '',
@@ -1182,7 +1080,6 @@ export default {
         title: 'Products Admin - Revamped',
         description: 'Page for creating product items for Revamped',
       },
-      selectedVariants: [],
       selectedVariant: '',
       selectedVariant02: '',
       variantsDemo: [
@@ -1292,14 +1189,6 @@ export default {
     };
   },
   computed: {
-    availableVariants: {
-      get() {
-        const selectedVariantIds = this.selectedVariants.map(
-          (selectedVariant) => selectedVariant.id)
-        return this.variants.filter(
-          (variant) => !selectedVariantIds.includes(variant.id))
-      },
-    },
     categories: {
       get() {
         return this.$store.state.product.categories;
@@ -1334,7 +1223,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.retrieveVariants()
       setInterval(() => {
         this.$axios
           .$get('v1/users/me')
@@ -1363,56 +1251,6 @@ export default {
     },
     categoriesLink() {
       this.$router.push('/admin/categories')
-    },
-    variantsLink() {
-      this.$router.push('/admin/variants')
-    },
-    closeEditElementDialog() {
-      this.showEditElement = false
-    },
-    updateElement(elementId) {
-      this.selectedElement = toNumber(elementId)
-      this.$refs.updateEleme.retrieveElement(this.selectedElement)
-      setTimeout(() => {
-        this.showEditElement = true
-      }, 2000)
-    },
-    updateElementProceed(editedValue) {
-      this.editedElement.id = editedValue.id
-      this.editedElement.name = editedValue.name
-      this.editedElement.thumbnailType = editedValue.thumbnailType
-      this.editedElement.thumbnail = editedValue.thumbnail
-    },
-    addToVariants(variantId) {
-      if (!this.selectedVariants.includes(variantId)) {
-        this.selectedVariants.push(variantId)
-      }
-    },
-    addVariantPicker() {
-      const variantLength = this.variants.length;
-      if (this.multipleVariantCounter < variantLength) {
-        this.multipleVariantCounter += 1
-        this.multipleVariantBuffer.push(this.multipleVariantCounter)
-      } else {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Variants has exceeded its length. Cannot add more than allowable.',
-          position: 'bottom',
-          variant: 'info',
-          queue: true,
-        })
-      }
-    },
-    removeVariantPicker(picker) {
-      this.multipleVariantCounter -= 1
-      const index = this.multipleVariantBuffer.indexOf(picker)
-      if (index > -1) {
-        this.multipleVariantBuffer.splice(index, 1)
-      }
-    },
-    resetVariantPicker() {
-      this.multipleVariantCounter = 1
-      this.multipleVariantBuffer = [ 1 ]
     },
     addCategoryPicker() {
       this.multipleCategoryCounter += 1
@@ -1446,27 +1284,6 @@ export default {
           this.$store.commit('product/setCategories', response.data.categories);
         });
     },
-    retrieveVariants() {
-      const query = { q: this.query2 }
-      // Sanitize and remove null values
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/variants?${queryString}`)
-        .then((response) => {
-          this.variants = response.data.variants;
-          if (!this.variants.length) {
-            this.showEmptyVariantNotification = true;
-          } else {
-            this.showEmptyVariantNotification = false;
-          }
-        })
-    },
     retrieveProducts() {
       this.isProductsLoading = true;
 
@@ -1493,6 +1310,7 @@ export default {
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
+          console.log(response.data.items)
         })
         .finally(() => {
           this.isProductsLoading = false;
@@ -1501,31 +1319,6 @@ export default {
     setPage(page) {
       this.page = page;
       this.retrieveProducts();
-    },
-    checkDuplicateVariants() {
-      const variantIds = []
-      this.multipleVariantBuffer.forEach((picker) => {
-        const selectedVariant =
-          this.$refs[`variantPicker-${picker}`][0].selectedVariant
-        if (selectedVariant !== null) {
-          variantIds.push(selectedVariant)
-        }
-      })
-
-      return new Set(variantIds).size !== variantIds.length
-    },
-    testgetSelectedElements() {
-      // todo: remove test function when done
-      this.elements = []
-      const elements = []
-      this.multipleVariantBuffer.forEach((picker) => {
-        const selectedElements =
-          this.$refs[`variantPicker-${picker}`][0].getSelectedElements()
-        if (selectedElements !== null) {
-          elements.push(selectedElements)
-        }
-      })
-      this.elements = elements
     },
     getSelected() {
       const categories = []
@@ -1536,16 +1329,6 @@ export default {
         }
       })
       this.selectedCategory = categories;
-
-      const elements = []
-      this.multipleVariantBuffer.forEach((picker) => {
-        const selectedElements =
-          this.$refs[`variantPicker-${picker}`][0].getSelectedElements()
-        if (selectedElements !== null) {
-          elements.push(selectedElements)
-        }
-      })
-      this.elements = elements
     },
     getFilteredTags(text) {
       this.filteredTags = this.tagData.map((option) => {
@@ -1699,7 +1482,6 @@ export default {
       this.reset();
       this.inStockRadio = 'Yes';
       this.toggleStock();
-      this.retrieveVariants()
       this.showAddProductModal = true;
     },
     editPr(index) {
@@ -1710,15 +1492,15 @@ export default {
         position: 'bottom',
         queue: true,
       });
-      this.retrieveVariants()
       this.editingNo = toNumber(index);
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
         .then((response) => {
+          console.log(response.data.item)
           this.name = response.data.item.name;
           this.price = response.data.item.price;
           this.description = response.data.item.description;
-          this.elements = response.data.item.elements;
+          this.variants = response.data.item.variants;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
           this.imgUrlEdit = response.data.item.media.map((x) =>
@@ -1744,89 +1526,65 @@ export default {
     closeEdit() {
       this.showEditProductModal = false;
     },
-    recordElementID(elementId) {
-      this.checkedElementIds.push(elementId)
-    },
-    removeElementID(elementId) {
-      const index = this.checkedElementIds.indexOf(elementId)
-      this.checkedElementIds.splice(index, 1)
-    },
     create() {
       // create item
       this.getSelected();
-      const hasDuplicateVariants = this.checkDuplicateVariants();
-      if (!hasDuplicateVariants) {
-        // create
-        const product = {
-          name: this.name,
-          price: this.price,
-          description: this.description,
-          categoryId: this.selectedCategory.map(x => x.id),
-          inStock: this.inStock,
-          tags: this.tags.map((x) => x.id),
-          photo: this.imgList,
-          elements: this.elements
-        };
-        const form = new FormData();
-        form.append('name', product.name);
-        form.append('description', product.description);
-        form.append('price', product.price);
-        form.append('stock', product.inStock);
-        for (let i = 0; i < product.elements[0].length; i++) {
-          for (
-            const [ elementProperty, value ] of
-            Object.entries(product.elements[0][i])
-          ) {
-            form.append(`elements[${i}][${elementProperty}]`, value)
+      this.myCroppa.generateBlob(
+        (blob) => {
+          const product = {
+            name: this.name,
+            price: this.price,
+            description: this.description,
+            categoryId: this.selectedCategory.map(x => x.id),
+            inStock: this.inStock,
+            tags: this.tags.map((x) => x.id),
+            photo: this.imgList
+          };
+          const form = new FormData();
+          form.append('name', product.name);
+          form.append('description', product.description);
+          form.append('price', product.price);
+          form.append('stock', product.inStock);
+          for (let i = 0; i < product.tags.length; i++) {
+            form.append('tags[]', product.tags[i]);
           }
-        }
-        for (let i = 0; i < product.tags.length; i++) {
-          form.append('tags[]', product.tags[i]);
-        }
-        for (let i = 0; i < product.categoryId.length; i++) {
-          form.append('categoryId[]', product.categoryId[i]);
-        }
-        for (let i = 0; i < product.photo.length; i++) {
-          form.append('photo[]', product.photo[i], 'itemThumbnail.jpg');
-        }
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+          for (let i = 0; i < product.categoryId.length; i++) {
+            form.append('categoryId[]', product.categoryId[i]);
+          }
+          for (let i = 0; i < product.photo.length; i++) {
+            form.append('photo[]', product.photo[i], 'itemThumbnail.jpg');
+          }
+          const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
-        this.$axios
-          .$post('v1/items/', form, config)
-          .then((response) => {
-            this.showAddProductModal = false;
-            this.isItemAdded = true;
-            this.$oruga.notification.open({
-              message: response.title,
-              variant: 'success',
-              duration: 5000,
-              position: 'bottom',
-              queue: true,
+          this.$axios
+            .$post('v1/items/', form, config)
+            .then((response) => {
+              this.showAddProductModal = false;
+              this.isItemAdded = true;
+              this.$oruga.notification.open({
+                message: response.title,
+                variant: 'success',
+                duration: 5000,
+                position: 'bottom',
+                queue: true,
+              });
+              this.reset();
+              this.retrieveProducts();
+            })
+            .catch((err) => {
+              this.$oruga.notification.open({
+                duration: 5000,
+                message: err.title,
+                position: 'bottom',
+                variant: 'danger',
+                closable: true,
+                queue: true,
+              });
             });
-            this.reset();
-            this.retrieveProducts();
-          })
-          .catch((err) => {
-            this.$oruga.notification.open({
-              duration: 5000,
-              message: err.message,
-              position: 'bottom',
-              variant: 'danger',
-              closable: true,
-              queue: true,
-            });
-          });
-      } else {
-        // show notification must be unique
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Variants must be unique.',
-          position: 'bottom',
-          variant: 'warning',
-          closable: true,
-          queue: true
-        })
-      }
+        },
+        'image/jpeg',
+        0.95
+      );
     },
     edit(index) {
       const editObject = this.productList.find(
@@ -1834,83 +1592,60 @@ export default {
       );
       this.selectedCategory = {};
       this.getSelected();
-      // todo: add elements upon editing
-      const hasDuplicateVariants = this.checkDuplicateVariants();
-      if (!hasDuplicateVariants) {
-        const editedProduct = {
-          name: this.name,
-          price: this.price,
-          description: this.description,
-          inStock: this.inStock,
-          categoryId: this.selectedCategory.map(x => x.id),
-          tags: this.tags.map((x) => x.id),
-          photo: this.imgListEdit,
-          elements: this.elements,
-        };
+      const editedProduct = {
+        name: this.name,
+        price: this.price,
+        description: this.description,
+        inStock: this.inStock,
+        categoryId: this.selectedCategory.map(x => x.id),
+        tags: this.tags.map((x) => x.id),
+        photo: this.imgListEdit,
+      };
 
-        const form = new FormData();
-        form.append('_method', 'PATCH');
-        form.append('name', editedProduct.name);
-        form.append('description', editedProduct.description);
-        form.append('price', editedProduct.price);
-        form.append('stock', editedProduct.inStock);
-        for (let i = 0; i < editedProduct.tags.length; i++) {
-          form.append('tags[]', editedProduct.tags[i]);
-        }
-        for (let i = 0; i < editedProduct.elements[0].length; i++) {
-          for (
-            const [ elementProperty, value ] of
-            Object.entries(editedProduct.elements[0][i])
-          ) {
-            form.append(`elements[${i}][${elementProperty}]`, value)
-          }
-        }
-        for (let i = 0; i < editedProduct.categoryId.length; i++) {
-          form.append('categoryId[]', editedProduct.categoryId[i]);
-        }
-        for (let i = 0; i < editedProduct.photo.length; i++) {
-          form.append('photo[]', editedProduct.photo[i]);
-        }
-        form.append('id', index);
-
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-
-        this.$axios
-          .$post(`v1/items/${editObject.id}`, form, config)
-          .then((response) => {
-            this.showEditProductModal = false;
-            this.$oruga.notification.open({
-              message: response.title,
-              variant: 'success',
-              duration: 5000,
-              position: 'bottom',
-              queue: true,
-            });
-            this.editingNo = '';
-            this.reset();
-            this.retrieveProducts();
-          })
-          .catch((err) => {
-            this.$oruga.notification.open({
-              duration: 5000,
-              message: err.title,
-              position: 'bottom',
-              variant: 'danger',
-              closable: true,
-              queue: true,
-            });
-          });
-      } else {
-        // show notification must be unique
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Variants must be unique.',
-          position: 'bottom',
-          variant: 'warning',
-          closable: true,
-          queue: true
-        })
+      const form = new FormData();
+      form.append('_method', 'PATCH');
+      form.append('name', editedProduct.name);
+      form.append('description', editedProduct.description);
+      form.append('price', editedProduct.price);
+      form.append('stock', editedProduct.inStock);
+      for (let i = 0; i < editedProduct.tags.length; i++) {
+        form.append('tags[]', editedProduct.tags[i]);
       }
+      for (let i = 0; i < editedProduct.categoryId.length; i++) {
+        form.append('categoryId[]', editedProduct.categoryId[i]);
+      }
+      for (let i = 0; i < editedProduct.photo.length; i++) {
+        form.append('photo[]', editedProduct.photo[i]);
+      }
+      form.append('id', index);
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+      this.$axios
+        .$post(`v1/items/${editObject.id}`, form, config)
+        .then((response) => {
+          this.showEditProductModal = false;
+          this.$oruga.notification.open({
+            message: response.title,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          this.editingNo = '';
+          this.reset();
+          this.retrieveProducts();
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.title,
+            position: 'bottom',
+            variant: 'danger',
+            closable: true,
+            queue: true,
+          });
+        });
     },
     remove(index) {
       const editObject = this.productList.find(
@@ -1976,8 +1711,7 @@ export default {
       this.imgUrlEdit = [];
       this.imgListEdit = [];
       this.syncProducts();
-      this.resetVariantPicker();
-      this.resetCategoryPicker();
+      this.resetCategoryPicker()
     },
     syncProducts() {
       this.name = this.$store.state.product.name;
@@ -2019,10 +1753,12 @@ export default {
     },
     assignImage(elementId) {
       this.selectedElement = toNumber(elementId)
+      console.log(`Assigning image to Element# ${this.selectedElement}`)
       this.showAssignImage = true
     },
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
+      console.log(`Assigning colour to Element# ${this.selectedElement}`)
       this.showAssignColour = true
     },
     closeAssignImageDialog() {
@@ -2032,6 +1768,7 @@ export default {
       this.showAssignColour = false
     },
     createImageToElement(imgValue) {
+      console.log(imgValue)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
@@ -2041,6 +1778,7 @@ export default {
       });
     },
     createColourToElement(colourValue) {
+      console.log(colourValue)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',

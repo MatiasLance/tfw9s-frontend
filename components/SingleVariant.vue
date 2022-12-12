@@ -10,10 +10,7 @@
             >
                 {{ name }}
             </label>
-            <div
-              class="flex flex-col justify-end space-y-4
-              lg:flex-row lg:space-y-0"
-            >
+            <div class="flex flex-col justify-end lg:flex-row">
               <VBtn plain elevation="2" x-small @click="editVariantOpt">
                   <i class="ri-pencil-fill mr-2"></i>
               </VBtn>
@@ -27,20 +24,18 @@
             </div>
         </div>
         <div class="grid w-full grid-cols-2 gap-2">
+            <!-- todo: change elementKey to element.id -->
             <SingleElementEdit
-                v-for="element in elements"
-                :key="element.id"
-                :eid="element.id"
+                v-for="(element, elementKey) in elements"
+                :key="elementKey"
+                :eid="elementKey"
                 :variant-name="name"
                 :name="element.name"
                 :price="element.price"
                 :stock="element.stock"
-                :photo="element.thumbnail"
-                :photo-type="element.thumbnail.type"
+                :photo="element.photo"
                 @assign-image="assignImage"
                 @assign-colour="assignColour"
-                @remove-element="removeElement"
-                @edit-element="editElement"
             />
         </div>
         <EditVariantModal
@@ -49,14 +44,6 @@
          @close="closeEditVariantDialog"
          @confirm="updateVariant"
         />
-        <div class="z-auto overflow-hidden">
-          <AddElementModal
-            :active="showAddElement"
-            :uid="uid"
-            @close="closeAddElementDialog"
-            @confirm="createElement"
-          />
-        </div>
         <div>
       <OModal
         :active="showDeleteVariant"
@@ -138,7 +125,6 @@ export default {
       editableVariant: '',
       selectedElement: -1,
       newVariantName: '',
-      showAddElement: false,
       showEditVariant: false,
       showDeleteVariant: false,
       showDeleteVariantDialog: false
@@ -153,69 +139,14 @@ export default {
       this.selectedElement = toNumber(elementId)
       this.$emit('assign-colour', this.selectedElement)
     },
-    editElement(elementId) {
-      this.selectedElement = toNumber(elementId)
-      this.$emit('update-element', this.selectedElement)
-    },
-    createElement(element) {
-      console.log(element)
-      const form = new FormData()
-      form.append('name', element.name)
-      form.append('thumbnail_type', element.thumbnailType)
-      if (element.thumbnailType === 'image') {
-        form.append('thumbnail', element.thumbnail, 'image.png')
-      }
-      if (element.thumbnailType === 'color') {
-        form.append('thumbnail', element.thumbnail)
-      }
-      form.append('order', element.order)
-
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-
-      this.$axios
-        .$post(`v1/variants/${element.variantId}`, form, config)
-        .then((response) => {
-          this.$oruga.notification.open({
-            message: response.title,
-            variant: 'success',
-            duration: 5000,
-            position: 'bottom',
-            queue: true
-          })
-          this.$emit('retrieve')
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$oruga.notification.open({
-            message: 'Failed to save',
-            variant: 'danger',
-            duration: 5000,
-            position: 'bottom',
-            queue: true
-          })
-        })
-      this.$oruga.notification.open({
-        duration: 3000,
-        message: 'Creating element...',
-        position: 'bottom',
-        variant: 'warning',
-        queue: true,
-      });
-    },
-    removeElement(elementId) {
-      this.$emit('remove-element', elementId)
-    },
     addElementOpt() {
-      this.showAddElement = true
+      this.$emit('show-element-dialog', true)
     },
     deleteVariantOpt() {
       this.showDeleteVariant = true
     },
     editVariantOpt() {
       this.showEditVariant = true
-    },
-    closeAddElementDialog() {
-      this.showAddElement = false
     },
     closeEditVariantDialog() {
       this.showEditVariant = false
