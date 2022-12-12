@@ -126,7 +126,9 @@
 
 <script>
 import PaypalCheckout from '~/components/PaypalCheckout.vue';
-import PaymentTab from '~/components/payment/PaymentTab'
+import PaymentTab from '~/components/payment/PaymentTab';
+
+let elements;
 
 export default {
   components: {
@@ -149,6 +151,90 @@ export default {
   },
   data() {
     return { paymentMethod: 'stripe' };
+  },
+  mounted() {
+    this.initialize()
+  },
+  methods: {
+    async initialize() {
+      this.isStepperLoading = true;
+      const items = this.$store.state.cart.cart;
+      const metadata = this.shippingInformation;
+      const clientSecret = await this.$axios
+        .$post('v1/orders/checkout', {
+          items,
+          metadata,
+        })
+        .then((response) => {
+          this.activeStep = 2;
+          return response;
+        })
+        .finally(() => {
+          this.isStepperLoading = false;
+        });
+
+      this.loadStripe(clientSecret);
+    },
+    loadStripe(clientSecret) {
+      const appearance = {
+        theme: 'stripe',
+        labels: 'floating',
+        variables: {
+          colorPrimary: '#1a1d18',
+          colorBackground: '#ffffff',
+          colorText: '#191919',
+          colorDanger: '#e73538',
+          fontFamily: 'Ideal Sans, system-ui, sans-serif',
+          spacingUnit: '4px',
+          borderRadius: '2px',
+          // See all possible variables below
+        },
+      };
+
+      elements = this.$stripe.elements({ clientSecret, appearance });
+      const paymentElement = elements.create('payment');
+      paymentElement.mount('#payment-element');
+    },
+    async handleSubmit() {
+      this.setLoading(true);
+      const { error } = await this.$stripe.confirmPayment({
+        elements,
+        // eslint-disable-next-line camelcase
+        confirmParams: { return_url: `${this.$config.baseURL}/thank-you` },
+      });
+
+      if (error.type === 'card_error' || error.type === 'validation_error') {
+        this.showMessage(error.message);
+      } else {
+        this.showMessage('An unexpected error occurred.');
+      }
+
+      this.setLoading(false);
+    },
+    setLoading(isLoading) {
+      if (isLoading) {
+        // Disable the button and show a spinner
+        document.querySelector('#stripeSubmit').disabled = true;
+        document.querySelector('#spinner').classList.remove('hidden');
+        document.querySelector('#button-text').classList.add('hidden');
+      } else {
+        document.querySelector('#stripeSubmit').disabled = false;
+        document.querySelector('#spinner').classList.add('hidden');
+        document.querySelector('#button-text').classList.remove('hidden');
+      }
+    },
+    showMessage(messageText) {
+      const messageContainer = document.querySelector('#payment-message');
+      messageContainer.classList.remove('hidden');
+
+      messageContainer.textContent = messageText;
+
+      setTimeout(function() {
+        messageContainer.classList.add('hidden');
+        messageText = '';
+        messageContainer.textContent = messageText;
+      }, 7000);
+    },
   },
 };
 </script>
