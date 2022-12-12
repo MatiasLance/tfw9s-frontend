@@ -25,7 +25,7 @@
         >
           <span class="font-medium text-white">
             <NuxtLink to="/">
-                <VBtn text color="white">Home</VBtn>
+              <VBtn text color="white">Home</VBtn>
             </NuxtLink>
           </span>
         </span>
@@ -35,157 +35,25 @@
       </div>
     </BaseHeader>
 
-    <div class="container mx-auto my-24 max-w-screen-xl px-4">
-
+    <div class="container my-24 max-w-screen-xl px-4">
       <div class="mb-12 w-full">
         <Stepper :step="activeStep" />
       </div>
 
-      <div class="flex flex-col justify-center gap-4 md:flex-row">
-
-        <div v-if="activeStep === 1">
+      <div class="flex flex-col gap-4 md:flex-row">
+        <template v-if="activeStep === 1">
           <ShippingInformationForm
             :is-loading="isStepperLoading"
             @submit="toPayStep"
           />
-        </div>
-        <div v-else-if="activeStep === 2" class="w-[320px]">
-          <article
-            class="flex flex-col justify-center text-gray-600"
-          >
-            <h2 class="mb-3 flex justify-center text-lg font-semibold">
-              Summary
-            </h2>
-            <ul>
-              <li class="mb-1 flex justify-between">
-                <span>Subtotal:</span>
-                <span>{{ formatCurrency(subtotal) }}</span>
-              </li>
-              <li class="mb-1 flex justify-between">
-                <span>GST:</span>
-                <span>{{ formatCurrency(gst) }}</span>
-              </li>
-              <li class="mt-3 flex justify-between border-t pt-3">
-                <span>Total price:</span>
-                <span class="font-bold text-gray-900">
-                  {{ formatCurrency(total) }}
-                </span>
-              </li>
-            </ul>
-
-            <hr class="my-4" />
-          </article>
-          <div
-            class="my-7 flex flex-col items-center
-            justify-center md:flex-row md:space-x-4"
-          >
-            <button
-              type="button"
-              class="rounded-xl
-              border
-              border-solid border-brand-slate
-              bg-transparent px-6 py-3
-              text-base text-slate-600 hover:bg-slate-200
-              hover:text-black"
-              :class="selectedClass1"
-              @click="togglePaypal"
-            >
-              Paypal
-            </button>
-            <button
-              type="button"
-              class="rounded-xl
-              border
-              border-solid border-brand-slate
-              bg-transparent px-6 py-3
-              text-base text-slate-600 hover:bg-slate-200
-              hover:text-black"
-              :class="selectedClass2"
-              @click="toggleStripe"
-            >
-              Stripe
-            </button>
-            <button
-              type="button"
-              class="rounded-xl
-              border
-              border-solid border-brand-slate
-              bg-transparent px-6 py-3
-              text-base text-slate-600 hover:bg-slate-200
-              hover:text-black"
-              :class="selectedClass3"
-              @click="toggleAfterPay"
-            >
-              Afterpay
-            </button>
-          </div>
-          <PaypalCheckout
-            v-if="showPaypal"
-            id="paypal-payment-form"
-            class="p-10"
-            :cart-total="total"
+        </template>
+        <template v-else-if="activeStep === 2">
+          <PaymentForm
+            :subtotal="formatCurrency(subtotal)"
+            :gst="formatCurrency(gst)"
+            :total="formatCurrency(total)"
           />
-          <div v-if="showStripe" class="flex gap-3 text-gray-600">
-            <form id="payment-form" @submit.prevent="handleSubmit">
-              <legend>
-                <h2 class="mb-3 block text-lg font-semibold">
-                  Payment Method (Stripe)
-                </h2>
-              </legend>
-              <div id="payment-element">
-                <!-- Stripe.js injects the Payment Element -->
-              </div>
-              <button id="stripeSubmit" type="submit">
-                <div id="spinner" class="spinner hidden"></div>
-                <span id="button-text">Pay now</span>
-              </button>
-              <a
-                class="
-                  mt-3
-                  block
-                  w-full
-                  border border-gray-200
-                  bg-white
-                  py-[16px]
-                  px-[12px]
-                  text-center text-gray-700
-                  shadow-sm
-                  hover:bg-gray-100 hover:text-[#1a1d18]
-                "
-                href="/cart"
-              >
-                Return to cart
-              </a>
-              <div id="payment-message" class="hidden"></div>
-            </form>
-          </div>
-          <div v-if="showAfterpay" class="flex gap-3 text-gray-600">
-            <form id="afterpay-form" @submit.prevent="handleSubmitAfterpay">
-              <legend>
-                <h2 class="mb-3 block text-lg font-semibold">
-                  Payment Method (Afterpay)
-                </h2>
-              </legend>
-              <a
-                class="
-                  mt-3
-                  block
-                  w-full
-                  border border-gray-200
-                  bg-white
-                  py-[16px]
-                  px-[12px]
-                  text-center text-gray-700
-                  shadow-sm
-                  hover:bg-gray-100 hover:text-[#1a1d18]
-                "
-                href="/cart"
-              >
-                Return to cart
-              </a>
-            </form>
-          </div>
-        </div>
+        </template>
         <!-- col.// -->
       </div>
       <!-- grid.// -->
@@ -195,11 +63,12 @@
 </template>
 
 <script>
-import PaypalCheckout from '../components/PaypalCheckout.vue';
 import BaseHeader from '~/components/base/BaseHeader';
 import ShippingInformationForm from '~/components/ShippingInformationForm';
 import Stepper from '~/components/Stepper/Stepper';
 import currencyMixin from '~/mixins/currency';
+import PaymentForm from '~/components/PaymentForm';
+
 let elements;
 
 export default {
@@ -208,111 +77,70 @@ export default {
     BaseHeader,
     ShippingInformationForm,
     Stepper,
-    PaypalCheckout,
+    PaymentForm,
   },
   mixins: [ currencyMixin ],
   data() {
     return {
       clientSecret: '',
       shippingInformation: [],
-      activeStep: 1,
+      activeStep: 2,
       isStepperLoading: false,
-      showPaypal: false,
-      showAfterpay: false,
-      showStripe: false,
-      selectedPaypal: false,
-      selectedStripe: false,
-      selectedAfterpay: false
     };
   },
   computed: {
-    selectedClass1() {
-      return this.selectedPaypal ? 'selected' : ''
-    },
-    selectedClass2() {
-      return this.selectedStripe ? 'selected' : ''
-    },
-    selectedClass3() {
-      return this.selectedAfterpay ? 'selected' : ''
-    },
     subtotal: {
       get() {
-        return this.$store.state.cart.subtotal
+        return this.$store.state.cart.subtotal;
       },
       set(v) {
-        this.$store.commit('cart/setSubtotal', v)
+        this.$store.commit('cart/setSubtotal', v);
       },
     },
     gst: {
       get() {
-        return this.$store.state.cart.gst
+        return this.$store.state.cart.gst;
       },
       set(v) {
-        this.$store.commit('cart/setGst', v)
+        this.$store.commit('cart/setGst', v);
       },
     },
     total: {
       get() {
-        return this.$store.state.cart.total
+        return this.$store.state.cart.total;
       },
       set(v) {
-        this.$store.commit('cart/setTotal', v)
+        this.$store.commit('cart/setTotal', v);
       },
     },
   },
   methods: {
-    togglePaypal() {
-      this.showPaypal = true
-      this.showStripe = false
-      this.showAfterpay = false
-      this.selectedAfterpay = false
-      this.selectedStripe = false
-      this.selectedPaypal = true
-    },
-    toggleStripe() {
-      this.showPaypal = false
-      this.showStripe = true
-      this.showAfterpay = false
-      this.selectedAfterpay = false
-      this.selectedStripe = true
-      this.selectedPaypal = false
-      this.initialize()
-    },
-    toggleAfterPay() {
-      this.showPaypal = false
-      this.showStripe = false
-      this.showAfterpay = true
-      this.selectedAfterpay = true
-      this.selectedStripe = false
-      this.selectedPaypal = false
-    },
     toPayStep(shippingInformation) {
-      this.shippingInformation = shippingInformation
-      this.isStepperLoading = true
+      this.shippingInformation = shippingInformation;
+      this.isStepperLoading = true;
       setTimeout(() => {
-        this.activeStep = 2
-        this.isStepperLoading = false
+        this.activeStep = 2;
+        this.isStepperLoading = false;
       }, 3000);
     },
     async initialize() {
-      this.isStepperLoading = true
-      const items = this.$store.state.cart.cart
-      const metadata = this.shippingInformation
+      this.isStepperLoading = true;
+      const items = this.$store.state.cart.cart;
+      const metadata = this.shippingInformation;
       const clientSecret = await this.$axios
         .$post('v1/orders/checkout', {
           items,
-          metadata
+          metadata,
         })
         .then((response) => {
-          this.activeStep = 2
+          this.activeStep = 2;
           return response;
         })
         .finally(() => {
-          this.isStepperLoading = false
-        })
+          this.isStepperLoading = false;
+        });
 
-      this.loadStripe(clientSecret)
-
+      this.loadStripe(clientSecret);
     },
     loadStripe(clientSecret) {
       const appearance = {
@@ -388,7 +216,7 @@ export default {
       switch (paymentIntent.status) {
       case 'succeeded':
         this.showMessage('Success! Payment received.');
-        this.$router.push('/shop')
+        this.$router.push('/shop');
         break;
       case 'processing':
         this.showMessage('Your payment is processing.');
@@ -414,8 +242,8 @@ form#payment-form {
   /* min-width: 500px; */
   align-self: center;
   box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-              0px 2px 5px 0px rgba(50, 50, 93, 0.1),
-              0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
+    0px 2px 5px 0px rgba(50, 50, 93, 0.1),
+    0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
   border-radius: 7px;
   padding: 40px;
 }
@@ -424,8 +252,8 @@ form#payment-form {
   width: 100%;
   align-self: center;
   box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-              0px 2px 5px 0px rgba(50, 50, 93, 0.1),
-              0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
+    0px 2px 5px 0px rgba(50, 50, 93, 0.1),
+    0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
   border-radius: 7px;
 }
 
