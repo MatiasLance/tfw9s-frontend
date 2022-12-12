@@ -35,12 +35,12 @@
       </div>
     </BaseHeader>
 
-    <div class="container my-24 max-w-screen-xl px-4">
-      <div class="mb-12 w-full">
+    <div class="my-24 mx-auto max-w-screen-xl bg-gray-200">
+      <div class="mb-12 w-full bg-white">
         <Stepper :step="activeStep" />
       </div>
 
-      <div class="flex flex-col gap-4 md:flex-row">
+      <div class="flex flex-col gap-4 p-2 md:flex-row">
         <template v-if="activeStep === 1">
           <ShippingInformationForm
             :is-loading="isStepperLoading"
@@ -84,7 +84,7 @@ export default {
     return {
       clientSecret: '',
       shippingInformation: [],
-      activeStep: 2,
+      activeStep: 1,
       isStepperLoading: false,
     };
   },
@@ -237,17 +237,6 @@ export default {
 
 <style>
 /* Variables */
-form#payment-form {
-  width: 100%;
-  /* min-width: 500px; */
-  align-self: center;
-  box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-    0px 2px 5px 0px rgba(50, 50, 93, 0.1),
-    0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
-  border-radius: 7px;
-  padding: 40px;
-}
-
 #paypal-payment-form {
   width: 100%;
   align-self: center;

@@ -1,23 +1,27 @@
 <template>
-  <div
-    class="
-      flex
-      w-full
-      flex-col
-      justify-center
-      gap-4
-      md:flex-row
-    "
-  >
-    <div class="payment-section grow">
+  <div class="flex w-full flex-col justify-center gap-4 md:flex-row">
+    <div class="payment-section flex grow flex-col bg-gray-200">
 
-      <div v-if="paymentMethod == 'stripe'" class="flex gap-3 text-gray-600">
-        <form id="payment-form" @submit.prevent="handleSubmit">
-          <legend>
-            <h2 class="mb-3 block text-lg font-semibold">
-              Payment Method (Stripe)
-            </h2>
-          </legend>
+      <div class="flex">
+        <PaymentTab
+          :active="paymentMethod === 'stripe'"
+          @click="paymentMethod = 'stripe'"
+        >
+          Credit Card
+        </PaymentTab>
+        <PaymentTab
+          :active="paymentMethod === 'paypal'"
+          @click="paymentMethod = 'paypal'"
+        >
+          Paypal
+        </PaymentTab>
+      </div>
+
+      <div
+        v-if="paymentMethod === 'stripe'"
+        class="payment-module gap-3 text-gray-600"
+      >
+        <form class="w-full" @submit.prevent="handleSubmit">
           <div id="payment-element">
             <!-- Stripe.js injects the Payment Element -->
           </div>
@@ -47,14 +51,14 @@
       </div>
 
       <PaypalCheckout
-        v-else-if="paymentMethod == 'paypal'"
+        v-else-if="paymentMethod === 'paypal'"
         id="paypal-payment-form"
         class="p-10"
         :cart-total="total"
       />
 
       <div
-        v-else-if="paymentMethod == 'afterpay'"
+        v-else-if="paymentMethod === 'afterpay'"
         class="flex gap-3 text-gray-600"
       >
         <form id="afterpay-form" @submit.prevent="handleSubmitAfterpay">
@@ -91,6 +95,8 @@
         w-full
         flex-col
         justify-center
+        bg-white
+        p-2
         text-gray-600
         md:w-80
       "
@@ -119,21 +125,25 @@
 </template>
 
 <script>
-import PaypalCheckout from '../components/PaypalCheckout.vue';
+import PaypalCheckout from '~/components/PaypalCheckout.vue';
+import PaymentTab from '~/components/payment/PaymentTab'
 
 export default {
-  components: { PaypalCheckout },
+  components: {
+    PaypalCheckout,
+    PaymentTab
+  },
   props: {
     subtotal: {
-      type: Number,
+      type: [ String, Number ],
       required: true,
     },
     gst: {
-      type: Number,
+      type: [ String, Number ],
       required: true,
     },
     total: {
-      type: Number,
+      type: [ String, Number ],
       required: true,
     },
   },
@@ -144,11 +154,15 @@ export default {
 </script>
 
 <style scoped>
+.payment-module {
+  @apply bg-white p-8;
+}
+
 .payment-section {
-  @apply order-2 md:order-1
+  @apply order-2 md:order-1;
 }
 
 .summary {
-  @apply order-1 md:order-2
+  @apply order-1 md:order-2;
 }
 </style>
