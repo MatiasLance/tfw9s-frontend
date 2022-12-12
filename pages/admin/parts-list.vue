@@ -370,40 +370,6 @@
             <label class="mb-1 block">Description:</label>
             <Tiptap v-model="description" />
           </div>
-          <!-- variants section -->
-          <div class="col-span-3 mb-4 w-full">
-            <label class="mb-1 block">Variants:</label>
-            <select
-              v-model="selectedVariant"
-              class="block w-full rounded-md border
-              border-gray-200 bg-gray-100 py-2 px-4 text-lg"
-            >
-              <option
-                v-for="(variant, variantKey) in variantsDemo"
-                :key="variant.name"
-                :value="variantKey"
-              >
-                {{ variant.name }}
-              </option>
-            </select>
-          </div>
-          <div v-if="selectedVariant !== ''" class="col-span-3 mb-4 w-full">
-            <div class="grid grid-cols-6 gap-2">
-              <SingleElement
-                v-for="(element, elementKey) in
-                  variantsDemo[selectedVariant].elements"
-                :key="elementKey"
-                :eid="elementKey"
-                :variant-name="name"
-                :name="element.name"
-                :price="element.price"
-                :stock="element.stock"
-                :photo="element.photo"
-                @assign-image="assignImage"
-                @assign-colour="assignColour"
-                />
-            </div>
-          </div>
           <!-- categories section -->
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
@@ -705,40 +671,6 @@
             <label class="mb-1 block">Description:</label>
             <Tiptap v-model="description" />
           </div>
-           <!-- variants section -->
-          <div class="col-span-3 mb-4 w-full">
-            <label class="mb-1 block">Variants:</label>
-            <select
-              v-model="selectedVariant02"
-              class="block w-full rounded-md border
-              border-gray-200 bg-gray-100 py-2 px-4 text-lg"
-            >
-              <option
-                v-for="(variant, variantKey) in variants"
-                :key="variant.name"
-                :value="variantKey"
-              >
-                {{ variant.name }}
-              </option>
-            </select>
-          </div>
-          <div v-if="selectedVariant02 !== ''" class="col-span-3 mb-4 w-full">
-            <div class="grid grid-cols-6 gap-2">
-              <SingleElement
-                v-for="(element, elementKey) in
-                  variants[selectedVariant02].elements"
-                :key="elementKey"
-                :eid="elementKey"
-                :variant-name="name"
-                :name="element.name"
-                :price="element.price"
-                :stock="element.stock"
-                :photo="element.photo"
-                @assign-image="assignImage"
-                @assign-colour="assignColour"
-                />
-            </div>
-          </div>
           <div class="col-span-3 mb-4 w-full">
             <div class="flex items-center justify-between">
               <label class="mb-1 block"> Category: </label>
@@ -994,7 +926,6 @@
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
-import SingleElement from '~/components/SingleElement.vue';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
@@ -1011,7 +942,6 @@ export default {
     BasePagination,
     SearchBar,
     Tiptap,
-    SingleElement,
   },
   mixins: [
     aosMixin,
@@ -1040,7 +970,6 @@ export default {
       subcategory: '',
       inStock: '',
       categoryLineages: [],
-      variants: [],
       tags: [
         { id: 1, name: 'foo' },
         { id: 2, name: 'bar' },
@@ -1080,100 +1009,6 @@ export default {
         title: 'Products Admin - Revamped',
         description: 'Page for creating product items for Revamped',
       },
-      selectedVariant: '',
-      selectedVariant02: '',
-      variantsDemo: [
-        {
-          name: 'Size',
-          elements: [
-            {
-              name: 'Small',
-              photo: {
-                type: '',
-                value: '',
-              },
-              price: 0
-            },
-            {
-              name: 'Medium',
-              photo: {
-                type: '',
-                value: '',
-              },
-              price: 0
-            },
-            {
-              name: 'Large',
-              photo: {
-                type: '',
-                value: '',
-              },
-              price: 0
-            },
-            {
-              name: 'XLarge',
-              photo: {
-                type: '',
-                value: '',
-              },
-              price: 0
-            },
-            {
-              name: 'XXLarge',
-              photo: {
-                type: '',
-                value: '',
-              },
-              price: 0
-            }
-          ]
-        },
-        {
-          name: 'Color',
-          elements: [
-            {
-              name: 'Black',
-              photo: {
-                type: 'colour',
-                value: '#000'
-              },
-              price: 0
-            },
-            {
-              name: 'Red White w/ Stripes',
-              photo: {
-                type: 'image',
-                value: null
-              },
-              price: 0
-            },
-            {
-              name: 'Blue',
-              photo: {
-                type: 'image',
-                value: null
-              },
-              price: 0
-            },
-            {
-              name: 'Green',
-              photo: {
-                type: 'colour',
-                value: '#319b5a'
-              },
-              price: 0
-            },
-            {
-              name: 'Brown',
-              photo: {
-                type: 'colour',
-                value: '#b4844b'
-              },
-              price: 0
-            }
-          ]
-        }
-      ],
     };
   },
   head() {
@@ -1500,7 +1335,6 @@ export default {
           this.name = response.data.item.name;
           this.price = response.data.item.price;
           this.description = response.data.item.description;
-          this.variants = response.data.item.variants;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
           this.imgUrlEdit = response.data.item.media.map((x) =>
