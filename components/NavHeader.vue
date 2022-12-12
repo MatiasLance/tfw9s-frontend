@@ -63,7 +63,7 @@
               <ul class="block lg:flex">
                 <li
                   v-for="(link, linkIndex) in links"
-                  :key="`link-desktop-${linkIndex}`"
+                  :key="`left-menu-links-desktop-${linkIndex}`"
                   class="group"
                 >
                   <NuxtLink :to="link.to">
@@ -158,7 +158,7 @@
                   >
                     <a
                       v-for="(link, linkIndex) in more"
-                      :key="`link-mobile-${linkIndex}`"
+                      :key="`more-a-link-mobile-${linkIndex}`"
                       :href="link.to"
                       class="hover:bg-slate-100"
                     >
@@ -208,7 +208,7 @@
               <ul class="block lg:flex">
                 <li
                   v-for="(link, linkIndex) in links"
-                  :key="`link-mobile-${linkIndex}`"
+                  :key="`left-menu-link-mobile-${linkIndex}`"
                   class="group"
                 >
                   <NuxtLink :to="link.to">
@@ -238,7 +238,7 @@
                 </li>
                 <li
                   v-for="(link, linkIndex) in rightMenu"
-                  :key="`link-mobile-${linkIndex}`"
+                  :key="`right-menu-link-mobile-${linkIndex}`"
                   class="group"
                 >
                   <NuxtLink :to="link.to">
@@ -333,7 +333,7 @@
                   >
                     <a
                       v-for="(link, linkIndex) in more"
-                      :key="`link-mobile-${linkIndex}`"
+                      :key="`more-a-link-mobile-${linkIndex}`"
                       :href="link.to"
                       class="hover:bg-slate-100"
                     >
@@ -384,7 +384,7 @@
                 <ul class="block lg:flex">
                   <li
                     v-for="(link, linkIndex) in rightMenu"
-                    :key="`link-desktop-${linkIndex}`"
+                    :key="`right-menu-links-desktop-${linkIndex}`"
                     class="group"
                   >
                   <NuxtLink :to="link.to">
