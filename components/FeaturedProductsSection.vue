@@ -84,10 +84,8 @@ export default {
   methods: {
     retrieveFeaturedItems() {
       const query = {
-        q: this.query,
         sort: 'a_to_z',
-        page: this.page,
-        itemVariant: this.activeVariantItem,
+        maxItemsPerPage: 64,
       };
 
       // Sanitize and remove null values
