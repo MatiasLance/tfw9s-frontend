@@ -31,7 +31,7 @@
             @click="$router.push('shop')"
           >
             <img
-              :src="`/img/sample/${product.img}`"
+              :src="getMediaURL(product.media[0])"
               class="mb-8 h-80 w-80 object-contain"
               alt=""
             />
@@ -63,73 +63,51 @@
 </template>
 
 <script>
+import handlesMedia from '~/mixins/shop/handlesMedia'
 import currency from '~/mixins/currency';
 
 export default {
   name: 'FeaturedProductsSection',
-  mixins: [ currency ],
+  mixins: [
+    currency,
+    handlesMedia,
+  ],
   data() {
     return {
       headline: 'Featured Products',
-      featuredProducts: [
-        {
-          id: 1,
-          brand: 'NIKE',
-          name: 'NIKE SB Dunk Low Pro St. Patrick\'s Day',
-          price: 370.0,
-          img: '1.png',
-        },
-        {
-          id: 2,
-          brand: 'NIKE',
-          name: 'nike sb dunk low \'gnarhunters\'',
-          price: 280.0,
-          img: '2.png',
-        },
-        {
-          id: 3,
-          brand: 'JORDAN 1',
-          name: 'Jordan 1 Low Diamond Shorts',
-          price: 260.0,
-          img: '3.png',
-        },
-        {
-          id: 4,
-          brand: 'JORDAN 1',
-          name: 'JORDAN 1 retro high og grade school/youth \'Marina Blue\'',
-          price: 280.0,
-          img: '4.png',
-        },
-        {
-          id: 5,
-          brand: 'JORDAN 1',
-          name: 'Jordan 11 Retro Low \'UNC\'',
-          price: 830.0,
-          img: '5.png',
-        },
-        {
-          id: 6,
-          brand: 'BILLIONAIRE BOYS CLUB',
-          name: 'Billionaire BB Ruler Woven Black Casual Button Up Shirt',
-          price: 180.0,
-          img: '6.png',
-        },
-        {
-          id: 7,
-          brand: 'BILLIONAIRE BOYS CLUB',
-          name: 'Billionaire BB Deep Space S/S Woven Knit Black',
-          price: 220.0,
-          img: '7.png',
-        },
-        {
-          id: 8,
-          brand: 'JORDAN 1',
-          name: 'Jordan 1 Retro High OG \'Heritage\'',
-          price: 300.0,
-          img: '8.png',
-        },
-      ],
+      featuredProducts: [],
     };
+  },
+  mounted() {
+    this.retrieveFeaturedItems()
+  },
+  methods: {
+    retrieveFeaturedItems() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        itemVariant: this.activeVariantItem,
+      };
+
+      // Sanitize and remove null values
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/items?${queryString}`)
+        .then((response) => {
+          this.featuredProducts = response.data.items;
+        })
+        .finally(() => {
+          this.isProductsLoading = false;
+        });
+    },
   },
 };
 </script>
