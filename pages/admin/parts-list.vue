@@ -103,9 +103,45 @@
           md:justify-between
         "
       >
-          <p class="text-base leading-[2.5em]">
-            Showing {{ from }}-{{ to }} of {{ totalItems }} results
-          </p>
+          <span class="flex items-center">
+            <template v-if="activeVariantItem !== null">
+              <button
+                type="button"
+                class="
+                  mr-4
+                  rounded-xl border border-solid
+                  border-brand-black
+                  bg-brand-black
+                  px-4
+                  py-2
+                  text-center
+                  text-white
+                  hover:bg-slate-400
+                  focus:bg-brand-grey
+                "
+                @click="clearVariantItemFilter"
+              >
+                <span
+                  class="flex items-center justify-center"
+                  aria-hidden="true"
+                >
+                  <i class="ri-arrow-left-line"></i>
+                  <span class="pr-1">Back</span>
+                </span>
+              </button>
+
+              <p class="text-base leading-[2.5em]">
+                Showing item and its variants
+              </p>
+              <span class="px-2 text-3xl">
+                |
+              </span>
+            </template>
+            <p class="text-base leading-[2.5em]">
+              Showing {{ from }}-{{ to }} of {{ totalItems }} results
+            </p>
+          </span>
+
           <BasePagination
             :active-page="page"
             :total-pages="totalPages"
@@ -1416,6 +1452,10 @@ export default {
     },
     showVariants(productId) {
       this.activeVariantItem = productId
+      this.retrieveProducts()
+    },
+    clearVariantItemFilter() {
+      this.activeVariantItem = null
       this.retrieveProducts()
     },
     removePr(index) {
