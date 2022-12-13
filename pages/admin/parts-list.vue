@@ -241,6 +241,20 @@
                   hover:text-brand-slate
                   hover:underline hover:decoration-brand-slate
                 "
+                @click="showVariants(prod.id)"
+              >
+                <i class="ri-link"></i> Show Variants
+              </button>
+              <button
+                type="button"
+                class="
+                  mr-2
+                  flex
+                  cursor-pointer
+                  items-center
+                  hover:text-brand-slate
+                  hover:underline hover:decoration-brand-slate
+                "
                 @click="duplicate(prod.id)"
               >
                 <i class="ri-file-copy-line"></i> Duplicate
@@ -970,6 +984,7 @@ export default {
       to: 0,
       totalPages: 0,
       totalItems: 0,
+      activeVariantItem: null,
       isProductsLoading: false,
       isItemAdded: false,
       showAddProductModal: false,
@@ -1145,7 +1160,8 @@ export default {
       const query = {
         q: this.query,
         sort: 'a_to_z',
-        page: this.page
+        page: this.page,
+        itemVariant: this.activeVariantItem,
       };
 
       // Sanitize and remove null values
@@ -1397,6 +1413,10 @@ export default {
           this.isEdit = false
           this.showEditProductModal = true;
         });
+    },
+    showVariants(productId) {
+      this.activeVariantItem = productId
+      this.retrieveProducts()
     },
     removePr(index) {
       this.editingNo = toNumber(index);
