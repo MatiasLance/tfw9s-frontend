@@ -13,7 +13,7 @@
             </div>
             <div class="col-span-3">
               <template v-if="photos.length > 0">
-                <VueSlickCarousel v-bind="settings">
+                <VueSlickCarousel v-bind="imageCarouselSettings">
                   <div
                     v-for="photo in photos"
                     :key="photo.id"
@@ -185,6 +185,15 @@
         <div class="product-description col-span-12 p-[1rem]"></div>
       </div>
     </div>
+    <div
+      v-if="product !== null || (typeof product !== 'undefined')"
+      class="mb-4 px-6"
+    >
+      <span class="mb-4 text-2xl font-bold">
+        Related Items
+      </span>
+      <VariantSlider :variants="product.related" />
+    </div>
   </div>
 </template>
 
@@ -195,7 +204,8 @@ import InnerImageZoom from 'vue-inner-image-zoom';
 import VueSlickCarousel from 'vue-slick-carousel';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import currencyMixin from '~/mixins/currency'
-import BaseButton from '~/components/base/BaseButton.vue';
+import BaseButton from '~/components/base/BaseButton';
+import VariantSlider from '~/components/VariantSlider';
 
 const slickSettings = {
   arrows: true,
@@ -240,6 +250,7 @@ export default {
     InnerImageZoom,
     VueSlickCarousel,
     BaseButton,
+    VariantSlider,
   },
   mixins: [
     currencyMixin,
@@ -249,85 +260,6 @@ export default {
     return {
       isSelected: '',
       variants: [],
-      variantsDemo: [
-        {
-          name: 'Size',
-          elements: [
-            {
-              name: 'Small',
-              photo: null,
-              price: 0,
-            },
-            {
-              name: 'Medium',
-              photo: null,
-              price: 0,
-            },
-            {
-              name: 'Large',
-              photo: null,
-              price: 0,
-            },
-            {
-              name: 'XLarge',
-              photo: null,
-              price: 0,
-            },
-            {
-              name: 'XXLarge',
-              photo: null,
-              price: 0,
-            }
-          ],
-          selectedValue: ''
-        },
-        {
-          name: 'Color',
-          elements: [
-            {
-              name: 'Black',
-              photo: {
-                type: 'color',
-                value: '#000'
-              },
-              price: 0,
-            },
-            {
-              name: 'Red White w/ Stripes',
-              photo: {
-                type: 'image',
-                value: null
-              },
-              price: 0,
-            },
-            {
-              name: 'Blue',
-              photo: {
-                type: 'image',
-                value: null
-              },
-              price: 0,
-            },
-            {
-              name: 'Green',
-              photo: {
-                type: 'color',
-                value: '#319b5a'
-              },
-              price: 0,
-            },
-            {
-              name: 'Brown',
-              photo: {
-                type: 'color',
-                value: '#b4844b'
-              },
-              price: 0,
-            }
-          ],
-          selectedValue: ''
-        }
-      ],
       product: {
         id: 0,
         name: '',
@@ -336,12 +268,13 @@ export default {
         stock: '',
         categories: [],
         tags: [],
-        variants: []
+        variants: [],
+        related: [],
       },
       activeImageURL: '',
       photos: [],
       quantity: 1,
-      settings: slickSettings
+      imageCarouselSettings: slickSettings
     };
   },
   computed: {
