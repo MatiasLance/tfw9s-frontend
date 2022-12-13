@@ -227,6 +227,20 @@
                   hover:text-brand-slate
                   hover:underline hover:decoration-brand-slate
                 "
+                @click="addVariant(prod.id)"
+              >
+                <i class="ri-links-line"></i> Add Variant
+              </button>
+              <button
+                type="button"
+                class="
+                  mr-2
+                  flex
+                  cursor-pointer
+                  items-center
+                  hover:text-brand-slate
+                  hover:underline hover:decoration-brand-slate
+                "
                 @click="duplicate(prod.id)"
               >
                 <i class="ri-file-copy-line"></i> Duplicate
@@ -559,7 +573,7 @@
     >
       <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <h3 class="mb-3 font-bold text-brand-black">
-          Edit Product
+          {{ editModalTitle }}
         </h3>
         <hr class="my-3">
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -825,7 +839,7 @@
               hover:bg-brand-green/30
               lg:mx-4 lg:w-48
             "
-            @click="edit(editingNo)"
+            @click="confirmItemEdit(editingNo)"
           >
             Confirm
           </button>
@@ -1009,6 +1023,7 @@ export default {
         title: 'Products Admin - Revamped',
         description: 'Page for creating product items for Revamped',
       },
+      isEdit: true, // True for editing item, false for adding variant
     };
   },
   head() {
@@ -1024,6 +1039,11 @@ export default {
     };
   },
   computed: {
+    editModalTitle: {
+      get() {
+        return this.isEdit ? 'Edit Product' : 'Add Item Variant'
+      },
+    },
     categories: {
       get() {
         return this.$store.state.product.categories;
@@ -1344,6 +1364,37 @@ export default {
           this.multipleCategoryCounter = categoryLineages.length
           this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
           this.categoryLineages = categoryLineages
+
+          this.isEdit = true
+          this.showEditProductModal = true;
+        });
+    },
+    addVariant(productId) {
+      this.$oruga.notification.open({
+        message: 'Retrieving...',
+        variant: 'info',
+        duration: 3000,
+        position: 'bottom',
+        queue: true,
+      });
+      this.editingNo = toNumber(productId);
+      this.$axios
+        .$get(`v1/items/${this.editingNo}`)
+        .then((response) => {
+          this.name = response.data.item.name;
+          this.price = response.data.item.price;
+          this.description = response.data.item.description;
+          this.inStock = response.data.item.stock;
+          this.tags = response.data.item.tags;
+          this.imgUrlEdit = response.data.item.media.map((x) =>
+            `${this.$config.baseURL}/storage/${x.path}`);
+          this.imgListEdit = response.data.item.media.map((x) => x.hash);
+          const categoryLineages = response.data.item.categoryLineages
+          this.multipleCategoryCounter = categoryLineages.length
+          this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
+          this.categoryLineages = categoryLineages
+
+          this.isEdit = false
           this.showEditProductModal = true;
         });
     },
@@ -1420,7 +1471,14 @@ export default {
         0.95
       );
     },
-    edit(index) {
+    confirmItemEdit(index) {
+      if (this.isEdit) {
+        this.updateItem(index)
+      } else {
+        this.addItemAsVariant(index)
+      }
+    },
+    updateItem(index) {
       const editObject = this.productList.find(
         (product) => product.id === this.editingNo
       );
@@ -1457,6 +1515,67 @@ export default {
 
       this.$axios
         .$post(`v1/items/${editObject.id}`, form, config)
+        .then((response) => {
+          this.showEditProductModal = false;
+          this.$oruga.notification.open({
+            message: response.title,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          this.editingNo = '';
+          this.reset();
+          this.retrieveProducts();
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.title,
+            position: 'bottom',
+            variant: 'danger',
+            closable: true,
+            queue: true,
+          });
+        });
+    },
+    addItemAsVariant(index) {
+      const editObject = this.productList.find(
+        (product) => product.id === this.editingNo
+      );
+      this.selectedCategory = {};
+      this.getSelected();
+      const editedProduct = {
+        name: this.name,
+        price: this.price,
+        description: this.description,
+        inStock: this.inStock,
+        categoryId: this.selectedCategory.map(x => x.id),
+        tags: this.tags.map((x) => x.id),
+        photo: this.imgListEdit,
+      };
+
+      const form = new FormData();
+      form.append('_method', 'PATCH');
+      form.append('name', editedProduct.name);
+      form.append('description', editedProduct.description);
+      form.append('price', editedProduct.price);
+      form.append('stock', editedProduct.inStock);
+      for (let i = 0; i < editedProduct.tags.length; i++) {
+        form.append('tags[]', editedProduct.tags[i]);
+      }
+      for (let i = 0; i < editedProduct.categoryId.length; i++) {
+        form.append('categoryId[]', editedProduct.categoryId[i]);
+      }
+      for (let i = 0; i < editedProduct.photo.length; i++) {
+        form.append('photo[]', editedProduct.photo[i]);
+      }
+      form.append('id', index);
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+      this.$axios
+        .$post(`v1/items/addVariant/${editObject.id}`, form, config)
         .then((response) => {
           this.showEditProductModal = false;
           this.$oruga.notification.open({
