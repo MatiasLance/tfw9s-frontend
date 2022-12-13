@@ -393,42 +393,69 @@
                 hover:bg-slate-50
                 "
               >
-              <span>
-                <input
-                  v-model="inStockRadio"
-                  value='No'
-                  name="stockRadio"
-                  type="radio"
-                  :checked="inStock === 0"
-                  class="
-                  mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                  focus:ring-brand-black"
-                  @change="toggleStock"
-                />
-              </span>
-              <span>Out of stock</span>
+                <span>
+                  <input
+                    v-model="inStockRadio"
+                    value='No'
+                    name="stockRadio"
+                    type="radio"
+                    :checked="inStock === 0"
+                    class="
+                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                    focus:ring-brand-black"
+                    @change="toggleStock"
+                  />
+                </span>
+                <span>Out of stock</span>
               </label>
             </div>
-            <input
-              v-if="inStockRadio === 'Yes'"
-              v-model="inStock"
-              type="number"
-              min="0"
-              class="
-                form-input
-                mt-1
-                block
-                w-24
-                appearance-none
-                border border-gray-100
-                bg-gray-200
-                py-2
-                px-3
-                hover:border-gray-400
-                focus:border-gray-400 focus:outline-none
-              "
-              @keyup="handleNegativeValue"
-            />
+            <div class="grid w-full grid-cols-2 gap-2">
+              <input
+                v-if="inStockRadio === 'Yes'"
+                v-model="inStock"
+                type="number"
+                min="0"
+                class="
+                  form-input
+                  mt-1
+                  block
+                  w-24
+                  appearance-none
+                  border border-gray-100
+                  bg-gray-200
+                  py-2
+                  px-3
+                  hover:border-gray-400
+                  focus:border-gray-400 focus:outline-none
+                "
+                @keyup="handleNegativeValue"
+              />
+              <div class="item-center mt-4 flex">
+                <label
+                  class="
+                  flex
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
+                  bg-transparent p-3
+                  hover:border-brand-black
+                  hover:bg-slate-50
+                  "
+                >
+                  <span>
+                    <input
+                      v-model="isItemFeatured"
+                      name="itemFeatured"
+                      type="checkbox"
+                      class="
+                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                      focus:ring-brand-black"
+                    />
+                  </span>
+                  <span>Featured Item</span>
+                </label>
+              </div>
+            </div>
           </div>
           <div class="col-span-3 mb-4">
             <label class="mb-1 block">Description:</label>
@@ -656,7 +683,7 @@
           </div>
           <div class="col-span-3 mb-4 lg:col-span-2">
             <label class="mb-1 block"> In Stock: {{ inStock }} </label>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid w-full grid-cols-2 gap-2">
               <label
                 class="
                   flex
@@ -710,26 +737,53 @@
               <span>Out of stock</span>
               </label>
             </div>
-            <input
-              v-if="inStockRadio === 'Yes'"
-              v-model="inStock"
-              type="number"
-              min="0"
-              class="
-                form-input
-                mt-1
-                block
-                w-24
-                appearance-none
-                border border-gray-100
-                bg-gray-200
-                py-2
-                px-3
-                hover:border-gray-400
-                focus:border-gray-400 focus:outline-none
-              "
-              @keyup="handleNegativeValue"
-            />
+            <div class="grid w-full grid-cols-2 gap-2">
+              <input
+                v-if="inStockRadio === 'Yes'"
+                v-model="inStock"
+                type="number"
+                min="0"
+                class="
+                  form-input
+                  mt-1
+                  block
+                  w-24
+                  appearance-none
+                  border border-gray-100
+                  bg-gray-200
+                  py-2
+                  px-3
+                  hover:border-gray-400
+                  focus:border-gray-400 focus:outline-none
+                "
+                @keyup="handleNegativeValue"
+              />
+              <div class="item-center mt-4 flex">
+                <label
+                  class="
+                  flex
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
+                  bg-transparent p-3
+                  hover:border-brand-black
+                  hover:bg-slate-50
+                  "
+                >
+                  <span>
+                    <input
+                      v-model="isItemFeatured"
+                      name="itemFeatured"
+                      type="checkbox"
+                      class="
+                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                      focus:ring-brand-black"
+                    />
+                  </span>
+                  <span>Featured Item</span>
+                </label>
+              </div>
+            </div>
           </div>
           <div class="col-span-3 mb-4">
             <label class="mb-1 block">Description:</label>
@@ -1023,6 +1077,7 @@ export default {
       activeVariantItem: null,
       isProductsLoading: false,
       isItemAdded: false,
+      isItemFeatured: false,
       showAddProductModal: false,
       showEditProductModal: false,
       showRemoveProductModal: false,
@@ -1409,6 +1464,7 @@ export default {
           this.description = response.data.item.description;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
+          this.isItemFeatured = response.data.item.is_featured;
           this.imgUrlEdit = response.data.item.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
@@ -1483,13 +1539,15 @@ export default {
             categoryId: this.selectedCategory.map(x => x.id),
             inStock: this.inStock,
             tags: this.tags.map((x) => x.id),
-            photo: this.imgList
+            photo: this.imgList,
+            isFeatured: this.isItemFeatured.toString(),
           };
           const form = new FormData();
           form.append('name', product.name);
           form.append('description', product.description);
           form.append('price', product.price);
           form.append('stock', product.inStock);
+          form.append('isFeatured', product.isFeatured);
           for (let i = 0; i < product.tags.length; i++) {
             form.append('tags[]', product.tags[i]);
           }
@@ -1552,6 +1610,7 @@ export default {
         categoryId: this.selectedCategory.map(x => x.id),
         tags: this.tags.map((x) => x.id),
         photo: this.imgListEdit,
+        isFeatured: this.isItemFeatured.toString(),
       };
 
       const form = new FormData();
@@ -1560,6 +1619,7 @@ export default {
       form.append('description', editedProduct.description);
       form.append('price', editedProduct.price);
       form.append('stock', editedProduct.inStock);
+      form.append('isFeatured', editedProduct.isFeatured);
       for (let i = 0; i < editedProduct.tags.length; i++) {
         form.append('tags[]', editedProduct.tags[i]);
       }
@@ -1719,6 +1779,7 @@ export default {
       this.description = '';
       this.subcategory = '';
       this.inStock = '';
+      this.isItemFeatured = false;
       this.imgUrl = [];
       this.imgList = [];
       this.imgUrlEdit = [];
