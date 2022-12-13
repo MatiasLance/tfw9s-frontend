@@ -53,7 +53,7 @@
       <PaypalCheckout
         v-else-if="paymentMethod === 'paypal'"
         id="paypal-payment-form"
-        class="p-10"
+        class="payment-module p-10"
         :cart-total="total"
       />
 
@@ -107,16 +107,16 @@
       <ul class="px-2">
         <li class="mb-1 flex justify-between">
           <span>Subtotal:</span>
-          <span>{{ subtotal }}</span>
+          <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
-          <span>{{ gst }}</span>
+          <span>{{ formatCurrency(gst) }}</span>
         </li>
         <li class="mt-3 flex justify-between border-t pt-3">
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
-            {{ total }}
+            {{ formatCurrency(total) }}
           </span>
         </li>
       </ul>
@@ -127,6 +127,7 @@
 <script>
 import PaypalCheckout from '~/components/PaypalCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
+import currencyMixin from '~/mixins/currency';
 
 let elements;
 
@@ -135,17 +136,18 @@ export default {
     PaypalCheckout,
     PaymentTab
   },
+  mixins: [ currencyMixin ],
   props: {
     subtotal: {
-      type: [ String, Number ],
+      type: [ Number ],
       required: true,
     },
     gst: {
-      type: [ String, Number ],
+      type: [ Number ],
       required: true,
     },
     total: {
-      type: [ String, Number ],
+      type: [ Number ],
       required: true,
     },
   },

@@ -1,5 +1,5 @@
 <template>
-    <section class="my-3 w-full">
+    <section class="w-full">
         <div v-if="!paid" id="paypal-button-container"></div>
         <div v-else id="confirmation">
             Order complete!
@@ -15,27 +15,28 @@ export default {
   props: {
     cartTotal: {
       type: Number,
-      default: 0.01
+      required: true
     }
   },
   data() {
     return { paid: false }
   },
   beforeCreate() {
-    loadScript({ 'client-id': this.$config.paypal.clientId }).then((paypal) => {
-      paypal
-        .Buttons({
-          createOrder: this.createOrder,
-          onApprove: this.onApprove,
-          style: {
-            layout: 'vertical',
-            color: 'black',
-            shape: 'pill',
-            label: 'paypal'
-          }
-        })
-        .render('#paypal-button-container');
-    })
+    loadScript({ 'client-id': this.$config.paypal.clientId })
+      .then((paypal) => {
+        paypal
+          .Buttons({
+            createOrder: this.createOrder,
+            onApprove: this.onApprove,
+            style: {
+              layout: 'vertical',
+              color: 'black',
+              shape: 'pill',
+              label: 'paypal'
+            }
+          })
+          .render('#paypal-button-container');
+      })
   },
   methods: {
     createOrder(data, actions) {
