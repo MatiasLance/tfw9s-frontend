@@ -31,7 +31,8 @@
           >
             <div
               class="
-                flex cursor-pointer
+                flex aspect-square
+                cursor-pointer
                 flex-col
                 rounded-lg border
                 border-transparent
@@ -42,7 +43,7 @@
             >
               <img
                 :src="getMediaURL(product.media[0])"
-                class="mb-8 h-80 w-80 object-contain"
+                class="mb-8 rounded-t-lg object-contain"
                 alt=""
               />
               <div class="p-2">
