@@ -182,63 +182,69 @@
             :alt="prod.name"
           />
         </div>
-        <div class="md:w-3/4">
-          <div class="p-4">
-            <div
-              class="mb-2 flex flex-wrap items-center gap-2"
-            >
+        <div class="self-stretch md:w-3/4">
+          <div class="flex h-full flex-col justify-between p-4">
+            <div>
               <div
-                v-for="category in prod.categories"
-                :key="category.id"
-                class="flex flex-wrap items-center"
+                class="mb-2 flex flex-wrap items-center gap-2"
               >
-                <span class="pr-1 text-[16px]">
-                  <i class="ri-price-tag-3-line text-brand-black"></i>
-                </span>
-                <span
-                  class="text-[16px]
-                  selection:bg-brand-black selection:text-white"
+                <div
+                  v-for="category in prod.categories"
+                  :key="category.id"
+                  class="flex flex-wrap items-center"
                 >
-                  {{ category.name }}
-                </span>
+                  <span class="pr-1 text-[16px]">
+                    <i class="ri-price-tag-3-line text-brand-black"></i>
+                  </span>
+                  <span
+                    class="text-[16px]
+                    selection:bg-brand-black selection:text-white"
+                  >
+                    {{ category.name }}
+                  </span>
+                </div>
               </div>
-            </div>
-            <span
-              class="text-2xl
-              selection:bg-brand-black
-              selection:text-white"
-            >
-              <a
-                :href="`/product/?id=${prod.id}`"
-                target="_self"
-                :title="prod.name"
-                class="
-                  font-montserrat font-bold
-                  transition
-                  duration-200
-                  hover:text-brand-black
-                "
+              <span
+                class="text-2xl
+                selection:bg-brand-black
+                selection:text-white"
               >
-                {{ prod.name }}
-              </a>
-            </span>
-            <p class="mb-1">
-              <span class="mb-2 pt-2 pb-4 text-lg font-semibold text-gray-900">
-                <span>{{ formatCurrency(prod.price) }}</span>
+                <a
+                  :href="`/product/?id=${prod.id}`"
+                  target="_self"
+                  :title="prod.name"
+                  class="
+                    font-montserrat font-bold
+                    transition
+                    duration-200
+                    hover:text-brand-black
+                  "
+                >
+                  {{ prod.name }}
+                </a>
               </span>
-            </p>
-            <p class="mb-2 text-gray-500">
-              {{ prod.snippet }}
-            </p>
-            <p>
-              <template v-if="prod.stock > 0">
-                <span class="font-bold">{{ prod.stock }}</span> in Stock
-              </template>
-              <template v-else>
-                Out of stock
-              </template>
-            </p>
-            <div class="mt-4 flex flex-wrap justify-start gap-2">
+              <p class="mb-1">
+                <span
+                  class="mb-2 pt-2 pb-4 text-lg font-semibold text-gray-900"
+                >
+                  <span>{{ formatCurrency(prod.price) }}</span>
+                </span>
+              </p>
+              <p class="mt-6 mb-2 text-gray-500">
+                {{ prod.snippet }}
+              </p>
+              <p>
+                <template v-if="prod.stock > 0">
+                  <span class="font-bold">{{ prod.stock }}</span> in Stock
+                </template>
+                <template v-else>
+                  Out of stock
+                </template>
+              </p>
+            </div>
+            <div
+              class="part-item__actions mt-4 flex flex-wrap justify-start gap-2"
+            >
               <button
                 type="button"
                 class="
@@ -265,7 +271,10 @@
                 "
                 @click="addVariant(prod.id)"
               >
-                <i class="ri-links-line"></i> Add Variant
+                <i class="ri-links-line"></i>
+                <span class="mt-1">
+                  Add Variant
+                </span>
               </button>
               <button
                 type="button"
@@ -279,7 +288,10 @@
                 "
                 @click="showVariants(prod.id)"
               >
-                <i class="ri-link"></i> Show Variants
+                <i class="ri-link"></i>
+                <span class="mt-1">
+                  Show Variants
+                </span>
               </button>
               <button
                 type="button"
@@ -293,7 +305,10 @@
                 "
                 @click="duplicate(prod.id)"
               >
-                <i class="ri-file-copy-line"></i> Duplicate
+                <i class="ri-file-copy-line"></i>
+                <span class="mt-1">
+                  Duplicate
+                </span>
               </button>
               <button
                 type="button"
@@ -308,7 +323,10 @@
                 "
                 @click="removePr(prod.id)"
               >
-                <i class="ri-delete-bin-5-line"></i> Remove
+                <i class="ri-delete-bin-5-line"></i>
+                <span class="mt-1">
+                  Remove
+                </span>
               </button>
             </div>
           </div>
@@ -1872,5 +1890,9 @@ export default {
 }
 .o-inputit__item--danger {
   background-color: #e73538 !important;
+}
+
+.part-item__actions [class^="ri-"] {
+  padding-right: 0.25rem;
 }
 </style>
