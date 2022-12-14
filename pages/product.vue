@@ -289,6 +289,12 @@ export default {
       },
     },
   },
+  watch: {
+    $route() {
+      this.retrieveItem(this.$route.query.id);
+      window.scrollTo(0, 0);
+    }
+  },
   mounted() {
     this.retrieveItem(this.$route.query.id);
   },
