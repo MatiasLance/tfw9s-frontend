@@ -24,38 +24,64 @@
             lg:grid-cols-4
           "
         >
-          <div
+          <NuxtLink
             v-for="product in featuredProducts"
             :key="product.id"
-            class="flex cursor-pointer flex-col"
-            @click="$router.push('shop')"
+            :to="`/product?id=${product.id}`"
           >
-            <img
-              :src="getMediaURL(product.media[0])"
-              class="mb-8 h-80 w-80 object-contain"
-              alt=""
-            />
-            <span
+            <div
               class="
-                block
-                pb-2
-                text-[18px]
-                font-bold
-                uppercase
-                text-brand-dgrey
+                flex cursor-pointer
+                flex-col
+                rounded-lg border
+                border-transparent
+                transition
+                duration-200
+                hover:border-gray-400
               "
             >
-              {{ product.brand }}
-            </span>
-            <h2 class="pb-2 text-[16px] font-normal uppercase text-brand-black">
-              {{ product.name }}
-            </h2>
-            <span
-              class="text-[14px] leading-[20px] text-brand-grey transition-all"
-            >
-              A{{ formatCurrency(product.price) }}
-            </span>
-          </div>
+              <img
+                :src="getMediaURL(product.media[0])"
+                class="mb-8 h-80 w-80 object-contain"
+                alt=""
+              />
+              <div class="p-2">
+                <span
+                  class="
+                    block
+                    pb-2
+                    text-[18px]
+                    font-bold
+                    uppercase
+                    text-brand-dgrey
+                  "
+                >
+                  {{ product.brand }}
+                </span>
+                <h2
+                  class="
+                    pb-2
+                    text-base
+                    font-normal
+                    uppercase
+                    text-brand-black
+                  "
+                >
+                  {{ product.name }}
+                </h2>
+                <span
+                  class="
+                    text-[14px]
+                    leading-[20px]
+                    text-brand-grey
+                    transition-all
+                  "
+                >
+                  A{{ formatCurrency(product.price) }}
+                </span>
+              </div>
+            </div>
+          </NuxtLink>
         </div>
       </div>
     </BaseSection>
@@ -63,7 +89,7 @@
 </template>
 
 <script>
-import handlesMedia from '~/mixins/shop/handlesMedia'
+import handlesMedia from '~/mixins/shop/handlesMedia';
 import currency from '~/mixins/currency';
 
 export default {
@@ -79,7 +105,7 @@ export default {
     };
   },
   mounted() {
-    this.retrieveFeaturedItems()
+    this.retrieveFeaturedItems();
   },
   methods: {
     retrieveFeaturedItems() {
@@ -91,11 +117,11 @@ export default {
       // Sanitize and remove null values
       Object.keys(query).forEach((key) => {
         if (query[key] == null) {
-          delete query[key]
+          delete query[key];
         }
-      })
+      });
 
-      const queryString = new URLSearchParams(query).toString()
+      const queryString = new URLSearchParams(query).toString();
 
       this.$axios
         .$get(`v1/items?${queryString}`)
