@@ -97,36 +97,6 @@
           </div>
           <div class="grid grid-cols-6 gap-6">
             <div class="col-span-6">
-              <div class="my-4 flex flex-col flex-wrap">
-                  <div
-                    v-for="variant in variants"
-                    :key="variant.name"
-                    class="relative mr-2 mb-4 w-full"
-                  >
-                    <label class="flex items-start font-semibold">
-                      {{ variant.name }}
-                    </label>
-                    <select
-                      :name="variant.name"
-                      class="block w-full appearance-none rounded-md
-                      border border-gray-200
-                      bg-gray-100 py-2 px-4 text-lg
-                      hover:border-gray-400 focus:border-gray-400
-                      focus:outline-none lg:w-1/2"
-                    >
-                      <option
-                        v-for="(element, elementKey) in variant.elements"
-                        :key="elementKey"
-                        class="w-full"
-                        :value="element.name"
-                      >
-                        {{ element.name }}
-                      </option>
-                    </select>
-                  </div>
-              </div>
-            </div>
-            <div class="col-span-6">
               <div
                 class="flex flex-col items-start justify-start gap-2"
               >
@@ -259,7 +229,6 @@ export default {
   data() {
     return {
       isSelected: '',
-      variants: [],
       product: {
         id: 0,
         name: '',
@@ -308,7 +277,6 @@ export default {
         .then((response) => {
           this.product = response.data.item
           this.activeImageURL = this.getMediaURL(this.product.media[0])
-          this.variants = this.product.variants
           this.photos = this.product.media
           console.log(this.product)
         })
