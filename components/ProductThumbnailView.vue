@@ -102,14 +102,20 @@
         Add to cart
       </VBtn>
 
-      <span class="pl-availability flex justify-center space-x-1 py-3">
+      <span
+        class="pl-availability flex items-center justify-center space-x-1 py-3"
+      >
         <template v-if="stock > 0">
         <i class="ri-check-line text-green-500"></i>
-          <span class="text-sm font-bold uppercase">In Stock </span>
+          <span class="mt-1 text-sm font-bold uppercase">
+            In Stock
+          </span>
         </template>
         <template v-else>
           <i class="ri-forbid-line text-orange-500"></i>
-          <span class="text-sm font-bold uppercase">Out of stock</span>
+          <span class="mt-1 text-sm font-bold uppercase">
+            Out of stock
+          </span>
         </template>
       </span>
     </div>
