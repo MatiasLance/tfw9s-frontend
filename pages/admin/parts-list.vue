@@ -222,6 +222,9 @@
                 >
                   {{ prod.name }}
                 </a>
+                <span class="ml-2">
+                  <FeaturedChip />
+                </span>
               </span>
               <p class="mb-1">
                 <span
@@ -1066,6 +1069,7 @@ import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
 import InfiniteCategories from '~/components/InfiniteCategories.vue';
+import FeaturedChip from '~/components/chips/FeaturedChip';
 import SearchBar from '~/components/SearchBar'
 import Tiptap from '~/components/Wysiwyg/Tiptap'
 import aosMixin from '@/mixins/aos';
@@ -1078,6 +1082,7 @@ export default {
     BasePagination,
     SearchBar,
     Tiptap,
+    FeaturedChip,
   },
   mixins: [
     aosMixin,
