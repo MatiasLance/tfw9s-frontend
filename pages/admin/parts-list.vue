@@ -222,7 +222,7 @@
                 >
                   {{ prod.name }}
                 </a>
-                <span class="ml-2">
+                <span v-if="prod.is_featured" class="ml-2">
                   <FeaturedChip />
                 </span>
               </span>
