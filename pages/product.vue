@@ -81,12 +81,12 @@
           >
             <span class="amount">{{ formatCurrency(product.price) }}</span>
           </p>
-          <div class="w-full pb-[2em]">
+          <div class="w-full">
             <p
               class="product-description my-12"
               v-html="product.description"
             ></p>
-            <p>
+            <p class="font-bold">
               <template v-if="product.stock > 0">
                 In Stock
               </template>
@@ -101,7 +101,7 @@
                 class="flex flex-col items-start justify-start gap-2"
               >
                 <div class="my-4">
-                  <label class="mx-2 my-auto items-center">
+                  <label class="my-auto mr-2 items-center">
                     Quantity
                   </label>
                   <input
@@ -125,29 +125,55 @@
                     @keyup="handleHighStockValue"
                   />
                 </div>
-                <BaseButton
-                  type="button"
-                  class="
-                    h-14
-                    w-full
-                    cursor-pointer
-                    rounded-lg border
-                    bg-brand-black
-                    py-4
-                    px-5
-                    font-bold
-                    leading-3
-                    text-white
-                    transition
-                    duration-300
-                    hover:shadow-[#1a1d18]/50
-                    lg:w-auto
-                  "
-                  :disabled="!product.stock > 0"
-                  @click="addToCart"
-                >
-                  Add to Cart
-                </BaseButton>
+                <template v-if="hasVariants">
+                  <BaseButton
+                    type="button"
+                    class="
+                      h-14
+                      w-full
+                      cursor-pointer
+                      rounded-lg border
+                      bg-brand-black
+                      py-4
+                      px-5
+                      font-bold
+                      leading-3
+                      text-white
+                      transition
+                      duration-300
+                      hover:shadow-[#1a1d18]/50
+                      lg:w-auto
+                    "
+                    @click="viewVariantSlider"
+                  >
+                    View Variants
+                  </BaseButton>
+                </template>
+                <template v-else>
+                  <BaseButton
+                    type="button"
+                    class="
+                      h-14
+                      w-full
+                      cursor-pointer
+                      rounded-lg border
+                      bg-brand-black
+                      py-4
+                      px-5
+                      font-bold
+                      leading-3
+                      text-white
+                      transition
+                      duration-300
+                      hover:shadow-[#1a1d18]/50
+                      lg:w-auto
+                    "
+                    :disabled="!product.stock > 0"
+                    @click="addToCart"
+                  >
+                    Add to Cart
+                  </BaseButton>
+                </template>
               </div>
             </div>
           </div>
@@ -156,11 +182,15 @@
       </div>
     </div>
     <div
-      v-if="product !== null || (typeof product !== 'undefined')"
+      v-if="
+        (product !== null || (typeof product !== 'undefined')) &&
+        hasVariants
+      "
+      ref="variantSlider"
       class="mb-4 px-6"
     >
       <span class="mb-4 text-2xl font-bold">
-        Related Items
+        Variants
       </span>
       <VariantSlider :variants="product.related" />
     </div>
@@ -173,6 +203,7 @@ import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css';
 import InnerImageZoom from 'vue-inner-image-zoom';
 import VueSlickCarousel from 'vue-slick-carousel';
 import handlesMedia from '~/mixins/shop/handlesMedia'
+import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
 import currencyMixin from '~/mixins/currency'
 import BaseButton from '~/components/base/BaseButton';
 import VariantSlider from '~/components/VariantSlider';
@@ -224,7 +255,8 @@ export default {
   },
   mixins: [
     currencyMixin,
-    handlesMedia
+    handlesMedia,
+    handlesCoordinates,
   ],
   data() {
     return {
@@ -257,17 +289,34 @@ export default {
         return this.$store.getters['cart/cartCount']
       },
     },
+    hasVariants: {
+      get() {
+        return this.product.variants.length > 0
+      },
+    },
   },
   watch: {
     $route() {
       this.retrieveItem(this.$route.query.id);
-      window.scrollTo(0, 0);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      });
     }
   },
   mounted() {
     this.retrieveItem(this.$route.query.id);
   },
   methods: {
+    viewVariantSlider() {
+      const sliderCoordinates = this.getCoordinates(this.$refs.variantSlider)
+      window.scrollTo({
+        top: sliderCoordinates.top,
+        left: sliderCoordinates.left,
+        behavior: 'smooth',
+      })
+    },
     setActiveMedia(path) {
       this.activeImageURL = this.getMediaURL(path)
     },
