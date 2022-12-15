@@ -126,7 +126,7 @@
                   />
                 </div>
                 <div class="flex items-center gap-4">
-                  <template v-if="hasVariants">
+                  <template v-if="product.has_variants">
                     <BaseButton
                       type="button"
                       class="
@@ -212,7 +212,7 @@
     <div
       v-if="
         (product !== null || (typeof product !== 'undefined')) &&
-        hasVariants
+        product.has_variants
       "
       ref="variantSlider"
       class="mb-4 px-6"
@@ -316,11 +316,6 @@ export default {
     cartCount: {
       get() {
         return this.$store.getters['cart/cartCount']
-      },
-    },
-    hasVariants: {
-      get() {
-        return this.product.variants.length > 0
       },
     },
   },
