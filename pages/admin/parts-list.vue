@@ -119,7 +119,7 @@
                   hover:bg-slate-400
                   focus:bg-brand-grey
                 "
-                @click="clearVariantItemFilter"
+                @click="popVariantBuffer"
               >
                 <span
                   class="flex items-center justify-center"
@@ -1098,6 +1098,7 @@ export default {
       totalPages: 0,
       totalItems: 0,
       activeVariantItem: null,
+      variantBuffer: [],
       isProductsLoading: false,
       isItemAdded: false,
       isItemFeatured: false,
@@ -1530,11 +1531,19 @@ export default {
         });
     },
     showVariants(productId) {
+      this.variantBuffer.push(this.activeVariantItem)
+
       this.activeVariantItem = productId
       this.retrieveProducts()
     },
-    clearVariantItemFilter() {
-      this.activeVariantItem = null
+    popVariantBuffer() {
+      if (this.variantBuffer.length > 0) {
+        const activeItem = this.variantBuffer.pop()
+        this.activeVariantItem = activeItem
+      } else {
+        this.activeVariantItem = null
+      }
+
       this.retrieveProducts()
     },
     removePr(index) {
