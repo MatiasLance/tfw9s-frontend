@@ -185,7 +185,7 @@
                           w-full
                           cursor-pointer
                           rounded-lg border
-                          bg-brand-black
+                          bg-brand-green
                           py-4
                           px-5
                           font-bold
