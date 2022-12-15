@@ -125,55 +125,83 @@
                     @keyup="handleHighStockValue"
                   />
                 </div>
-                <template v-if="hasVariants">
-                  <BaseButton
-                    type="button"
-                    class="
-                      h-14
-                      w-full
-                      cursor-pointer
-                      rounded-lg border
-                      bg-brand-black
-                      py-4
-                      px-5
-                      font-bold
-                      leading-3
-                      text-white
-                      transition
-                      duration-300
-                      hover:shadow-[#1a1d18]/50
-                      lg:w-auto
-                    "
-                    @click="viewVariantSlider"
-                  >
-                    View Variants
-                  </BaseButton>
-                </template>
-                <template v-else>
-                  <BaseButton
-                    type="button"
-                    class="
-                      h-14
-                      w-full
-                      cursor-pointer
-                      rounded-lg border
-                      bg-brand-black
-                      py-4
-                      px-5
-                      font-bold
-                      leading-3
-                      text-white
-                      transition
-                      duration-300
-                      hover:shadow-[#1a1d18]/50
-                      lg:w-auto
-                    "
-                    :disabled="!product.stock > 0"
-                    @click="addToCart"
-                  >
-                    Add to Cart
-                  </BaseButton>
-                </template>
+                <div class="flex items-center gap-4">
+                  <template v-if="hasVariants">
+                    <BaseButton
+                      type="button"
+                      class="
+                        h-14
+                        w-full
+                        cursor-pointer
+                        rounded-lg border
+                        bg-brand-black
+                        py-4
+                        px-5
+                        font-bold
+                        leading-3
+                        text-white
+                        transition
+                        duration-300
+                        hover:shadow-[#1a1d18]/50
+                        lg:w-auto
+                      "
+                      @click="viewVariantSlider"
+                    >
+                      View Variants
+                    </BaseButton>
+                  </template>
+                  <template v-else>
+                    <BaseButton
+                      type="button"
+                      class="
+                        h-14
+                        w-full
+                        cursor-pointer
+                        rounded-lg border
+                        bg-brand-black
+                        py-4
+                        px-5
+                        font-bold
+                        leading-3
+                        text-white
+                        transition
+                        duration-300
+                        hover:shadow-[#1a1d18]/50
+                        lg:w-auto
+                      "
+                      :disabled="!product.stock > 0"
+                      @click="addToCart"
+                    >
+                      Add to Cart
+                    </BaseButton>
+                  </template>
+
+                  <template v-if="product.parent !== null">
+                    <NuxtLink :to="`/product?id=${product.parent.id}`">
+                      <BaseButton
+                        type="button"
+                        class="
+                          h-14
+                          w-full
+                          cursor-pointer
+                          rounded-lg border
+                          bg-brand-black
+                          py-4
+                          px-5
+                          font-bold
+                          leading-3
+                          text-white
+                          transition
+                          duration-300
+                          hover:shadow-[#1a1d18]/50
+                          lg:w-auto
+                        "
+                      >
+                        Back
+                      </BaseButton>
+                    </NuxtLink>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
@@ -267,6 +295,7 @@ export default {
         description: '',
         price: '',
         stock: '',
+        parent: null,
         categories: [],
         tags: [],
         variants: [],

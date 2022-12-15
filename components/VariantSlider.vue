@@ -13,6 +13,7 @@
       :categories="item.categories"
       :stock="item.stock"
       :path="getMediaURL(item.media[0])"
+      :has-variants="item.has_variants"
     />
   </VueSlickCarousel>
 </template>
@@ -80,7 +81,8 @@ export default {
   props: {
     variants: {
       type: Array,
-      required: false
+      required: false,
+      default: () => []
     }
   },
   data() {
