@@ -110,14 +110,14 @@
                 class="
                   mr-4
                   rounded-xl border border-solid
-                  border-brand-black
-                  bg-brand-black
+                  border-brand-green
+                  bg-brand-green
                   px-4
                   py-2
                   text-center
                   text-white
-                  hover:bg-slate-400
-                  focus:bg-brand-grey
+                  hover:bg-green-600
+                  focus:bg-green-600
                 "
                 @click="popVariantBuffer"
               >
