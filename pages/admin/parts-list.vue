@@ -272,6 +272,23 @@
                   hover:text-brand-slate
                   hover:underline hover:decoration-brand-slate
                 "
+                @click="duplicate(prod.id)"
+              >
+                <i class="ri-file-copy-line"></i>
+                <span class="mt-1">
+                  Duplicate
+                </span>
+              </button>
+              <button
+                type="button"
+                class="
+                  mr-2
+                  flex
+                  cursor-pointer
+                  items-center
+                  hover:text-brand-slate
+                  hover:underline hover:decoration-brand-slate
+                "
                 @click="addVariant(prod.id)"
               >
                 <i class="ri-links-line"></i>
@@ -281,36 +298,21 @@
               </button>
               <button
                 type="button"
-                class="
+                :class="`
                   mr-2
                   flex
                   cursor-pointer
                   items-center
                   hover:text-brand-slate
                   hover:underline hover:decoration-brand-slate
-                "
+                  ${variantCount(prod) ? 'text-brand-green' : 'text-gray-400'}
+                `"
+                :disabled="!variantCount(prod)"
                 @click="showVariants(prod.id)"
               >
                 <i class="ri-link"></i>
                 <span class="mt-1">
-                  Show Variants
-                </span>
-              </button>
-              <button
-                type="button"
-                class="
-                  mr-2
-                  flex
-                  cursor-pointer
-                  items-center
-                  hover:text-brand-slate
-                  hover:underline hover:decoration-brand-slate
-                "
-                @click="duplicate(prod.id)"
-              >
-                <i class="ri-file-copy-line"></i>
-                <span class="mt-1">
-                  Duplicate
+                  Show Variants ({{ prod.variants.length }})
                 </span>
               </button>
               <button
@@ -1462,6 +1464,9 @@ export default {
       );
 
       this.myEditCroppa.refresh()
+    },
+    variantCount(item) {
+      return item.variants !== null && item.variants.length > 0
     },
     addPr() {
       this.$store.dispatch('product/clearProduct');
