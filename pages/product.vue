@@ -351,7 +351,6 @@ export default {
           this.product = response.data.item
           this.activeImageURL = this.getMediaURL(this.product.media[0])
           this.photos = this.product.media
-          console.log(this.product)
         })
     },
     handleHighStockValue() {
