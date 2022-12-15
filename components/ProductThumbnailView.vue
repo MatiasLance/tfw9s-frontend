@@ -77,30 +77,57 @@
         <span>{{ formatCurrency(price) }}</span>
       </span>
 
-      <VBtn
-        dark
-        large
-        color="black"
-        class="
-          relative
-          cursor-pointer
-          rounded-lg
-          py-2
-          text-xs
-          leading-3 text-white
-          transition
-          duration-300
-          hover:shadow-[#1a1d18]/50
-          sm:px-3
-          lg:px-7
-          lg:py-5
-          lg:text-base
-        "
-        :disabled="!stock > 0"
-        @click="addToCart"
-      >
-        Add to cart
-      </VBtn>
+      <template v-if="hasVariants">
+        <VBtn
+          dark
+          large
+          color="black"
+          class="
+            relative
+            cursor-pointer
+            rounded-lg
+            py-2
+            text-xs
+            leading-3 text-white
+            transition
+            duration-300
+            hover:shadow-[#1a1d18]/50
+            sm:px-3
+            lg:px-7
+            lg:py-5
+            lg:text-base
+          "
+          @click="viewItem"
+        >
+          View item
+        </VBtn>
+      </template>
+      <template v-else>
+        <VBtn
+          dark
+          large
+          color="black"
+          class="
+            relative
+            cursor-pointer
+            rounded-lg
+            py-2
+            text-xs
+            leading-3 text-white
+            transition
+            duration-300
+            hover:shadow-[#1a1d18]/50
+            sm:px-3
+            lg:px-7
+            lg:py-5
+            lg:text-base
+          "
+          :disabled="!stock > 0"
+          @click="addToCart"
+        >
+          Add to cart
+        </VBtn>
+      </template>
 
       <span
         class="pl-availability flex items-center justify-center space-x-1 py-3"
@@ -151,6 +178,10 @@ export default {
     path: {
       type: String,
       required: true
+    },
+    hasVariants: {
+      type: Boolean,
+      required: true,
     }
   },
   computed: {
@@ -166,6 +197,9 @@ export default {
     },
   },
   methods: {
+    viewItem() {
+      this.$router.push(`/product/?id=${this.uid}`)
+    },
     addToCart() {
       this.$store
         .dispatch('cart/addItemToCart', {

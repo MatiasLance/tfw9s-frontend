@@ -44,6 +44,7 @@
         :categories="product.categories"
         :stock="product.stock"
         :path="getMediaURL(product.media[0])"
+        :has-variants="product.has_variants"
       />
     </section>
   </div>

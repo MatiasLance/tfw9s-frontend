@@ -81,12 +81,12 @@
           >
             <span class="amount">{{ formatCurrency(product.price) }}</span>
           </p>
-          <div class="w-full pb-[2em]">
+          <div class="w-full">
             <p
               class="product-description my-12"
               v-html="product.description"
             ></p>
-            <p>
+            <p class="font-bold">
               <template v-if="product.stock > 0">
                 In Stock
               </template>
@@ -97,41 +97,11 @@
           </div>
           <div class="grid grid-cols-6 gap-6">
             <div class="col-span-6">
-              <div class="my-4 flex flex-col flex-wrap">
-                  <div
-                    v-for="variant in variants"
-                    :key="variant.name"
-                    class="relative mr-2 mb-4 w-full"
-                  >
-                    <label class="flex items-start font-semibold">
-                      {{ variant.name }}
-                    </label>
-                    <select
-                      :name="variant.name"
-                      class="block w-full appearance-none rounded-md
-                      border border-gray-200
-                      bg-gray-100 py-2 px-4 text-lg
-                      hover:border-gray-400 focus:border-gray-400
-                      focus:outline-none lg:w-1/2"
-                    >
-                      <option
-                        v-for="(element, elementKey) in variant.elements"
-                        :key="elementKey"
-                        class="w-full"
-                        :value="element.name"
-                      >
-                        {{ element.name }}
-                      </option>
-                    </select>
-                  </div>
-              </div>
-            </div>
-            <div class="col-span-6">
               <div
                 class="flex flex-col items-start justify-start gap-2"
               >
                 <div class="my-4">
-                  <label class="mx-2 my-auto items-center">
+                  <label class="my-auto mr-2 items-center">
                     Quantity
                   </label>
                   <input
@@ -155,29 +125,83 @@
                     @keyup="handleHighStockValue"
                   />
                 </div>
-                <BaseButton
-                  type="button"
-                  class="
-                    h-14
-                    w-full
-                    cursor-pointer
-                    rounded-lg border
-                    bg-brand-black
-                    py-4
-                    px-5
-                    font-bold
-                    leading-3
-                    text-white
-                    transition
-                    duration-300
-                    hover:shadow-[#1a1d18]/50
-                    lg:w-auto
-                  "
-                  :disabled="!product.stock > 0"
-                  @click="addToCart"
-                >
-                  Add to Cart
-                </BaseButton>
+                <div class="flex items-center gap-4">
+                  <template v-if="product.has_variants">
+                    <BaseButton
+                      type="button"
+                      class="
+                        h-14
+                        w-full
+                        cursor-pointer
+                        rounded-lg border
+                        bg-brand-black
+                        py-4
+                        px-5
+                        font-bold
+                        leading-3
+                        text-white
+                        transition
+                        duration-300
+                        hover:shadow-[#1a1d18]/50
+                        lg:w-auto
+                      "
+                      @click="viewVariantSlider"
+                    >
+                      View Variants
+                    </BaseButton>
+                  </template>
+                  <template v-else>
+                    <BaseButton
+                      type="button"
+                      class="
+                        h-14
+                        w-full
+                        cursor-pointer
+                        rounded-lg border
+                        bg-brand-black
+                        py-4
+                        px-5
+                        font-bold
+                        leading-3
+                        text-white
+                        transition
+                        duration-300
+                        hover:shadow-[#1a1d18]/50
+                        lg:w-auto
+                      "
+                      :disabled="!product.stock > 0"
+                      @click="addToCart"
+                    >
+                      Add to Cart
+                    </BaseButton>
+                  </template>
+
+                  <template v-if="product.parent !== null">
+                    <NuxtLink :to="`/product?id=${product.parent.id}`">
+                      <BaseButton
+                        type="button"
+                        class="
+                          h-14
+                          w-full
+                          cursor-pointer
+                          rounded-lg border
+                          bg-brand-black
+                          py-4
+                          px-5
+                          font-bold
+                          leading-3
+                          text-white
+                          transition
+                          duration-300
+                          hover:shadow-[#1a1d18]/50
+                          lg:w-auto
+                        "
+                      >
+                        Back
+                      </BaseButton>
+                    </NuxtLink>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
@@ -186,11 +210,15 @@
       </div>
     </div>
     <div
-      v-if="product !== null || (typeof product !== 'undefined')"
+      v-if="
+        (product !== null || (typeof product !== 'undefined')) &&
+        product.has_variants
+      "
+      ref="variantSlider"
       class="mb-4 px-6"
     >
       <span class="mb-4 text-2xl font-bold">
-        Related Items
+        Variants
       </span>
       <VariantSlider :variants="product.related" />
     </div>
@@ -203,6 +231,7 @@ import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css';
 import InnerImageZoom from 'vue-inner-image-zoom';
 import VueSlickCarousel from 'vue-slick-carousel';
 import handlesMedia from '~/mixins/shop/handlesMedia'
+import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
 import currencyMixin from '~/mixins/currency'
 import BaseButton from '~/components/base/BaseButton';
 import VariantSlider from '~/components/VariantSlider';
@@ -254,18 +283,19 @@ export default {
   },
   mixins: [
     currencyMixin,
-    handlesMedia
+    handlesMedia,
+    handlesCoordinates,
   ],
   data() {
     return {
       isSelected: '',
-      variants: [],
       product: {
         id: 0,
         name: '',
         description: '',
         price: '',
         stock: '',
+        parent: null,
         categories: [],
         tags: [],
         variants: [],
@@ -292,13 +322,25 @@ export default {
   watch: {
     $route() {
       this.retrieveItem(this.$route.query.id);
-      window.scrollTo(0, 0);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      });
     }
   },
   mounted() {
     this.retrieveItem(this.$route.query.id);
   },
   methods: {
+    viewVariantSlider() {
+      const sliderCoordinates = this.getCoordinates(this.$refs.variantSlider)
+      window.scrollTo({
+        top: sliderCoordinates.top,
+        left: sliderCoordinates.left,
+        behavior: 'smooth',
+      })
+    },
     setActiveMedia(path) {
       this.activeImageURL = this.getMediaURL(path)
     },
@@ -308,7 +350,6 @@ export default {
         .then((response) => {
           this.product = response.data.item
           this.activeImageURL = this.getMediaURL(this.product.media[0])
-          this.variants = this.product.variants
           this.photos = this.product.media
           console.log(this.product)
         })
