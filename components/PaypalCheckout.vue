@@ -1,6 +1,10 @@
 <template>
     <section class="w-full">
-        <div v-if="!paid" id="paypal-button-container"></div>
+        <div
+          v-if="!paid"
+          id="paypal-button-container"
+          class="mx-8 flex justify-center"
+        ></div>
         <div v-else id="confirmation">
             Order complete!
         </div>
@@ -29,7 +33,7 @@ export default {
             createOrder: this.createOrder,
             onApprove: this.onApprove,
             style: {
-              layout: 'vertical',
+              layout: 'horizontal',
               color: 'black',
               shape: 'pill',
               label: 'paypal'
@@ -57,10 +61,6 @@ export default {
 </script>
 
 <style scoped>
-#paypal-button-container {
-    margin: 30px 0;
-}
-
 #confirmation {
     color: green;
     margin-top: 1em;

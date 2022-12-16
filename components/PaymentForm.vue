@@ -18,7 +18,7 @@
       </div>
 
       <div
-        v-if="paymentMethod === 'stripe'"
+        v-show="paymentMethod === 'stripe'"
         class="payment-module gap-3 text-gray-600"
       >
         <form class="w-full" @submit.prevent="handleSubmit">
@@ -51,14 +51,14 @@
       </div>
 
       <PaypalCheckout
-        v-else-if="paymentMethod === 'paypal'"
+        v-show="paymentMethod === 'paypal'"
         id="paypal-payment-form"
         class="payment-module p-10"
         :cart-total="total"
       />
 
       <div
-        v-else-if="paymentMethod === 'afterpay'"
+        v-show="paymentMethod === 'afterpay'"
         class="flex gap-3 text-gray-600"
       >
         <form id="afterpay-form" @submit.prevent="handleSubmitAfterpay">
