@@ -154,6 +154,16 @@ export default {
   data() {
     return { paymentMethod: 'stripe' };
   },
+  computed: {
+    shippingInformation: {
+      get() {
+        return this.$store.state.order.shippingInformation;
+      },
+      set(v) {
+        this.$store.commit('order/setShippingInformation', v);
+      },
+    },
+  },
   mounted() {
     this.initialize()
   },

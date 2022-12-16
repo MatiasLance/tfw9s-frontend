@@ -81,12 +81,19 @@ export default {
   data() {
     return {
       clientSecret: '',
-      shippingInformation: {},
       activeStep: 1,
       isStepperLoading: false,
     };
   },
   computed: {
+    shippingInformation: {
+      get() {
+        return this.$store.state.order.shippingInformation;
+      },
+      set(v) {
+        this.$store.commit('order/setShippingInformation', v);
+      },
+    },
     subtotal: {
       get() {
         return this.$store.state.cart.subtotal;
