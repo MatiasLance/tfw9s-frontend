@@ -3,7 +3,7 @@
         <div
           v-if="!paid"
           id="paypal-button-container"
-          class="mx-8 flex justify-center"
+          class="mx-8 flex min-h-[250px] items-center justify-center"
         ></div>
         <div v-else id="confirmation">
             Order complete!
