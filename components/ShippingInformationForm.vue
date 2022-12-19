@@ -110,39 +110,6 @@
       </div>
     </div>
 
-    <label class="my-4 flex w-max items-center">
-      <input
-        v-model="hasAgreedToTerms"
-        type="checkbox"
-        class="
-          h-4
-          w-4
-          cursor-pointer
-          rounded-full
-          border-[3px] border-gray-300
-          bg-gray-400
-          text-brand-black
-          hover:border-gray-700
-          focus:border-transparent
-          focus:bg-gray-200
-          focus:ring-1
-          focus:ring-gray-500
-          focus:ring-offset-2
-        "
-        required
-      />
-      <span class="ml-2 inline-block cursor-pointer text-gray-500">
-        I agree with
-        <a
-          class="decoration-none hover:text-brand-black hover:underline"
-          href="#"
-          @click="showTermsModal = true"
-        >
-          Terms and Conditions
-        </a>
-      </span>
-    </label>
-
     <hr class="my-4" />
 
     <!-- radio selection -->
@@ -269,10 +236,45 @@
       ></textarea>
     </div>
 
-    <div class="flex w-full items-center justify-end">
+    <div class="flex w-full flex-wrap items-center justify-between gap-x-2">
+
+      <label class="my-4 mr-0 flex w-max items-center sm:mr-4 md:mr-8">
+        <input
+          v-model="hasAgreedToTerms"
+          type="checkbox"
+          class="
+            mr-2
+            h-4
+            w-4
+            cursor-pointer
+            rounded-full
+            border-[3px] border-gray-300
+            bg-gray-400
+            text-brand-black
+            hover:border-gray-700
+            focus:border-transparent
+            focus:bg-gray-200
+            focus:ring-1
+            focus:ring-gray-500
+            focus:ring-offset-2
+          "
+          required
+        />
+        <span class="mt-1 inline-block cursor-pointer text-gray-500">
+          I agree with
+          <a
+            class="decoration-none hover:text-brand-black hover:underline"
+            href="#"
+            @click="showTermsModal = true"
+          >
+            Terms and Conditions
+          </a>
+        </span>
+      </label>
+
       <button
         type="submit"
-        class="mx-2 w-24 cursor-pointer bg-brand-black py-2 text-white"
+        class="w-24 cursor-pointer bg-brand-black py-2 text-white"
         :disabled="isLoading"
       >
         <span v-if="!isLoading">

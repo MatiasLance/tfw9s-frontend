@@ -377,10 +377,7 @@ export default {
             closable: true,
             queue: true,
           });
-
-          setTimeout(() => {
-            this.$router.push('/cart');
-          }, 3000);
+          this.$router.push('/cart');
         })
         .catch(() => {
           this.$oruga.notification.open({

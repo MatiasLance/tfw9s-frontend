@@ -1,6 +1,16 @@
 export const state = () => ({
   deliveryNote: '',
-  pickupNote: ''
+  pickupNote: '',
+  shippingInformation: {
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    email: '',
+    shippingType: '',
+    address: '',
+    postCode: '',
+    remarks: '',
+  }
 })
 
 export const mutations = {
@@ -9,5 +19,15 @@ export const mutations = {
   },
   setPickupNote(state, pickup) {
     state.pickupNote = pickup
-  }
+  },
+  setShippingInformation(state, shippingInformation) {
+    state.shippingInformation.firstName = shippingInformation.firstName
+    state.shippingInformation.lastName = shippingInformation.lastName
+    state.shippingInformation.phoneNumber = shippingInformation.phoneNumber
+    state.shippingInformation.email = shippingInformation.email
+    state.shippingInformation.shippingType = shippingInformation.shippingType
+    state.shippingInformation.address = shippingInformation.address
+    state.shippingInformation.postCode = shippingInformation.postCode
+    state.shippingInformation.remarks = shippingInformation.remarks
+  },
 }
