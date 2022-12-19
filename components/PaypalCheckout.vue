@@ -38,8 +38,11 @@ export default {
   methods: {
     createOrder(data, actions) {
       return actions.order
-        // eslint-disable-next-line camelcase
-        .create({ purchase_units: [ { amount: { value: this.cartTotal } } ] });
+        .create({
+          prefer: 'return=minimal',
+          // eslint-disable-next-line camelcase
+          purchase_units: [ { amount: { value: this.cartTotal } } ]
+        });
     },
     onApprove(data, actions) {
       return actions.order
