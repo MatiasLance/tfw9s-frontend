@@ -174,6 +174,8 @@ export default {
       const metadata = this.shippingInformation;
       const clientSecret = await this.$axios
         .$post('v1/orders/checkout', {
+          // eslint-disable-next-line camelcase
+          payment_method: 'stripe',
           items,
           metadata,
         })

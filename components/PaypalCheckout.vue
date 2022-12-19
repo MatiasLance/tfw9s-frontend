@@ -18,6 +18,21 @@ export default {
       required: true
     }
   },
+  computed: {
+    cart: {
+      get() {
+        return this.$store.state.cart.cart;
+      },
+    },
+    shippingInformation: {
+      get() {
+        return this.$store.state.order.shippingInformation;
+      },
+      set(v) {
+        this.$store.commit('order/setShippingInformation', v);
+      },
+    },
+  },
   beforeCreate() {
     loadScript({ 'client-id': this.$config.paypal.clientId })
       .then((paypal) => {
@@ -42,6 +57,19 @@ export default {
           prefer: 'return=minimal',
           // eslint-disable-next-line camelcase
           purchase_units: [ { amount: { value: this.cartTotal } } ]
+        })
+        .then((orderId) => {
+          return this.$axios
+            .$post('v1/orders/checkout', {
+              // eslint-disable-next-line camelcase
+              payment_method: 'paypal',
+              items: this.cart,
+              metadata: {
+                ...this.shippingInformation,
+                // eslint-disable-next-line camelcase
+                transaction_id: orderId
+              },
+            })
         });
     },
     onApprove(data, actions) {
