@@ -1,13 +1,9 @@
 <template>
     <section class="w-full">
         <div
-          v-if="!paid"
           id="paypal-button-container"
           class="mx-8 flex min-h-[250px] items-center justify-center"
         ></div>
-        <div v-else id="confirmation">
-            Order complete!
-        </div>
     </section>
 </template>
 
@@ -21,9 +17,6 @@ export default {
       type: Number,
       required: true
     }
-  },
-  data() {
-    return { paid: false }
   },
   beforeCreate() {
     loadScript({ 'client-id': this.$config.paypal.clientId })
@@ -44,17 +37,16 @@ export default {
   },
   methods: {
     createOrder(data, actions) {
-      console.log('Creating order...')
       return actions.order
         // eslint-disable-next-line camelcase
         .create({ purchase_units: [ { amount: { value: this.cartTotal } } ] });
     },
     onApprove(data, actions) {
-      console.log('Order approved...')
-      return actions.order.capture().then(() => {
-        this.paid = true;
-        console.log('Order complete!')
-      })
+      return actions.order
+        .capture()
+        .then(() => {
+          this.$router.push(`/thank-you?paypal_transaction_id=${data.orderID}`)
+        })
     },
   }
 }

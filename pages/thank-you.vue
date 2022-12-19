@@ -126,29 +126,53 @@
 </template>
 
 <script>
+const GATEWAY_STRIPE = 'stripe'
+const GATEWAY_PAYPAL = 'paypal'
+
+const SUPPORTED_GATEWAYS = [
+  GATEWAY_STRIPE,
+  GATEWAY_PAYPAL,
+]
+
 export default {
   data() {
     return {
       status: 'loading',
-      paymentIntentId: null,
+      transactionId: null,
+      paymentGateway: null,
       bannerText: 'Verifying Order'
     }
   },
   mounted() {
-    this.paymentIntentId = this.$route.query.payment_intent
+    if (typeof this.$route.query.payment_intent !== 'undefined') {
+      this.paymentGateway = GATEWAY_STRIPE
+      this.transactionId = this.$route.query.payment_intent
+    } else if (typeof this.$route.query.paypal_transaction_id !== 'undefined') {
+      this.paymentGateway = GATEWAY_PAYPAL
+      this.transactionId = this.$route.query.paypal_transaction_id
+    } else {
+      this.status = 'failed'
+      this.bannerText = 'Could not find transaction'
+    }
+
     this.$nextTick(() => {
       this.verify()
     })
   },
   methods: {
     verify() {
-      if (this.paymentIntentId) {
+      if (SUPPORTED_GATEWAYS.includes(this.paymentGateway)) {
         this.status = 'loading'
         this.$axios
-          .$post('/v1/orders/verify', { paymentIntent: this.paymentIntentId })
+          .$post('/v1/orders/verify', {
+            // eslint-disable-next-line camelcase
+            transaction_id: this.transactionId,
+            // eslint-disable-next-line camelcase
+            payment_method: this.paymentGateway,
+          })
           .then((response) => {
             const status = response.data.status
-            if (status === 'succeeded') {
+            if (status === 'complete') {
               this.status = 'success'
               this.bannerText = 'Thank you'
               this.$store.dispatch('cart/clearCart')
@@ -164,6 +188,7 @@ export default {
             this.status = 'failed'
             this.bannerText = 'Order failed'
           })
+
       } else {
         this.status = 'failed'
         this.bannerText = 'Order failed'
