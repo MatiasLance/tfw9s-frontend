@@ -127,7 +127,7 @@ export default {
           type: 'paragraph',
           title: '',
           paragraphs: [
-            'This product is part of our Revamped Global X Collection:',
+            'Products that are a part of REVAMPED Global X Collection:',
             'Order ready to pick up for locals/GC (approximately): <span class="font-bold">10 - 14 days from purchase</span>',
             'Total shipping time for interstate/non-local (approximately): <span class="font-bold">14 - 20 days from purchase</span>'
           ]

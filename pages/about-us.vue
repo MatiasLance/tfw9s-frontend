@@ -27,11 +27,11 @@
                 >
                 {{ headline }}
                 </h2>
-                <p class="paragraph text-base">
+                <p class="paragraph text-lg">
                     {{ contentblurb1 }}
                 </p>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="paragraph text-base" v-html="contentblurb2" />
+                <p class="paragraph text-lg" v-html="contentblurb2" />
             </div>
         </BaseSection>
         <BaseSection class="my-16 sm:my-12 sm:px-12">
@@ -50,23 +50,21 @@
             data-aos="fade-left"
             data-aos-delay="700"
             class="col-span-12
-            mt-4
             flex flex-col
-            items-center
-            justify-center
-            space-y-6 p-5
+            space-y-6 self-center
+            px-2
             md:text-left lg:col-span-6 lg:space-y-8"
             >
-                <p class="paragraph text-base">
+                <p class="paragraph text-xl">
                     {{ contentblurb3 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-xl">
                     {{ contentblurb4 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-xl">
                     {{ contentblurb5 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-xl">
                     {{ contentblurb6 }}
                 </p>
             </div>
@@ -95,24 +93,21 @@
             data-aos="fade-left"
             data-aos-delay="700"
             class="col-span-12
-            mt-4
-            flex flex-col
-            items-center
-            justify-center
-            space-y-6 p-5
+            flex flex-col space-y-6
+            self-center p-2
             md:text-left lg:col-span-6 lg:space-y-8"
             >
-                <p class="paragraph text-base">
+                <p class="paragraph text-lg">
                     {{ contentblurb7 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-lg">
                     {{ contentblurb8 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-lg">
                     {{ contentblurb9 }}
                 </p>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="paragraph text-base" v-html="contentblurb10" />
+                <p class="paragraph text-xl" v-html="contentblurb10" />
             </div>
             <div class="col-span-12 mt-8 sm:hidden">
                 <div class="w-full">
@@ -195,7 +190,7 @@
                 </h2>
                 <div class="paragraph text-lg">
                     <blockquote class="relative my-7">
-                        <QuoteIcon />
+                        <QuoteIcon class="left-0" />
                         <div class="relative z-10">
                             <p class="text-gray-800 sm:text-xl">
                             <em>
@@ -314,10 +309,11 @@
                             And this store is just the start of it.
                         </p>
                     </address>
-                    <address class="my-6">
+                    <address class="relative my-6">
                         <p>
                             Stay true. Stay real. Just Be Yourself.
                         </p>
+                        <QuoteIcon class="right-0 flex -rotate-180" />
                     </address>
                 </div>
                 <span class="my-12 block text-lg font-bold">

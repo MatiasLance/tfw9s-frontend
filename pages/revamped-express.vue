@@ -127,7 +127,7 @@ export default {
           type: 'paragraph',
           title: '',
           paragraphs: [
-            'This product is part of our Revamped X Express Collection:',
+            'Products that are a part of REVAMPED X Express Collection:',
             'Order ready to pick up for locals/GC (approximately): <span class="font-bold">7 days from purchase</span>',
             'Total shipping time for interstate/non-local (approximately): <span class="font-bold">5 – 10 days from purchase</span>'
           ]
