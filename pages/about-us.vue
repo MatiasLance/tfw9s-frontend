@@ -50,11 +50,9 @@
             data-aos="fade-left"
             data-aos-delay="700"
             class="col-span-12
-            mt-4
             flex flex-col
-            items-center
-            justify-center
-            space-y-6 p-5
+            space-y-6 self-center
+            px-2
             md:text-left lg:col-span-6 lg:space-y-8"
             >
                 <p class="paragraph text-xl">
@@ -95,24 +93,21 @@
             data-aos="fade-left"
             data-aos-delay="700"
             class="col-span-12
-            mt-4
-            flex flex-col
-            items-center
-            justify-center
-            space-y-6 p-5
+            flex flex-col space-y-6
+            self-center p-2
             md:text-left lg:col-span-6 lg:space-y-8"
             >
-                <p class="paragraph text-base">
+                <p class="paragraph text-lg">
                     {{ contentblurb7 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-lg">
                     {{ contentblurb8 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-lg">
                     {{ contentblurb9 }}
                 </p>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="paragraph text-base" v-html="contentblurb10" />
+                <p class="paragraph text-xl" v-html="contentblurb10" />
             </div>
             <div class="col-span-12 mt-8 sm:hidden">
                 <div class="w-full">
