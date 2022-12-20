@@ -27,11 +27,11 @@
                 >
                 {{ headline }}
                 </h2>
-                <p class="paragraph text-base">
+                <p class="paragraph text-lg">
                     {{ contentblurb1 }}
                 </p>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="paragraph text-base" v-html="contentblurb2" />
+                <p class="paragraph text-lg" v-html="contentblurb2" />
             </div>
         </BaseSection>
         <BaseSection class="my-16 sm:my-12 sm:px-12">
@@ -57,16 +57,16 @@
             space-y-6 p-5
             md:text-left lg:col-span-6 lg:space-y-8"
             >
-                <p class="paragraph text-base">
+                <p class="paragraph text-xl">
                     {{ contentblurb3 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-xl">
                     {{ contentblurb4 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-xl">
                     {{ contentblurb5 }}
                 </p>
-                <p class="paragraph text-base">
+                <p class="paragraph text-xl">
                     {{ contentblurb6 }}
                 </p>
             </div>
