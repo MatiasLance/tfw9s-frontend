@@ -190,7 +190,7 @@
                 </h2>
                 <div class="paragraph text-lg">
                     <blockquote class="relative my-7">
-                        <QuoteIcon />
+                        <QuoteIcon class="left-0" />
                         <div class="relative z-10">
                             <p class="text-gray-800 sm:text-xl">
                             <em>
@@ -309,10 +309,11 @@
                             And this store is just the start of it.
                         </p>
                     </address>
-                    <address class="my-6">
+                    <address class="relative my-6">
                         <p>
                             Stay true. Stay real. Just Be Yourself.
                         </p>
+                        <QuoteIcon class="right-0 flex -rotate-180" />
                     </address>
                 </div>
                 <span class="my-12 block text-lg font-bold">
