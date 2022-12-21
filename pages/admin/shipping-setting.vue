@@ -1978,6 +1978,14 @@ export default {
       )
     },
     proceed() {
+    // todo: remove this upon finalising
+      this.$oruga.notification.open({
+        message: 'Work in progress',
+        variant: 'warning',
+        duration: 3000,
+        queue: true,
+        position: 'bottom'
+      })
       const shippingValuesForm = {
         name: this.settingName,
         country: this.own.country.name,
