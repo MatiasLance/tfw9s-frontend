@@ -28,8 +28,8 @@
                     >
                       <img
                         class="h-14 w-14"
-                        :src="`${$config.baseURL}/storage/${photo.path}`"
-                        alt="Product title"
+                        :src="getMediaURL(photo)"
+                        :alt="`Product thumbnail - ${photo.id}`"
                       >
                     </a>
                   </div>
