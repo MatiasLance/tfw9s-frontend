@@ -151,7 +151,7 @@ Here is what's happening with your shop today:
                 <hr class="my-4" />
                 <NuxtLink
                   to="/admin/shipping-setting"
-                  class="hover:text-wpi-red font-semibold"
+                  class="font-semibold hover:text-brand-black"
                 >
                   <i class="ri-pencil-line mr-1"></i>
                   Edit
@@ -167,7 +167,7 @@ Here is what's happening with your shop today:
                 <hr class="my-4" />
                 <NuxtLink
                   to="/admin/shipping-master"
-                  class="hover:text-wpi-red font-semibold"
+                  class="font-semibold hover:text-brand-black"
                 >
                   <i class="ri-pencil-line mr-1"></i>
                   Edit
