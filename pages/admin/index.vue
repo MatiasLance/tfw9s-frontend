@@ -142,6 +142,38 @@ Here is what's happening with your shop today:
                   >See all categories</NuxtLink>
               </div>
             </article>
+
+            <article class="rounded border border-gray-200 bg-white shadow-sm">
+              <div class="flex flex-col justify-start space-y-4 p-5">
+                <h2 class="text-xl font-semibold">
+                  Shipping Settings
+                </h2>
+                <hr class="my-4" />
+                <NuxtLink
+                  to="/admin/shipping-setting"
+                  class="hover:text-wpi-red font-semibold"
+                >
+                  <i class="ri-pencil-line mr-1"></i>
+                  Edit
+                </NuxtLink>
+              </div>
+            </article>
+
+            <article class="rounded border border-gray-200 bg-white shadow-sm">
+              <div class="flex flex-col justify-start space-y-4 p-5">
+                <h2 class="text-xl font-semibold">
+                  Shipping Master Controls
+                </h2>
+                <hr class="my-4" />
+                <NuxtLink
+                  to="/admin/shipping-master"
+                  class="hover:text-wpi-red font-semibold"
+                >
+                  <i class="ri-pencil-line mr-1"></i>
+                  Edit
+                </NuxtLink>
+              </div>
+            </article>
         </div> <!-- grid.// -->
 
     </section> <!-- container -->
