@@ -128,10 +128,12 @@
 <script>
 const GATEWAY_STRIPE = 'stripe'
 const GATEWAY_PAYPAL = 'paypal'
+const GATEWAY_SQUARE = 'square'
 
 const SUPPORTED_GATEWAYS = [
   GATEWAY_STRIPE,
   GATEWAY_PAYPAL,
+  GATEWAY_SQUARE,
 ]
 
 export default {
@@ -150,6 +152,9 @@ export default {
     } else if (typeof this.$route.query.paypal_transaction_id !== 'undefined') {
       this.paymentGateway = GATEWAY_PAYPAL
       this.transactionId = this.$route.query.paypal_transaction_id
+    } else if (typeof this.$route.query.square_transaction_id !== 'undefined') {
+      this.paymentGateway = GATEWAY_SQUARE
+      this.transactionId = this.$route.query.square_transaction_id
     } else {
       this.status = 'failed'
       this.bannerText = 'Could not find transaction'

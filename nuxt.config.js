@@ -51,7 +51,12 @@ export default {
       }
     ],
     script: [
-      { src: 'https://js.stripe.com/v3' }
+      { src: 'https://js.stripe.com/v3' },
+      {
+        hid: 'square-web-payments-sdk',
+        type: 'text/javascript',
+        src: 'https://sandbox.web.squarecdn.com/v1/square.js'
+      }
     ]
   },
 
@@ -113,6 +118,10 @@ export default {
     },
     paypal: {
       clientId: process.env.PAYPAL_CLIENT_ID
+    },
+    square: {
+      appId: process.env.SQUARE_APPLICATION_ID,
+      locationId: process.env.SQUARE_LOCATION_ID,
     },
     stripe: {
       liveEnvironment: process.env.STRIPE_LIVE_ENVIRONMENT,

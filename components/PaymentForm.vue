@@ -15,6 +15,12 @@
         >
           Paypal
         </PaymentTab>
+        <PaymentTab
+          :active="paymentMethod === 'square'"
+          @click="paymentMethod = 'square'"
+        >
+          Square
+        </PaymentTab>
       </div>
 
       <div
@@ -57,35 +63,10 @@
         :cart-total="total"
       />
 
-      <div
-        v-show="paymentMethod === 'afterpay'"
-        class="flex gap-3 text-gray-600"
-      >
-        <form id="afterpay-form" @submit.prevent="handleSubmitAfterpay">
-          <legend>
-            <h2 class="mb-3 block text-lg font-semibold">
-              Payment Method (Afterpay)
-            </h2>
-          </legend>
-          <a
-            class="
-              mt-3
-              block
-              w-full
-              border border-gray-200
-              bg-white
-              py-[16px]
-              px-[12px]
-              text-center text-gray-700
-              shadow-sm
-              hover:bg-gray-100 hover:text-[#1a1d18]
-            "
-            href="/cart"
-          >
-            Return to cart
-          </a>
-        </form>
-      </div>
+      <SquareCheckout
+        v-show="paymentMethod === 'square'"
+        class="payment-module p-10"
+      />
     </div>
 
     <article
@@ -126,6 +107,7 @@
 
 <script>
 import PaypalCheckout from '~/components/PaypalCheckout.vue';
+import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency';
 
@@ -134,6 +116,7 @@ let elements;
 export default {
   components: {
     PaypalCheckout,
+    SquareCheckout,
     PaymentTab
   },
   mixins: [ currencyMixin ],
@@ -152,7 +135,7 @@ export default {
     },
   },
   data() {
-    return { paymentMethod: 'stripe' };
+    return { paymentMethod: 'square' };
   },
   computed: {
     shippingInformation: {
