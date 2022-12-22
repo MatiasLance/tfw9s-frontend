@@ -538,10 +538,13 @@
               :width="320"
               :height="320"
               :quality="5"
+              placeholder="Place image here"
+              :placeholder-font-size="15"
               accept=".png, .webp, .jpeg, .jpg"
               :file-size-limit="31457280"
               :zoom-speed="5"
               :prevent-white-space="false"
+              :show-loading="true"
               initial-size="contain"
               @file-size-exceed="handleCroppaFileSizeExceed"
               @file-type-mismatch="handleCroppaFileTypeMismatch"
@@ -1592,7 +1595,7 @@ export default {
             form.append('categoryId[]', product.categoryId[i]);
           }
           for (let i = 0; i < product.photo.length; i++) {
-            form.append('photo[]', product.photo[i], 'itemThumbnail.jpg');
+            form.append('photo[]', product.photo[i], 'itemThumbnail.png');
           }
           const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
@@ -1664,7 +1667,7 @@ export default {
         form.append('categoryId[]', editedProduct.categoryId[i]);
       }
       for (let i = 0; i < editedProduct.photo.length; i++) {
-        form.append('photo[]', editedProduct.photo[i]);
+        form.append('photo[]', editedProduct.photo[i], 'itemThumbnail.png');
       }
       form.append('id', index);
 
