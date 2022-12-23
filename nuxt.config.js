@@ -51,7 +51,6 @@ export default {
       }
     ],
     script: [
-      { src: 'https://js.stripe.com/v3' },
       {
         hid: 'square-web-payments-sdk',
         type: 'text/javascript',
@@ -80,7 +79,6 @@ export default {
     },
     { src: '~/plugins/oruga.js' },
     { src: '~/plugins/croppa.js' },
-    { src: '~/plugins/vue-stripe.js', mode: 'client' },
     { src: '~/plugins/ChromePicker.js', mode: 'client' },
     { src: '~/plugins/PhotoshopPicker.js', mode: 'client' },
   ],
