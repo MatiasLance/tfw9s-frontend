@@ -42,7 +42,6 @@
     </form>
     <div
       id="payment-status-container"
-      class="mx-8 flex min-h-[250px] items-center justify-center"
     ></div>
   </section>
 </template>
