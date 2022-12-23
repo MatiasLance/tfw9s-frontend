@@ -53,6 +53,10 @@
           <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
+          <span>Shipping:</span>
+          <span>{{ formatCurrency(shipping) }}</span>
+        </li>
+        <li class="mb-1 flex justify-between">
           <span>GST:</span>
           <span>{{ formatCurrency(gst) }}</span>
         </li>
@@ -93,9 +97,19 @@ export default {
       type: [ Number ],
       required: true,
     },
+    shipping: {
+      type: [ Number ],
+      required: true
+    }
   },
   data() {
-    return { paymentMethod: 'square' };
+    return {
+      paymentMethod: 'square',
+      isStepperLoading: false,
+      overallTotal: 0,
+      newSubTotal: 0,
+      newGST: 0
+    };
   },
   computed: {
     shippingInformation: {
@@ -107,6 +121,29 @@ export default {
       },
     },
   },
+  methods: {
+    initialize() {
+      this.isStepperLoading = true
+      const items = this.$store.state.cart.cart
+      const metadata = this.shippingInformation
+      this.$axios
+        .$post('v1/orders/checkout', {
+          items,
+          metadata
+        })
+        .then((response) => {
+          this.activeStep = 2
+          this.$store.commit('cart/setShipping', response.totalShipping)
+          this.$store.commit('cart/setTotal', response.totalProduct)
+          this.newSubTotal = (this.subtotal + this.shipping);
+          this.newGST = this.newSubTotal * 0.1;
+          this.overallTotal = this.newGST + this.newSubTotal;
+        })
+        .finally(() => {
+          this.isStepperLoading = false
+        })
+    }
+  }
 };
 </script>
 

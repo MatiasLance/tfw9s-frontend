@@ -3,6 +3,17 @@ export const state = () => ({
   subtotal: 0,
   gst: 0,
   total: 0,
+  shipping: 0,
+  own: {
+    country: { active: true },
+    state: { active: true },
+    city: { active: true }
+  },
+  other: {
+    country: { active: true },
+    state: { active: true },
+    city: { active: true }
+  }
 })
 
 export const mutations = {
@@ -35,11 +46,32 @@ export const mutations = {
   setSubtotal(state, subtotal) {
     state.subtotal = subtotal
   },
+  setShipping(state, shipping) {
+    state.shipping = shipping
+  },
   setGst(state, gst) {
     state.gst = gst
   },
   setTotal(state, total) {
     state.total = total
+  },
+  setOwnCountryActive(state, active) {
+    state.own.country.active = active
+  },
+  setOwnStateActive(state, active) {
+    state.own.state.active = active
+  },
+  setOwnCityActive(state, active) {
+    state.own.city.active = active
+  },
+  setOtherCountryActive(state, active) {
+    state.other.country.active = active
+  },
+  setOtherStateActive(state, active) {
+    state.other.state.active = active
+  },
+  setOtherCityActive(state, active) {
+    state.other.city.active = active
   },
 }
 
