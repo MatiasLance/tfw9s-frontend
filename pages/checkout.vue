@@ -52,6 +52,7 @@
             :subtotal="subtotal"
             :gst="gst"
             :total="total"
+            :shipping="shipping"
           />
         </template>
         <!-- col.// -->
@@ -86,6 +87,14 @@ export default {
     };
   },
   computed: {
+    shipping: {
+      get() {
+        return this.$store.state.cart.shipping
+      },
+      set(v) {
+        this.$store.commit('cart/setShipping', v)
+      }
+    },
     shippingInformation: {
       get() {
         return this.$store.state.order.shippingInformation;

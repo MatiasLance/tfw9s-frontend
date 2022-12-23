@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'Revamp Official',
+    title: 'Revamped Official',
     htmlAttrs: {
       lang: 'en',
     },
@@ -32,7 +32,7 @@ export default {
       {
         hid: 'og:site_name',
         name: 'og:site_name',
-        content: 'Revamp Official Website',
+        content: 'Revamped Official Website',
       },
     ],
     link: [

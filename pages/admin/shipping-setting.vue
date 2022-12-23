@@ -156,7 +156,7 @@
     hover:border-brand-black
     hover:bg-blue-50 sm:col-span-1
     "
-    >
+>
     <span>
         <input
         v-model="own.country.activate"
@@ -1272,118 +1272,42 @@ focus:outline-none disabled:opacity-75"
                 <div
                     class="grid grid-cols-2 gap-4"
                 >
-                    <article
-                        v-for="setting in shippingSettingsList"
-                        :key="setting.id"
-                        class="mb-5 border border-gray-200 bg-white shadow-lg"
-                    >
-                        <div
-                            class="relative overflow-hidden bg-brand-lgrey
-                            p-0.5"
-                        >
-                            <span
-                                class="h-60 w-60
-                                text-6xl text-brand-dgrey"
-                            >
-                               {{ setting.name }}
-                            </span>
-                        </div>
-                        <div class="border-t border-t-gray-200 p-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <section class="col-span-2">
-                                <p>
-                                    Country: {{ setting.country }}
-                                </p>
-                                <div
-                                    class="mb-6 grid grid-cols-1
-                                    gap-4 sm:grid-cols-2"
-                                >
-                                    <p>
-                                        Shipping:
-                                        {{ setting.shipping_rate }}
-                                    </p>
-                                    <p>
-                                        Insurance:
-                                        {{ setting.insurance_value }}
-                                    </p>
-                                    <p>
-                                        Registered:
-                                        {{ setting.registered_value }}
-                                    </p>
-                                    <p>
-                                        Express:
-                                        {{ setting.express_value }}
-                                    </p>
-                                </div>
-                                <p>
-                                    State: {{ setting.state }}
-                                </p>
-                                <div
-                                    class="mb-6 grid grid-cols-1
-                                    gap-4 sm:grid-cols-2"
-                                >
-                                    <p>
-                                        Shipping:
-                                        {{ setting.shipping_rate }}
-                                    </p>
-                                    <p>
-                                        Insurance:
-                                        {{ setting.insurance_value }}
-                                    </p>
-                                    <p>
-                                        Registered:
-                                        {{ setting.registered_value }}
-                                    </p>
-                                    <p>
-                                        Express:
-                                        {{ setting.express_value }}
-                                    </p>
-                                </div>
-                                <p>
-                                    City: {{ setting.city }}
-                                </p>
-                                <div
-                                    class="mb-6 grid grid-cols-1
-                                    gap-4 sm:grid-cols-2"
-                                >
-                                    <p>
-                                        Shipping:
-                                        {{ setting.shipping_rate }}
-                                    </p>
-                                    <p>
-                                        Insurance:
-                                        {{ setting.insurance_value }}
-                                    </p>
-                                    <p>
-                                        Registered:
-                                        {{ setting.registered_value }}
-                                    </p>
-                                    <p>
-                                        Express:
-                                        {{ setting.express_value }}
-                                    </p>
-                                </div>
-                            </section>
-                            </div>
-                        <div class="mt-4 flex flex-wrap justify-start gap-2">
-            <button
-                type="button"
-                class="
-                mr-2
-                flex
-                cursor-pointer
-                items-center text-lg
-                text-brand-black
-                hover:text-brand-dred
-                hover:underline hover:decoration-brand-dred
-                "
-                @click="removeShipping(setting.id)"
-            >
-                <i class="ri-delete-bin-5-line"></i> Remove
-            </button>
-                        </div>
-                        </div>
-                    </article>
+                    <ShippingSettingElement
+                        class="col-span-2"
+                        :options="shippingSettingsList"
+                        shipping-type="own"
+                        @change="retrieveShipping"
+                    />
+                    <ShippingSettingElement
+                        class="col-span-2"
+                        :options="shippingSettingsList2"
+                        shipping-type="own"
+                        @change="retrieveShipping"
+                    />
+                    <ShippingSettingElement
+                        class="col-span-2"
+                        :options="shippingSettingsList3"
+                        shipping-type="own"
+                        @change="retrieveShipping"
+                    />
+                    <ShippingSettingElement
+                        class="col-span-2"
+                        :options="shippingSettingsList4"
+                        shipping-type="other"
+                        @change="retrieveShipping"
+                    />
+                    <ShippingSettingElement
+                        class="col-span-2"
+                        :options="shippingSettingsList5"
+                        shipping-type="other"
+                        @change="retrieveShipping"
+                    />
+                    <ShippingSettingElement
+                        class="col-span-2"
+                        :options="shippingSettingsList6"
+                        shipping-type="other"
+                        @change="retrieveShipping"
+                    />
                 </div>
             </div>
         </section>
@@ -1395,6 +1319,7 @@ import 'remixicon/fonts/remixicon.css';
 import BaseHeader from '~/components/base/BaseHeader';
 import aosMixin from '~/mixins/aos';
 import currencyMixin from '@/mixins/currency';
+import ShippingSettingElement from '~/components/ShippingSettingElement.vue';
 
 const countryList = {
   'AF': 'Afghanistan',
@@ -1650,7 +1575,10 @@ const countryList = {
 
 export default {
   name: 'shipping-setting',
-  components: { BaseHeader },
+  components: {
+    BaseHeader,
+    ShippingSettingElement
+  },
   mixins: [
     aosMixin,
     currencyMixin,
@@ -1660,13 +1588,18 @@ export default {
       editingShippingSetting: {},
       editedShippingSetting: {},
       shippingSettingsList: [],
+      shippingSettingsList2: [],
+      shippingSettingsList3: [],
+      shippingSettingsList4: [],
+      shippingSettingsList5: [],
+      shippingSettingsList6: [],
       settingName: '',
       ownOrOtherCountry: 'other',
       ownOrOtherState: '',
       ownOrOtherCity: '',
       own: {
         country: {
-          name: 'Australia',
+          name: '',
           shippingValue: 0,
           insuranceValue: 0,
           registeredPostValue: 0,
@@ -1680,7 +1613,7 @@ export default {
           activate: false,
         },
         state: {
-          name: 'NSW',
+          name: '',
           shippingValue: 0,
           insuranceValue: 0,
           registeredPostValue: 0,
@@ -1694,7 +1627,7 @@ export default {
           activate: false,
         },
         city: {
-          name: 'Sydney',
+          name: '',
           shippingValue: 0,
           insuranceValue: 0,
           registeredPostValue: 0,
@@ -1812,10 +1745,7 @@ export default {
     }
   },
   mounted() {
-    /*
-     * todo: remove comment when backend is ready.
-     * this.retrieveShipping()
-     */
+    this.retrieveShipping()
   },
   methods: {
     testFunc6() {
@@ -1965,77 +1895,92 @@ export default {
     },
     checkActiveIfOwn() {
       return (
-        this.own.country.activate === true ||
-        this.own.state.activate === true ||
-        this.own.city.activate === true
+        this.own.country.activate === true
       )
     },
     checkActiveIfOther() {
       return (
-        this.other.country.activate === true ||
-        this.other.state.activate === true ||
-        this.other.city.activate === true
+        this.other.country.activate === true
       )
     },
     proceed() {
-    // todo: remove this upon finalising
-      this.$oruga.notification.open({
-        message: 'Work in progress',
-        variant: 'warning',
-        duration: 3000,
-        queue: true,
-        position: 'bottom'
-      })
-      const shippingValuesForm = {
+      const shippingValuesFormCountry = {
         name: this.settingName,
         country: this.own.country.name,
-        state: this.own.state.name,
-        city: this.own.city.name,
         // eslint-disable-next-line camelcase
-        shipping_rate: this.own.country.shippingValue,
+        shipping_value: this.own.country.shippingValue,
         // eslint-disable-next-line camelcase
         insurance_value: this.own.country.insuranceValue,
         // eslint-disable-next-line camelcase
         registered_value: this.own.country.registeredPostValue,
         // eslint-disable-next-line camelcase
-        express_value: this.own.country.expressPostValue,
-        // eslint-disable-next-line camelcase
-        maxshipping_value: 0,
-        // eslint-disable-next-line camelcase
-        freeshipping_value: 0
+        express_value: this.own.country.expressPostValue
       }
-      const otherCountryForm = {
+      const shippingValuesFormState = {
         name: this.settingName,
-        country: 'Own Country',
-        state: 'Own State',
-        city: 'Own City',
+        state: this.own.state.name,
         // eslint-disable-next-line camelcase
-        shipping_rate: this.other.country.shippingValue,
+        shipping_value: this.own.state.shippingValue,
+        // eslint-disable-next-line camelcase
+        insurance_value: this.own.state.insuranceValue,
+        // eslint-disable-next-line camelcase
+        registered_value: this.own.state.registeredPostValue,
+        // eslint-disable-next-line camelcase
+        express_value: this.own.state.expressPostValue
+      }
+      const shippingValuesFormCity = {
+        name: this.settingName,
+        city: this.own.city.name,
+        // eslint-disable-next-line camelcase
+        shipping_value: this.own.city.shippingValue,
+        // eslint-disable-next-line camelcase
+        insurance_value: this.own.city.insuranceValue,
+        // eslint-disable-next-line camelcase
+        registered_value: this.own.city.registeredPostValue,
+        // eslint-disable-next-line camelcase
+        express_value: this.own.city.expressPostValue,
+      }
+      const otherCountryFormCountry = {
+        name: this.settingName,
+        country: 'Other Country',
+        // eslint-disable-next-line camelcase
+        shipping_value: this.other.country.shippingValue,
+        // eslint-disable-next-line camelcase
+        insurance_value: this.other.country.insuranceValue,
+        // eslint-disable-next-line camelcase
+        registered_value: this.other.country.registeredPostValue,
+        // eslint-disable-next-line camelcase
+        express_value: this.other.country.expressPostValue
+      }
+      const otherCountryFormState = {
+        name: this.settingName,
+        state: 'Other State',
+        // eslint-disable-next-line camelcase
+        shipping_value: this.other.state.shippingValue,
+        // eslint-disable-next-line camelcase
+        insurance_value: this.other.state.insuranceValue,
+        // eslint-disable-next-line camelcase
+        registered_value: this.other.state.registeredPostValue,
+        // eslint-disable-next-line camelcase
+        express_value: this.other.state.expressPostValue,
+      }
+      const otherCountryFormCity = {
+        name: this.settingName,
+        city: 'Other City',
+        // eslint-disable-next-line camelcase
+        shipping_value: this.other.country.shippingValue,
         // eslint-disable-next-line camelcase
         insurance_value: this.other.country.insuranceValue,
         // eslint-disable-next-line camelcase
         registered_value: this.other.country.registeredPostValue,
         // eslint-disable-next-line camelcase
         express_value: this.other.country.expressPostValue,
-        // eslint-disable-next-line camelcase
-        maxshipping_value: 0,
-        // eslint-disable-next-line camelcase
-        freeshipping_value: 0
       }
 
-      // own
       if (this.checkActiveIfOwn()) {
-        if (!this.own.country.activate) {
-          shippingValuesForm.country = 'n/a'
-        }
-        if (!this.own.state.activate) {
-          shippingValuesForm.state = 'n/a'
-        }
-        if (!this.own.city.activate) {
-          shippingValuesForm.city = 'n/a'
-        }
+        // endpoint own country
         this.$axios
-          .$post('v1/shipping/', shippingValuesForm)
+          .$post('v1/shipping/country/', shippingValuesFormCountry)
           .then((response) => {
             this.$oruga.notification.open({
               message: `${response.title} for Own Country`,
@@ -2044,7 +1989,6 @@ export default {
               position: 'bottom',
               queue: true
             })
-            this.retrieveShipping()
           })
           .catch((err) => {
             this.$oruga.notifcation.open({
@@ -2055,28 +1999,102 @@ export default {
               queue: true
             })
           })
-      } else {
-        this.$oruga.notification.open({
-          message: 'Own Country/State/City fields are currently disabled. To enable one, tick Activate checkbox.',
-          variant: 'info',
-          duration: 3000,
-          position: 'bottom',
-        })
+        // endpoint own state
+        setTimeout(() => {
+          this.$axios
+            .$post('v1/shipping/state/', shippingValuesFormState)
+            .then((response) => {
+              this.$oruga.notification.open({
+                message: `${response.title} for Own State`,
+                variant: 'success',
+                duration: 3000,
+                position: 'bottom',
+                queue: true
+              })
+            })
+            .catch((err) => {
+              this.$oruga.notifcation.open({
+                message: err.message,
+                variant: 'danger',
+                duration: 3000,
+                position: 'bottom',
+                queue: true
+              })
+            })
+        }, 1000);
+        // endpoint own city
+        setTimeout(() => {
+          this.$axios
+            .$post('v1/shipping/city/', shippingValuesFormCity)
+            .then((response) => {
+              this.$oruga.notification.open({
+                message: `${response.title} for Own City`,
+                variant: 'success',
+                duration: 3000,
+                position: 'bottom',
+                queue: true
+              })
+              this.retrieveShipping()
+            })
+            .catch((err) => {
+              this.$oruga.notifcation.open({
+                message: err.message,
+                variant: 'danger',
+                duration: 3000,
+                position: 'bottom',
+                queue: true
+              })
+            })
+        }, 2000);
       }
       // other
       if (this.checkActiveIfOther()) {
-        if (!this.other.country.activate) {
-          otherCountryForm.country = 'n/a'
-        }
-        if (!this.other.state.activate) {
-          otherCountryForm.state = 'n/a'
-        }
-        if (!this.other.city.activate) {
-          otherCountryForm.city = 'n/a'
-        }
         setTimeout(() => {
+          // endpoint other country
           this.$axios
-            .$post('v1/shipping/', otherCountryForm)
+            .$post('v1/shipping/othercountry/', otherCountryFormCountry)
+            .then((response) => {
+              this.$oruga.notification.open({
+                message: `${response.title} for Other Country`,
+                variant: 'success',
+                duration: 3000,
+                position: 'bottom',
+                queue: true
+              })
+            })
+            .catch((err) => {
+              this.$oruga.notifcation.open({
+                message: err.message,
+                variant: 'danger',
+                duration: 3000,
+                position: 'bottom',
+                queue: true
+              })
+            })
+          // endpoint other state
+          this.$axios
+            .$post('v1/shipping/otherstate/', otherCountryFormState)
+            .then((response) => {
+              this.$oruga.notification.open({
+                message: `${response.title} for Other State`,
+                variant: 'success',
+                duration: 3000,
+                position: 'bottom',
+                queue: true
+              })
+            })
+            .catch((err) => {
+              this.$oruga.notifcation.open({
+                message: err.message,
+                variant: 'danger',
+                duration: 3000,
+                position: 'bottom',
+                queue: true
+              })
+            })
+          // endpoint other city
+          this.$axios
+            .$post('v1/shipping/othercity', otherCountryFormCity)
             .then((response) => {
               this.$oruga.notification.open({
                 message: `${response.title} for Other Country`,
@@ -2096,14 +2114,7 @@ export default {
                 queue: true
               })
             })
-        }, 3000);
-      } else {
-        this.$oruga.notification.open({
-          message: 'Other Country/State/City fields are currently disabled. To enable one, tick Activate checkbox.',
-          variant: 'info',
-          duration: 3000,
-          position: 'bottom',
-        })
+        }, 500);
       }
     },
     retrieveShipping() {
