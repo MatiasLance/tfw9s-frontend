@@ -4,8 +4,8 @@
 
       <div class="flex">
         <PaymentTab
-          :active="paymentMethod === 'stripe'"
-          @click="paymentMethod = 'stripe'"
+          :active="paymentMethod === 'square'"
+          @click="paymentMethod = 'square'"
         >
           Credit Card
         </PaymentTab>
@@ -15,45 +15,6 @@
         >
           Paypal
         </PaymentTab>
-        <PaymentTab
-          :active="paymentMethod === 'square'"
-          @click="paymentMethod = 'square'"
-        >
-          Square
-        </PaymentTab>
-      </div>
-
-      <div
-        v-show="paymentMethod === 'stripe'"
-        class="payment-module gap-3 text-gray-600"
-      >
-        <form class="w-full" @submit.prevent="handleSubmit">
-          <div id="payment-element">
-            <!-- Stripe.js injects the Payment Element -->
-          </div>
-          <button id="stripeSubmit" type="submit">
-            <div id="spinner" class="spinner hidden"></div>
-            <span id="button-text">Pay now</span>
-          </button>
-          <a
-            class="
-              mt-3
-              block
-              w-full
-              border border-gray-200
-              bg-white
-              py-[16px]
-              px-[12px]
-              text-center text-gray-700
-              shadow-sm
-              hover:bg-gray-100 hover:text-[#1a1d18]
-            "
-            href="/cart"
-          >
-            Return to cart
-          </a>
-          <div id="payment-message" class="hidden"></div>
-        </form>
       </div>
 
       <PaypalCheckout
@@ -112,8 +73,6 @@ import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency';
 
-let elements;
-
 export default {
   components: {
     PaypalCheckout,
@@ -146,92 +105,6 @@ export default {
       set(v) {
         this.$store.commit('order/setShippingInformation', v);
       },
-    },
-  },
-  mounted() {
-    this.initialize()
-  },
-  methods: {
-    async initialize() {
-      this.isStepperLoading = true;
-      const items = this.$store.state.cart.cart;
-      const metadata = this.shippingInformation;
-      const clientSecret = await this.$axios
-        .$post('v1/orders/checkout', {
-          // eslint-disable-next-line camelcase
-          payment_method: 'stripe',
-          items,
-          metadata,
-        })
-        .then((response) => {
-          this.activeStep = 2;
-          return response;
-        })
-        .finally(() => {
-          this.isStepperLoading = false;
-        });
-
-      this.loadStripe(clientSecret);
-    },
-    loadStripe(clientSecret) {
-      const appearance = {
-        theme: 'stripe',
-        labels: 'floating',
-        variables: {
-          colorPrimary: '#1a1d18',
-          colorBackground: '#ffffff',
-          colorText: '#191919',
-          colorDanger: '#e73538',
-          fontFamily: 'Ideal Sans, system-ui, sans-serif',
-          spacingUnit: '4px',
-          borderRadius: '2px',
-          // See all possible variables below
-        },
-      };
-
-      elements = this.$stripe.elements({ clientSecret, appearance });
-      const paymentElement = elements.create('payment');
-      paymentElement.mount('#payment-element');
-    },
-    async handleSubmit() {
-      this.setLoading(true);
-      const { error } = await this.$stripe.confirmPayment({
-        elements,
-        // eslint-disable-next-line camelcase
-        confirmParams: { return_url: `${this.$config.baseURL}/thank-you` },
-      });
-
-      if (error.type === 'card_error' || error.type === 'validation_error') {
-        this.showMessage(error.message);
-      } else {
-        this.showMessage('An unexpected error occurred.');
-      }
-
-      this.setLoading(false);
-    },
-    setLoading(isLoading) {
-      if (isLoading) {
-        // Disable the button and show a spinner
-        document.querySelector('#stripeSubmit').disabled = true;
-        document.querySelector('#spinner').classList.remove('hidden');
-        document.querySelector('#button-text').classList.add('hidden');
-      } else {
-        document.querySelector('#stripeSubmit').disabled = false;
-        document.querySelector('#spinner').classList.add('hidden');
-        document.querySelector('#button-text').classList.remove('hidden');
-      }
-    },
-    showMessage(messageText) {
-      const messageContainer = document.querySelector('#payment-message');
-      messageContainer.classList.remove('hidden');
-
-      messageContainer.textContent = messageText;
-
-      setTimeout(function() {
-        messageContainer.classList.add('hidden');
-        messageText = '';
-        messageContainer.textContent = messageText;
-      }, 7000);
     },
   },
 };
