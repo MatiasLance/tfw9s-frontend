@@ -174,6 +174,168 @@
     <!-- radio selection .//end -->
 
     <div class="grid gap-x-3 md:grid-cols-3">
+      <div class="my-4 md:col-span-3">
+        <div class="grid w-full grid-cols-2 gap-2">
+              <label
+              v-if="isOwnCountryActive"
+              class="
+                  hover:border-wpi-red
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
+                  hover:bg-blue-50
+              "
+              >
+              <span>
+                  <input
+                  v-model="shippingChoiceCalc"
+                  value="Own Country"
+                  type="radio"
+                  class="
+                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
+                  bg-gray-200"
+                  />
+              </span>
+              <span>Sending to {{ ownCountry }}</span>
+              </label>
+              <label
+              v-if="isOtherCountryActive"
+              class="
+                  hover:border-wpi-red
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
+                  hover:bg-blue-50
+              "
+              >
+              <span>
+                  <input
+                  v-model="shippingChoiceCalc"
+                  value="Other Country"
+                  type="radio"
+                  class="
+                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
+                  bg-gray-200"
+                  />
+              </span>
+              <span>Sending to other Country</span>
+              </label>
+        </div>
+        <div
+          class="grid w-full grid-cols-2 gap-2"
+        >
+              <label
+              v-if="isOwnStateActive"
+              class="
+                  hover:border-wpi-red
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
+                  hover:bg-blue-50
+              "
+              >
+              <span>
+                  <input
+                  v-model="shippingChoiceCalc"
+                  value="Own State"
+                  name="shippingChoiceState"
+                  type="radio"
+                  class="
+                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
+                  bg-gray-200"
+                  />
+              </span>
+              <span>Sending to {{ ownState }}</span>
+            </label>
+            <label
+              v-if="isOtherStateActive"
+              class="
+                  hover:border-wpi-red
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
+                  hover:bg-blue-50
+              "
+              >
+              <span>
+                  <input
+                  v-if="isOtherStateActive"
+                  v-model="shippingChoiceCalc"
+                  value="Other State"
+                  name="shippingChoiceState"
+                  type="radio"
+                  class="
+                  text-wpi-red focus:ring-wpi-red mt-1 mr-1
+                  h-4
+                  w-4
+                  bg-gray-200"
+                  />
+              </span>
+              <span>Sending to other State</span>
+              </label>
+        </div>
+        <div
+          class="grid w-full grid-cols-2 gap-2"
+        >
+              <label
+              v-if="isOwnCityActive"
+              class="
+                  hover:border-wpi-red
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
+                  hover:bg-blue-50
+              "
+              >
+              <span>
+                  <input
+                  v-model="shippingChoiceCalc"
+                  value="Own City"
+                  name="shippingChoiceCity"
+                  type="radio"
+                  class="
+                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
+                  bg-gray-200"
+                  />
+              </span>
+              <span>Sending to {{ ownCity }}</span>
+              </label>
+              <label
+              v-if="isOtherCityActive"
+              class="
+                  hover:border-wpi-red
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
+                  hover:bg-blue-50
+              "
+              >
+              <span>
+                  <input
+                  value="Other City"
+                  name="shippingChoiceCity"
+                  type="radio"
+                  class="
+                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
+                  bg-gray-200"
+                  />
+              </span>
+              <span>Sending to other City</span>
+              </label>
+        </div>
+      </div>
       <div class="mb-4 md:col-span-2">
         <label class="mb-1 block">
           Address<span v-show="shippingType === 'delivery'">*</span>
@@ -325,6 +487,13 @@ export default {
       lastName: '',
       phoneCode: '+61',
       phoneDigits: '',
+      shippingChoiceCalc: '',
+      shippingChoiceCountry: '',
+      shippingChoiceState: '',
+      shippingChoiceCity: '',
+      ownCountry: '',
+      ownState: '',
+      ownCity: '',
       email: '',
       hasAgreedToTerms: false,
       shippingType: 'delivery',
@@ -341,6 +510,48 @@ export default {
       get() {
         return `${this.phoneCode}${this.phoneDigits}`
       },
+    },
+    isOwnCountryActive: {
+      get() {
+        return (
+          this.$store.state.cart.own.country.active
+        )
+      }
+    },
+    isOwnStateActive: {
+      get() {
+        return (
+          this.$store.state.cart.own.state.active
+        )
+      }
+    },
+    isOwnCityActive: {
+      get() {
+        return (
+          this.$store.state.cart.own.city.active
+        )
+      }
+    },
+    isOtherCountryActive: {
+      get() {
+        return (
+          this.$store.state.cart.other.country.active
+        )
+      }
+    },
+    isOtherStateActive: {
+      get() {
+        return (
+          this.$store.state.cart.other.country.active
+        )
+      }
+    },
+    isOtherCityActive: {
+      get() {
+        return (
+          this.$store.state.cart.other.country.active
+        )
+      }
     },
   },
   mounted() {
@@ -373,6 +584,77 @@ export default {
     },
     additionalValidation() {
       return this.shippingType
+    },
+    retrieveShippingSetting() {
+      this.$axios
+        .$get('/v1/shipping/country/latest')
+        .then((response) => {
+          this.ownCountry = response.data.data.country
+          if (!response.data.data) {
+            this.$store.commit('cart/setOwnCountryActive', false)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$store.commit('cart/setOwnCountryActive', false)
+        })
+      this.$axios
+        .$get('/v1/shipping/state/latest')
+        .then((response) => {
+          this.ownState = response.data.data.state
+          if (!response.data.data) {
+            this.$store.commit('cart/setOwnStateActive', false)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$store.commit('cart/setOwnStateActive', false)
+        })
+      this.$axios
+        .$get('/v1/shipping/city/latest')
+        .then((response) => {
+          this.ownCity = response.data.data.city
+          if (!response.data.data) {
+            this.$store.commit('cart/setOwnCityActive', false)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$store.commit('cart/setOwnCityActive', false)
+        })
+      this.$axios
+        .$get('/v1/shipping/othercountry/latest')
+        .then((response) => {
+          if (!response.data.data) {
+            this.$store.commit('cart/setOtherCountryActive', false)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$store.commit('cart/setOtherCountryActive', false)
+        })
+      this.$axios
+        .$get('/v1/shipping/otherstate/latest')
+        .then((response) => {
+          if (!response.data.data) {
+            this.$store.commit('cart/setOtherStateActive', false)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$store.commit('cart/setOtherStateActive', false)
+        })
+      this.$axios
+        .$get('/v1/shipping/othercity/latest')
+        .then((response) => {
+          if (!response.data.data) {
+            this.$store.commit('cart/setOtherCityActive', false)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$store.commit('cart/setOtherCityActive', false)
+        })
     },
     retrieveShippingNotes() {
       this.$axios
