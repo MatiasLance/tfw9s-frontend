@@ -2,7 +2,7 @@
   <section class="w-full">
     <form id="payment-form">
       <div id="card-container"></div>
-      <div class="mt-4">
+      <div class="mt-2">
         <button
           id="card-button"
           type="button"
@@ -14,10 +14,15 @@
             font-bold
             text-white
           "
-          @click="checkout"
+          @click="checkoutViaSquare"
         >
           Pay Now
         </button>
+
+        <div id="afterpay-button" @click="payViaAfterpay"></div>
+
+        <hr class="my-4">
+
         <NuxtLink to="/cart">
           <div
             class="
@@ -44,9 +49,17 @@
 
 <script>
 export default {
+  name: 'SquareCheckout',
+  props: {
+    cartTotal: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       card: null,
+      afterpay: null,
       appID: this.$config.square.appId,
       locationID: this.$config.square.locationId,
     }
@@ -67,19 +80,22 @@ export default {
     },
   },
   mounted() {
-    this.initializeSquare()
+    if (!window.Square) {
+      throw new Error('Sqaure.js failed to load properly')
+    }
+
+    const payments = window.Square.payments(this.appID, this.locationID)
+
+    this.initializeSquare(payments)
+
+    try {
+      this.initializeAfterpay(payments)
+    } catch (e) {
+      console.error('Initializing Afterpay/Clearpay failed', e);
+    }
   },
   methods: {
-    async initializeCard(payments) {
-      const card = await payments.card()
-      await card.attach('#card-container')
-      return card;
-    },
-    async initializeSquare() {
-      if (!window.Square) {
-        throw new Error('Sqaure.js failed to load properly')
-      }
-      const payments = window.Square.payments(this.appID, this.locationID)
+    async initializeSquare(payments) {
       try {
         this.card = await this.initializeCard(payments)
       } catch (e) {
@@ -87,7 +103,12 @@ export default {
         return false;
       }
     },
-    async checkout() {
+    async initializeCard(payments) {
+      const card = await payments.card()
+      await card.attach('#card-container')
+      return card;
+    },
+    async checkoutViaSquare() {
       const result = await this.card.tokenize()
 
       if (result.status === 'OK') {
@@ -104,6 +125,44 @@ export default {
           })
           .then((response) => {
             this.$router.push(`/thank-you?square_transaction_id=${response}`)
+          })
+      }
+    },
+    async initializeAfterpay(payments) {
+      const paymentRequest = this.buildPaymentRequest(payments)
+
+      this.afterpay = await payments.afterpayClearpay(paymentRequest)
+      await this.afterpay.attach('#afterpay-button')
+    },
+    buildPaymentRequest(payments) {
+      const req = payments.paymentRequest({
+        countryCode: 'AU',
+        currencyCode: 'AUD',
+        total: {
+          amount: this.cartTotal.toString(),
+          label: 'Total'
+        },
+      })
+
+      return req
+    },
+    async payViaAfterpay() {
+      const result = await this.afterpay.tokenize()
+
+      if (result.status === 'OK') {
+        this.$axios
+          .$post('/v1/orders/checkout', {
+            // eslint-disable-next-line camelcase
+            payment_method: 'afterpay',
+            items: this.cart,
+            metadata: {
+              ...this.shippingInformation,
+              // eslint-disable-next-line camelcase
+              card_token: result.token
+            },
+          })
+          .then((response) => {
+            this.$router.push(`/thank-you?afterpay_transaction_id=${response}`)
           })
       }
     },
