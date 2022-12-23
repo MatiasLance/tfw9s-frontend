@@ -34,7 +34,7 @@
                     class="flex flex-row text-3xl font-bold
                     text-white lg:text-6xl"
                 >
-                Shipping Master Control
+                Shipping Master Controls
                 </h1>
             </div>
         </BaseHeader>
@@ -167,19 +167,47 @@ export default {
       freeShippingValue: 0
     }
   },
+  mounted() {
+    this.retrieveMasterShipping()
+  },
   methods: {
+    retrieveMasterShipping() {
+      this.$axios
+        .$get('v1/shipping/mastershipping/1')
+        .then((response) => {
+          console.log(response)
+          this.maxShippingValue = response.data[0].maxshipping_value
+          this.freeShippingValue = response.data[0].freeshipping_value
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
     proceed() {
-      // TODO: add api endpoint for shipping update
-      const form = new FormData()
+      const form = new FormData();
+      form.append('_method', 'PATCH')
       form.append('maxshipping_value', this.maxShippingValue)
       form.append('freeshipping_value', this.freeShippingValue)
-      this.$oruga.notification.open({
-        message: 'Work in progress',
-        variant: 'warning',
-        duration: 3000,
-        queue: true,
-        position: 'bottom'
-      })
+      this.$axios
+        .$post('v1/shipping/mastershipping/1', form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: response.Message,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom'
+          })
+          this.retrieveMasterShipping()
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
     }
   }
 }
