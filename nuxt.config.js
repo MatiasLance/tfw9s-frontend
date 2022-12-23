@@ -55,7 +55,7 @@ export default {
       {
         hid: 'square-web-payments-sdk',
         type: 'text/javascript',
-        src: 'https://sandbox.web.squarecdn.com/v1/square.js'
+        src: `${process.env.ENVIRONMENT === 'production' ? 'https://web.squarecdn.com/v1/square.js' : 'https://sandbox.web.squarecdn.com/v1/square.js'}`
       }
     ]
   },

@@ -66,6 +66,7 @@
       <SquareCheckout
         v-show="paymentMethod === 'square'"
         class="payment-module p-10"
+        :cart-total="total"
       />
     </div>
 
