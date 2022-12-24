@@ -531,6 +531,37 @@
               </div>
             </div>
           </div>
+<div class="col-span-3 mb-4 w-full">
+  <div class="flex items-center justify-between">
+    <label class="mb-1 block"> Shipping: </label>
+  </div>
+  <div class="grid grid-cols-1 gap-2">
+    <select
+        v-model="selectedShippingSetting"
+        class="
+        my-2 block w-full
+        appearance-none
+        border border-gray-200 bg-gray-200
+        py-2 px-3
+      hover:border-gray-400
+      focus:border-gray-400 focus:outline-none
+        "
+        @change="setShippingSettings"
+    >
+        <option :value="0" selected>
+            Choose Shipping Setting
+        </option>
+        <option
+            v-for="shipping in shippings"
+            :key="shipping.id"
+            :value="shipping.id"
+            aria-placeholder="Select Shipping Setting"
+        >
+            {{ shipping.name }}
+        </option>
+    </select>
+  </div>
+</div>
           <div class="col-span-3 mb-4 w-full">
             <label class="mb-1 block">Image</label>
             <Croppa
@@ -863,6 +894,36 @@
             </div>
           </div>
           <div class="col-span-3 mb-4 w-full">
+            <div class="flex items-center justify-between">
+              <label class="mb-1 block"> Shipping: </label>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+              <select
+                v-model="selectedShippingSettingEdit"
+                class="
+                  my-2 block w-full
+                  appearance-none
+                  border border-gray-200 bg-gray-200
+                  py-2 px-3
+                hover:border-gray-400
+                focus:border-gray-400 focus:outline-none
+                  "
+                 @change="setShippingSettingEdit"
+              >
+                <option :value="0" selected>
+                  Choose Shipping Setting
+                </option>
+                <option
+                  v-for="shipping in shippings"
+                  :key="shipping.id"
+                  :value="shipping.id"
+                >
+                  {{ shipping.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-span-3 mb-4 w-full">
             <label class="mb-1 block">Image</label>
             <Croppa
               v-model="myEditCroppa"
@@ -1113,6 +1174,12 @@ export default {
       showGenerateEditedImageBtn: false,
       showGenerateCreatedImageBtn: false,
       showModal: false,
+      showShipValuesOwnCountry: false,
+      showShipValuesOwnState: false,
+      showShipValuesOwnCity: false,
+      showShipValuesOtherCountry: false,
+      showShipValuesOtherState: false,
+      showShipValuesOtherCity: false,
       name: '',
       price: '',
       description: '',
@@ -1138,6 +1205,45 @@ export default {
       filteredTags: [],
       selectedList: [],
       selectedCategory: {},
+      selectedShippingSetting: 0,
+      selectedShippingSettingEdit: 0,
+      selectedShipSetting: {
+        own: {
+          country: 0,
+          state: 0,
+          city: 0,
+        },
+        other: {
+          country: 0,
+          state: 0,
+          city: 0
+        }
+      },
+      calcs: {
+        own: {
+          country: { totalShipping: 0 },
+          state: { totalShipping: 0 },
+          city: { totalShipping: 0 }
+        },
+        other: {
+          country: { totalShipping: 0 },
+          state: { totalShipping: 0 },
+          city: { totalShipping: 0 }
+        }
+      },
+      selectedShipSettingEdited: {
+        own: {
+          country: 0,
+          state: 0,
+          city: 0,
+        },
+        other: {
+          country: 0,
+          state: 0,
+          city: 0
+        }
+      },
+      selectedShippingEdit: 0,
       selectedElement: -1,
       showAssignImage: false,
       showAssignColour: false,
@@ -1227,6 +1333,12 @@ export default {
     });
     this.retrieveProducts();
     this.retrieveCategories();
+    this.retrieveShippingOwnCountry();
+    this.retrieveShippingOwnState();
+    this.retrieveShippingOwnCity();
+    this.retrieveShippingOtherCountry();
+    this.retrieveShippingOtherState();
+    this.retrieveShippingOtherCity();
     this.$axios.$get('v1/tags/').then((response) => {
       this.$store.commit('product/setTagData', response.data.tags);
     });
@@ -1273,6 +1385,97 @@ export default {
           this.categories = response.data.categories
           this.$store.commit('product/setCategories', response.data.categories);
         });
+    },
+    retrieveShippingOwnCountry() {
+      this.$axios
+        .$get('v1/shipping/country/')
+        .then((response) => {
+          this.shippings = response.list.data
+        })
+    },
+    retrieveShippingCalcOwnCountry() {
+      this.showShipValuesOwnCountry = true
+      const id = this.selectedShipSetting.own.country
+      this.$axios
+        .$get(`v1/shipping/country/calc/${id}`)
+        .then((response) => {
+          this.calcs.own.country.totalShipping = response.total
+        })
+    },
+    retrieveShippingOwnState() {
+      this.$axios
+        .$get('v1/shipping/state/')
+        .then((response) => {
+          this.shippings2 = response.list.data
+        })
+    },
+    retrieveShippingCalcOwnState() {
+      const id = this.selectedShipSetting.own.state
+      this.$axios
+        .$get(`v1/shipping/state/calc/${id}`)
+        .then((response) => {
+          this.calcs.own.state.totalShipping = response.total
+        })
+    },
+    retrieveShippingOwnCity() {
+      this.$axios
+        .$get('v1/shipping/city/')
+        .then((response) => {
+          this.shippings3 = response.list.data
+        })
+    },
+    retrieveShippingCalcOwnCity() {
+      const id = this.selectedShipSetting.own.city
+      this.$axios
+        .$get(`v1/shipping/city/calc/${id}`)
+        .then((response) => {
+          this.calcs.own.city.totalShipping = response.total
+        })
+    },
+    retrieveShippingOtherCountry() {
+      this.$axios
+        .$get('v1/shipping/othercountry/')
+        .then((response) => {
+          this.shippings4 = response.list.data
+        })
+    },
+    retrieveShippingCalcOtherCountry() {
+      const id = this.selectedShipSetting.other.country
+      this.$axios
+        .$get(`v1/shipping/othercountry/calc/${id}`)
+        .then((response) => {
+          this.calcs.other.country.totalShipping = response.total
+        })
+    },
+    retrieveShippingOtherState() {
+      this.$axios
+        .$get('v1/shipping/otherstate/')
+        .then((response) => {
+          this.shippings5 = response.list.data
+        })
+    },
+    retrieveShippingCalcOtherState() {
+      const id = this.selectedShipSetting.other.state
+      this.$axios
+        .$get(`v1/shipping/otherstate/calc/${id}`)
+        .then((response) => {
+          this.calcs.other.state.totalShipping = response.total
+        })
+    },
+    retrieveShippingOtherCity() {
+      this.$axios
+        .$get('v1/shipping/othercity/')
+        .then((response) => {
+          this.shippings6 = response.list.data
+        })
+    },
+    retrieveShippingCalcOtherCity() {
+      const id = this.selectedShipSetting.other.city
+      this.$axios
+        .$get(`v1/shipping/othercity/calc/${id}`)
+        .then((response) => {
+          this.calcs.other.city.totalShipping = response.total
+        })
     },
     retrieveProducts() {
       this.isProductsLoading = true;
@@ -1580,6 +1783,12 @@ export default {
             inStock: this.inStock,
             tags: this.tags.map((x) => x.id),
             photo: this.imgList,
+            shippingowncountry: this.selectedShipSetting.own.country,
+            shippingownstate: this.selectedShipSetting.own.state,
+            shippingowncity: this.selectedShipSetting.own.city,
+            shippingothercountry: this.selectedShipSetting.other.country,
+            shippingotherstate: this.selectedShipSetting.other.state,
+            shippingothercity: this.selectedShipSetting.other.city,
             isFeatured: this.isItemFeatured.toString(),
           };
           const form = new FormData();
@@ -1587,6 +1796,12 @@ export default {
           form.append('description', product.description);
           form.append('price', product.price);
           form.append('stock', product.inStock);
+          form.append('shipping_owncountryid', product.shippingowncountry);
+          form.append('shipping_ownstateid', product.shippingownstate);
+          form.append('shipping_owncityid', product.shippingowncity);
+          form.append('shipping_othercountryid', product.shippingothercountry);
+          form.append('shipping_otherstateid', product.shippingotherstate);
+          form.append('shipping_othercityid', product.shippingothercity);
           form.append('isFeatured', product.isFeatured);
           for (let i = 0; i < product.tags.length; i++) {
             form.append('tags[]', product.tags[i]);
@@ -1789,6 +2004,28 @@ export default {
       this.productList.splice(index, 1);
       this.reset();
       this.showRemoveProductModal = false;
+    },
+    setShippingSettings() {
+      this.selectedShipSetting.own.country = this.selectedShippingSetting
+      this.selectedShipSetting.own.state = this.selectedShippingSetting
+      this.selectedShipSetting.own.city = this.selectedShippingSetting
+      this.selectedShipSetting.other.country = this.selectedShippingSetting
+      this.selectedShipSetting.other.state = this.selectedShippingSetting
+      this.selectedShipSetting.other.city = this.selectedShippingSetting
+    },
+    setShippingSettingEdit() {
+      this.selectedShipSettingEdited
+        .own.country = this.selectedShippingSettingEdit
+      this.selectedShipSettingEdited
+        .own.state = this.selectedShippingSettingEdit
+      this.selectedShipSettingEdited
+        .own.city = this.selectedShippingSettingEdit
+      this.selectedShipSettingEdited
+        .other.country = this.selectedShippingSettingEdit
+      this.selectedShipSettingEdited
+        .other.state = this.selectedShippingSettingEdit
+      this.selectedShipSettingEdited
+        .other.city = this.selectedShippingSettingEdit
     },
     duplicate(itemId) {
       this.$axios
