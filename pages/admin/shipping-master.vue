@@ -175,7 +175,6 @@ export default {
       this.$axios
         .$get('v1/shipping/mastershipping/1')
         .then((response) => {
-          console.log(response)
           this.maxShippingValue = response.data[0].maxshipping_value
           this.freeShippingValue = response.data[0].freeshipping_value
         })

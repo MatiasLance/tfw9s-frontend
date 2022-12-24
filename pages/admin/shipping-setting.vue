@@ -2119,7 +2119,7 @@ export default {
     },
     retrieveShipping() {
       this.$axios
-        .$get('v1/shipping/')
+        .$get('v1/shipping/country/')
         .then((response) => {
           this.shippingSettingsList = response.list.data
         })
@@ -2133,15 +2133,76 @@ export default {
             queue: true
           })
         })
-    },
-    editShipping(sid) {
       this.$axios
-        .$get(`v1/shipping/${sid}`)
+        .$get('v1/shipping/state/')
         .then((response) => {
-          this.editingShippingSetting = response.data.data
+          this.shippingSettingsList2 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
           this.$oruga.notification.open({
-            message: response.title,
-            variant: 'success',
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/city/')
+        .then((response) => {
+          this.shippingSettingsList3 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/othercountry/')
+        .then((response) => {
+          this.shippingSettingsList4 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/otherstate/')
+        .then((response) => {
+          this.shippingSettingsList5 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/othercity/')
+        .then((response) => {
+          this.shippingSettingsList6 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
             duration: 3000,
             position: 'bottom',
             queue: true
