@@ -1,209 +1,209 @@
 <template>
-    <div>
-        <article
-            v-for="setting in options"
-            :key="setting.id"
-            class="mb-5 border border-gray-200 bg-white shadow-lg"
-        >
-            <div
-                class="relative overflow-hidden bg-brand-lgrey
-                p-0.5"
-            >
-                <span
-                    class="h-60 w-60
-                    text-6xl text-brand-dgrey"
-                >
-                    {{ setting.name }}
-                </span>
-            </div>
-            <div class="border-t border-t-gray-200 p-4">
-                <div class="grid grid-cols-2 gap-4">
-                <section class="col-span-2">
-                    <template v-if="setting.country">
-                        <p>
-                            Country: {{ setting.country }}
-                        </p>
-                        <div
-                            class="mb-6 grid grid-cols-1
-                            gap-4 sm:grid-cols-2"
-                        >
-                            <p>
-                                Shipping:
-                                {{ setting.shipping_value }}
-                            </p>
-                            <p>
-                                Insurance:
-                                {{ setting.insurance_value }}
-                            </p>
-                            <p>
-                                Registered:
-                                {{ setting.registered_value }}
-                            </p>
-                            <p>
-                                Express:
-                                {{ setting.express_value }}
-                            </p>
-                        </div>
-                    </template>
-                    <template v-if="setting.state">
-                        <p>
-                            State: {{ setting.state }}
-                        </p>
-                        <div
-                            class="mb-6 grid grid-cols-1
-                            gap-4 sm:grid-cols-2"
-                        >
-                            <p>
-                                Shipping:
-                                {{ setting.shipping_value }}
-                            </p>
-                            <p>
-                                Insurance:
-                                {{ setting.insurance_value }}
-                            </p>
-                            <p>
-                                Registered:
-                                {{ setting.registered_value }}
-                            </p>
-                            <p>
-                                Express:
-                                {{ setting.express_value }}
-                            </p>
-                        </div>
-                    </template>
-                    <template v-if="setting.city">
-                        <p>
-                            City: {{ setting.city }}
-                        </p>
-                        <div
-                            class="mb-6 grid grid-cols-1
-                            gap-4 sm:grid-cols-2"
-                        >
-                            <p>
-                                Shipping:
-                                {{ setting.shipping_value }}
-                            </p>
-                            <p>
-                                Insurance:
-                                {{ setting.insurance_value }}
-                            </p>
-                            <p>
-                                Registered:
-                                {{ setting.registered_value }}
-                            </p>
-                            <p>
-                                Express:
-                                {{ setting.express_value }}
-                            </p>
-                        </div>
-                    </template>
-                </section>
-                </div>
-            <div class="mt-4 flex flex-wrap justify-start gap-2">
+  <div>
+      <article
+          v-for="setting in options"
+          :key="setting.id"
+          class="mb-5 border border-gray-200 bg-white shadow-lg"
+      >
+          <div
+              class="bg-wpi-lgrey relative overflow-hidden
+              p-0.5"
+          >
+              <span
+                  class="text-wpi-dgrey h-60
+                  w-60 text-6xl"
+              >
+                  {{ setting.name }}
+              </span>
+          </div>
+          <div class="border-t border-t-gray-200 p-4">
+              <div class="grid grid-cols-2 gap-4">
+              <section class="col-span-2">
+                  <template v-if="setting.country">
+                      <p>
+                          Country: {{ setting.country }}
+                      </p>
+                      <div
+                          class="mb-6 grid grid-cols-1
+                          gap-4 sm:grid-cols-2"
+                      >
+                          <p>
+                              Shipping:
+                              {{ setting.shipping_value }}
+                          </p>
+                          <p>
+                              Insurance:
+                              {{ setting.insurance_value }}
+                          </p>
+                          <p>
+                              Registered:
+                              {{ setting.registered_value }}
+                          </p>
+                          <p>
+                              Express:
+                              {{ setting.express_value }}
+                          </p>
+                      </div>
+                  </template>
+                  <template v-if="setting.state">
+                      <p>
+                          State: {{ setting.state }}
+                      </p>
+                      <div
+                          class="mb-6 grid grid-cols-1
+                          gap-4 sm:grid-cols-2"
+                      >
+                          <p>
+                              Shipping:
+                              {{ setting.shipping_value }}
+                          </p>
+                          <p>
+                              Insurance:
+                              {{ setting.insurance_value }}
+                          </p>
+                          <p>
+                              Registered:
+                              {{ setting.registered_value }}
+                          </p>
+                          <p>
+                              Express:
+                              {{ setting.express_value }}
+                          </p>
+                      </div>
+                  </template>
+                  <template v-if="setting.city">
+                      <p>
+                          City: {{ setting.city }}
+                      </p>
+                      <div
+                          class="mb-6 grid grid-cols-1
+                          gap-4 sm:grid-cols-2"
+                      >
+                          <p>
+                              Shipping:
+                              {{ setting.shipping_value }}
+                          </p>
+                          <p>
+                              Insurance:
+                              {{ setting.insurance_value }}
+                          </p>
+                          <p>
+                              Registered:
+                              {{ setting.registered_value }}
+                          </p>
+                          <p>
+                              Express:
+                              {{ setting.express_value }}
+                          </p>
+                      </div>
+                  </template>
+              </section>
+              </div>
+          <div class="mt-4 flex flex-wrap justify-start gap-2">
 <template v-if="shippingType === 'own'">
-    <template v-if="setting.country">
-        <button
-            type="button"
-            class="
-            mr-2
-            flex
-            cursor-pointer
-            items-center text-lg
-            text-brand-red
-            hover:text-brand-dred hover:underline hover:decoration-brand-dred
-            "
-            @click="removeShippingOwnCountry(setting.id)"
-        >
-            <i class="ri-delete-bin-5-line"></i> Remove
-        </button>
-    </template>
-    <template v-if="setting.state">
-        <button
-            type="button"
-            class="
-            mr-2
-            flex
-            cursor-pointer
-            items-center text-lg
-            text-brand-red
-            hover:text-brand-dred hover:underline hover:decoration-brand-dred
-            "
-            @click="removeShippingOwnState(setting.id)"
-        >
-            <i class="ri-delete-bin-5-line"></i> Remove
-        </button>
-    </template>
-    <template v-if="setting.city">
-        <button
-            type="button"
-            class="
-            mr-2
-            flex
-            cursor-pointer
-            items-center text-lg
-            text-brand-red
-            hover:text-brand-dred hover:underline hover:decoration-brand-dred
-            "
-            @click="removeShippingOwnCity(setting.id)"
-        >
-            <i class="ri-delete-bin-5-line"></i> Remove
-        </button>
-    </template>
+  <template v-if="setting.country">
+      <button
+          type="button"
+          class="
+          text-wpi-red
+          hover:text-wpi-dred
+          hover:decoration-wpi-dred
+          mr-2 flex
+          cursor-pointer
+          items-center text-lg hover:underline
+          "
+          @click="removeShippingOwnCountry(setting.id)"
+      >
+          <i class="ri-delete-bin-5-line"></i> Remove
+      </button>
+  </template>
+  <template v-if="setting.state">
+      <button
+          type="button"
+          class="
+          text-wpi-red
+          hover:text-wpi-dred
+          hover:decoration-wpi-dred
+          mr-2 flex
+          cursor-pointer
+          items-center text-lg hover:underline
+          "
+          @click="removeShippingOwnState(setting.id)"
+      >
+          <i class="ri-delete-bin-5-line"></i> Remove
+      </button>
+  </template>
+  <template v-if="setting.city">
+      <button
+          type="button"
+          class="
+          text-wpi-red
+          hover:text-wpi-dred
+          hover:decoration-wpi-dred
+          mr-2 flex
+          cursor-pointer
+          items-center text-lg hover:underline
+          "
+          @click="removeShippingOwnCity(setting.id)"
+      >
+          <i class="ri-delete-bin-5-line"></i> Remove
+      </button>
+  </template>
 </template>
 <template v-if="shippingType === 'other'">
-    <template v-if="setting.country">
-        <button
-        type="button"
-        class="
-        mr-2
-        flex
-        cursor-pointer
-        items-center text-lg
-        text-brand-red
-        hover:text-brand-dred hover:underline hover:decoration-brand-dred
-        "
-        @click="removeShippingOtherCountry(setting.id)"
-    >
-        <i class="ri-delete-bin-5-line"></i> Remove
-    </button>
-    </template>
-    <template v-if="setting.state">
-        <button
-        type="button"
-        class="
-        mr-2
-        flex
-        cursor-pointer
-        items-center text-lg
-        text-brand-red
-        hover:text-brand-dred hover:underline hover:decoration-brand-dred
-        "
-        @click="removeShippingOtherState(setting.id)"
-        >
-        <i class="ri-delete-bin-5-line"></i> Remove
-        </button>
-    </template>
-    <template v-if="setting.city">
-        <button
-        type="button"
-        class="
-        mr-2
-        flex
-        cursor-pointer
-        items-center text-lg
-        text-brand-red
-        hover:text-brand-dred hover:underline hover:decoration-brand-dred
-        "
-        @click="removeShippingOtherCity(setting.id)"
-        >
-        <i class="ri-delete-bin-5-line"></i> Remove
-        </button>
-    </template>
+  <template v-if="setting.country">
+      <button
+      type="button"
+      class="
+      text-wpi-red
+      hover:text-wpi-dred
+      hover:decoration-wpi-dred
+      mr-2 flex
+      cursor-pointer
+      items-center text-lg hover:underline
+      "
+      @click="removeShippingOtherCountry(setting.id)"
+  >
+      <i class="ri-delete-bin-5-line"></i> Remove
+  </button>
+  </template>
+  <template v-if="setting.state">
+      <button
+      type="button"
+      class="
+      text-wpi-red
+      hover:text-wpi-dred
+      hover:decoration-wpi-dred
+      mr-2 flex
+      cursor-pointer
+      items-center text-lg hover:underline
+      "
+      @click="removeShippingOtherState(setting.id)"
+      >
+      <i class="ri-delete-bin-5-line"></i> Remove
+      </button>
+  </template>
+  <template v-if="setting.city">
+      <button
+      type="button"
+      class="
+      text-wpi-red
+      hover:text-wpi-dred
+      hover:decoration-wpi-dred
+      mr-2 flex
+      cursor-pointer
+      items-center text-lg hover:underline
+      "
+      @click="removeShippingOtherCity(setting.id)"
+      >
+      <i class="ri-delete-bin-5-line"></i> Remove
+      </button>
+  </template>
 </template>
-            </div>
-            </div>
-        </article>
-    </div>
+          </div>
+          </div>
+      </article>
+  </div>
 </template>
 
 <script>
@@ -221,7 +221,7 @@ export default {
   },
   methods: {
     removeShippingOwnCountry(index) {
-      // delete own country
+    // delete own country
       this.$axios
         .$delete(`/v1/shipping/country/${index}`)
         .then((response) => {
@@ -245,7 +245,7 @@ export default {
         })
     },
     removeShippingOwnState(index) {
-    // delete own state
+      // delete own state
       this.$axios
         .$delete(`/v1/shipping/state/${index}`)
         .then((response) => {
@@ -269,7 +269,7 @@ export default {
         })
     },
     removeShippingOwnCity(index) {
-      // delete own city
+    // delete own city
       this.$axios
         .$delete(`/v1/shipping/city/${index}`)
         .then((response) => {
@@ -293,7 +293,7 @@ export default {
         })
     },
     removeShippingOtherCountry(index) {
-      // delete other country
+    // delete other country
       this.$axios
         .$delete(`/v1/shipping/othercountry/${index}`)
         .then((response) => {
@@ -317,7 +317,7 @@ export default {
         })
     },
     removeShippingOtherState(index) {
-      // delete other state
+    // delete other state
       this.$axios
         .$delete(`/v1/shipping/otherstate/${index}`)
         .then((response) => {
@@ -341,7 +341,7 @@ export default {
         })
     },
     removeShippingOtherCity(index) {
-      // delete other city
+    // delete other city
       this.$axios
         .$delete(`/v1/shipping/othercity/${index}`)
         .then((response) => {

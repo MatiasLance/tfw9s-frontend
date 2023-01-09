@@ -194,11 +194,11 @@
                   value="Own Country"
                   type="radio"
                   class="
-                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
-                  bg-gray-200"
+                  mt-1 h-4 w-4 bg-gray-200
+                  text-brand-black focus:ring-slate-500"
                   />
               </span>
-              <span>Sending to {{ ownCountry }}</span>
+                <span>Sending to {{ ownCountry }}</span>
               </label>
               <label
               v-if="isOtherCountryActive"
@@ -218,11 +218,11 @@
                   value="Other Country"
                   type="radio"
                   class="
-                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
-                  bg-gray-200"
+                mt-1 h-4 w-4 bg-gray-200
+                text-brand-black focus:ring-slate-500"
                   />
               </span>
-              <span>Sending to other Country</span>
+                <span>Sending to other Country</span>
               </label>
         </div>
         <div
@@ -247,11 +247,11 @@
                   name="shippingChoiceState"
                   type="radio"
                   class="
-                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
-                  bg-gray-200"
+                mt-1 h-4 w-4 bg-gray-200
+                text-brand-black focus:ring-slate-500"
                   />
               </span>
-              <span>Sending to {{ ownState }}</span>
+                <span>Sending to {{ ownState }}</span>
             </label>
             <label
               v-if="isOtherStateActive"
@@ -273,13 +273,11 @@
                   name="shippingChoiceState"
                   type="radio"
                   class="
-                  text-wpi-red focus:ring-wpi-red mt-1 mr-1
-                  h-4
-                  w-4
-                  bg-gray-200"
+                mt-1 h-4 w-4 bg-gray-200
+                text-brand-black focus:ring-slate-500"
                   />
               </span>
-              <span>Sending to other State</span>
+                <span>Sending to other State</span>
               </label>
         </div>
         <div
@@ -304,11 +302,11 @@
                   name="shippingChoiceCity"
                   type="radio"
                   class="
-                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
-                  bg-gray-200"
+                mt-1 h-4 w-4 bg-gray-200
+                text-brand-black focus:ring-slate-500"
                   />
               </span>
-              <span>Sending to {{ ownCity }}</span>
+                <span>Sending to {{ ownCity }}</span>
               </label>
               <label
               v-if="isOtherCityActive"
@@ -324,18 +322,77 @@
               >
               <span>
                   <input
+                  v-model="shippingChoiceCalc"
                   value="Other City"
                   name="shippingChoiceCity"
                   type="radio"
                   class="
-                  text-wpi-red focus:ring-wpi-red mt-1 mr-1 h-4 w-4
-                  bg-gray-200"
+                mt-1 h-4 w-4 bg-gray-200
+                text-brand-black focus:ring-slate-500"
                   />
               </span>
-              <span>Sending to other City</span>
+                <span>Sending to other City</span>
               </label>
         </div>
       </div>
+    </div>
+     <!-- Adding shipping delivery choices insurance, registered, express -->
+     <div
+              class="gap-auto mt-5 grid md:grid-cols-3 md:gap-4"
+              >
+              <div class="my-4 flex items-center">
+                <input
+                name="RegisteredPost"
+                value="RegisteredPost"
+                type="radio"
+                class="
+                mt-1 h-4 w-4 bg-gray-200
+                text-brand-black focus:ring-slate-500"
+                >
+                <label
+                class="
+                text-dark-900
+                dark:text-dark-300 ml-2 text-sm font-medium"
+                >
+                ${{  }} Registered Value
+                </label>
+              </div>
+              <div class="my-4 flex items-center">
+                <input
+                name="ExpressPost"
+                value="ExpressPost"
+                type="radio"
+                class="
+                mt-1 h-4 w-4 bg-gray-200
+                text-brand-black focus:ring-slate-500"
+                >
+                <label
+                class="
+                text-dark-900 dark:text-dark-300 ml-2 text-sm font-medium"
+                >
+                ${{  }} Express Value
+                </label>
+              </div>
+              <div class="my-4 flex items-center">
+                <input
+                name="AddInsurance"
+                value="AddInsurance"
+                type="radio"
+                class="
+                mt-1 h-4 w-4 bg-gray-200
+                text-brand-black focus:ring-slate-500"
+                >
+                <label
+                class="
+                text-dark-900 dark:text-dark-300 ml-2 text-sm font-medium"
+                >
+                ${{  }} Insurance Value
+                </label>
+              </div>
+            </div>
+            <!-- End of adding shipping delivery choices -->
+
+    <div class="grid gap-x-3 md:grid-cols-3">
       <div class="mb-4 md:col-span-2">
         <label class="mb-1 block">
           Address<span v-show="shippingType === 'delivery'">*</span>
@@ -487,11 +544,12 @@ export default {
       lastName: '',
       phoneCode: '+61',
       phoneDigits: '',
-      shippingChoiceCalc: '',
+      shippingChoiceCalc: null,
       shippingChoiceCountry: '',
       shippingChoiceState: '',
       shippingChoiceCity: '',
       ownCountry: '',
+      ownCountryDeliveryChoice: null,
       ownState: '',
       ownCity: '',
       email: '',
@@ -556,16 +614,31 @@ export default {
   },
   mounted() {
     this.retrieveShippingNotes();
+    this.retrieveShippingSetting();
+
+    if (this.shippingAvailability === 3) {
+      this.shippingType = 'delivery'
+    } else if (this.shippingAvailability === 2) {
+      this.shippingType = 'pickup'
+    } else if (this.shippingAvailability === 1) {
+      this.shippingType = 'delivery'
+    } else {
+      this.shippingType = null
+    }
   },
   methods: {
     submit() {
-      if (this.additionalValidation) {
+      if (this.additionalValidation()) {
         this.$emit('submit', {
           firstName: this.firstName,
           lastName: this.lastName,
           phoneNumber: this.phoneNumber,
           email: this.email,
           shippingType: this.shippingType,
+          shippingChoiceCalc: this.shippingChoiceCalc,
+          RegisteredPost: this.RegisteredPost,
+          ExpressPost: this.ExpressPost,
+          AddInsurance: this.AddInsurance,
           address: this.address,
           postCode: this.postCode,
           remarks: this.remarks,
@@ -583,7 +656,7 @@ export default {
       return false
     },
     additionalValidation() {
-      return this.shippingType
+      return this.shippingType && this.shippingType !== null
     },
     retrieveShippingSetting() {
       this.$axios
