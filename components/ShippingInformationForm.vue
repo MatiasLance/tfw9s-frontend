@@ -337,59 +337,9 @@
       </div>
     </div>
      <!-- Adding shipping delivery choices insurance, registered, express -->
-     <div
-              class="gap-auto mt-5 grid md:grid-cols-3 md:gap-4"
-              >
-              <div class="my-4 flex items-center">
-                <input
-                name="RegisteredPost"
-                value="RegisteredPost"
-                type="radio"
-                class="
-                mt-1 h-4 w-4 bg-gray-200
-                text-brand-black focus:ring-slate-500"
-                >
-                <label
-                class="
-                text-dark-900
-                dark:text-dark-300 ml-2 text-sm font-medium"
-                >
-                ${{  }} Registered Value
-                </label>
-              </div>
-              <div class="my-4 flex items-center">
-                <input
-                name="ExpressPost"
-                value="ExpressPost"
-                type="radio"
-                class="
-                mt-1 h-4 w-4 bg-gray-200
-                text-brand-black focus:ring-slate-500"
-                >
-                <label
-                class="
-                text-dark-900 dark:text-dark-300 ml-2 text-sm font-medium"
-                >
-                ${{  }} Express Value
-                </label>
-              </div>
-              <div class="my-4 flex items-center">
-                <input
-                name="AddInsurance"
-                value="AddInsurance"
-                type="radio"
-                class="
-                mt-1 h-4 w-4 bg-gray-200
-                text-brand-black focus:ring-slate-500"
-                >
-                <label
-                class="
-                text-dark-900 dark:text-dark-300 ml-2 text-sm font-medium"
-                >
-                ${{  }} Insurance Value
-                </label>
-              </div>
-            </div>
+     <ShippingChoicesValue
+       :shipping="shippingChoiceCalc"
+     />
             <!-- End of adding shipping delivery choices -->
 
     <div class="grid gap-x-3 md:grid-cols-3">
@@ -526,11 +476,13 @@
 <script>
 import Modal from '~/components/Modal';
 import TermsSection from '~/components/TermsSection';
+import ShippingChoicesValue from '~/components/ShippingChoicesValue.vue';
 
 export default {
   components: {
     Modal,
     TermsSection,
+    ShippingChoicesValue
   },
   props: {
     isLoading: {
@@ -548,10 +500,40 @@ export default {
       shippingChoiceCountry: '',
       shippingChoiceState: '',
       shippingChoiceCity: '',
+      otherCountryShippingValues: {
+        registeredValue: 0,
+        expressValue: 0,
+        insuranceValue: 0
+      },
+      otherStateShippingValues: {
+        registeredValue: 0,
+        expressValue: 0,
+        insuranceValue: 0
+      },
+      otherCityShippingValues: {
+        registeredValue: 0,
+        expressValue: 0,
+        insuranceValue: 0
+      },
       ownCountry: '',
       ownCountryDeliveryChoice: null,
+      ownCountryShippingValues: {
+        registeredValue: 0,
+        expressValue: 0,
+        insuranceValue: 0,
+      },
       ownState: '',
+      ownStateShippingValues: {
+        registeredValue: 0,
+        expressValue: 0,
+        insuranceValue: 0,
+      },
       ownCity: '',
+      ownCityShippingValues: {
+        registeredValue: 0,
+        expressValue: 0,
+        insuranceValue: 0,
+      },
       email: '',
       hasAgreedToTerms: false,
       shippingType: 'delivery',
@@ -662,7 +644,52 @@ export default {
       this.$axios
         .$get('/v1/shipping/country/latest')
         .then((response) => {
-          this.ownCountry = response.data.data.country
+          this.ownCountry = response.data.data[0].country
+          this.ownState = response.data.data[1].state
+          this.ownCity = response.data.data[2].city
+
+          this.ownCountryShippingValues.registeredValue =
+            response.data.data[0].registered_value
+          this.ownCountryShippingValues.expressValue =
+            response.data.data[0].express_value
+          this.ownCountryShippingValues.insuranceValue =
+            response.data.data[0].insurance_value
+
+          this.ownStateShippingValues.registeredValue =
+            response.data.data[1].registered_value
+          this.ownStateShippingValues.expressValue =
+            response.data.data[1].express_value
+          this.ownStateShippingValues.insuranceValue =
+            response.data.data[1].insurance_value
+
+          this.ownCityShippingValues.registeredValue =
+            response.data.data[2].registered_value
+          this.ownCityShippingValues.expressValue =
+            response.data.data[2].express_value
+          this.ownCityShippingValues.insuranceValue =
+            response.data.data[2].insurance_value
+
+          this.otherCountryShippingValues.registeredValue =
+            response.data.data[3].registered_value
+          this.otherCountryShippingValues.expressValue =
+            response.data.data[3].express_value
+          this.otherCountryShippingValues.insuranceValue =
+            response.data.data[3].insurance_value
+
+          this.otherStateShippingValues.registeredValue =
+            response.data.data[4].registered_value
+          this.otherStateShippingValues.expressValue =
+            response.data.data[4].express_value
+          this.otherStateShippingValues.insuranceValue =
+            response.data.data[4].insurance_value
+
+          this.otherCityShippingValues.registeredValue =
+            response.data.data[5].registered_value
+          this.otherCityShippingValues.expressValue =
+            response.data.data[5].express_value
+          this.otherCityShippingValues.insuranceValue =
+            response.data.data[5].insurance_value
+
           if (!response.data.data) {
             this.$store.commit('cart/setOwnCountryActive', false)
           }
@@ -671,10 +698,10 @@ export default {
           console.log(err)
           this.$store.commit('cart/setOwnCountryActive', false)
         })
+      // needed for show or hide shipping options
       this.$axios
         .$get('/v1/shipping/state/latest')
         .then((response) => {
-          this.ownState = response.data.data.state
           if (!response.data.data) {
             this.$store.commit('cart/setOwnStateActive', false)
           }
@@ -686,7 +713,6 @@ export default {
       this.$axios
         .$get('/v1/shipping/city/latest')
         .then((response) => {
-          this.ownCity = response.data.data.city
           if (!response.data.data) {
             this.$store.commit('cart/setOwnCityActive', false)
           }
