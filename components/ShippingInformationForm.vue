@@ -115,14 +115,15 @@
     <!-- radio selection -->
     <div class="mb-6 grid gap-3 sm:grid-cols-2">
       <label
-        class="
+        :class="`
           flex
           cursor-pointer
           border border-gray-200
           bg-gray-50
           p-3
           hover:border-brand-black hover:bg-slate-50
-        "
+          ${isDeliveryAvailable ? '' : 'disabled'}
+        `"
       >
         <span>
           <input
@@ -132,6 +133,7 @@
             type="radio"
             class="mt-1 h-4 w-4 bg-gray-200
             text-brand-black focus:ring-slate-500"
+            :disabled="!isDeliveryAvailable"
           />
         </span>
         <p class="ml-2">
@@ -143,14 +145,16 @@
         </p>
       </label>
       <label
-        class="
+        :class="`
+          shipping-option
           flex
           cursor-pointer
           border border-gray-200
           bg-gray-50
           p-3
           hover:border-brand-black hover:bg-slate-50
-        "
+          ${isPickupAvailable ? '' : 'disabled'}
+        `"
       >
         <span>
           <input
@@ -339,6 +343,7 @@
      <!-- Adding shipping delivery choices insurance, registered, express -->
      <ShippingChoicesValue
        :shipping="shippingChoiceCalc"
+       @change="setShippingOptions"
      />
             <!-- End of adding shipping delivery choices -->
 
@@ -496,6 +501,7 @@ export default {
       lastName: '',
       phoneCode: '+61',
       phoneDigits: '',
+      totalShippingCost: 0,
       shippingChoiceCalc: null,
       shippingChoiceCountry: '',
       shippingChoiceState: '',
@@ -522,21 +528,27 @@ export default {
         expressValue: 0,
         insuranceValue: 0,
       },
+      showStateLayer: false,
       ownState: '',
       ownStateShippingValues: {
         registeredValue: 0,
         expressValue: 0,
         insuranceValue: 0,
       },
+      showCityLayer: false,
       ownCity: '',
       ownCityShippingValues: {
         registeredValue: 0,
         expressValue: 0,
         insuranceValue: 0,
       },
+      shippingOptions: [],
       email: '',
       hasAgreedToTerms: false,
-      shippingType: 'delivery',
+      shippingType: 'null',
+      RegisteredPost: '',
+      ExpressPost: '',
+      AddInsurance: '',
       address: '',
       postCode: '',
       remarks: '',
@@ -549,6 +561,19 @@ export default {
     phoneNumber: {
       get() {
         return `${this.phoneCode}${this.phoneDigits}`
+      },
+    },
+    shippingAvailability: {
+      get() {
+        return this.$store.state.cart.shippingAvailability
+      },
+    },
+    isDeliveryAvailable: {
+      get() {
+        return (
+          this.shippingAvailability === 3 ||
+          this.shippingAvailability === 1
+        )
       },
     },
     isOwnCountryActive: {
@@ -593,6 +618,14 @@ export default {
         )
       }
     },
+    isPickupAvailable: {
+      get() {
+        return (
+          this.shippingAvailability === 3 ||
+          this.shippingAvailability === 2
+        )
+      },
+    },
   },
   mounted() {
     this.retrieveShippingNotes();
@@ -609,6 +642,123 @@ export default {
     }
   },
   methods: {
+    setShippingOptions(options) {
+      this.shippingOptions = options
+    },
+    retrieveShipping() {
+      this.$axios
+        .$get('v1/shipping/country/')
+        .then((response) => {
+          this.shippingSettingsList = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/state/')
+        .then((response) => {
+          this.shippingSettingsList2 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/city/')
+        .then((response) => {
+          this.shippingSettingsList3 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/othercountry/')
+        .then((response) => {
+          this.shippingSettingsList4 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/otherstate/')
+        .then((response) => {
+          this.shippingSettingsList5 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+      this.$axios
+        .$get('v1/shipping/othercity/')
+        .then((response) => {
+          this.shippingSettingsList6 = response.list.data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$oruga.notification.open({
+            message: err.message,
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true
+          })
+        })
+    },
+    triggerFunc2() {
+      this.hideCityFunc()
+      this.shippingChoiceCity = ''
+    },
+    triggerFunc1() {
+      this.hideStateFunc()
+      this.hideCityFunc()
+      this.shippingChoiceState = ''
+      this.shippingChoiceCity = ''
+    },
+    showStateFunc() {
+      this.showStateLayer = true
+    },
+    hideStateFunc() {
+      this.showStateLayer = false
+    },
+    showCityFunc() {
+      this.showCityLayer = true
+    },
+    hideCityFunc() {
+      this.showCityLayer = false
+    },
     submit() {
       if (this.additionalValidation()) {
         this.$emit('submit', {
@@ -618,6 +768,7 @@ export default {
           email: this.email,
           shippingType: this.shippingType,
           shippingChoiceCalc: this.shippingChoiceCalc,
+          shippingOptions: this.shippingOptions,
           RegisteredPost: this.RegisteredPost,
           ExpressPost: this.ExpressPost,
           AddInsurance: this.AddInsurance,
@@ -697,62 +848,6 @@ export default {
         .catch((err) => {
           console.log(err)
           this.$store.commit('cart/setOwnCountryActive', false)
-        })
-      // needed for show or hide shipping options
-      this.$axios
-        .$get('/v1/shipping/state/latest')
-        .then((response) => {
-          if (!response.data.data) {
-            this.$store.commit('cart/setOwnStateActive', false)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$store.commit('cart/setOwnStateActive', false)
-        })
-      this.$axios
-        .$get('/v1/shipping/city/latest')
-        .then((response) => {
-          if (!response.data.data) {
-            this.$store.commit('cart/setOwnCityActive', false)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$store.commit('cart/setOwnCityActive', false)
-        })
-      this.$axios
-        .$get('/v1/shipping/othercountry/latest')
-        .then((response) => {
-          if (!response.data.data) {
-            this.$store.commit('cart/setOtherCountryActive', false)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$store.commit('cart/setOtherCountryActive', false)
-        })
-      this.$axios
-        .$get('/v1/shipping/otherstate/latest')
-        .then((response) => {
-          if (!response.data.data) {
-            this.$store.commit('cart/setOtherStateActive', false)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$store.commit('cart/setOtherStateActive', false)
-        })
-      this.$axios
-        .$get('/v1/shipping/othercity/latest')
-        .then((response) => {
-          if (!response.data.data) {
-            this.$store.commit('cart/setOtherCityActive', false)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$store.commit('cart/setOtherCityActive', false)
         })
     },
     retrieveShippingNotes() {
