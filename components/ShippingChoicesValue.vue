@@ -217,6 +217,11 @@ export default {
       },
     }
   },
+  watch: {
+    selected() {
+      this.$emit('change', { selected: this.selected })
+    }
+  },
   mounted() {
     this.retrieve();
   },
