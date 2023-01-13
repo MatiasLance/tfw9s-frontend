@@ -25,35 +25,50 @@
                 </span>
             <template v-if="shipping === 'Own Country'">
                 <p class="ml-2">
-{{ formatCurrency(ownCountryShippingValues.registeredValue) }} Registered Value
+<span v-if="showRegisteredValueAmount">
+  {{ formatCurrency(ownCountryShippingValues.registeredValue) }}
+</span>
+Registered Value
                 </p>
             </template>
             <template v-if="shipping === 'Own State'">
                 <p class="ml-2">
-{{ formatCurrency(ownStateShippingValues.registeredValue) }} Registered Value
+<span v-if="showRegisteredValueAmount">
+  {{ formatCurrency(ownStateShippingValues.registeredValue) }}
+</span>
+Registered Value
                 </p>
             </template>
             <template v-if="shipping === 'Own City'">
                 <p class="ml-2">
-{{ formatCurrency(ownCityShippingValues.registeredValue) }} Registered Value
+<span v-if="showRegisteredValueAmount">
+  {{ formatCurrency(ownCityShippingValues.registeredValue) }}
+</span>
+Registered Value
                 </p>
             </template>
             <template v-if="shipping === 'Other Country'">
                 <p class="ml-2">
+<span v-if="showRegisteredValueAmount">
 {{ formatCurrency(otherCountryShippingValues.registeredValue) }}
-    Registered Value
+</span>
+Registered Value
                 </p>
             </template>
             <template v-if="shipping === 'Other State'">
                 <p class="ml-2">
-{{ formatCurrency(otherStateShippingValues.registeredValue) }}
-    Registered Value
+<span v-if="showRegisteredValueAmount">
+  {{ formatCurrency(otherStateShippingValues.registeredValue) }}
+</span>
+Registered Value
                 </p>
             </template>
             <template v-if="shipping === 'Other City'">
                 <p class="ml-2">
-{{ formatCurrency(otherCityShippingValues.registeredValue) }}
-    Registered Value
+<span v-if="showRegisteredValueAmount">
+  {{ formatCurrency(otherCityShippingValues.registeredValue) }}
+</span>
+Registered Value
                 </p>
             </template>
         </label>
@@ -181,6 +196,7 @@ export default {
   },
   data() {
     return {
+      showRegisteredValueAmount: false,
       registeredPostSelect: null,
       expressPostSelect: null,
       insuranceValueSelect: null,
