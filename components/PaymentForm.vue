@@ -10,6 +10,7 @@
           Credit Card
         </PaymentTab>
         <PaymentTab
+          v-if="showPaypal"
           :active="paymentMethod === 'paypal'"
           @click="paymentMethod = 'paypal'"
         >
@@ -108,7 +109,8 @@ export default {
       isStepperLoading: false,
       overallTotal: 0,
       newSubTotal: 0,
-      newGST: 0
+      newGST: 0,
+      showPaypal: false
     };
   },
   computed: {
