@@ -64,7 +64,7 @@
         <li class="mt-3 flex justify-between border-t pt-3">
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
-            {{ formatCurrency(total) }}
+            {{ formatCurrency(overallTotal) }}
           </span>
         </li>
       </ul>
@@ -94,10 +94,6 @@ export default {
       type: [ Number ],
       required: true,
     },
-    shipping: {
-      type: [ Number ],
-      required: true
-    }
   },
   data() {
     return {
@@ -110,6 +106,14 @@ export default {
     };
   },
   computed: {
+    shipping: {
+      get() {
+        return this.$store.state.cart.shipping
+      },
+      set(v) {
+        this.$store.commit('cart/setShipping', v)
+      }
+    },
     shippingInformation: {
       get() {
         return this.$store.state.order.shippingInformation;
@@ -138,9 +142,9 @@ export default {
         })
         .then((response) => {
           this.activeStep = 2
-          this.$store.commit('cart/setShipping', response.totalShipping)
-          this.$store.commit('cart/setTotal', response.totalProduct)
-          this.newSubTotal = (this.subtotal + this.shipping);
+          this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping)
+          this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
+          this.newSubTotal = (this.subtotal + (this.shipping));
           this.newGST = this.newSubTotal * 0.1;
           this.overallTotal = this.newGST + this.newSubTotal;
         })
