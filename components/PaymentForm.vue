@@ -130,7 +130,7 @@ export default {
       // eslint-disable-next-line camelcase
       const payment_method = this.paymentMethod
       this.$axios
-        .$post('v1/orders/checkout', {
+        .$post('v1/orders/calculation', {
           items,
           metadata,
           // eslint-disable-next-line camelcase

@@ -64,6 +64,7 @@
                     v-model="maxShippingValue"
                     type="tel"
                     name="maxShipping"
+                    maxlength="5"
                     class="
                         form-input
                         mt-1
@@ -95,6 +96,7 @@
                     v-model="freeShippingValue"
                     type="tel"
                     name="freeShippingValue"
+                    maxlength="5"
                     class="
                         form-input
                         mt-1

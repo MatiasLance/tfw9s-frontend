@@ -109,7 +109,8 @@ export default {
     },
     async checkoutViaSquare() {
       const result = await this.card.tokenize()
-
+      // todo: remove
+      console.log(result)
       if (result.status === 'OK') {
         this.$axios
           .$post('/v1/orders/checkout', {
