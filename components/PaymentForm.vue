@@ -10,6 +10,7 @@
           Credit Card
         </PaymentTab>
         <PaymentTab
+          v-if="showPaypal"
           :active="paymentMethod === 'paypal'"
           @click="paymentMethod = 'paypal'"
         >
@@ -58,7 +59,7 @@
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
-          <span>{{ formatCurrency(gst) }}</span>
+          <span>{{ formatCurrency(newGST) }}</span>
         </li>
         <li class="mt-3 flex justify-between border-t pt-3">
           <span>Total price:</span>
@@ -89,10 +90,6 @@ export default {
       type: [ Number ],
       required: true,
     },
-    gst: {
-      type: [ Number ],
-      required: true,
-    },
     total: {
       type: [ Number ],
       required: true,
@@ -108,7 +105,8 @@ export default {
       isStepperLoading: false,
       overallTotal: 0,
       newSubTotal: 0,
-      newGST: 0
+      newGST: 0,
+      showPaypal: false
     };
   },
   computed: {
@@ -121,15 +119,22 @@ export default {
       },
     },
   },
+  mounted() {
+    this.initialize()
+  },
   methods: {
     initialize() {
       this.isStepperLoading = true
       const items = this.$store.state.cart.cart
       const metadata = this.shippingInformation
+      // eslint-disable-next-line camelcase
+      const payment_method = this.paymentMethod
       this.$axios
         .$post('v1/orders/checkout', {
           items,
-          metadata
+          metadata,
+          // eslint-disable-next-line camelcase
+          payment_method
         })
         .then((response) => {
           this.activeStep = 2

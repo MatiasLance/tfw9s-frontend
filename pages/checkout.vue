@@ -50,7 +50,6 @@
         <template v-else-if="activeStep === 2">
           <PaymentForm
             :subtotal="subtotal"
-            :gst="gst"
             :total="total"
             :shipping="shipping"
           />

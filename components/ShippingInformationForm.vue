@@ -119,10 +119,10 @@
           flex
           cursor-pointer
           border border-gray-200
-          bg-gray-50
           p-3
-          hover:border-brand-black hover:bg-slate-50
-          ${isDeliveryAvailable ? '' : 'disabled'}
+          ${isDeliveryAvailable
+              ? 'bg-gray-50 hover:border-brand-black hover:bg-slate-50'
+              : 'bg-gray-300 opacity-60 cursor-not-allowed'}
         `"
       >
         <span>
@@ -133,11 +133,17 @@
             type="radio"
             class="mt-1 h-4 w-4 bg-gray-200
             text-brand-black focus:ring-slate-500"
+            :class="isDeliveryAvailable
+              ? ''
+              : 'disabled cursor-not-allowed'
+            "
             :disabled="!isDeliveryAvailable"
           />
         </span>
         <p class="ml-2">
-          <span>Delivery</span>
+          <span class="">
+            Delivery
+          </span>
           <small
             class="block text-sm text-gray-400"
             v-html="deliveryNote"
