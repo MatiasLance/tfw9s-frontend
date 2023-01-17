@@ -28,7 +28,7 @@
 <span v-if="showAmountt">
   {{ formatCurrency(ownCountryShippingValues.registeredValue) }}
 </span>
-Registered Value
+Add Registered Post
                 </p>
             </template>
             <template v-if="shipping === 'Own State'">
@@ -36,7 +36,7 @@ Registered Value
 <span v-if="showAmountt">
   {{ formatCurrency(ownStateShippingValues.registeredValue) }}
 </span>
-Registered Value
+Add Registered Post
                 </p>
             </template>
             <template v-if="shipping === 'Own City'">
@@ -44,7 +44,7 @@ Registered Value
 <span v-if="showAmountt">
   {{ formatCurrency(ownCityShippingValues.registeredValue) }}
 </span>
-Registered Value
+Add Registered Post
                 </p>
             </template>
             <template v-if="shipping === 'Other Country'">
@@ -52,7 +52,7 @@ Registered Value
 <span v-if="showAmountt">
 {{ formatCurrency(otherCountryShippingValues.registeredValue) }}
 </span>
-Registered Value
+Add Registered Post
                 </p>
             </template>
             <template v-if="shipping === 'Other State'">
@@ -60,7 +60,7 @@ Registered Value
 <span v-if="showAmountt">
   {{ formatCurrency(otherStateShippingValues.registeredValue) }}
 </span>
-Registered Value
+Add Registered Post
                 </p>
             </template>
             <template v-if="shipping === 'Other City'">
@@ -68,7 +68,7 @@ Registered Value
 <span v-if="showAmountt">
   {{ formatCurrency(otherCityShippingValues.registeredValue) }}
 </span>
-Registered Value
+Add Registered Post
                 </p>
             </template>
         </label>
@@ -98,7 +98,7 @@ Registered Value
               <span v-if="showAmountt">
                 {{ formatCurrency(ownCountryShippingValues.expressValue) }}
               </span>
-Express Value
+Add Express Post
             </p>
             </template>
             <template v-if="shipping === 'Own State'">
@@ -106,7 +106,7 @@ Express Value
                   <span v-if="showAmountt">
                     {{ formatCurrency(ownStateShippingValues.expressValue) }}
                   </span>
-Express Value
+Add Express Post
                 </p>
             </template>
             <template v-if="shipping === 'Own City'">
@@ -114,7 +114,7 @@ Express Value
                   <span v-if="showAmountt">
                     {{ formatCurrency(ownCityShippingValues.expressValue) }}
                   </span>
-Express Value
+Add Express Post
                 </p>
             </template>
             <template v-if="shipping === 'Other Country'">
@@ -122,7 +122,7 @@ Express Value
                   <span v-if="showAmountt">
 {{ formatCurrency(otherCountryShippingValues.expressValue) }}
                   </span>
-    Express Value
+    Add Express Post
                 </p>
             </template>
             <template v-if="shipping === 'Other State'">
@@ -130,7 +130,7 @@ Express Value
                   <span v-if="showAmountt">
 {{ formatCurrency(otherStateShippingValues.expressValue) }}
                   </span>
-    Express Value
+    Add Express Post
                 </p>
             </template>
             <template v-if="shipping === 'Other City'">
@@ -138,7 +138,7 @@ Express Value
                   <span v-if="showAmountt">
                     {{ formatCurrency(otherCityShippingValues.expressValue) }}
                   </span>
-    Express Value
+    Add Express Post
                 </p>
             </template>
         </label>
@@ -168,7 +168,7 @@ Express Value
               <span v-if="showAmountt">
                 {{ formatCurrency(ownCountryShippingValues.insuranceValue) }}
               </span>
-Insurance Value
+Add Insurance Value
             </p>
             </template>
             <template v-if="shipping === 'Own State'">
@@ -176,7 +176,7 @@ Insurance Value
               <span v-if="showAmountt">
                 {{ formatCurrency(ownStateShippingValues.insuranceValue) }}
               </span>
-Insurance Value
+Add Insurance Value
             </p>
             </template>
             <template v-if="shipping === 'Own City'">
@@ -184,7 +184,7 @@ Insurance Value
               <span v-if="showAmountt">
                 {{ formatCurrency(ownCityShippingValues.insuranceValue) }}
               </span>
-Insurance Value
+Add Insurance Value
             </p>
             </template>
             <template v-if="shipping === 'Other Country'">
@@ -192,7 +192,7 @@ Insurance Value
               <span v-if="showAmountt">
                 {{ formatCurrency(otherCountryShippingValues.insuranceValue) }}
               </span>
-Insurance Value
+Add Insurance Value
             </p>
             </template>
             <template v-if="shipping === 'Other State'">
@@ -200,7 +200,7 @@ Insurance Value
               <span v-if="showAmountt">
                 {{ formatCurrency(otherStateShippingValues.insuranceValue) }}
               </span>
-Insurance Value
+Add Insurance Value
             </p>
             </template>
             <template v-if="shipping === 'Other City'">
@@ -208,7 +208,7 @@ Insurance Value
               <span v-if="showAmountt">
                 {{ formatCurrency(otherCityShippingValues.insuranceValue) }}
               </span>
-Insurance Value
+Add Insurance Value
             </p>
             </template>
         </label>
