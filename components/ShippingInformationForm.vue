@@ -635,6 +635,7 @@ export default {
   },
   mounted() {
     this.retrieveShippingNotes();
+    this.retrieveShippingInfo();
     this.retrieveShippingSetting();
 
     if (this.shippingAvailability === 3) {
@@ -648,6 +649,22 @@ export default {
     }
   },
   methods: {
+    retrieveShippingInfo() {
+      this.firstName = this.$store.state.order.shippingInformation.firstName
+      this.lastName = this.$store.state.order.shippingInformation.lastName
+      this.phoneDigits =
+        this.$store.state.order.shippingInformation.phoneNumber.slice(3)
+      this.email = this.$store.state.order.shippingInformation.email
+      this.shippingType =
+        this.$store.state.order.shippingInformation.shippingType
+      this.shippingChoiceCalc =
+        this.$store.state.order.shippingInformation.shippingChoiceCalc
+      this.shippingOptions =
+        this.$store.state.order.shippingInformation.shippingOptions
+      this.address = this.$store.state.order.shippingInformation.address
+      this.postCode = this.$store.state.order.shippingInformation.postCode
+      this.remarks = this.$store.state.order.shippingInformation.remarks
+    },
     setShippingOptions(options) {
       this.shippingOptions = options
     },

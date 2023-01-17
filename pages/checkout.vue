@@ -52,6 +52,7 @@
             :subtotal="subtotal"
             :total="total"
             :shipping="shipping"
+            @active-step="setPreviousStep"
           />
         </template>
         <!-- col.// -->
@@ -128,6 +129,9 @@ export default {
     },
   },
   methods: {
+    setPreviousStep(stepNo) {
+      this.activeStep = stepNo
+    },
     toPayStep(shippingInformation) {
       this.shippingInformation = shippingInformation;
       this.isStepperLoading = true;

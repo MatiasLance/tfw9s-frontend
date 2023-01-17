@@ -29,6 +29,7 @@
         v-show="paymentMethod === 'square'"
         class="payment-module p-10"
         :cart-total="total"
+        @active-step="activeStepPrev"
       />
     </div>
 
@@ -127,6 +128,9 @@ export default {
     this.initialize()
   },
   methods: {
+    activeStepPrev(stepNo) {
+      this.$emit('active-step', stepNo)
+    },
     initialize() {
       this.isStepperLoading = true
       const items = this.$store.state.cart.cart
