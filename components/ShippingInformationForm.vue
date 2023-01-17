@@ -121,7 +121,7 @@
           cursor-pointer
           border border-gray-200 bg-gray-50
           p-3
-          ${isDeliveryAvailable ? '' : 'disabled'}
+          ${isDeliveryAvailableStatic ? '' : 'disabled'}
         `"
       >
         <span>
@@ -132,7 +132,7 @@
             type="radio"
             class="mt-1 h-4 w-4 bg-gray-200
             text-brand-black focus:ring-slate-500"
-            :disabled="!isDeliveryAvailable"
+            :disabled="!isDeliveryAvailableStatic"
           />
         </span>
         <p class="ml-2">
@@ -153,7 +153,7 @@
           border border-gray-200
           bg-gray-50
           p-3
-          ${isPickupAvailable ? '' : 'disabled'}
+          ${isPickupAvailableStatic ? '' : 'disabled'}
         `"
       >
         <span>
@@ -164,7 +164,7 @@
             type="radio"
             class="mt-1 h-4 w-4 bg-gray-200
             text-brand-black focus:ring-slate-500"
-            :disabled="!isPickupAvailable"
+            :disabled="!isPickupAvailableStatic"
           />
         </span>
         <p class="ml-2">
@@ -529,6 +529,8 @@ export default {
       totalShippingCost: 0,
       shippingChoiceCalc: null,
       shippingChoiceCountry: '',
+      isPickupAvailableStatic: true,
+      isDeliveryAvailableStatic: true,
       shippingChoiceState: '',
       shippingChoiceCity: '',
       otherCountryShippingValues: {
