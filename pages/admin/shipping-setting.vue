@@ -225,7 +225,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Express Post Value
+                                Express Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
@@ -250,7 +250,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Registered Post Value
+                                Registered Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
@@ -281,7 +281,7 @@ focus:outline-none disabled:opacity-75"
                                     justify-start space-y-2"
                                 >
                                 <label class="mb-1 block">
-                                    Insurance Value</label>
+                                    Insurance Added Value</label>
                                 <div
                                     class="relative w-full"
                                 >
@@ -449,7 +449,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Express Post Value
+                                Express Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
@@ -475,7 +475,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Registered Post Value
+                                Registered Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
@@ -507,7 +507,7 @@ focus:outline-none disabled:opacity-75"
             justify-start space-y-2"
         >
             <label class="mb-1 block">
-                Insurance Value</label>
+                Insurance Added Value</label>
             <div
                 class="relative w-full"
             >
@@ -633,7 +633,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Express Post Value
+                                Express Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
@@ -659,7 +659,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Registered Post Value
+                                Registered Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
@@ -691,7 +691,7 @@ focus:outline-none disabled:opacity-75"
             justify-start space-y-2"
         >
         <label class="mb-1 block">
-            Insurance Value
+            Insurance Added Value
         </label>
             <div
                 class="relative w-full"
@@ -788,7 +788,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Express Post Value
+                                Express Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
@@ -814,7 +814,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Registered Post Value
+                                Registered Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
@@ -846,7 +846,7 @@ focus:outline-none disabled:opacity-75"
             justify-start space-y-2"
         >
         <label class="mb-1 block">
-            Insurance Value</label>
+            Insurance Added Value</label>
         <div
             class="relative w-full"
         >
@@ -949,7 +949,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Registered Post Value
+                                Registered Post Added Value
                             </label>
                             <div
                                 class="relative w-full"
@@ -984,7 +984,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
                             <label class="mb-1 block">
-                                Express Post Value
+                                Express Post Added Value
                             </label>
                             <input
                                 v-model.trim="other.state.expressPostValue"
@@ -1012,7 +1012,7 @@ focus:outline-none disabled:opacity-75"
             justify-start space-y-2"
         >
         <label class="mb-1 block">
-            Insurance Value</label>
+            Insurance Added Value</label>
         <div
             class="relative w-full"
         >
@@ -1115,7 +1115,7 @@ focus:outline-none disabled:opacity-75"
                         </div>
 <div class="col-span-3 mb-4 lg:col-span-1">
     <label class="mb-1 block">
-        Registered Post Value
+        Registered Post Added Value
     </label>
     <div
         class="relative w-full"
@@ -1151,7 +1151,7 @@ focus:outline-none disabled:opacity-75"
 </div>
 <div class="col-span-3 mb-4 lg:col-span-1">
     <label class="mb-1 block">
-        Express Post Value
+        Express Post Added Value
     </label>
     <input
         v-model.trim="other.city.expressPostValue"
@@ -1180,7 +1180,7 @@ focus:outline-none disabled:opacity-75"
             justify-start space-y-2"
         >
             <label class="mb-1 block">
-                Insurance Value</label>
+                Insurance Added Value</label>
             <div
                 class="relative w-full"
             >

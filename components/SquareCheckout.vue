@@ -38,6 +38,21 @@
             Return to Cart
           </div>
         </NuxtLink>
+        <button
+            type="button"
+            class="
+            w-full
+            rounded
+            border
+            border-gray-200
+            p-2 text-center
+            font-bold
+            shadow-sm hover:bg-gray-100
+            "
+            @click="activeStepPrev"
+        >
+            Return to Step 1
+        </button>
       </div>
     </form>
     <div
@@ -94,6 +109,9 @@ export default {
     }
   },
   methods: {
+    activeStepPrev() {
+      this.$emit('active-step', 1)
+    },
     async initializeSquare(payments) {
       try {
         this.card = await this.initializeCard(payments)

@@ -116,13 +116,12 @@
     <div class="mb-6 grid gap-3 sm:grid-cols-2">
       <label
         :class="`
+          shipping-option
           flex
           cursor-pointer
-          border border-gray-200
+          border border-gray-200 bg-gray-50
           p-3
-          ${isDeliveryAvailable
-              ? 'bg-gray-50 hover:border-brand-black hover:bg-slate-50'
-              : 'bg-gray-300 opacity-60 cursor-not-allowed'}
+          ${isDeliveryAvailableStatic ? '' : 'disabled'}
         `"
       >
         <span>
@@ -133,11 +132,7 @@
             type="radio"
             class="mt-1 h-4 w-4 bg-gray-200
             text-brand-black focus:ring-slate-500"
-            :class="isDeliveryAvailable
-              ? ''
-              : 'disabled cursor-not-allowed'
-            "
-            :disabled="!isDeliveryAvailable"
+            :disabled="!isDeliveryAvailableStatic"
           />
         </span>
         <p class="ml-2">
@@ -158,8 +153,7 @@
           border border-gray-200
           bg-gray-50
           p-3
-          hover:border-brand-black hover:bg-slate-50
-          ${isPickupAvailable ? '' : 'disabled'}
+          ${isPickupAvailableStatic ? '' : 'disabled'}
         `"
       >
         <span>
@@ -170,6 +164,7 @@
             type="radio"
             class="mt-1 h-4 w-4 bg-gray-200
             text-brand-black focus:ring-slate-500"
+            :disabled="!isPickupAvailableStatic"
           />
         </span>
         <p class="ml-2">
@@ -186,17 +181,20 @@
     <div class="grid gap-x-3 md:grid-cols-3">
       <div class="my-4 md:col-span-3">
         <div class="grid w-full grid-cols-2 gap-2">
-              <label
-              v-if="isOwnCountryActive"
+            <label
               class="
-                  hover:border-wpi-red
+                shipping-option
                   flex
-                  w-full cursor-pointer
-                  border
-                  border-gray-200 bg-transparent
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
                   p-3
+                  hover:border-brand-grey
                   hover:bg-blue-50
               "
+              :class="
+                isOwnCountryActive ?
+                'bg-transparent' : 'disabled bg-gray-50'"
               >
               <span>
                   <input
@@ -206,21 +204,25 @@
                   class="
                   mt-1 h-4 w-4 bg-gray-200
                   text-brand-black focus:ring-slate-500"
+                  :disabled="!isOwnCountryActive"
                   />
               </span>
                 <span>Sending to {{ ownCountry }}</span>
               </label>
               <label
-              v-if="isOtherCountryActive"
               class="
-                  hover:border-wpi-red
+                shipping-option
                   flex
-                  w-full cursor-pointer
-                  border
-                  border-gray-200 bg-transparent
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
                   p-3
+                  hover:border-brand-grey
                   hover:bg-blue-50
               "
+              :class="
+                isOtherCountryActive ?
+                'bg-transparent' : 'disabled bg-gray-50'"
               >
               <span>
                   <input
@@ -230,6 +232,7 @@
                   class="
                 mt-1 h-4 w-4 bg-gray-200
                 text-brand-black focus:ring-slate-500"
+                :disabled="!isOtherCountryActive"
                   />
               </span>
                 <span>Sending to other Country</span>
@@ -239,16 +242,19 @@
           class="grid w-full grid-cols-2 gap-2"
         >
               <label
-              v-if="isOwnStateActive"
               class="
-                  hover:border-wpi-red
+                shipping-option
                   flex
-                  w-full cursor-pointer
-                  border
-                  border-gray-200 bg-transparent
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
                   p-3
+                  hover:border-brand-grey
                   hover:bg-blue-50
               "
+              :class="
+                isOwnStateActive ?
+                'bg-transparent' : 'disabled bg-gray-50'"
               >
               <span>
                   <input
@@ -259,25 +265,28 @@
                   class="
                 mt-1 h-4 w-4 bg-gray-200
                 text-brand-black focus:ring-slate-500"
+                :disabled="!isOwnStateActive"
                   />
               </span>
                 <span>Sending to {{ ownState }}</span>
             </label>
             <label
-              v-if="isOtherStateActive"
               class="
-                  hover:border-wpi-red
+                shipping-option
                   flex
-                  w-full cursor-pointer
-                  border
-                  border-gray-200 bg-transparent
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
                   p-3
+                  hover:border-brand-grey
                   hover:bg-blue-50
               "
+              :class="
+                isOtherStateActive ?
+                'bg-transparent' : 'disabled bg-gray-50'"
               >
               <span>
                   <input
-                  v-if="isOtherStateActive"
                   v-model="shippingChoiceCalc"
                   value="Other State"
                   name="shippingChoiceState"
@@ -285,6 +294,7 @@
                   class="
                 mt-1 h-4 w-4 bg-gray-200
                 text-brand-black focus:ring-slate-500"
+                :disabled="!isOtherStateActive"
                   />
               </span>
                 <span>Sending to other State</span>
@@ -294,16 +304,19 @@
           class="grid w-full grid-cols-2 gap-2"
         >
               <label
-              v-if="isOwnCityActive"
               class="
-                  hover:border-wpi-red
+                shipping-option
                   flex
-                  w-full cursor-pointer
-                  border
-                  border-gray-200 bg-transparent
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
                   p-3
+                  hover:border-brand-grey
                   hover:bg-blue-50
               "
+              :class="
+                isOwnCityActive ?
+                'bg-transparent' : 'disabled bg-gray-50'"
               >
               <span>
                   <input
@@ -314,20 +327,25 @@
                   class="
                 mt-1 h-4 w-4 bg-gray-200
                 text-brand-black focus:ring-slate-500"
+                :disabled="!isOwnCityActive"
                   />
               </span>
                 <span>Sending to {{ ownCity }}</span>
               </label>
               <label
-              v-if="isOtherCityActive"
               class="
-                  hover:border-wpi-red
+                  shipping-option
                   flex
-                  w-full cursor-pointer
-                  border
-                  border-gray-200 bg-transparent
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
                   p-3
+                  hover:border-brand-grey
                   hover:bg-blue-50
+              "
+              :class="
+                isOtherCityActive ?
+                'bg-transparent' : 'disabled bg-gray-50'
               "
               >
               <span>
@@ -339,6 +357,7 @@
                   class="
                 mt-1 h-4 w-4 bg-gray-200
                 text-brand-black focus:ring-slate-500"
+                :disabled="!isOtherCityActive"
                   />
               </span>
                 <span>Sending to other City</span>
@@ -510,6 +529,8 @@ export default {
       totalShippingCost: 0,
       shippingChoiceCalc: null,
       shippingChoiceCountry: '',
+      isPickupAvailableStatic: true,
+      isDeliveryAvailableStatic: true,
       shippingChoiceState: '',
       shippingChoiceCity: '',
       otherCountryShippingValues: {
@@ -635,6 +656,7 @@ export default {
   },
   mounted() {
     this.retrieveShippingNotes();
+    this.retrieveShippingInfo();
     this.retrieveShippingSetting();
 
     if (this.shippingAvailability === 3) {
@@ -648,6 +670,22 @@ export default {
     }
   },
   methods: {
+    retrieveShippingInfo() {
+      this.firstName = this.$store.state.order.shippingInformation.firstName
+      this.lastName = this.$store.state.order.shippingInformation.lastName
+      this.phoneDigits =
+        this.$store.state.order.shippingInformation.phoneNumber.slice(3)
+      this.email = this.$store.state.order.shippingInformation.email
+      this.shippingType =
+        this.$store.state.order.shippingInformation.shippingType
+      this.shippingChoiceCalc =
+        this.$store.state.order.shippingInformation.shippingChoiceCalc
+      this.shippingOptions =
+        this.$store.state.order.shippingInformation.shippingOptions
+      this.address = this.$store.state.order.shippingInformation.address
+      this.postCode = this.$store.state.order.shippingInformation.postCode
+      this.remarks = this.$store.state.order.shippingInformation.remarks
+    },
     setShippingOptions(options) {
       this.shippingOptions = options
     },
@@ -849,11 +887,21 @@ export default {
 
           if (!response.data.data) {
             this.$store.commit('cart/setOwnCountryActive', false)
+            this.$store.commit('cart/setOwnStateActive', false)
+            this.$store.commit('cart/setOwnCityActive', false)
+            this.$store.commit('cart/setOtherCountryActive', false)
+            this.$store.commit('cart/setOtherStateActive', false)
+            this.$store.commit('cart/setOtherCityActive', false)
           }
         })
         .catch((err) => {
           console.log(err)
           this.$store.commit('cart/setOwnCountryActive', false)
+          this.$store.commit('cart/setOwnStateActive', false)
+          this.$store.commit('cart/setOwnCityActive', false)
+          this.$store.commit('cart/setOtherCountryActive', false)
+          this.$store.commit('cart/setOtherStateActive', false)
+          this.$store.commit('cart/setOtherCityActive', false)
         })
     },
     retrieveShippingNotes() {
@@ -869,3 +917,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.shipping-option {
+  @apply cursor-pointer hover:border-brand-grey hover:bg-blue-50
+}
+
+.shipping-option.disabled {
+  @apply text-gray-400 cursor-not-allowed hover:border-gray-200 hover:bg-gray-50
+}
+</style>
