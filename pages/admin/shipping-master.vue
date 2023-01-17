@@ -51,6 +51,12 @@
                 "
             >
             <form @submit.prevent="proceed">
+            <div class="mb-1">
+              <VSwitch
+              v-model="toggleMasterSetting1"
+              color="black"
+              ></VSwitch>
+            </div>
             <div class="mb-4">
               <div class="flex flex-wrap items-start justify-start gap-4">
                 <div class="flex w-full flex-col sm:flex-row">
@@ -74,11 +80,19 @@
                         border border-gray-100 bg-gray-100
                         py-2 px-3
                         text-xl hover:border-gray-400
-                        focus:border-gray-400
-                        focus:outline-none"
+                        focus:border-gray-400 focus:outline-none
+                        disabled:cursor-not-allowed
+                        disabled:bg-gray-400"
+                    :disabled="!toggleMasterSetting1"
                   />
                 </div>
               </div>
+            </div>
+            <div class="mb-1">
+              <VSwitch
+              v-model="toggleMasterSetting2"
+              color="black"
+              ></VSwitch>
             </div>
             <div class="mb-4">
               <div class="flex flex-wrap items-start justify-start gap-4">
@@ -109,8 +123,10 @@
                         px-3 text-xl
                         hover:border-gray-400
                         focus:border-gray-400
-                        focus:outline-none
+                        focus:outline-none disabled:cursor-not-allowed
+                        disabled:bg-gray-400
                     "
+                    :disabled="!toggleMasterSetting2"
                   />
                 </div>
               </div>
@@ -166,7 +182,9 @@ export default {
   data() {
     return {
       maxShippingValue: 0,
-      freeShippingValue: 0
+      freeShippingValue: 0,
+      toggleMasterSetting1: true,
+      toggleMasterSetting2: true
     }
   },
   mounted() {
