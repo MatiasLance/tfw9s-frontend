@@ -12,7 +12,9 @@ export const state = () => ({
     address: '',
     postCode: '',
     remarks: '',
-  }
+  },
+  toggleMasterSetting1: true,
+  toggleMasterSetting2: true
 })
 
 export const mutations = {
@@ -29,11 +31,17 @@ export const mutations = {
     state.shippingInformation.email = shippingInformation.email
     state.shippingInformation.shippingType = shippingInformation.shippingType
     state.shippingInformation.shippingChoiceCalc =
-    shippingInformation.shippingChoiceCalc
+      shippingInformation.shippingChoiceCalc
     state.shippingInformation.shippingOptions =
-    shippingInformation.shippingOptions
+      shippingInformation.shippingOptions
     state.shippingInformation.address = shippingInformation.address
     state.shippingInformation.postCode = shippingInformation.postCode
     state.shippingInformation.remarks = shippingInformation.remarks
+  },
+  setToggleMasterSetting1(state, settingValue) {
+    state.toggleMasterSetting1 = settingValue
+  },
+  setToggleMasterSetting2(state, settingValue) {
+    state.toggleMasterSetting2 = settingValue
   },
 }
