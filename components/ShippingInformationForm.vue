@@ -528,11 +528,8 @@ export default {
       phoneDigits: '',
       totalShippingCost: 0,
       shippingChoiceCalc: null,
-      shippingChoiceCountry: '',
       isPickupAvailableStatic: true,
       isDeliveryAvailableStatic: true,
-      shippingChoiceState: '',
-      shippingChoiceCity: '',
       otherCountryShippingValues: {
         registeredValue: 0,
         expressValue: 0,
@@ -573,9 +570,6 @@ export default {
       email: '',
       hasAgreedToTerms: false,
       shippingType: 'null',
-      RegisteredPost: '',
-      ExpressPost: '',
-      AddInsurance: '',
       address: '',
       postCode: '',
       remarks: '',
@@ -783,13 +777,10 @@ export default {
     },
     triggerFunc2() {
       this.hideCityFunc()
-      this.shippingChoiceCity = ''
     },
     triggerFunc1() {
       this.hideStateFunc()
       this.hideCityFunc()
-      this.shippingChoiceState = ''
-      this.shippingChoiceCity = ''
     },
     showStateFunc() {
       this.showStateLayer = true
@@ -813,9 +804,6 @@ export default {
           shippingType: this.shippingType,
           shippingChoiceCalc: this.shippingChoiceCalc,
           shippingOptions: this.shippingOptions,
-          RegisteredPost: this.RegisteredPost,
-          ExpressPost: this.ExpressPost,
-          AddInsurance: this.AddInsurance,
           address: this.address,
           postCode: this.postCode,
           remarks: this.remarks,
@@ -842,60 +830,37 @@ export default {
           this.ownCountry = response.data.data[0].country
           this.ownState = response.data.data[1].state
           this.ownCity = response.data.data[2].city
-
-          this.ownCountryShippingValues.registeredValue =
-            response.data.data[0].registered_value
-          this.ownCountryShippingValues.expressValue =
-            response.data.data[0].express_value
-          this.ownCountryShippingValues.insuranceValue =
-            response.data.data[0].insurance_value
-
-          this.ownStateShippingValues.registeredValue =
-            response.data.data[1].registered_value
-          this.ownStateShippingValues.expressValue =
-            response.data.data[1].express_value
-          this.ownStateShippingValues.insuranceValue =
-            response.data.data[1].insurance_value
-
-          this.ownCityShippingValues.registeredValue =
-            response.data.data[2].registered_value
-          this.ownCityShippingValues.expressValue =
-            response.data.data[2].express_value
-          this.ownCityShippingValues.insuranceValue =
-            response.data.data[2].insurance_value
-
-          this.otherCountryShippingValues.registeredValue =
-            response.data.data[3].registered_value
-          this.otherCountryShippingValues.expressValue =
-            response.data.data[3].express_value
-          this.otherCountryShippingValues.insuranceValue =
-            response.data.data[3].insurance_value
-
-          this.otherStateShippingValues.registeredValue =
-            response.data.data[4].registered_value
-          this.otherStateShippingValues.expressValue =
-            response.data.data[4].express_value
-          this.otherStateShippingValues.insuranceValue =
-            response.data.data[4].insurance_value
-
-          this.otherCityShippingValues.registeredValue =
-            response.data.data[5].registered_value
-          this.otherCityShippingValues.expressValue =
-            response.data.data[5].express_value
-          this.otherCityShippingValues.insuranceValue =
-            response.data.data[5].insurance_value
-
-          if (!response.data.data) {
+          if (!response.data.data[0]) {
             this.$store.commit('cart/setOwnCountryActive', false)
+          }
+          if (!response.data.data[1]) {
             this.$store.commit('cart/setOwnStateActive', false)
+          }
+          if (!response.data.data[2]) {
             this.$store.commit('cart/setOwnCityActive', false)
+          }
+          if (!response.data.data[3]) {
             this.$store.commit('cart/setOtherCountryActive', false)
+          }
+          if (!response.data.data[4]) {
             this.$store.commit('cart/setOtherStateActive', false)
+          }
+          if (!response.data.data[5]) {
             this.$store.commit('cart/setOtherCityActive', false)
           }
         })
         .catch((err) => {
-          console.log(err)
+          /*
+           * sets the end user shipping options disabled if errors found
+           */
+          const errorMessage = err.message;
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: errorMessage,
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
           this.$store.commit('cart/setOwnCountryActive', false)
           this.$store.commit('cart/setOwnStateActive', false)
           this.$store.commit('cart/setOwnCityActive', false)

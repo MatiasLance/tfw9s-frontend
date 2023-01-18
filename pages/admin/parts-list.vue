@@ -1572,6 +1572,14 @@ export default {
         'metadata',
         JSON.stringify(metadata)
       );
+      this.applyMetadata()
+      this.$oruga.notification.open({
+        message: 'Image preset applied on proceeding uploads',
+        variant: 'info',
+        duration: 5000,
+        position: 'bottom',
+        queue: true,
+      })
     },
     clearImagePreset() {
       localStorage.removeItem('metadata')
@@ -1611,6 +1619,14 @@ export default {
         'metadata',
         JSON.stringify(metadata)
       );
+      this.applyEditMetadata()
+      this.$oruga.notification.open({
+        message: 'Image preset applied on proceeding uploads',
+        variant: 'info',
+        duration: 5000,
+        position: 'bottom',
+        queue: true,
+      })
     },
     generateImage() {
       this.myCroppa.generateBlob(
