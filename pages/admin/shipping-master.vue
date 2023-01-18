@@ -183,14 +183,40 @@ export default {
     return {
       maxShippingValue: 0,
       freeShippingValue: 0,
-      toggleMasterSetting1: true,
-      toggleMasterSetting2: true
+    }
+  },
+  computed: {
+    toggleMasterSetting1: {
+      get() {
+        return (
+          this.$store.state.order.toggleMasterSetting1
+        )
+      },
+      set(val) {
+        this.$store.commit('order/setToggleMasterSetting1', val)
+      }
+    },
+    toggleMasterSetting2: {
+      get() {
+        return (
+          this.$store.state.order.toggleMasterSetting2
+        )
+      },
+      set(val) {
+        this.$store.commit('order/setToggleMasterSetting2', val)
+      }
     }
   },
   mounted() {
     this.retrieveMasterShipping()
   },
   methods: {
+    saveMasterSetting1() {
+      this.$store.commit('order/setToggleMasterSetting1', this.toggleMasterSetting1)
+    },
+    saveMasterSetting2() {
+      this.$store.commit('order/setToggleMasterSetting2', this.toggleMasterSetting2)
+    },
     retrieveMasterShipping() {
       this.$axios
         .$get('v1/shipping/mastershipping/1')
@@ -202,7 +228,25 @@ export default {
           console.log(err)
         })
     },
+    retrieveToggleMasterSetting() {
+      const form = new FormData();
+      form.append('_method', 'PATCH')
+      form.append('togglemastersetting1', this.toggleMasterSetting1)
+      form.append('togglemastersetting2', this.toggleMasterSetting2)
+      // todo: axios endpoints and keys then fetch assign to setToggle
+      this.$oruga.notification.open({
+        message: 'Work in progress',
+        variant: 'warning',
+        duration: 5000,
+        position: 'bottom',
+        queue: true
+      })
+    },
     proceed() {
+      // todo: save the toggleValue also to backend as well
+      this.saveMasterSetting1()
+      this.saveMasterSetting2()
+
       const form = new FormData();
       form.append('_method', 'PATCH')
       form.append('maxshipping_value', this.maxShippingValue)

@@ -179,191 +179,193 @@
     <!-- radio selection .//end -->
 
     <div class="grid gap-x-3 md:grid-cols-3">
-      <div class="my-4 md:col-span-3">
-        <div class="grid w-full grid-cols-2 gap-2">
-            <label
-              class="
-                shipping-option
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  p-3
-                  hover:border-brand-grey
-                  hover:bg-blue-50
-              "
-              :class="
-                isOwnCountryActive ?
-                'bg-transparent' : 'disabled bg-gray-50'"
-              >
-              <span>
-                  <input
-                  v-model="shippingChoiceCalc"
-                  value="Own Country"
-                  type="radio"
-                  class="
+      <template v-if="shippingType === 'delivery'">
+        <div class="my-4 md:col-span-3">
+          <div class="grid w-full grid-cols-2 gap-2">
+              <label
+                class="
+                  shipping-option
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    p-3
+                    hover:border-brand-grey
+                    hover:bg-blue-50
+                "
+                :class="
+                  isOwnCountryActive ?
+                  'bg-transparent' : 'disabled bg-gray-50'"
+                >
+                <span>
+                    <input
+                    v-model="shippingChoiceCalc"
+                    value="Own Country"
+                    type="radio"
+                    class="
+                    mt-1 h-4 w-4 bg-gray-200
+                    text-brand-black focus:ring-slate-500"
+                    :disabled="!isOwnCountryActive"
+                    />
+                </span>
+                  <span>Sending to {{ ownCountry }}</span>
+                </label>
+                <label
+                class="
+                  shipping-option
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    p-3
+                    hover:border-brand-grey
+                    hover:bg-blue-50
+                "
+                :class="
+                  isOtherCountryActive ?
+                  'bg-transparent' : 'disabled bg-gray-50'"
+                >
+                <span>
+                    <input
+                    v-model="shippingChoiceCalc"
+                    value="Other Country"
+                    type="radio"
+                    class="
                   mt-1 h-4 w-4 bg-gray-200
                   text-brand-black focus:ring-slate-500"
-                  :disabled="!isOwnCountryActive"
-                  />
-              </span>
-                <span>Sending to {{ ownCountry }}</span>
-              </label>
-              <label
-              class="
-                shipping-option
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  p-3
-                  hover:border-brand-grey
-                  hover:bg-blue-50
-              "
-              :class="
-                isOtherCountryActive ?
-                'bg-transparent' : 'disabled bg-gray-50'"
-              >
-              <span>
-                  <input
-                  v-model="shippingChoiceCalc"
-                  value="Other Country"
-                  type="radio"
-                  class="
-                mt-1 h-4 w-4 bg-gray-200
-                text-brand-black focus:ring-slate-500"
-                :disabled="!isOtherCountryActive"
-                  />
-              </span>
-                <span>Sending to other Country</span>
-              </label>
-        </div>
-        <div
-          class="grid w-full grid-cols-2 gap-2"
-        >
-              <label
-              class="
-                shipping-option
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  p-3
-                  hover:border-brand-grey
-                  hover:bg-blue-50
-              "
-              :class="
-                isOwnStateActive ?
-                'bg-transparent' : 'disabled bg-gray-50'"
-              >
-              <span>
-                  <input
-                  v-model="shippingChoiceCalc"
-                  value="Own State"
-                  name="shippingChoiceState"
-                  type="radio"
-                  class="
-                mt-1 h-4 w-4 bg-gray-200
-                text-brand-black focus:ring-slate-500"
-                :disabled="!isOwnStateActive"
-                  />
-              </span>
-                <span>Sending to {{ ownState }}</span>
-            </label>
-            <label
-              class="
-                shipping-option
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  p-3
-                  hover:border-brand-grey
-                  hover:bg-blue-50
-              "
-              :class="
-                isOtherStateActive ?
-                'bg-transparent' : 'disabled bg-gray-50'"
-              >
-              <span>
-                  <input
-                  v-model="shippingChoiceCalc"
-                  value="Other State"
-                  name="shippingChoiceState"
-                  type="radio"
-                  class="
-                mt-1 h-4 w-4 bg-gray-200
-                text-brand-black focus:ring-slate-500"
-                :disabled="!isOtherStateActive"
-                  />
-              </span>
-                <span>Sending to other State</span>
-              </label>
-        </div>
-        <div
-          class="grid w-full grid-cols-2 gap-2"
-        >
-              <label
-              class="
-                shipping-option
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  p-3
-                  hover:border-brand-grey
-                  hover:bg-blue-50
-              "
-              :class="
-                isOwnCityActive ?
-                'bg-transparent' : 'disabled bg-gray-50'"
-              >
-              <span>
-                  <input
-                  v-model="shippingChoiceCalc"
-                  value="Own City"
-                  name="shippingChoiceCity"
-                  type="radio"
-                  class="
-                mt-1 h-4 w-4 bg-gray-200
-                text-brand-black focus:ring-slate-500"
-                :disabled="!isOwnCityActive"
-                  />
-              </span>
-                <span>Sending to {{ ownCity }}</span>
-              </label>
-              <label
-              class="
+                  :disabled="!isOtherCountryActive"
+                    />
+                </span>
+                  <span>Sending to other Country</span>
+                </label>
+          </div>
+          <div
+            class="grid w-full grid-cols-2 gap-2"
+          >
+                <label
+                class="
                   shipping-option
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  p-3
-                  hover:border-brand-grey
-                  hover:bg-blue-50
-              "
-              :class="
-                isOtherCityActive ?
-                'bg-transparent' : 'disabled bg-gray-50'
-              "
-              >
-              <span>
-                  <input
-                  v-model="shippingChoiceCalc"
-                  value="Other City"
-                  name="shippingChoiceCity"
-                  type="radio"
-                  class="
-                mt-1 h-4 w-4 bg-gray-200
-                text-brand-black focus:ring-slate-500"
-                :disabled="!isOtherCityActive"
-                  />
-              </span>
-                <span>Sending to other City</span>
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    p-3
+                    hover:border-brand-grey
+                    hover:bg-blue-50
+                "
+                :class="
+                  isOwnStateActive ?
+                  'bg-transparent' : 'disabled bg-gray-50'"
+                >
+                <span>
+                    <input
+                    v-model="shippingChoiceCalc"
+                    value="Own State"
+                    name="shippingChoiceState"
+                    type="radio"
+                    class="
+                  mt-1 h-4 w-4 bg-gray-200
+                  text-brand-black focus:ring-slate-500"
+                  :disabled="!isOwnStateActive"
+                    />
+                </span>
+                  <span>Sending to {{ ownState }}</span>
               </label>
+              <label
+                class="
+                  shipping-option
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    p-3
+                    hover:border-brand-grey
+                    hover:bg-blue-50
+                "
+                :class="
+                  isOtherStateActive ?
+                  'bg-transparent' : 'disabled bg-gray-50'"
+                >
+                <span>
+                    <input
+                    v-model="shippingChoiceCalc"
+                    value="Other State"
+                    name="shippingChoiceState"
+                    type="radio"
+                    class="
+                  mt-1 h-4 w-4 bg-gray-200
+                  text-brand-black focus:ring-slate-500"
+                  :disabled="!isOtherStateActive"
+                    />
+                </span>
+                  <span>Sending to other State</span>
+                </label>
+          </div>
+          <div
+            class="grid w-full grid-cols-2 gap-2"
+          >
+                <label
+                class="
+                  shipping-option
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    p-3
+                    hover:border-brand-grey
+                    hover:bg-blue-50
+                "
+                :class="
+                  isOwnCityActive ?
+                  'bg-transparent' : 'disabled bg-gray-50'"
+                >
+                <span>
+                    <input
+                    v-model="shippingChoiceCalc"
+                    value="Own City"
+                    name="shippingChoiceCity"
+                    type="radio"
+                    class="
+                  mt-1 h-4 w-4 bg-gray-200
+                  text-brand-black focus:ring-slate-500"
+                  :disabled="!isOwnCityActive"
+                    />
+                </span>
+                  <span>Sending to {{ ownCity }}</span>
+                </label>
+                <label
+                class="
+                    shipping-option
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    p-3
+                    hover:border-brand-grey
+                    hover:bg-blue-50
+                "
+                :class="
+                  isOtherCityActive ?
+                  'bg-transparent' : 'disabled bg-gray-50'
+                "
+                >
+                <span>
+                    <input
+                    v-model="shippingChoiceCalc"
+                    value="Other City"
+                    name="shippingChoiceCity"
+                    type="radio"
+                    class="
+                  mt-1 h-4 w-4 bg-gray-200
+                  text-brand-black focus:ring-slate-500"
+                  :disabled="!isOtherCityActive"
+                    />
+                </span>
+                  <span>Sending to other City</span>
+                </label>
+          </div>
         </div>
-      </div>
+      </template>
     </div>
      <!-- Adding shipping delivery choices insurance, registered, express -->
      <ShippingChoicesValue
