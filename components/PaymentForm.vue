@@ -149,7 +149,7 @@ export default {
           if (this.shippingInformation.shippingType === 'pickup') {
             response.shippingCalculation.totalShipping = 0
           }
-          this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping)
+          this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
           this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
           this.newSubTotal = (this.subtotal + (this.shipping));
           this.newGST = this.newSubTotal * 0.1;
