@@ -209,6 +209,7 @@ export default {
   },
   mounted() {
     this.retrieveMasterShipping()
+    this.retrieveToggleMasterSetting()
   },
   methods: {
     saveMasterSetting1() {
@@ -228,25 +229,54 @@ export default {
           console.log(err)
         })
     },
-    retrieveToggleMasterSetting() {
+    updateToggleMasterSetting() {
       const form = new FormData();
       form.append('_method', 'PATCH')
       form.append('togglemastersetting1', this.toggleMasterSetting1)
       form.append('togglemastersetting2', this.toggleMasterSetting2)
-      // todo: axios endpoints and keys then fetch assign to setToggle
-      this.$oruga.notification.open({
-        message: 'Work in progress',
-        variant: 'warning',
-        duration: 5000,
-        position: 'bottom',
-        queue: true
-      })
+
+      // todo: insert axios endpoint here when backend is ready.
+      this.$axios
+        .$post('v1/shipping/togglemastershippingsetting/1', form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: `Toggle setting: ${response.Message}`,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom'
+          })
+          this.retrieveToggleMasterSetting()
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
+    retrieveToggleMasterSetting() {
+      this.$axios
+        .$get('v1/shipping/togglemastershippingsetting/1')
+        .then((response) => {
+          this.toggleMasterSetting1 = response.data.togglemastersetting1
+          this.toggleMasterSetting2 = response.data.togglemastersetting2
+          this.$store.commit('order/setToggleMasterSetting1', response.data.togglemastersetting1)
+          this.$store.commit('order/setToggleMasterSetting2', response.data.togglemastersetting2)
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
     },
     proceed() {
-      // todo: save the toggleValue also to backend as well
-      this.saveMasterSetting1()
-      this.saveMasterSetting2()
-
       const form = new FormData();
       form.append('_method', 'PATCH')
       form.append('maxshipping_value', this.maxShippingValue)
@@ -255,7 +285,7 @@ export default {
         .$post('v1/shipping/mastershipping/1', form)
         .then((response) => {
           this.$oruga.notification.open({
-            message: response.Message,
+            message: `Master settings: ${response.Message}`,
             variant: 'success',
             duration: 5000,
             position: 'bottom'
@@ -271,6 +301,8 @@ export default {
             position: 'bottom'
           })
         })
+
+      this.updateToggleMasterSetting()
     }
   }
 }

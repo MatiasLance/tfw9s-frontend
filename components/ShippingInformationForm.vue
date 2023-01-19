@@ -133,6 +133,7 @@
             class="mt-1 h-4 w-4 bg-gray-200
             text-brand-black focus:ring-slate-500"
             :disabled="!isDeliveryAvailableStatic"
+            @change="resetShippingCalcOption"
           />
         </span>
         <p class="ml-2">
@@ -165,6 +166,7 @@
             class="mt-1 h-4 w-4 bg-gray-200
             text-brand-black focus:ring-slate-500"
             :disabled="!isPickupAvailableStatic"
+            @change="setShippingCalcOptionDefault"
           />
         </span>
         <p class="ml-2">
@@ -364,15 +366,15 @@
                   <span>Sending to other City</span>
                 </label>
           </div>
+  <!-- Adding shipping delivery choices insurance, registered, express -->
+          <ShippingChoicesValue
+            :shipping="shippingChoiceCalc"
+            @change="setShippingOptions"
+          />
+          <!-- End of adding shipping delivery choices -->
         </div>
       </template>
     </div>
-     <!-- Adding shipping delivery choices insurance, registered, express -->
-     <ShippingChoicesValue
-       :shipping="shippingChoiceCalc"
-       @change="setShippingOptions"
-     />
-            <!-- End of adding shipping delivery choices -->
 
     <div class="grid gap-x-3 md:grid-cols-3">
       <div class="mb-4 md:col-span-2">
@@ -654,6 +656,7 @@ export default {
     this.retrieveShippingNotes();
     this.retrieveShippingInfo();
     this.retrieveShippingSetting();
+    this.getShippingOptions()
 
     if (this.shippingAvailability === 3) {
       this.shippingType = 'delivery'
@@ -666,6 +669,18 @@ export default {
     }
   },
   methods: {
+    resetShippingCalcOption() {
+      if (this.shippingType === 'delivery') {
+        this.shippingChoiceCalc = ''
+        this.shippingOptions = []
+      }
+    },
+    setShippingCalcOptionDefault() {
+      if (this.shippingType === 'pickup') {
+        this.shippingChoiceCalc = ''
+        this.shippingOptions = { selected: [ 'Registered Value' ] }
+      }
+    },
     retrieveShippingInfo() {
       this.firstName = this.$store.state.order.shippingInformation.firstName
       this.lastName = this.$store.state.order.shippingInformation.lastName
@@ -684,6 +699,11 @@ export default {
     },
     setShippingOptions(options) {
       this.shippingOptions = options
+    },
+    getShippingOptions() {
+      const shippingoptions =
+        this.$store.state.order.shippingInformation.shippingOptions
+      this.setShippingOptions(shippingoptions)
     },
     retrieveShipping() {
       this.$axios
