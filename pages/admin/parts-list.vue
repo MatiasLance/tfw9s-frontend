@@ -345,104 +345,20 @@
      <!-- showAddProduct modal component -->
      <OModal :active="showAddProductModal" @close="showAddProductModal = false">
       <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-        <h3 class="mb-3 font-bold text-brand-black">
-          Add Product
-        </h3>
-        <hr class="my-3">
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div class="col-span-3 mb-4">
-            <label class="mb-1 block"> Product Name: </label>
-            <input
-              v-model="name"
-              class="
-                w-full
-                appearance-none
-                border border-gray-100
-                bg-gray-200
-                py-2
-                px-3
-                hover:border-gray-400
-                focus:border-gray-400 focus:outline-none
-              "
-            />
-          </div>
-          <div class="col-span-3 mb-4 lg:col-span-1">
-            <label class="mb-1 block">Price:</label>
-            <div class="flex flex-wrap">
-              <OInput
-                v-model="price"
-                placeholder="Amount"
-                type="text"
-                icon="currency-usd"
-              ></OInput>
-            </div>
-          </div>
-          <div class="col-span-3 mb-4 lg:col-span-2">
-            <label class="mb-1 block"> In Stock: {{ inStock }} </label>
-            <div class="grid w-full grid-cols-2 gap-2">
-              <label
-                class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
-                  hover:border-brand-black
-                  hover:bg-slate-100
-                "
-                >
-                <span>
-                  <input
-                    v-model="inStockRadio"
-                    value="Yes"
-                    name="stockRadio"
-                    type="radio"
-                    class="
-                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
-                    @change="toggleStock"
-                  />
-                </span>
-                <span>In Stock</span>
-              </label>
-              <label
-                class="
-                flex
-                w-full
-                cursor-pointer border
-                border-gray-200
-                bg-transparent p-3
-                hover:border-brand-black
-                hover:bg-slate-50
-                "
-              >
-                <span>
-                  <input
-                    v-model="inStockRadio"
-                    value='No'
-                    name="stockRadio"
-                    type="radio"
-                    :checked="inStock === 0"
-                    class="
-                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
-                    @change="toggleStock"
-                  />
-                </span>
-                <span>Out of stock</span>
-              </label>
-            </div>
-            <div class="grid w-full grid-cols-2 gap-2">
+        <form @submit.prevent="create">
+          <h3 class="mb-3 font-bold text-brand-black">
+            Add Product
+          </h3>
+          <hr class="my-3">
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div class="col-span-3 mb-4">
+              <label class="mb-1 block"> Product Name: </label>
               <input
-                v-if="inStockRadio === 'Yes'"
-                v-model="inStock"
-                type="number"
-                min="0"
+                v-model="name"
+                type="text"
+                required
                 class="
-                  form-input
-                  mt-1
-                  block
-                  w-24
+                  w-full
                   appearance-none
                   border border-gray-100
                   bg-gray-200
@@ -451,9 +367,47 @@
                   hover:border-gray-400
                   focus:border-gray-400 focus:outline-none
                 "
-                @keyup="handleNegativeValue"
               />
-              <div class="item-center mt-4 flex">
+            </div>
+            <div class="col-span-3 mb-4 lg:col-span-1">
+              <label class="mb-1 block">Price:</label>
+              <div class="flex flex-wrap">
+                <OInput
+                  v-model="price"
+                  placeholder="Amount"
+                  type="text"
+                  icon="currency-usd"
+                ></OInput>
+              </div>
+            </div>
+            <div class="col-span-3 mb-4 lg:col-span-2">
+              <label class="mb-1 block"> In Stock: {{ inStock }} </label>
+              <div class="grid w-full grid-cols-2 gap-2">
+                <label
+                  class="
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    bg-transparent p-3
+                    hover:border-brand-black
+                    hover:bg-slate-100
+                  "
+                  >
+                  <span>
+                    <input
+                      v-model="inStockRadio"
+                      value="Yes"
+                      name="stockRadio"
+                      type="radio"
+                      class="
+                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                      focus:ring-brand-black"
+                      @change="toggleStock"
+                    />
+                  </span>
+                  <span>In Stock</span>
+                </label>
                 <label
                   class="
                   flex
@@ -467,237 +421,286 @@
                 >
                   <span>
                     <input
-                      v-model="isItemFeatured"
-                      name="itemFeatured"
-                      type="checkbox"
+                      v-model="inStockRadio"
+                      value='No'
+                      name="stockRadio"
+                      type="radio"
+                      :checked="inStock === 0"
                       class="
                       mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
                       focus:ring-brand-black"
+                      @change="toggleStock"
                     />
                   </span>
-                  <span>Featured Item</span>
+                  <span>Out of stock</span>
                 </label>
               </div>
-            </div>
-          </div>
-          <div class="col-span-3 mb-4">
-            <label class="mb-1 block">Description:</label>
-            <Tiptap v-model="description" />
-          </div>
-          <!-- categories section -->
-          <div class="col-span-3 mb-4 w-full">
-            <div class="flex items-center justify-between">
-              <label class="mb-1 block"> Category: </label>
-              <button
-                type="button"
-                class="
-                  flex
-                  items-center
-                  justify-center
-                  border border-solid border-brand-black
-                  bg-brand-black
-                  px-4
-                  py-2
-                  text-white
-                "
-                @click="addCategoryPicker"
-              >
-                <i class="ri-add-fill"></i>
-                Add Category
-              </button>
-            </div>
-            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-              <div
-                v-for="categoryPickerIndex in multipleCategoryBuffer"
-                :key="categoryPickerIndex"
-                class="flex justify-center gap-1"
-              >
-                <InfiniteCategories
-                  :ref="`categoryPicker-${categoryPickerIndex}`"
-                  :options="categories"
+              <div class="grid w-full grid-cols-2 gap-2">
+                <input
+                  v-if="inStockRadio === 'Yes'"
+                  v-model="inStock"
+                  type="number"
+                  min="0"
+                  class="
+                    form-input
+                    mt-1
+                    block
+                    w-24
+                    appearance-none
+                    border border-gray-100
+                    bg-gray-200
+                    py-2
+                    px-3
+                    hover:border-gray-400
+                    focus:border-gray-400 focus:outline-none
+                  "
+                  @keyup="handleNegativeValue"
                 />
+                <div class="item-center mt-4 flex">
+                  <label
+                    class="
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    bg-transparent p-3
+                    hover:border-brand-black
+                    hover:bg-slate-50
+                    "
+                  >
+                    <span>
+                      <input
+                        v-model="isItemFeatured"
+                        name="itemFeatured"
+                        type="checkbox"
+                        class="
+                        mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                        focus:ring-brand-black"
+                      />
+                    </span>
+                    <span>Featured Item</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col-span-3 mb-4">
+              <label class="mb-1 block">Description:</label>
+              <Tiptap v-model="description" />
+            </div>
+            <!-- categories section -->
+            <div class="col-span-3 mb-4 w-full">
+              <div class="flex items-center justify-between">
+                <label class="mb-1 block"> Category: </label>
                 <button
                   type="button"
                   class="
-                    my-4
-                    h-6 w-6
-                    text-brand-black
-                    hover:bg-brand-black hover:text-white
+                    flex
+                    items-center
+                    justify-center
+                    border border-solid border-brand-black
+                    bg-brand-black
+                    px-4
+                    py-2
+                    text-white
                   "
-                  @click="removeCategoryPicker(categoryPickerIndex)"
+                  @click="addCategoryPicker"
                 >
-                  <div class="ri-close-fill ri-lg"></div>
+                  <i class="ri-add-fill"></i>
+                  Add Category
                 </button>
               </div>
+              <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+                <div
+                  v-for="categoryPickerIndex in multipleCategoryBuffer"
+                  :key="categoryPickerIndex"
+                  class="flex justify-center gap-1"
+                >
+                  <InfiniteCategories
+                    :ref="`categoryPicker-${categoryPickerIndex}`"
+                    :options="categories"
+                  />
+                  <button
+                    type="button"
+                    class="
+                      my-4
+                      h-6 w-6
+                      text-brand-black
+                      hover:bg-brand-black hover:text-white
+                    "
+                    @click="removeCategoryPicker(categoryPickerIndex)"
+                  >
+                    <div class="ri-close-fill ri-lg"></div>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-<div class="col-span-3 mb-4 w-full">
-  <div class="flex items-center justify-between">
-    <label class="mb-1 block"> Shipping: </label>
-  </div>
-  <div class="grid grid-cols-1 gap-2">
-    <select
-        v-model="selectedShippingSetting"
-        class="
-        my-2 block w-full
-        appearance-none
-        border border-gray-200 bg-gray-200
-        py-2 px-3
-      hover:border-gray-400
-      focus:border-gray-400 focus:outline-none
-        "
-        @change="setShippingSettings"
-    >
-        <option :value="0" selected>
-            Choose Shipping Setting
-        </option>
-        <option
-            v-for="shipping in shippings"
-            :key="shipping.id"
-            :value="shipping.id"
-            aria-placeholder="Select Shipping Setting"
-        >
-            {{ shipping.name }}
-        </option>
-    </select>
-  </div>
-</div>
-          <div class="col-span-3 mb-4 w-full">
-            <label class="mb-1 block">Image</label>
-            <Croppa
-              v-model="myCroppa"
-              :width="320"
-              :height="320"
-              :quality="5"
-              placeholder="Place image here"
-              :placeholder-font-size="15"
-              accept=".png, .webp, .jpeg, .jpg"
-              :file-size-limit="31457280"
-              :zoom-speed="5"
-              :prevent-white-space="false"
-              :show-loading="true"
-              initial-size="contain"
-              @file-size-exceed="handleCroppaFileSizeExceed"
-              @file-type-mismatch="handleCroppaFileTypeMismatch"
-              @new-image-drawn="handleNewImageCreate"
-              @image-remove="handleImageRemoveCreate"
-              @loading-end="applyMetadata"
-            >
-            </Croppa>
-            <br />
-            <div class="flex justify-start">
-              <VBtn @click="rotateAnti">
-                <i class="ri-anticlockwise-line"></i>
-              </VBtn>
-              <VBtn @click="rotate">
-                <i class="ri-clockwise-line"></i>
-              </VBtn>
-              <VBtn @click="flipx">
-                <i class="ri-arrow-left-right-line"></i>
-              </VBtn>
-              <VBtn @click="flipy">
-                <i class="ri-arrow-up-down-line"></i>
-              </VBtn>
-            </div>
-            <div class="flex justify-start">
-              <VBtn @click="zoomIn">
-                <i class="ri-zoom-in-line"></i>
-              </VBtn>
-              <VBtn @click="zoomOut">
-                <i class="ri-zoom-out-line"></i>
-              </VBtn>
-              <VBtn plain @click="setImagePreset">
-                set
-              </VBtn>
-              <VBtn plain @click="clearImagePreset">
-                clr
-              </VBtn>
-            </div>
-            <br />
-            <VBtn
-              v-if="showGenerateCreatedImageBtn"
-              dark
-              large
-              class="bg-gradient-to-r from-brand-black to-brand-black"
-              @click="generateImage"
-            >
-              GENERATE
-            </VBtn>
-          </div>
-          <div
-            class="col-span-3 mb-4 w-full"
+  <div class="col-span-3 mb-4 w-full">
+    <div class="flex items-center justify-between">
+      <label class="mb-1 block"> Shipping: </label>
+    </div>
+    <div class="grid grid-cols-1 gap-2">
+      <select
+          v-model="selectedShippingSetting"
+          class="
+          my-2 block w-full
+          appearance-none
+          border border-gray-200 bg-gray-200
+          py-2 px-3
+        hover:border-gray-400
+        focus:border-gray-400 focus:outline-none
+          "
+          @change="setShippingSettings"
+      >
+          <option :value="0" selected>
+              Choose Shipping Setting
+          </option>
+          <option
+              v-for="shipping in shippings"
+              :key="shipping.id"
+              :value="shipping.id"
+              aria-placeholder="Select Shipping Setting"
           >
+              {{ shipping.name }}
+          </option>
+      </select>
+    </div>
+  </div>
+            <div class="col-span-3 mb-4 w-full">
+              <label class="mb-1 block">Image</label>
+              <Croppa
+                v-model="myCroppa"
+                :width="320"
+                :height="320"
+                :quality="5"
+                placeholder="Place image here"
+                :placeholder-font-size="15"
+                accept=".png, .webp, .jpeg, .jpg"
+                :file-size-limit="31457280"
+                :zoom-speed="5"
+                :prevent-white-space="false"
+                :show-loading="true"
+                initial-size="contain"
+                @file-size-exceed="handleCroppaFileSizeExceed"
+                @file-type-mismatch="handleCroppaFileTypeMismatch"
+                @new-image-drawn="handleNewImageCreate"
+                @image-remove="handleImageRemoveCreate"
+                @loading-end="applyMetadata"
+              >
+              </Croppa>
+              <br />
+              <div class="flex justify-start">
+                <VBtn @click="rotateAnti">
+                  <i class="ri-anticlockwise-line"></i>
+                </VBtn>
+                <VBtn @click="rotate">
+                  <i class="ri-clockwise-line"></i>
+                </VBtn>
+                <VBtn @click="flipx">
+                  <i class="ri-arrow-left-right-line"></i>
+                </VBtn>
+                <VBtn @click="flipy">
+                  <i class="ri-arrow-up-down-line"></i>
+                </VBtn>
+              </div>
+              <div class="flex justify-start">
+                <VBtn @click="zoomIn">
+                  <i class="ri-zoom-in-line"></i>
+                </VBtn>
+                <VBtn @click="zoomOut">
+                  <i class="ri-zoom-out-line"></i>
+                </VBtn>
+                <VBtn plain @click="setImagePreset">
+                  set
+                </VBtn>
+                <VBtn plain @click="clearImagePreset">
+                  clr
+                </VBtn>
+              </div>
+              <br />
+              <VBtn
+                v-if="showGenerateCreatedImageBtn"
+                dark
+                large
+                class="bg-gradient-to-r from-brand-black to-brand-black"
+                @click="generateImage"
+              >
+                GENERATE
+              </VBtn>
+            </div>
             <div
-              class="grid grid-cols-1 gap-3 lg:grid-cols-3"
+              class="col-span-3 mb-4 w-full"
             >
               <div
-                v-for="(photo, photoIndex) in imgUrl"
-                :key="photo"
-                class="relative flex justify-center gap-1"
+                class="grid grid-cols-1 gap-3 lg:grid-cols-3"
               >
-                <VImg :src="photo"></VImg>
-                <button
-                  type="button"
-                  class="
-                    absolute
-                    left-0 my-2
-                    h-6
-                    w-6 text-brand-lgrey
-                    shadow-sm
-                    hover:bg-brand-black
-                    hover:text-white
-                  "
-                  @click="removeImage(photoIndex)"
+                <div
+                  v-for="(photo, photoIndex) in imgUrl"
+                  :key="photo"
+                  class="relative flex justify-center gap-1"
                 >
-                  <div class="ri-close-fill ri-lg"></div>
-                </button>
+                  <VImg :src="photo"></VImg>
+                  <button
+                    type="button"
+                    class="
+                      absolute
+                      left-0 my-2
+                      h-6
+                      w-6 text-brand-lgrey
+                      shadow-sm
+                      hover:bg-brand-black
+                      hover:text-white
+                    "
+                    @click="removeImage(photoIndex)"
+                  >
+                    <div class="ri-close-fill ri-lg"></div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-green/30
-              lg:mx-4 lg:w-48
-            "
-            @click="create"
-          >
-            OK
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-red/30
-              lg:mx-4 lg:w-48
-            "
-            @click="close"
-          >
-            Cancel
-          </button>
-        </div>
+          <hr class="my-3">
+          <div class="block lg:flex lg:flex-auto lg:justify-end">
+            <button
+              type="submit"
+              class="
+                my-2
+                inline-block
+                w-full
+                border border-transparent
+                bg-brand-green
+                py-3
+                px-5
+                text-center
+                font-bold
+                text-white
+                hover:bg-brand-green/30
+                lg:mx-4 lg:w-48
+              "
+            >
+              OK
+            </button>
+            <button
+              type="button"
+              class="
+                my-2
+                inline-block
+                w-full
+                border border-transparent
+                bg-brand-red
+                py-3
+                px-5
+                text-center
+                font-bold
+                text-white
+                hover:bg-brand-red/30
+                lg:mx-4 lg:w-48
+              "
+              @click="close"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </OModal>
     <!-- showEditProduct modal component -->
@@ -706,105 +709,20 @@
       @close="showEditProductModal = false"
     >
       <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-        <h3 class="mb-3 font-bold text-brand-black">
-          {{ editModalTitle }}
-        </h3>
-        <hr class="my-3">
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div class="col-span-3 mb-4">
-            <label class="mb-1 block"> Product Name: </label>
-            <input
-              v-model="name"
-              class="
-                w-full
-                appearance-none
-                border border-gray-100
-                bg-gray-200
-                py-2
-                px-3
-                hover:border-gray-400
-                focus:border-gray-400 focus:outline-none
-              "
-            />
-          </div>
-          <div class="col-span-3 mb-4 lg:col-span-1">
-            <label class="mb-1 block">Price:</label>
-            <div class="flex flex-wrap">
-              <OInput
-                v-model="price"
-                placeholder="Amount"
-                type="text"
-                icon="currency-usd"
-              ></OInput>
-            </div>
-          </div>
-          <div class="col-span-3 mb-4 lg:col-span-2">
-            <label class="mb-1 block"> In Stock: {{ inStock }} </label>
-            <div class="grid w-full grid-cols-2 gap-2">
-              <label
-                class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
-                  hover:border-brand-black
-                  hover:bg-slate-50
-                "
-                >
-                <span>
-                  <input
-                    :id="`instockChoice2-${editingNo}`"
-                    v-model="inStockRadio"
-                    value="Yes"
-                    name="stockRadio"
-                    type="radio"
-                    class="
-                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
-                    @change="toggleStock"
-                  />
-                </span>
-                <span>In Stock</span>
-              </label>
-              <label
-                class="
-                flex
-                w-full
-                cursor-pointer border
-                border-gray-200
-                bg-transparent p-3
-                hover:border-brand-black
-                hover:bg-slate-50
-                "
-              >
-              <span>
-                <input
-                  :id="`outofstockChoice2-${editingNo}`"
-                  v-model="inStockRadio"
-                  value='No'
-                  name="stockRadio"
-                  type="radio"
-                  class="
-                  mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                  focus:ring-brand-black"
-                  @change="toggleStock"
-                />
-              </span>
-              <span>Out of stock</span>
-              </label>
-            </div>
-            <div class="grid w-full grid-cols-2 gap-2">
+        <form @submit.prevent="confirmItemEdit(editingNo)">
+          <h3 class="mb-3 font-bold text-brand-black">
+            {{ editModalTitle }}
+          </h3>
+          <hr class="my-3">
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div class="col-span-3 mb-4">
+              <label class="mb-1 block"> Product Name: </label>
               <input
-                v-if="inStockRadio === 'Yes'"
-                v-model="inStock"
-                type="number"
-                min="0"
+                v-model="name"
+                type="text"
+                required
                 class="
-                  form-input
-                  mt-1
-                  block
-                  w-24
+                  w-full
                   appearance-none
                   border border-gray-100
                   bg-gray-200
@@ -813,9 +731,48 @@
                   hover:border-gray-400
                   focus:border-gray-400 focus:outline-none
                 "
-                @keyup="handleNegativeValue"
               />
-              <div class="item-center mt-4 flex">
+            </div>
+            <div class="col-span-3 mb-4 lg:col-span-1">
+              <label class="mb-1 block">Price:</label>
+              <div class="flex flex-wrap">
+                <OInput
+                  v-model="price"
+                  placeholder="Amount"
+                  type="text"
+                  icon="currency-usd"
+                ></OInput>
+              </div>
+            </div>
+            <div class="col-span-3 mb-4 lg:col-span-2">
+              <label class="mb-1 block"> In Stock: {{ inStock }} </label>
+              <div class="grid w-full grid-cols-2 gap-2">
+                <label
+                  class="
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    bg-transparent p-3
+                    hover:border-brand-black
+                    hover:bg-slate-50
+                  "
+                  >
+                  <span>
+                    <input
+                      :id="`instockChoice2-${editingNo}`"
+                      v-model="inStockRadio"
+                      value="Yes"
+                      name="stockRadio"
+                      type="radio"
+                      class="
+                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                      focus:ring-brand-black"
+                      @change="toggleStock"
+                    />
+                  </span>
+                  <span>In Stock</span>
+                </label>
                 <label
                   class="
                   flex
@@ -827,234 +784,283 @@
                   hover:bg-slate-50
                   "
                 >
-                  <span>
-                    <input
-                      v-model="isItemFeatured"
-                      name="itemFeatured"
-                      type="checkbox"
-                      class="
-                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
-                    />
-                  </span>
-                  <span>Featured Item</span>
+                <span>
+                  <input
+                    :id="`outofstockChoice2-${editingNo}`"
+                    v-model="inStockRadio"
+                    value='No'
+                    name="stockRadio"
+                    type="radio"
+                    class="
+                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                    focus:ring-brand-black"
+                    @change="toggleStock"
+                  />
+                </span>
+                <span>Out of stock</span>
                 </label>
               </div>
-            </div>
-          </div>
-          <div class="col-span-3 mb-4">
-            <label class="mb-1 block">Description:</label>
-            <Tiptap v-model="description" />
-          </div>
-          <div class="col-span-3 mb-4 w-full">
-            <div class="flex items-center justify-between">
-              <label class="mb-1 block"> Category: </label>
-              <button
-                type="button"
-                class="
-                  flex
-                  items-center
-                  justify-center
-                  border border-solid border-brand-black
-                  bg-brand-black
-                  px-4
-                  py-2
-                  text-white
-                "
-                @click="addCategoryPicker"
-              >
-                <i class="ri-add-fill"></i>
-                Add Category
-              </button>
-            </div>
-            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-              <div
-                v-for="categoryPickerIndex in multipleCategoryBuffer"
-                :key="categoryPickerIndex"
-                class="flex justify-center gap-1"
-              >
-                <InfiniteCategories
-                  :ref="`categoryPicker-${categoryPickerIndex}`"
-                  :options="categories"
-                  :lineage="categoryLineages[categoryPickerIndex-1]"
+              <div class="grid w-full grid-cols-2 gap-2">
+                <input
+                  v-if="inStockRadio === 'Yes'"
+                  v-model="inStock"
+                  type="number"
+                  min="0"
+                  class="
+                    form-input
+                    mt-1
+                    block
+                    w-24
+                    appearance-none
+                    border border-gray-100
+                    bg-gray-200
+                    py-2
+                    px-3
+                    hover:border-gray-400
+                    focus:border-gray-400 focus:outline-none
+                  "
+                  @keyup="handleNegativeValue"
                 />
+                <div class="item-center mt-4 flex">
+                  <label
+                    class="
+                    flex
+                    w-full
+                    cursor-pointer border
+                    border-gray-200
+                    bg-transparent p-3
+                    hover:border-brand-black
+                    hover:bg-slate-50
+                    "
+                  >
+                    <span>
+                      <input
+                        v-model="isItemFeatured"
+                        name="itemFeatured"
+                        type="checkbox"
+                        class="
+                        mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                        focus:ring-brand-black"
+                      />
+                    </span>
+                    <span>Featured Item</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col-span-3 mb-4">
+              <label class="mb-1 block">Description:</label>
+              <Tiptap v-model="description" />
+            </div>
+            <div class="col-span-3 mb-4 w-full">
+              <div class="flex items-center justify-between">
+                <label class="mb-1 block"> Category: </label>
                 <button
                   type="button"
                   class="
-                    my-4
-                    h-6 w-6
-                    text-brand-black
-                    hover:bg-brand-black hover:text-white
+                    flex
+                    items-center
+                    justify-center
+                    border border-solid border-brand-black
+                    bg-brand-black
+                    px-4
+                    py-2
+                    text-white
                   "
-                  @click="removeCategoryPicker(categoryPickerIndex)"
+                  @click="addCategoryPicker"
                 >
-                  <div class="ri-close-fill ri-lg"></div>
+                  <i class="ri-add-fill"></i>
+                  Add Category
                 </button>
               </div>
-            </div>
-          </div>
-          <div class="col-span-3 mb-4 w-full">
-            <div class="flex items-center justify-between">
-              <label class="mb-1 block"> Shipping: </label>
-            </div>
-            <div class="grid grid-cols-1 gap-2">
-              <select
-                v-model="selectedShippingSettingEdit"
-                class="
-                  my-2 block w-full
-                  appearance-none
-                  border border-gray-200 bg-gray-200
-                  py-2 px-3
-                hover:border-gray-400
-                focus:border-gray-400 focus:outline-none
-                  "
-                 @change="setShippingSettingEdit"
-              >
-                <option :value="0" selected>
-                  Choose Shipping Setting
-                </option>
-                <option
-                  v-for="shipping in shippings"
-                  :key="shipping.id"
-                  :value="shipping.id"
+              <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+                <div
+                  v-for="categoryPickerIndex in multipleCategoryBuffer"
+                  :key="categoryPickerIndex"
+                  class="flex justify-center gap-1"
                 >
-                  {{ shipping.name }}
-                </option>
-              </select>
+                  <InfiniteCategories
+                    :ref="`categoryPicker-${categoryPickerIndex}`"
+                    :options="categories"
+                    :lineage="categoryLineages[categoryPickerIndex-1]"
+                  />
+                  <button
+                    type="button"
+                    class="
+                      my-4
+                      h-6 w-6
+                      text-brand-black
+                      hover:bg-brand-black hover:text-white
+                    "
+                    @click="removeCategoryPicker(categoryPickerIndex)"
+                  >
+                    <div class="ri-close-fill ri-lg"></div>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="col-span-3 mb-4 w-full">
-            <label class="mb-1 block">Image</label>
-            <Croppa
-              v-model="myEditCroppa"
-              :width="320"
-              :height="320"
-              :quality="5"
-              placeholder="Place image here"
-              :placeholder-font-size="15"
-              :file-size-limit="31457280"
-              :zoom-speed="5"
-              accept="image/jpeg,image/png,image/webp, blob"
-              :prevent-white-space="false"
-              initial-size="contain"
-              @file-size-exceed="handleCroppaFileSizeExceed"
-              @file-type-mismatch="handleCroppaFileTypeMismatch"
-              @new-image-drawn="handleNewImage"
-              @image-remove="handleImageRemove"
-              @loading-end="applyEditMetadata"
-            >
-            </Croppa>
-            <br />
-            <div class="flex justify-start">
-              <VBtn @click="rotateAntiEdit">
-                <i class="ri-anticlockwise-line"></i>
-              </VBtn>
-              <VBtn @click="rotateEdit">
-                <i class="ri-clockwise-line"></i>
-              </VBtn>
-              <VBtn @click="flipxEdit">
-                <i class="ri-arrow-left-right-line"></i>
-              </VBtn>
-              <VBtn @click="flipyEdit">
-                <i class="ri-arrow-up-down-line"></i>
+            <div class="col-span-3 mb-4 w-full">
+              <div class="flex items-center justify-between">
+                <label class="mb-1 block"> Shipping: </label>
+              </div>
+              <div class="grid grid-cols-1 gap-2">
+                <select
+                  v-model="selectedShippingSettingEdit"
+                  class="
+                    my-2 block w-full
+                    appearance-none
+                    border border-gray-200 bg-gray-200
+                    py-2 px-3
+                  hover:border-gray-400
+                  focus:border-gray-400 focus:outline-none
+                    "
+                   @change="setShippingSettingEdit"
+                >
+                  <option :value="0" selected>
+                    Choose Shipping Setting
+                  </option>
+                  <option
+                    v-for="shipping in shippings"
+                    :key="shipping.id"
+                    :value="shipping.id"
+                  >
+                    {{ shipping.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-span-3 mb-4 w-full">
+              <label class="mb-1 block">Image</label>
+              <Croppa
+                v-model="myEditCroppa"
+                :width="320"
+                :height="320"
+                :quality="5"
+                placeholder="Place image here"
+                :placeholder-font-size="15"
+                :file-size-limit="31457280"
+                :zoom-speed="5"
+                accept="image/jpeg,image/png,image/webp, blob"
+                :prevent-white-space="false"
+                initial-size="contain"
+                @file-size-exceed="handleCroppaFileSizeExceed"
+                @file-type-mismatch="handleCroppaFileTypeMismatch"
+                @new-image-drawn="handleNewImage"
+                @image-remove="handleImageRemove"
+                @loading-end="applyEditMetadata"
+              >
+              </Croppa>
+              <br />
+              <div class="flex justify-start">
+                <VBtn @click="rotateAntiEdit">
+                  <i class="ri-anticlockwise-line"></i>
+                </VBtn>
+                <VBtn @click="rotateEdit">
+                  <i class="ri-clockwise-line"></i>
+                </VBtn>
+                <VBtn @click="flipxEdit">
+                  <i class="ri-arrow-left-right-line"></i>
+                </VBtn>
+                <VBtn @click="flipyEdit">
+                  <i class="ri-arrow-up-down-line"></i>
+                </VBtn>
+              </div>
+              <div class="flex justify-start">
+                <VBtn @click="zoomInEdit">
+                  <i class="ri-zoom-in-line"></i>
+                </VBtn>
+                <VBtn @click="zoomOutEdit">
+                  <i class="ri-zoom-out-line"></i>
+                </VBtn>
+                <VBtn plain @click="setEditImagePreset">
+                  set
+                </VBtn>
+                <VBtn plain @click="clearImagePreset">
+                  clr
+                </VBtn>
+              </div>
+              <br />
+              <VBtn
+                v-if="showGenerateEditedImageBtn"
+                dark
+                class="mt-2 bg-gradient-to-r from-brand-black to-brand-black"
+                @click="generateEditedImage"
+              >
+                GENERATE
               </VBtn>
             </div>
-            <div class="flex justify-start">
-              <VBtn @click="zoomInEdit">
-                <i class="ri-zoom-in-line"></i>
-              </VBtn>
-              <VBtn @click="zoomOutEdit">
-                <i class="ri-zoom-out-line"></i>
-              </VBtn>
-              <VBtn plain @click="setEditImagePreset">
-                set
-              </VBtn>
-              <VBtn plain @click="clearImagePreset">
-                clr
-              </VBtn>
-            </div>
-            <br />
-            <VBtn
-              v-if="showGenerateEditedImageBtn"
-              dark
-              class="mt-2 bg-gradient-to-r from-brand-black to-brand-black"
-              @click="generateEditedImage"
-            >
-              GENERATE
-            </VBtn>
-          </div>
-          <div class="col-span-3 mb-4 w-full">
-            <div
-              class="grid grid-cols-1 gap-3 lg:grid-cols-3"
-            >
+            <div class="col-span-3 mb-4 w-full">
               <div
-                v-for="(photo, photoIndex) in imgUrlEdit"
-                :key="photoIndex"
-                class="relative flex justify-center gap-1"
+                class="grid grid-cols-1 gap-3 lg:grid-cols-3"
               >
-              <VImg :src="photo"></VImg>
-                <button
-                  type="button"
-                  class="
-                    absolute
-                    left-0 my-2
-                    h-6
-                    w-6 text-brand-lgrey
-                    shadow-sm
-                    hover:bg-brand-black
-                    hover:text-white
-                  "
-                  @click="removeEditedImage(photoIndex)"
+                <div
+                  v-for="(photo, photoIndex) in imgUrlEdit"
+                  :key="photoIndex"
+                  class="relative flex justify-center gap-1"
                 >
-                  <div class="ri-close-fill ri-lg"></div>
-                </button>
+                <VImg :src="photo"></VImg>
+                  <button
+                    type="button"
+                    class="
+                      absolute
+                      left-0 my-2
+                      h-6
+                      w-6 text-brand-lgrey
+                      shadow-sm
+                      hover:bg-brand-black
+                      hover:text-white
+                    "
+                    @click="removeEditedImage(photoIndex)"
+                  >
+                    <div class="ri-close-fill ri-lg"></div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-green/30
-              lg:mx-4 lg:w-48
-            "
-            @click="confirmItemEdit(editingNo)"
-          >
-            Confirm
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-red/30
-              lg:mx-4 lg:w-48
-            "
-            @click="closeEdit"
-          >
-            Cancel
-          </button>
-        </div>
+          <hr class="my-3">
+          <div class="block lg:flex lg:flex-auto lg:justify-end">
+            <button
+              type="submit"
+              class="
+                my-2
+                inline-block
+                w-full
+                border border-transparent
+                bg-brand-green
+                py-3
+                px-5
+                text-center
+                font-bold
+                text-white
+                hover:bg-brand-green/30
+                lg:mx-4 lg:w-48
+              "
+            >
+              Confirm
+            </button>
+            <button
+              type="button"
+              class="
+                my-2
+                inline-block
+                w-full
+                border border-transparent
+                bg-brand-red
+                py-3
+                px-5
+                text-center
+                font-bold
+                text-white
+                hover:bg-brand-red/30
+                lg:mx-4 lg:w-48
+              "
+              @click="closeEdit"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </OModal>
     <!-- showRemoveProduct modal component -->
@@ -1898,7 +1904,7 @@ export default {
         form.append('categoryId[]', editedProduct.categoryId[i]);
       }
       for (let i = 0; i < editedProduct.photo.length; i++) {
-        form.append('photo[]', editedProduct.photo[i], 'itemThumbnail.png');
+        form.append('photo[]', editedProduct.photo[i]);
       }
       form.append('id', index);
 
