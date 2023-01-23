@@ -50,32 +50,31 @@
                 lg:p-6
                 "
             >
-            <form @submit.prevent="proceed">
-            <div class="mb-1">
-              <VSwitch
-              v-model="toggleMasterSetting1"
-              color="black"
-              ></VSwitch>
-            </div>
+          <form @submit.prevent="proceed">
             <div class="mb-4">
               <div class="flex flex-wrap items-start justify-start gap-4">
                 <div class="flex w-full flex-col sm:flex-row">
+                  <div class="mr-1 mt-3">
+                    <VSwitch
+                    v-model="toggleMasterSetting1"
+                    color="black"
+                    ></VSwitch>
+                  </div>
                   <label
-                    class="mb-1 mt-3 block self-center
-                    text-xl font-bold sm:mt-0"
+                  class="mb-1 mt-3 block self-center
+                  text-xl font-bold sm:mt-0"
                   >
                     Max Shipping Value:
                   </label>
                   <input
-                    v-model="maxShippingValue"
-                    type="tel"
+                    v-model.number="maxShippingValue"
+                    type="number"
                     name="maxShipping"
-                    maxlength="5"
                     class="
                         form-input
                         mt-1
                         ml-4 block
-                        w-24 appearance-none
+                        w-32 appearance-none
                         self-center
                         border border-gray-100 bg-gray-100
                         py-2 px-3
@@ -84,22 +83,25 @@
                         disabled:cursor-not-allowed
                         disabled:bg-gray-400"
                     :disabled="!toggleMasterSetting1"
+                    step=".01"
+                    min="0"
+                    @keydown="handleDecimal"
                   />
                 </div>
               </div>
             </div>
-            <div class="mb-1">
-              <VSwitch
-              v-model="toggleMasterSetting2"
-              color="black"
-              ></VSwitch>
-            </div>
             <div class="mb-4">
               <div class="flex flex-wrap items-start justify-start gap-4">
                 <div
-                    class="flex w-full flex-col justify-start
-                    space-y-2 sm:flex-row sm:space-x-2"
+                class="flex w-full flex-col justify-start
+                space-y-2 sm:flex-row sm:space-x-2"
                 >
+                  <div class="mr-1 mt-3">
+                    <VSwitch
+                    v-model="toggleMasterSetting2"
+                    color="black"
+                    ></VSwitch>
+                  </div>
                   <label
                   class="mb-1 block self-center
                   text-xl font-bold sm:mt-0"
@@ -108,25 +110,27 @@
                   </label>
                   <input
                     v-model="freeShippingValue"
-                    type="tel"
+                    type="number"
                     name="freeShippingValue"
-                    maxlength="5"
                     class="
-                        form-input
-                        mt-1
-                        block
-                        w-24
-                        appearance-none
-                        self-center border
-                        border-gray-100 bg-gray-100
-                        py-2
-                        px-3 text-xl
-                        hover:border-gray-400
-                        focus:border-gray-400
-                        focus:outline-none disabled:cursor-not-allowed
-                        disabled:bg-gray-400
+                      form-input
+                      mt-1
+                      block
+                      w-32
+                      appearance-none
+                      self-center border
+                      border-gray-100 bg-gray-100
+                      py-2
+                      px-3 text-xl
+                      hover:border-gray-400
+                      focus:border-gray-400
+                      focus:outline-none disabled:cursor-not-allowed
+                      disabled:bg-gray-400
                     "
                     :disabled="!toggleMasterSetting2"
+                    step=".01"
+                    min="0"
+                    @keydown="handleDecimal"
                   />
                 </div>
               </div>
@@ -212,6 +216,16 @@ export default {
     this.retrieveToggleMasterSetting()
   },
   methods: {
+    handleDecimal(event) {
+      const keyCodes = [
+        'Backspace',
+        'Delete',
+        'ArrowLeft',
+        'ArrowRight',
+        '.'
+      ]
+      return keyCodes.includes(event.code) ? true : !isNaN(Number(event.key)) && event.code!=='Space'
+    },
     saveMasterSetting1() {
       this.$store.commit('order/setToggleMasterSetting1', this.toggleMasterSetting1)
     },

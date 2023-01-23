@@ -4,6 +4,7 @@
      >
         <label
             class="
+            shipping-option
             flex
             cursor-pointer
             border border-gray-200
@@ -11,6 +12,7 @@
             p-3
             hover:border-brand-black hover:bg-slate-50
             "
+            :class="checkDisabledAll() ? 'disabled' : ''"
         >
                 <span>
                     <input
@@ -21,59 +23,16 @@
                         class="
                         mt-1 h-4 w-4 bg-gray-200
                         text-brand-black focus:ring-slate-500"
+                        :disabled="checkDisabledAll()"
                     >
                 </span>
-            <template v-if="shipping === 'Own Country'">
                 <p class="ml-2">
-<span v-if="showAmountt">
-  {{ formatCurrency(ownCountryShippingValues.registeredValue) }}
-</span>
 Add Registered Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Own State'">
-                <p class="ml-2">
-<span v-if="showAmountt">
-  {{ formatCurrency(ownStateShippingValues.registeredValue) }}
-</span>
-Add Registered Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Own City'">
-                <p class="ml-2">
-<span v-if="showAmountt">
-  {{ formatCurrency(ownCityShippingValues.registeredValue) }}
-</span>
-Add Registered Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Other Country'">
-                <p class="ml-2">
-<span v-if="showAmountt">
-{{ formatCurrency(otherCountryShippingValues.registeredValue) }}
-</span>
-Add Registered Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Other State'">
-                <p class="ml-2">
-<span v-if="showAmountt">
-  {{ formatCurrency(otherStateShippingValues.registeredValue) }}
-</span>
-Add Registered Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Other City'">
-                <p class="ml-2">
-<span v-if="showAmountt">
-  {{ formatCurrency(otherCityShippingValues.registeredValue) }}
-</span>
-Add Registered Post
-                </p>
-            </template>
+               </p>
         </label>
         <label
             class="
+            shipping-option
             flex
             cursor-pointer
             border border-gray-200
@@ -81,6 +40,7 @@ Add Registered Post
             p-3
             hover:border-brand-black hover:bg-slate-50
             "
+            :class="checkDisabledAll() ? 'disabled' : ''"
         >
             <span>
                 <input
@@ -91,59 +51,16 @@ Add Registered Post
                     class="
                     mt-1 h-4 w-4 bg-gray-200
                     text-brand-black focus:ring-slate-500"
+                    :disabled="checkDisabledAll()"
                 >
             </span>
-            <template v-if="shipping === 'Own Country'">
             <p class="ml-2">
-              <span v-if="showAmountt">
-                {{ formatCurrency(ownCountryShippingValues.expressValue) }}
-              </span>
 Add Express Post
-            </p>
-            </template>
-            <template v-if="shipping === 'Own State'">
-                <p class="ml-2">
-                  <span v-if="showAmountt">
-                    {{ formatCurrency(ownStateShippingValues.expressValue) }}
-                  </span>
-Add Express Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Own City'">
-                <p class="ml-2">
-                  <span v-if="showAmountt">
-                    {{ formatCurrency(ownCityShippingValues.expressValue) }}
-                  </span>
-Add Express Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Other Country'">
-                <p class="ml-2">
-                  <span v-if="showAmountt">
-{{ formatCurrency(otherCountryShippingValues.expressValue) }}
-                  </span>
-    Add Express Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Other State'">
-                <p class="ml-2">
-                  <span v-if="showAmountt">
-{{ formatCurrency(otherStateShippingValues.expressValue) }}
-                  </span>
-    Add Express Post
-                </p>
-            </template>
-            <template v-if="shipping === 'Other City'">
-                <p class="ml-2">
-                  <span v-if="showAmountt">
-                    {{ formatCurrency(otherCityShippingValues.expressValue) }}
-                  </span>
-    Add Express Post
-                </p>
-            </template>
+           </p>
         </label>
         <label
             class="
+            shipping-option
             flex
             cursor-pointer
             border border-gray-200
@@ -151,6 +68,7 @@ Add Express Post
             p-3
             hover:border-brand-black hover:bg-slate-50
             "
+            :class="checkDisabledAll() ? 'disabled' : ''"
         >
             <span>
                 <input
@@ -161,56 +79,12 @@ Add Express Post
                     class="
                     mt-1 h-4 w-4 bg-gray-200
                     text-brand-black focus:ring-slate-500"
+                    :disabled="checkDisabledAll()"
                 >
             </span>
-            <template v-if="shipping === 'Own Country'">
             <p class="ml-2">
-              <span v-if="showAmountt">
-                {{ formatCurrency(ownCountryShippingValues.insuranceValue) }}
-              </span>
-Add Insurance Value
-            </p>
-            </template>
-            <template v-if="shipping === 'Own State'">
-            <p class="ml-2">
-              <span v-if="showAmountt">
-                {{ formatCurrency(ownStateShippingValues.insuranceValue) }}
-              </span>
-Add Insurance Value
-            </p>
-            </template>
-            <template v-if="shipping === 'Own City'">
-            <p class="ml-2">
-              <span v-if="showAmountt">
-                {{ formatCurrency(ownCityShippingValues.insuranceValue) }}
-              </span>
-Add Insurance Value
-            </p>
-            </template>
-            <template v-if="shipping === 'Other Country'">
-            <p class="ml-2">
-              <span v-if="showAmountt">
-                {{ formatCurrency(otherCountryShippingValues.insuranceValue) }}
-              </span>
-Add Insurance Value
-            </p>
-            </template>
-            <template v-if="shipping === 'Other State'">
-            <p class="ml-2">
-              <span v-if="showAmountt">
-                {{ formatCurrency(otherStateShippingValues.insuranceValue) }}
-              </span>
-Add Insurance Value
-            </p>
-            </template>
-            <template v-if="shipping === 'Other City'">
-            <p class="ml-2">
-              <span v-if="showAmountt">
-                {{ formatCurrency(otherCityShippingValues.insuranceValue) }}
-              </span>
-Add Insurance Value
-            </p>
-            </template>
+              Add Insurance Value
+           </p>
         </label>
     </div>
 </template>
@@ -221,12 +95,6 @@ import currencyMixin from '~/mixins/currency';
 export default {
   name: 'ShippingChoicesValue',
   mixins: [ currencyMixin ],
-  props: {
-    shipping: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
       showAmountt: false,
@@ -266,15 +134,66 @@ export default {
       },
     }
   },
+  computed: {
+    isOwnCountryActive: {
+      get() {
+        return (
+          this.$store.state.cart.own.country.active
+        )
+      }
+    },
+    isOwnStateActive: {
+      get() {
+        return (
+          this.$store.state.cart.own.state.active
+        )
+      }
+    },
+    isOwnCityActive: {
+      get() {
+        return (
+          this.$store.state.cart.own.city.active
+        )
+      }
+    },
+    isOtherCountryActive: {
+      get() {
+        return (
+          this.$store.state.cart.other.country.active
+        )
+      }
+    },
+    isOtherStateActive: {
+      get() {
+        return (
+          this.$store.state.cart.other.state.active
+        )
+      }
+    },
+    isOtherCityActive: {
+      get() {
+        return (
+          this.$store.state.cart.other.city.active
+        )
+      }
+    },
+  },
   watch: {
     selected() {
       this.$emit('change', { selected: this.selected })
     }
   },
-  mounted() {
-    this.retrieve();
-  },
   methods: {
+    checkDisabledAll() {
+      return (
+        !this.isOwnCountryActive &&
+        !this.isOwnStateActive &&
+        !this.isOwnCityActive &&
+        !this.isOtherCountryActive &&
+        !this.isOtherStateActive &&
+        !this.isOtherCityActive
+      )
+    },
     retrieve() {
       this.$axios
         .$get('/v1/shipping/country/latest')
@@ -333,3 +252,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.shipping-option {
+  @apply cursor-pointer hover:border-brand-grey hover:bg-blue-50
+}
+
+.shipping-option.disabled {
+  @apply text-gray-400 cursor-not-allowed hover:border-gray-200 hover:bg-gray-50
+}
+</style>

@@ -210,7 +210,16 @@
                     :disabled="!isOwnCountryActive"
                     />
                 </span>
-                  <span>Sending to {{ ownCountry }}</span>
+                  <template v-if="!isOwnCountryActive">
+                    <span>
+                      To suppliers own Country (no rate set)
+                    </span>
+                  </template>
+                  <template v-else>
+                    <span>
+                      To {{ ownCountry }}
+                    </span>
+                  </template>
                 </label>
                 <label
                 class="
@@ -238,7 +247,12 @@
                   :disabled="!isOtherCountryActive"
                     />
                 </span>
-                  <span>Sending to other Country</span>
+                  <template v-if="!isOtherCountryActive">
+                    <span>To other Country (no rate set)</span>
+                  </template>
+                  <template v-else>
+                    <span>To other Country</span>
+                  </template>
                 </label>
           </div>
           <div
@@ -271,7 +285,10 @@
                   :disabled="!isOwnStateActive"
                     />
                 </span>
-                  <span>Sending to {{ ownState }}</span>
+                <span v-if="!isOwnStateActive">
+                    To suppliers own State (no rate set)
+                  </span>
+                  <span v-else>To {{ ownState }}</span>
               </label>
               <label
                 class="
@@ -300,7 +317,12 @@
                   :disabled="!isOtherStateActive"
                     />
                 </span>
-                  <span>Sending to other State</span>
+                <template v-if="!isOtherStateActive">
+                  <span>To other State (no rate set)</span>
+                </template>
+                <template v-else>
+                  <span>To other State</span>
+                </template>
                 </label>
           </div>
           <div
@@ -333,7 +355,12 @@
                   :disabled="!isOwnCityActive"
                     />
                 </span>
-                  <span>Sending to {{ ownCity }}</span>
+                  <template v-if="!isOwnCityActive">
+                    <span>To suppliers own City (no rate set)</span>
+                  </template>
+                  <template v-else>
+                    <span>To {{ ownCity }}</span>
+                  </template>
                 </label>
                 <label
                 class="
@@ -363,7 +390,12 @@
                   :disabled="!isOtherCityActive"
                     />
                 </span>
-                  <span>Sending to other City</span>
+                  <template v-if="!isOtherCityActive">
+                    <span>To other City (no rate set)</span>
+                  </template>
+                  <template v-else>
+                    <span>To other City</span>
+                  </template>
                 </label>
           </div>
   <!-- Adding shipping delivery choices insurance, registered, express -->
@@ -526,6 +558,12 @@ export default {
   },
   data() {
     return {
+      shippingSettingsList: [],
+      shippingSettingsList2: [],
+      shippingSettingsList3: [],
+      shippingSettingsList4: [],
+      shippingSettingsList5: [],
+      shippingSettingsList6: [],
       firstName: '',
       lastName: '',
       phoneCode: '+61',
@@ -632,14 +670,14 @@ export default {
     isOtherStateActive: {
       get() {
         return (
-          this.$store.state.cart.other.country.active
+          this.$store.state.cart.other.state.active
         )
       }
     },
     isOtherCityActive: {
       get() {
         return (
-          this.$store.state.cart.other.country.active
+          this.$store.state.cart.other.city.active
         )
       }
     },
@@ -653,6 +691,7 @@ export default {
     },
   },
   mounted() {
+    this.retrieveShipping();
     this.retrieveShippingNotes();
     this.retrieveShippingInfo();
     this.retrieveShippingSetting();
@@ -710,8 +749,15 @@ export default {
         .$get('v1/shipping/country/')
         .then((response) => {
           this.shippingSettingsList = response.list.data
+          const ownCountryLength = this.shippingSettingsList.length
+          if (ownCountryLength === 0) {
+            this.$store.commit('cart/setOwnCountryActive', false)
+          } else {
+            this.$store.commit('cart/setOwnCountryActive', true)
+          }
         })
         .catch((err) => {
+          this.$store.commit('cart/setOwnCountryActive', false)
           console.log(err)
           this.$oruga.notification.open({
             message: err.message,
@@ -725,8 +771,15 @@ export default {
         .$get('v1/shipping/state/')
         .then((response) => {
           this.shippingSettingsList2 = response.list.data
+          const ownStateLength = this.shippingSettingsList2.length
+          if (ownStateLength === 0) {
+            this.$store.commit('cart/setOwnStateActive', false)
+          } else {
+            this.$store.commit('cart/setOwnStateActive', true)
+          }
         })
         .catch((err) => {
+          this.$store.commit('cart/setOwnStateActive', false)
           console.log(err)
           this.$oruga.notification.open({
             message: err.message,
@@ -740,9 +793,15 @@ export default {
         .$get('v1/shipping/city/')
         .then((response) => {
           this.shippingSettingsList3 = response.list.data
+          const ownCityLength = this.shippingSettingsList3.length
+          if (ownCityLength === 0) {
+            this.$store.commit('cart/setOwnCityActive', false)
+          } else {
+            this.$store.commit('cart/setOwnCityActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOwnCityActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -755,9 +814,14 @@ export default {
         .$get('v1/shipping/othercountry/')
         .then((response) => {
           this.shippingSettingsList4 = response.list.data
+          if (this.shippingSettingsList4.length === 0) {
+            this.$store.commit('cart/setOtherCountryActive', false)
+          } else {
+            this.$store.commit('cart/setOtherCountryActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOtherCountryActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -770,9 +834,14 @@ export default {
         .$get('v1/shipping/otherstate/')
         .then((response) => {
           this.shippingSettingsList5 = response.list.data
+          if (this.shippingSettingsList5.length === 0) {
+            this.$store.commit('cart/setOtherStateActive', false)
+          } else {
+            this.$store.commit('cart/setOtherStateActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOtherStateActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -785,9 +854,14 @@ export default {
         .$get('v1/shipping/othercity/')
         .then((response) => {
           this.shippingSettingsList6 = response.list.data
+          if (this.shippingSettingsList6.length === 0) {
+            this.$store.commit('cart/setOtherCityActive', false)
+          } else {
+            this.$store.commit('cart/setOtherCityActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOtherCityActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -849,46 +923,17 @@ export default {
       this.$axios
         .$get('/v1/shipping/country/latest')
         .then((response) => {
-          this.ownCountry = response.data.data[0].country
-          this.ownState = response.data.data[1].state
-          this.ownCity = response.data.data[2].city
-          if (!response.data.data[0]) {
-            this.$store.commit('cart/setOwnCountryActive', false)
-          }
-          if (!response.data.data[1]) {
-            this.$store.commit('cart/setOwnStateActive', false)
-          }
-          if (!response.data.data[2]) {
-            this.$store.commit('cart/setOwnCityActive', false)
-          }
-          if (!response.data.data[3]) {
-            this.$store.commit('cart/setOtherCountryActive', false)
-          }
-          if (!response.data.data[4]) {
-            this.$store.commit('cart/setOtherStateActive', false)
-          }
-          if (!response.data.data[5]) {
-            this.$store.commit('cart/setOtherCityActive', false)
-          }
+          this.ownCountry = response.data.data.country
         })
-        .catch((err) => {
-          /*
-           * sets the end user shipping options disabled if errors found
-           */
-          const errorMessage = err.message;
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: errorMessage,
-            position: 'bottom',
-            variant: 'danger',
-            queue: true,
-          });
-          this.$store.commit('cart/setOwnCountryActive', false)
-          this.$store.commit('cart/setOwnStateActive', false)
-          this.$store.commit('cart/setOwnCityActive', false)
-          this.$store.commit('cart/setOtherCountryActive', false)
-          this.$store.commit('cart/setOtherStateActive', false)
-          this.$store.commit('cart/setOtherCityActive', false)
+      this.$axios
+        .$get('/v1/shipping/state/latest')
+        .then((response) => {
+          this.ownState = response.data.data.state
+        })
+      this.$axios
+        .$get('/v1/shipping/city/latest')
+        .then((response) => {
+          this.ownCity = response.data.data.city
         })
     },
     retrieveShippingNotes() {
