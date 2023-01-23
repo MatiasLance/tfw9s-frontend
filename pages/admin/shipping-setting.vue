@@ -176,17 +176,22 @@
                         class="col-span-3 grid grid-cols-3 gap-4"
                     >
                         <div class="col-span-3 mb-4">
-                            <label class="mb-1 block">Country</label>
+                            <label
+                              class="mb-1 block"
+                              :class="!own.country.activate ? 'opacity-75' : ''"
+                            >Country</label>
                             <select
                                 v-model.trim="own.country.name"
                                 :disabled="!own.country.activate"
-                                class="block w-full appearance-none border
+                                class="shipping-option
+                                block w-full appearance-none border
 border-gray-200 bg-gray-100 py-4
 px-5
 text-base
 uppercase
 hover:border-gray-400 focus:border-gray-400
 focus:outline-none disabled:opacity-75"
+:class="!own.country.activate ? 'disabled' : ''"
                             >
                                 <option
                                     v-for="(place, key) in countries"
@@ -199,13 +204,17 @@ focus:outline-none disabled:opacity-75"
                             </select>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!own.country.activate ? 'opacity-75' : ''"
+                            >
                                 Shipping value per product
                             </label>
                             <div class="relative w-full">
                                 <input
                                     v-model.trim="own.country.shippingValue"
                                     class="
+                                      shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -218,19 +227,27 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                              :class="!own.country.activate ? 'disabled' : ''"
+                                    type="number"
                                     :disabled="!own.country.activate"
+                                    step=".01"
+                                    min="0"
+                                    @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!own.country.activate ? 'opacity-75' : ''"
+                            >
                                 Express Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
                                     v-model.trim="own.country.expressPostValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -243,19 +260,27 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                            :class="!own.country.activate ? 'disabled' : ''"
+                                    type="number"
                                     :disabled="!own.country.activate"
+                                    step=".01"
+                                    min="0"
+                                    @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!own.country.activate ? 'opacity-75' : ''"
+                            >
                                 Registered Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
                                 v-model.trim="own.country.registeredPostValue"
                                 class="
+                                shipping-option
                                 w-full
                                 appearance-none
                                 border border-transparent
@@ -269,8 +294,12 @@ focus:outline-none disabled:opacity-75"
                                 focus:outline-none focus:ring-0
                                 disabled:opacity-75
                                 "
-                                type="tel"
-                                :disabled="!own.country.activate"
+                              :class="!own.country.activate ? 'disabled' : ''"
+                              type="number"
+                              :disabled="!own.country.activate"
+                              step=".01"
+                              min="0"
+                              @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
@@ -280,7 +309,10 @@ focus:outline-none disabled:opacity-75"
                                     class="col-span-1 flex flex-col
                                     justify-start space-y-2"
                                 >
-                                <label class="mb-1 block">
+                                <label
+                                  class="mb-1 block"
+                              :class="!own.country.activate ? 'opacity-75' : ''"
+                                >
                                     Insurance Added Value</label>
                                 <div
                                     class="relative w-full"
@@ -295,6 +327,7 @@ focus:outline-none disabled:opacity-75"
                                     <input
                                         v-model="own.country.insuranceValue"
                                         class="
+                                        shipping-option
                                             w-full
                                             appearance-none
                                             border border-transparent
@@ -307,8 +340,12 @@ focus:outline-none disabled:opacity-75"
                                             focus:outline-none focus:ring-0
                                             disabled:opacity-75
                                         "
-                                        type="tel"
-                                        :disabled="!own.country.activate"
+                                :class="!own.country.activate ? 'disabled' : ''"
+                                type="number"
+                                :disabled="!own.country.activate"
+                                step=".01"
+                                min="0"
+                                @keydown="handleDecimal"
                                     />
                                 </div>
                                 </div>
@@ -356,6 +393,7 @@ focus:outline-none disabled:opacity-75"
                                     v-model.trim="own.state.name"
                                     name="state"
                                     class="
+                                    shipping-option
                                     block w-full appearance-none border
                                     border-gray-200 bg-gray-100 py-4
                                     px-5
@@ -364,6 +402,7 @@ focus:outline-none disabled:opacity-75"
                                     hover:border-gray-400 focus:border-gray-400
                                     focus:outline-none disabled:opacity-75
                                     "
+                                :class="!own.state.activate ? 'disabled' : ''"
                                     :disabled="!own.state.activate"
                                 >
                                     <option value="NSW">
@@ -396,6 +435,7 @@ focus:outline-none disabled:opacity-75"
                                     v-model.trim="own.state.name"
                                     name="state"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -408,6 +448,7 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
+                                  :class="!own.state.activate ? 'disabled' : ''"
                                     type="text"
                                     required
                                     :disabled="!own.state.activate"
@@ -415,7 +456,10 @@ focus:outline-none disabled:opacity-75"
                             </template>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                            class="mb-1 block"
+                            :class="!own.state.activate ? 'opacity-75' : ''"
+                            >
                                 Shipping value per product
                             </label>
                             <div class="relative w-full">
@@ -429,6 +473,7 @@ focus:outline-none disabled:opacity-75"
                                 <input
                                     v-model.trim="own.state.shippingValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -441,20 +486,28 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                                  :class="!own.state.activate ? 'disabled' : ''"
+                                    type="number"
                                     required
                                     :disabled="!own.state.activate"
+                                    step=".01"
+                                    min="0"
+                                    @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!own.state.activate ? 'opacity-75' : ''"
+                            >
                                 Express Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
                                     v-model.trim="own.state.expressPostValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -467,20 +520,28 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                                  :class="!own.state.activate ? 'disabled' : ''"
+                                    type="number"
                                     required
                                     :disabled="!own.state.activate"
+                                  step=".01"
+                                  min="0"
+                                  @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!own.state.activate ? 'opacity-75' : ''"
+                            >
                                 Registered Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
                                     v-model.trim="own.state.registeredPostValue"
                                     class="
+                                    shipping-option
                                     w-full
                                     appearance-none
                                     border border-transparent
@@ -494,9 +555,13 @@ focus:outline-none disabled:opacity-75"
                                     focus:outline-none focus:ring-0
                                     disabled:opacity-75
                                     "
-                                    type="tel"
+                                :class="!own.state.activate ? 'disabled' : ''"
+                                    type="number"
                                     required
                                     :disabled="!own.state.activate"
+                                  step=".01"
+                                  min="0"
+                                  @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
@@ -506,7 +571,10 @@ focus:outline-none disabled:opacity-75"
             class="col-span-1 flex flex-col
             justify-start space-y-2"
         >
-            <label class="mb-1 block">
+            <label
+              class="mb-1 block"
+              :class="!own.state.activate ? 'opacity-75' : ''"
+            >
                 Insurance Added Value</label>
             <div
                 class="relative w-full"
@@ -521,20 +589,25 @@ focus:outline-none disabled:opacity-75"
                 <input
                     v-model="own.state.insuranceValue"
                     class="
-                        w-full
-                        appearance-none
-                        border border-transparent
-                        bg-gray-100 py-4 px-5
-                        pr-12
-                        pl-8
-                        text-base
-                        hover:border-gray-400
-                        focus:border-gray-500
-                        focus:outline-none focus:ring-0
-                        disabled:opacity-75
+                      shipping-option
+                      w-full
+                      appearance-none
+                      border border-transparent
+                    bg-gray-100 py-4 px-5
+                      pr-12
+                      pl-8
+                      text-base
+                    hover:border-gray-400
+                    focus:border-gray-500
+                      focus:outline-none focus:ring-0
+                      disabled:opacity-75
                     "
-                    type="tel"
+                    :class="!own.state.activate ? 'disabled' : ''"
+                    type="number"
                     :disabled="!own.state.activate"
+                    step=".01"
+                    min="0"
+                    @keydown="handleDecimal"
                 />
             </div>
         </div>
@@ -577,10 +650,14 @@ focus:outline-none disabled:opacity-75"
                         class="col-span-3 grid grid-cols-3 gap-4"
                     >
                         <div class="col-span-3 mb-4">
-                            <label class="mb-1 block">City </label>
+                            <label
+                              class="mb-1 block"
+                              :class="!own.city.activate ? 'opacity-75' : ''"
+                            >City </label>
                             <input
                                 v-model.trim="own.city.name"
                                 class="
+                                shipping-option
                                     w-full
                                     appearance-none
                                     border border-transparent
@@ -593,13 +670,17 @@ focus:outline-none disabled:opacity-75"
                                     focus:outline-none focus:ring-0
                                     disabled:opacity-75
                                 "
+                              :class="!own.city.activate ? 'disabled' : ''"
                                 type="text"
                                 required
                                 :disabled="!own.city.activate"
                             />
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!own.city.activate ? 'opacity-75' : ''"
+                            >
                                 Shipping value per product
                             </label>
                             <div class="relative w-full">
@@ -613,6 +694,7 @@ focus:outline-none disabled:opacity-75"
                                 <input
                                     v-model.trim="own.city.shippingValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -625,20 +707,28 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                                  :class="!own.city.activate ? 'disabled' : ''"
+                                    type="number"
                                     required
                                     :disabled="!own.city.activate"
+                                    step=".01"
+                                    min="0"
+                                    @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                            class="mb-1 block"
+                            :class="!own.city.activate ? 'opacity-75' : ''"
+                            >
                                 Express Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
                                     v-model.trim="own.city.expressPostValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -651,20 +741,28 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                                  :class="!own.city.activate ? 'disabled' : ''"
+                                    type="number"
                                     required
                                     :disabled="!own.city.activate"
+                                    step=".01"
+                                    min="0"
+                                    @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!own.city.activate ? 'opacity-75' : ''"
+                            >
                                 Registered Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
                                 v-model.trim="own.city.registeredPostValue"
                                 class="
+                                shipping-option
                                 w-full
                                 appearance-none
                                 border border-transparent
@@ -678,9 +776,13 @@ focus:outline-none disabled:opacity-75"
                                 focus:outline-none focus:ring-0
                                 disabled:opacity-75
                                 "
-                                type="tel"
+                              :class="!own.city.activate ? 'disabled' : ''"
+                                type="number"
                                 required
                                 :disabled="!own.city.activate"
+                                step=".01"
+                                min="0"
+                                @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
@@ -690,7 +792,10 @@ focus:outline-none disabled:opacity-75"
             class="col-span-1 flex flex-col
             justify-start space-y-2"
         >
-        <label class="mb-1 block">
+        <label
+          class="mb-1 block"
+          :class="!own.city.activate ? 'opacity-75' : ''"
+        >
             Insurance Added Value
         </label>
             <div
@@ -706,6 +811,7 @@ focus:outline-none disabled:opacity-75"
                 <input
                     v-model="own.city.insuranceValue"
                     class="
+                    shipping-option
                         w-full
                         appearance-none
                         border border-transparent
@@ -718,8 +824,12 @@ focus:outline-none disabled:opacity-75"
                         focus:outline-none focus:ring-0
                         disabled:opacity-75
                     "
-                    type="tel"
+                    :class="!own.city.activate ? 'disabled' : ''"
+                    type="number"
                     :disabled="!own.city.activate"
+                    step=".01"
+                    min="0"
+                    @keydown="handleDecimal"
                 />
             </div>
         </div>
@@ -762,13 +872,17 @@ focus:outline-none disabled:opacity-75"
                         class="col-span-3 grid grid-cols-3 gap-4"
                     >
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                          :class="!other.country.activate ? 'opacity-75' : ''"
+                            >
                                 Shipping value per product
                             </label>
                             <div class="relative w-full">
                                 <input
                                     v-model.trim="other.country.shippingValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -781,19 +895,27 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                              :class="!other.country.activate ? 'disabled' : ''"
+                                    type="number"
                                     :disabled="!other.country.activate"
+                                    step=".01"
+                                    min="0"
+                                    @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                          :class="!other.country.activate ? 'opacity-75' : ''"
+                            >
                                 Express Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
                                 v-model.trim="other.country.expressPostValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -806,20 +928,28 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                              :class="!other.country.activate ? 'disabled' : ''"
+                              type="number"
                                     required
                                     :disabled="!other.country.activate"
+                                step=".01"
+                                min="0"
+                                @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                          :class="!other.country.activate ? 'opacity-75' : ''"
+                            >
                                 Registered Post Added Value
                             </label>
                             <div class="relative w-full">
                                 <input
                                 v-model.trim="other.country.registeredPostValue"
                                 class="
+                                shipping-option
                                 w-full
                                 appearance-none
                                 border border-transparent
@@ -833,9 +963,13 @@ focus:outline-none disabled:opacity-75"
                                 focus:outline-none focus:ring-0
                                 disabled:opacity-75
                                 "
-                                type="tel"
+                            :class="!other.country.activate ? 'disabled' : ''"
+                            type="number"
                                 required
                                 :disabled="!other.country.activate"
+                                step=".01"
+                                min="0"
+                                @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
@@ -845,7 +979,10 @@ focus:outline-none disabled:opacity-75"
             class="col-span-1 flex flex-col
             justify-start space-y-2"
         >
-        <label class="mb-1 block">
+        <label
+          class="mb-1 block"
+          :class="!other.country.activate ? 'opacity-75' : ''"
+        >
             Insurance Added Value</label>
         <div
             class="relative w-full"
@@ -860,6 +997,7 @@ focus:outline-none disabled:opacity-75"
             <input
                 v-model="other.country.insuranceValue"
                 class="
+                shipping-option
                     w-full
                     appearance-none
                     border border-transparent
@@ -872,8 +1010,12 @@ focus:outline-none disabled:opacity-75"
                     focus:outline-none focus:ring-0
                     disabled:opacity-75
                 "
-                type="tel"
+            :class="!other.country.activate ? 'disabled' : ''"
+                type="number"
                 :disabled="!other.country.activate"
+                step=".01"
+                min="0"
+                @keydown="handleDecimal"
             />
         </div>
         </div>
@@ -916,7 +1058,10 @@ focus:outline-none disabled:opacity-75"
                         class="col-span-3 grid grid-cols-3 gap-4"
                     >
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!other.state.activate ? 'opacity-75' : ''"
+                            >
                                 Shipping value per product
                             </label>
                             <div class="relative w-full">
@@ -930,6 +1075,7 @@ focus:outline-none disabled:opacity-75"
                                 <input
                                     v-model.trim="other.state.shippingValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -942,13 +1088,21 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
-                                    :disabled="!other.state.activate"
+                                :class="!other.state.activate ? 'disabled' : ''"
+                                  type="number"
+                                  required
+                                  step=".01"
+                                  min="0"
+                                  :disabled="!other.state.activate"
+                                  @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!other.state.activate ? 'opacity-75' : ''"
+                            >
                                 Registered Post Added Value
                             </label>
                             <div
@@ -964,6 +1118,7 @@ focus:outline-none disabled:opacity-75"
                             <input
                             v-model.trim="other.state.registeredPostValue"
                             class="
+                            shipping-option
                                 w-full
                                 appearance-none
                                 border border-transparent
@@ -977,18 +1132,27 @@ focus:outline-none disabled:opacity-75"
                                 focus:outline-none focus:ring-0
                                 disabled:opacity-75
                             "
-                            type="tel"
+                            :class="!other.state.activate ? 'disabled' : ''"
+                            type="number"
+                            required
+                            step=".01"
+                            min="0"
                             :disabled="!other.state.activate"
+                            @keydown="handleDecimal"
                             />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!other.state.activate ? 'opacity-75' : ''"
+                            >
                                 Express Post Added Value
                             </label>
                             <input
                                 v-model.trim="other.state.expressPostValue"
                                 class="
+                                shipping-option
                                     w-full
                                     appearance-none
                                     border border-transparent
@@ -1001,8 +1165,13 @@ focus:outline-none disabled:opacity-75"
                                     focus:outline-none focus:ring-0
                                     disabled:opacity-75
                                 "
-                                type="tel"
+                                :class="!other.state.activate ? 'disabled' : ''"
+                                type="number"
+                                required
+                                step=".01"
+                                min="0"
                                 :disabled="!other.state.activate"
+                                @keydown="handleDecimal"
                             />
                         </div>
 <div class="col-span-3 mb-4">
@@ -1011,7 +1180,10 @@ focus:outline-none disabled:opacity-75"
             class="col-span-1 flex flex-col
             justify-start space-y-2"
         >
-        <label class="mb-1 block">
+        <label
+          class="mb-1 block"
+          :class="!other.state.activate ? 'disabled' : ''"
+        >
             Insurance Added Value</label>
         <div
             class="relative w-full"
@@ -1026,6 +1198,7 @@ focus:outline-none disabled:opacity-75"
             <input
                 v-model="other.state.insuranceValue"
                 class="
+                shipping-option
                     w-full
                     appearance-none
                     border border-transparent
@@ -1038,8 +1211,12 @@ focus:outline-none disabled:opacity-75"
                     focus:outline-none focus:ring-0
                     disabled:opacity-75
                 "
-                type="tel"
+                :class="!other.state.activate ? 'disabled' : ''"
+                type="number"
+                step=".01"
+                min="0"
                 :disabled="!other.state.activate"
+                @keydown="handleDecimal"
             />
         </div>
         </div>
@@ -1082,7 +1259,10 @@ focus:outline-none disabled:opacity-75"
                         class="col-span-3 grid grid-cols-3 gap-4"
                     >
                         <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label class="mb-1 block">
+                            <label
+                              class="mb-1 block"
+                              :class="!other.city.activate ? 'opacity-75' : ''"
+                            >
                                 Shipping value per product
                             </label>
                             <div class="relative w-full">
@@ -1096,6 +1276,7 @@ focus:outline-none disabled:opacity-75"
                                 <input
                                     v-model.trim="other.city.shippingValue"
                                     class="
+                                    shipping-option
                                         w-full
                                         appearance-none
                                         border border-transparent
@@ -1108,13 +1289,20 @@ focus:outline-none disabled:opacity-75"
                                         focus:outline-none focus:ring-0
                                         disabled:opacity-75
                                     "
-                                    type="tel"
+                                :class="!other.city.activate ? 'disabled' : ''"
+                                    type="number"
+                                    step=".01"
+                                    min="0"
                                     :disabled="!other.city.activate"
+                                    @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
 <div class="col-span-3 mb-4 lg:col-span-1">
-    <label class="mb-1 block">
+    <label
+      class="mb-1 block"
+      :class="!other.city.activate ? 'opacity-75' : ''"
+    >
         Registered Post Added Value
     </label>
     <div
@@ -1130,6 +1318,7 @@ focus:outline-none disabled:opacity-75"
     <input
     v-model.trim="other.city.registeredPostValue"
     class="
+    shipping-option
         w-full
         appearance-none
         border border-transparent
@@ -1143,19 +1332,27 @@ focus:outline-none disabled:opacity-75"
         focus:outline-none focus:ring-0
         disabled:opacity-75
     "
-    type="tel"
+    :class="!other.city.activate ? 'disabled' : ''"
+    type="number"
+    step=".01"
+    min="0"
     :disabled="!other.city.activate"
     required
+    @keydown="handleDecimal"
     />
     </div>
 </div>
 <div class="col-span-3 mb-4 lg:col-span-1">
-    <label class="mb-1 block">
+    <label
+      class="mb-1 block"
+      :class="!other.city.activate ? 'opacity-75' : ''"
+    >
         Express Post Added Value
     </label>
     <input
         v-model.trim="other.city.expressPostValue"
         class="
+        shipping-option
             w-full
             appearance-none
             border border-transparent
@@ -1168,9 +1365,13 @@ focus:outline-none disabled:opacity-75"
             focus:outline-none focus:ring-0
             disabled:opacity-75
         "
-        type="tel"
+        :class="!other.city.activate ? 'disabled' : ''"
+        type="number"
+        step=".01"
+        min="0"
         :disabled="!other.city.activate"
         required
+        @keydown="handleDecimal"
     />
 </div>
 <div class="col-span-3 mb-4">
@@ -1179,7 +1380,10 @@ focus:outline-none disabled:opacity-75"
             class="col-span-1 flex flex-col
             justify-start space-y-2"
         >
-            <label class="mb-1 block">
+            <label
+              class="mb-1 block"
+              :class="!other.city.activate ? 'opacity-75' : ''"
+            >
                 Insurance Added Value</label>
             <div
                 class="relative w-full"
@@ -1194,6 +1398,7 @@ focus:outline-none disabled:opacity-75"
                 <input
                     v-model="other.city.insuranceValue"
                     class="
+                    shipping-option
                         w-full
                         appearance-none
                         border border-transparent
@@ -1206,7 +1411,10 @@ focus:outline-none disabled:opacity-75"
                         focus:outline-none focus:ring-0
                         disabled:opacity-75
                     "
-                    type="tel"
+                    :class="!other.city.activate ? 'disabled' : ''"
+                    type="number"
+                    step=".01"
+                    min="0"
                     :disabled="!other.city.activate"
                 />
             </div>
@@ -1597,6 +1805,7 @@ export default {
       ownOrOtherCountry: 'other',
       ownOrOtherState: '',
       ownOrOtherCity: '',
+      resultRegExp: false,
       own: {
         country: {
           name: '',
@@ -1748,6 +1957,16 @@ export default {
     this.retrieveShipping()
   },
   methods: {
+    handleDecimal(event) {
+      const keyCodes = [
+        'Backspace',
+        'Delete',
+        'ArrowLeft',
+        'ArrowRight',
+        '.'
+      ]
+      return keyCodes.includes(event.code) ? true : !isNaN(Number(event.key)) && event.code!=='Space'
+    },
     testFunc6() {
       this.showOwnCity = true
       this.showOtherCity = false
@@ -1977,7 +2196,7 @@ export default {
         express_value: this.other.country.expressPostValue,
       }
 
-      if (this.checkActiveIfOwn()) {
+      if (this.own.country.activate === true) {
         // endpoint own country
         this.$axios
           .$post('v1/shipping/country/', shippingValuesFormCountry)
@@ -1989,6 +2208,7 @@ export default {
               position: 'bottom',
               queue: true
             })
+            this.retrieveShipping()
           })
           .catch((err) => {
             this.$oruga.notifcation.open({
@@ -1999,6 +2219,8 @@ export default {
               queue: true
             })
           })
+      }
+      if (this.own.state.activate === true) {
         // endpoint own state
         setTimeout(() => {
           this.$axios
@@ -2011,6 +2233,7 @@ export default {
                 position: 'bottom',
                 queue: true
               })
+              this.retrieveShipping()
             })
             .catch((err) => {
               this.$oruga.notifcation.open({
@@ -2022,6 +2245,8 @@ export default {
               })
             })
         }, 1000);
+      }
+      if (this.own.city.activate === true) {
         // endpoint own city
         setTimeout(() => {
           this.$axios
@@ -2045,12 +2270,12 @@ export default {
                 queue: true
               })
             })
-        }, 2000);
+        }, 1000);
       }
       // other
-      if (this.checkActiveIfOther()) {
+      if (this.other.country.activate === true) {
+        // endpoint other country
         setTimeout(() => {
-          // endpoint other country
           this.$axios
             .$post('v1/shipping/othercountry/', otherCountryFormCountry)
             .then((response) => {
@@ -2061,6 +2286,7 @@ export default {
                 position: 'bottom',
                 queue: true
               })
+              this.retrieveShipping()
             })
             .catch((err) => {
               this.$oruga.notifcation.open({
@@ -2071,7 +2297,11 @@ export default {
                 queue: true
               })
             })
-          // endpoint other state
+        }, 1000)
+      }
+      if (this.other.state.activate === true) {
+        // endpoint other state
+        setTimeout(() => {
           this.$axios
             .$post('v1/shipping/otherstate/', otherCountryFormState)
             .then((response) => {
@@ -2082,6 +2312,7 @@ export default {
                 position: 'bottom',
                 queue: true
               })
+              this.retrieveShipping()
             })
             .catch((err) => {
               this.$oruga.notifcation.open({
@@ -2092,7 +2323,11 @@ export default {
                 queue: true
               })
             })
-          // endpoint other city
+        }, 1000);
+      }
+      if (this.other.city.activate === true) {
+        // endpoint other city
+        setTimeout(() => {
           this.$axios
             .$post('v1/shipping/othercity', otherCountryFormCity)
             .then((response) => {
@@ -2114,7 +2349,7 @@ export default {
                 queue: true
               })
             })
-        }, 500);
+        }, 1000);
       }
     },
     retrieveShipping() {
@@ -2122,9 +2357,14 @@ export default {
         .$get('v1/shipping/country/')
         .then((response) => {
           this.shippingSettingsList = response.list.data
+          if (this.shippingSettingsList.length === 0) {
+            this.$store.commit('cart/setOwnCountryActive', false)
+          } else {
+            this.$store.commit('cart/setOwnCountryActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOwnCountryActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -2137,9 +2377,14 @@ export default {
         .$get('v1/shipping/state/')
         .then((response) => {
           this.shippingSettingsList2 = response.list.data
+          if (this.shippingSettingsList2.length === 0) {
+            this.$store.commit('cart/setOwnStateActive', false)
+          } else {
+            this.$store.commit('cart/setOwnStateActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOwnStateActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -2152,9 +2397,14 @@ export default {
         .$get('v1/shipping/city/')
         .then((response) => {
           this.shippingSettingsList3 = response.list.data
+          if (this.shippingSettingsList3.length === 0) {
+            this.$store.commit('cart/setOwnCityActive', false)
+          } else {
+            this.$store.commit('cart/setOwnCityActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOwnCityActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -2167,9 +2417,14 @@ export default {
         .$get('v1/shipping/othercountry/')
         .then((response) => {
           this.shippingSettingsList4 = response.list.data
+          if (this.shippingSettingsList4.length === 0) {
+            this.$store.commit('cart/setOtherCountryActive', false)
+          } else {
+            this.$store.commit('cart/setOtherCountryActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOtherCountryActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -2182,9 +2437,14 @@ export default {
         .$get('v1/shipping/otherstate/')
         .then((response) => {
           this.shippingSettingsList5 = response.list.data
+          if (this.shippingSettingsList5.length === 0) {
+            this.$store.commit('cart/setOtherStateActive', false)
+          } else {
+            this.$store.commit('cart/setOtherStateActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOtherStateActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -2197,9 +2457,14 @@ export default {
         .$get('v1/shipping/othercity/')
         .then((response) => {
           this.shippingSettingsList6 = response.list.data
+          if (this.shippingSettingsList6.length === 0) {
+            this.$store.commit('cart/setOtherCityActive', false)
+          } else {
+            this.$store.commit('cart/setOtherCityActive', true)
+          }
         })
         .catch((err) => {
-          console.log(err)
+          this.$store.commit('cart/setOtherCityActive', false)
           this.$oruga.notification.open({
             message: err.message,
             variant: 'danger',
@@ -2255,3 +2520,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.shipping-option {
+  @apply hover:border-brand-grey hover:bg-blue-50
+}
+
+.shipping-option.disabled {
+  @apply text-gray-400 cursor-not-allowed
+    hover:border-gray-200 hover:bg-gray-100
+}
+</style>
