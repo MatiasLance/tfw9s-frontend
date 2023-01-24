@@ -4,7 +4,7 @@
     >
         <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
         <v-app>
-            <TopHeader />
+            <TopHeader v-if="showComponents.topheader" />
             <NavHeader class="font-montserrat relative py-4 font-semibold"/>
             <Nuxt />
             <Footer />
@@ -13,9 +13,18 @@
 </template>
 
 <script>
-import TopHeader from '../components/TopHeader.vue'
+import TopHeader from '~/components/TopHeader.vue'
 export default {
   components: { TopHeader },
+  data() {
+    return {
+      showComponents: {
+        topheader: false,
+        navheader: true,
+        footer: true
+      }
+    }
+  },
   mounted() {
     document.addEventListener('click', this.close)
   },
@@ -27,14 +36,14 @@ export default {
 
 <style>
 * {
-    font-family: 'Courier Prime';
+    font-family: 'Montserrat';
 }
 h1, h2, h3, h4, h5, h6 {
-    font-family: "Courier Prime", monospace;
+    font-family: "Montserrat", monospace;
 }
 
 .font-montserrat {
-    font-family: "Courier Prime", Arial, Helvetica, monospace;
+    font-family: "Montserrat", Arial, Helvetica, monospace;
 }
 
 .btn.disabled, .btn:disabled {

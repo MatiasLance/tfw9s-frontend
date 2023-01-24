@@ -1,7 +1,7 @@
 <template>
     <div
         class="flex
-        w-full items-center bg-brand-black
+        w-full items-center bg-brand-yellow
         "
     >
         <div class="container">

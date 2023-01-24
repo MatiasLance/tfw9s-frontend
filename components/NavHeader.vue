@@ -1,14 +1,25 @@
 <template>
   <div
-    class="ud-header top-0 left-0 z-40 flex w-full items-center bg-transparent"
+    class="ud-header top-0 left-0 z-40 flex w-full items-center bg-brand-yellow"
   >
     <div class="container">
-      <div class="relative max-w-full">
+      <div class="relative flex max-w-6xl justify-between">
+        <div class="w-60 self-center px-4 lg:w-64">
+          <NuxtLink to="/">
+            <span class="navbar-logo block w-full py-2">
+              <img
+                src="~/assets/images/logo_brand.svg"
+                alt="logo"
+                class="header-logo w-full"
+              />
+            </span>
+          </NuxtLink>
+        </div>
         <div
-        class="flex w-full items-stretch
-        justify-evenly justify-items-center"
+        class="flex w-full items-center
+        justify-between px-4"
         >
-          <div class="custom-pl-16 lg:custom-pl-0">
+          <div>
             <button
               id="navbarToggler"
               type="button"
@@ -64,7 +75,7 @@
                 <li
                   v-for="(link, linkIndex) in links"
                   :key="`left-menu-links-desktop-${linkIndex}`"
-                  class="group"
+                  class="group relative"
                 >
                   <NuxtLink :to="link.to">
                     <span
@@ -89,12 +100,18 @@
                         lg:text-[#181818]
                         lg:group-hover:text-slate-800 lg:group-hover:opacity-70
                       "
+                      :class="(link.to === $route.path)
+                        ? 'underline underline-offset-8'
+                        : ''"
                     >
                       {{ link.text }}
                     </span>
                   </NuxtLink>
                 </li>
-                <li class="group submenu-item relative hover:bg-slate-100">
+                <li
+                  v-if="more.length > 0"
+                  class="group submenu-item relative hover:bg-yellow-400"
+                >
                   <span
                     class="
                       text-dark
@@ -160,7 +177,7 @@
                       v-for="(link, linkIndex) in more"
                       :key="`more-a-link-mobile-${linkIndex}`"
                       :href="link.to"
-                      class="hover:bg-slate-100"
+                      class="hover:bg-brand-lgrey"
                     >
                       <span
                         class="
@@ -198,7 +215,7 @@
                 lg:block
                 lg:w-full
                 lg:max-w-full
-                lg:bg-transparent
+                lg:bg-brand-yellow/60
                 lg:py-0
                 lg:px-4
                 lg:shadow-none
@@ -266,7 +283,10 @@
                     </span>
                   </NuxtLink>
                 </li>
-                <li class="group submenu-item relative">
+                <li
+                  v-if="more.length > 0"
+                  class="group submenu-item relative"
+                >
                   <span
                     href="javascript:void(0)"
                     class="
@@ -335,7 +355,7 @@
                       v-for="(link, linkIndex) in more"
                       :key="`more-a-link-mobile-${linkIndex}`"
                       :href="link.to"
-                      class="hover:bg-slate-100"
+                      class="hover:bg-brand-lgrey"
                     >
                       <span
                         class="
@@ -345,7 +365,7 @@
                           py-[10px]
                           px-4
                           text-sm
-                          hover:text-gray-500 hover:underline
+                          hover:text-brand-mgrey hover:underline
                         "
                       >
                         {{ link.text }}
@@ -356,69 +376,8 @@
               </ul>
             </nav>
           </div>
-          <div class="topBarInMenuCell hidden px-2 lg:block"></div>
-          <div class="w-80 self-center px-4 lg:w-64">
-            <NuxtLink to="/">
-              <span class="navbar-logo block w-full py-2">
-                <img
-                  src="~/assets/images/logo_brand.svg"
-                  alt="logo"
-                  class="header-logo w-full"
-                />
-              </span>
-            </NuxtLink>
-          </div>
+          <div class="topBarInMenuCell hidden lg:flex"></div>
           <div class="justify-end sm:flex lg:pr-0">
-            <div class="topBarInMenuCell px-3">
-              <nav
-                class="
-                hidden
-                w-full
-                py-5
-                lg:static
-                lg:block
-                lg:w-full
-                lg:max-w-full
-                "
-              >
-                <ul class="block lg:flex">
-                  <li
-                    v-for="(link, linkIndex) in rightMenu"
-                    :key="`right-menu-links-desktop-${linkIndex}`"
-                    class="group"
-                  >
-                  <NuxtLink :to="link.to">
-                      <span
-                        class="
-                          ud-menu-scroll
-                          text-dark
-                          group-hover:text-primary
-                          font-montserrat mx-6
-                          flex
-                          py-2
-                          text-base transition
-                          duration-300
-                          ease-in-out
-                          group-hover:underline
-                          group-hover:decoration-slate-600
-                          group-hover:decoration-2
-                          group-hover:underline-offset-8
-                          lg:mr-0
-                          lg:inline-flex
-                          lg:py-4
-                          lg:px-0
-                          lg:text-[#181818]
-                          lg:group-hover:text-slate-800
-                          lg:group-hover:opacity-70
-                        "
-                      >
-                        {{ link.text }}
-                      </span>
-                    </NuxtLink>
-                  </li>
-                </ul>
-              </nav>
-            </div>
             <NuxtLink to="/cart" class="self-center">
               <button
                 type="button"
@@ -427,7 +386,7 @@
                   flex cursor-pointer
                   flex-row-reverse
                   items-center px-3
-                  hover:text-slate-300
+                  hover:text-brand-dgrey
                 "
               >
                 <div
@@ -472,50 +431,20 @@ export default {
       isOpen2: false,
       links: [
         {
+          to: '/',
+          text: 'Home',
+        },
+        {
           to: '/shop',
-          text: 'Shop',
-        },
-        {
-          to: '/brands',
-          text: 'Brands',
-        },
-      ],
-      more: [
-        {
-          to: '/about-us',
-          text: 'About us'
-        },
-        {
-          to: '/reviews',
-          text: 'Reviews',
-        },
-        {
-          to: '/admin',
-          text: 'Admin',
-        },
-        {
-          to: '/revamped-intercity',
-          text: 'REVAMPED X INTERCITY'
-        },
-        {
-          to: '/revamped-express',
-          text: 'REVAMPED X EXPRESS'
-        },
-        {
-          to: '/revamped-global',
-          text: 'REVAMPED X GLOBAL'
-        }
-      ],
-      rightMenu: [
-        {
-          to: '/our-mission',
-          text: 'Our Mission'
+          text: 'Store',
         },
         {
           to: '/contact-us',
-          text: 'Contact us'
+          text: 'Contact',
         },
       ],
+      more: [],
+      rightMenu: [],
     };
   },
   computed: {
@@ -585,7 +514,7 @@ export default {
 }
 
   .sticky {
-    @apply fixed z-[9999] bg-white bg-opacity-80 transition;
+    @apply fixed z-[9999] bg-brand-yellow bg-opacity-80 transition;
     backdrop-filter: blur(5px);
     box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
   }

@@ -1,34 +1,36 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <template>
-  <div class="mx-auto max-w-full overflow-hidden">
-    <HomeSliderSection />
-    <BrandsSection />
+  <div class="max-w-full overflow-hidden">
+    <HeroSection />
     <FeaturedProductsSection />
-    <ReviewSection />
-    <BeforeFooterSection />
+    <BeforeFooterSection v-if="showSections.beforeFooter" />
   </div>
 </template>
 
 <script>
-import ReviewSection from '../components/ReviewSection.vue';
-import BrandsSection from '../components/BrandsSection.vue';
-import HomeSliderSection from '../components/HomeSliderSection.vue';
-import FeaturedProductsSection from '../components/FeaturedProductsSection.vue';
-import BeforeFooterSection from '../components/BeforeFooterSection.vue';
+import FeaturedProductsSection from '~/components/FeaturedProductsSection.vue';
+import BeforeFooterSection from '~/components/BeforeFooterSection.vue';
+import HeroSection from '~/components/HeroSection'
 import aosMixin from '@/mixins/aos';
 
 export default {
   name: 'index',
   components: {
-    ReviewSection,
-    BrandsSection,
-    HomeSliderSection,
-    FeaturedProductsSection,
-    BeforeFooterSection
+    HeroSection,
+    BeforeFooterSection,
+    FeaturedProductsSection
   },
   mixins: [ aosMixin ],
   data() {
-    return {};
+    return {
+      showSections: {
+        homeSlider: false,
+        brands: false,
+        featured: false,
+        review: false,
+        beforeFooter: true
+      }
+    };
   },
   head() {
     return {

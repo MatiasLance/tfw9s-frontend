@@ -1,7 +1,12 @@
 <template>
-  <section id="hero" class="relative w-full">
+  <section
+    id="hero"
+    class="relative flex min-h-screen flex-col justify-center
+    overflow-hidden bg-gray-50 py-6 sm:py-12"
+  >
     <img
-      class="absolute inset-0 h-full w-full object-cover"
+      class="absolute top-1/2 left-1/2 w-full
+      -translate-x-1/2 -translate-y-1/2 object-cover"
       src="/img/1.webp"
       alt=""
     />
@@ -14,14 +19,13 @@
         class="
           col-span-12
           mt-12
-          space-y-4
           px-6
           text-center
-          sm:space-y-6
-          lg:col-span-12
+          sm:space-y-8 lg:col-span-12
         "
       >
         <span
+          v-if="showContent.superheadline"
           data-aos="fade-right"
           data-aos-once="true"
           class="
@@ -45,8 +49,8 @@
             leading-snug
             tracking-wider
             text-white
-            sm:pr-8 sm:text-5xl
-             xl:pr-10 xl:text-6xl
+            sm:text-5xl
+            xl:text-6xl
           "
         >
           {{ headline }}
@@ -55,7 +59,8 @@
           data-aos="fade-down"
           data-aos-once="true"
           data-aos-delay="300"
-          class="hidden text-white sm:block"
+          class="hidden
+          text-white sm:block"
         >
           {{ contentblurb }}
         </p>
@@ -71,7 +76,7 @@
             justify-center space-y-4
             sm:flex-row
             sm:space-y-0
-            sm:space-x-4 md:mt-2 md:mb-10
+            sm:space-x-4 md:mb-10
           "
         >
           <NuxtLink to="/shop">
@@ -82,7 +87,8 @@
                 bg-white py-8 px-14
                 uppercase
                 text-black
-                hover:bg-brand-slate hover:text-white
+                hover:bg-brand-slate
+                hover:text-white
                 focus:ring-1 focus:ring-white focus:ring-offset-2
               "
             >
@@ -106,10 +112,16 @@ export default {
   },
   data() {
     return {
-      superheadline: 'Welcome to',
-      headline: 'Gold Coast\'s Finest RETAIL BOUTIQUE',
-      cta: 'Browse Products',
-      contentblurb: 'A BRAND NEW 1-OF-1 RETAIL STORE',
+      showContent: {
+        superheadline: false,
+        headline: false,
+        cta: false,
+        contentblurb: false
+      },
+      superheadline: '',
+      headline: 'The Drum HQ',
+      cta: 'Start Shopping',
+      contentblurb: 'Where drumming what you dream of becomes a tad closer',
     };
   },
 };

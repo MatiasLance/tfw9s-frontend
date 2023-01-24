@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'Revamped Official',
+    title: 'Drum HQ',
     htmlAttrs: {
       lang: 'en',
     },
@@ -11,28 +11,28 @@ export default {
       {
         hid: 'description',
         name: 'description',
-        content: 'Gold Coast\'s finest sneaker, clothing and accessories store'
+        content: ''
       },
       { name: 'format-detection', content: 'telephone=no' },
       {
         hid: 'og:title',
         name: 'og:title',
-        content: 'Revamped - GC\'S Finest Store: NIKE DUNKS, JORDANS, YEEZYS & MORE! | Revamped Official',
+        content: '',
       },
       {
         hid: 'og:description',
         name: 'og:description',
-        content: 'Gold Coast\'s finest sneaker, clothing and accessories store',
+        content: '',
       },
       {
         hid: 'og:image',
         property: 'og:image',
-        content: 'https://i.imgur.com/tcuaeC4.png',
+        content: '',
       },
       {
         hid: 'og:site_name',
         name: 'og:site_name',
-        content: 'Revamped Official Website',
+        content: 'Drum HQ Website',
       },
     ],
     link: [
@@ -46,7 +46,7 @@ export default {
         href: 'https://fonts.gstatic.com'
       },
       {
-        rel: 'stylesheet', 
+        rel: 'stylesheet',
         href: 'https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;700&display=swap'
       }
     ],
@@ -151,7 +151,7 @@ export default {
   },
 
   // Nuxt sitemap generator: https://www.npmjs.com/package/@nuxtjs/sitemap
-  sitemap: function() {
+  sitemap: function () {
     if (process.env.ENVIRONMENT.toLowerCase() === 'production') {
       return {
         hostname: process.env.BASE_URL,
