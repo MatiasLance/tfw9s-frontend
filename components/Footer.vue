@@ -1,15 +1,15 @@
 <template>
   <!-- Footer -->
-  <footer class="bg-gray-300">
+  <footer class="bg-brand-yellow">
     <!-- section footer top -->
     <section class="py-12 text-white">
 			<div class="container mx-auto max-w-screen-xl px-4">
 				<div class="flex flex-wrap sm:space-x-8 md:space-x-16 lg:space-x-24">
 					<aside class="mx-auto mb-5 w-full self-center md:w-1/3 lg:w-1/4">
-						<NuxtLink to="/" class="mx-auto py-5">
+						<NuxtLink to="/" class="py-5">
               <img
-                src="~/assets/images/logo_revamped_01.svg"
-                class="footer-logo" height="38"
+                src="~/assets/images/logo_brand_02.svg"
+                class="footer-logo w-52 mx-auto" height="38"
               />
             </NuxtLink>
             <div
@@ -22,7 +22,7 @@
               lg:text-start
               "
             >
-              &copy; Copyright 2022, Revamped. | Built by
+              &copy; Copyright 2022, Drum HQ. | Built by
                 <a
                 href="https://pageone247.com/"
                 target="_blank"
@@ -131,7 +131,7 @@
 		</section>
 
     <!-- section footer bottom -->
-    <section class="bg-gray-400 py-6">
+    <section class="bg-yellow-600 py-6">
       <div class="container mx-auto max-w-screen-xl px-4">
         <div class="justify-between lg:flex">
           <div class="mb-3 flex flex-wrap gap-2">
@@ -164,66 +164,20 @@ export default {
           text: 'Home',
         },
         {
-          to: '/brands',
-          text: 'Brands',
+          to: '/shop',
+          text: 'Store',
         },
         {
           to: '/contact-us',
           text: 'Contact Us',
         },
         {
-          to: '/about-us',
-          text: 'About Us',
-        },
-        {
-          to: '/our-mission',
-          text: 'Our Mission',
-        },
-        {
-          to: '/reviews',
-          text: 'Reviews',
-        },
-        {
           to: '/admin',
           text: 'Admin',
         },
       ],
-      links2: [
-        {
-          to: '/faq',
-          text: 'FAQs'
-        },
-        {
-          to: '/shipping',
-          text: 'Shipping'
-        },
-        {
-          to: '/returns-refunds',
-          text: 'Returns & Refunds'
-        },
-        {
-          to: '/terms',
-          text: 'Terms & Conditions'
-        },
-        {
-          to: '/privacy',
-          text: 'Privacy'
-        },
-      ],
-      links3: [
-        {
-          to: '/revamped-intercity',
-          text: 'REVAMPED X INTERCITY'
-        },
-        {
-          to: '/revamped-express',
-          text: 'REVAMPED X EXPRESS'
-        },
-        {
-          to: '/revamped-global',
-          text: 'REVAMPED X GLOBAL'
-        }
-      ],
+      links2: [],
+      links3: [],
       paymentchannels: [
         'stripe-purple.svg',
         'visa.svg',
@@ -246,8 +200,10 @@ export default {
 }
 .swlink {
   color: black !important;
+  font-weight: 600;
 }
 .swlink:hover {
-  color: #424242 !important;
+  color: #191919 !important;
+  font-weight: 600;
 }
 </style>

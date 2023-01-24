@@ -2,12 +2,11 @@
   <section
     id="hero"
     class="relative flex min-h-screen flex-col justify-center
-    overflow-hidden bg-gray-50 py-6 sm:py-12"
+    overflow-hidden"
   >
     <img
-      class="absolute top-1/2 left-1/2 w-full
-      -translate-x-1/2 -translate-y-1/2 object-cover"
-      src="/img/1.webp"
+      class="absolute w-full object-cover"
+      src="/img/hero/drum.jpg"
       alt=""
     />
     <div
@@ -83,12 +82,11 @@
             <BaseButtonLight
               class="
                 max-w-full
-                rounded-lg
-                bg-white py-8 px-14
+                rounded-lg border border-white
+                bg-transparent py-8 px-14
                 uppercase
-                text-black
-                hover:bg-brand-slate
-                hover:text-white
+                hover:bg-brand-yellow
+                hover:text-black
                 focus:ring-1 focus:ring-white focus:ring-offset-2
               "
             >

@@ -4,13 +4,13 @@
   >
     <div class="container">
       <div class="relative flex max-w-6xl justify-between">
-        <div class="w-60 self-center px-4 lg:w-64">
+        <div class="w-24 self-center px-4 lg:w-32">
           <NuxtLink to="/">
             <span class="navbar-logo block w-full py-2">
               <img
                 src="~/assets/images/logo_brand.svg"
                 alt="logo"
-                class="header-logo w-full"
+                class="header-logo"
               />
             </span>
           </NuxtLink>
