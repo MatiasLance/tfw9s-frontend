@@ -162,7 +162,7 @@ export default {
     };
   },
   head() {
-    return { title: 'Categories - Revamped' };
+    return { title: 'Categories - Drum HQ' };
   },
   computed: {
     selectedCategories: {

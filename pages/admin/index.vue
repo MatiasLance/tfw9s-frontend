@@ -197,7 +197,7 @@ export default {
       lastname: '',
       email: '',
       pageSEO: {
-        title: 'Admin Page - Revamped',
+        title: 'Admin Page - Drum HQ',
         description: 'Admin Page',
         url: 'admin',
       }
@@ -205,7 +205,7 @@ export default {
   },
   head() {
     return {
-      title: 'Admin Page - Revamped',
+      title: 'Admin Page - Drum HQ',
       meta: [
         {
           hid: 'description',

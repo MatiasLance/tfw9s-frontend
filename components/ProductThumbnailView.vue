@@ -75,7 +75,7 @@
       <span class="w-9 border-t-2 border-slate-600"></span>
       <div class="h-7">
         <span class="pt-2 pb-4 text-[18px] text-gray-900">
-          <span>{{ `${formatCurrency(price)} ${currencyCode}` }}</span>
+          <span>{{ formatCurrency(price) }}</span>
         </span>
       </div>
 
@@ -104,7 +104,6 @@
       </VBtn>
 
       <span
-        v-if="showComponent"
         class="pl-availability flex items-center justify-center space-x-1 py-3"
       >
         <template v-if="stock > 0">

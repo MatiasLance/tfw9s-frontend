@@ -4,17 +4,18 @@
       <div
         class="
           flex flex-wrap items-center justify-around
-          gap-x-2 lg:justify-between
+          gap-x-2
+          lg:justify-between
         "
       >
         <span class="text-base leading-[2.5em]">
           Showing {{ from }}-{{ to }} of {{ totalItems }} results
         </span>
-        <div>
-          <SortSearchTop
-            @change="retrieveProducts"
-          />
-        </div>
+        <BasePagination
+          :active-page="page"
+          :total-pages="totalPages"
+          @change="setPage"
+        />
       </div>
     </section>
 
@@ -30,7 +31,7 @@
         gap-x-0 gap-y-6
         sm:grid-cols-2
         md:grid-cols-3 md:gap-x-4 md:gap-y-8
-        lg:grid-cols-4 lg:gap-x-2 lg:gap-y-10
+        lg:grid-cols-4 lg:gap-x-4 lg:gap-y-10
       "
       v-bind="$attrs"
     >
@@ -45,16 +46,6 @@
         :path="getMediaURL(product.media[0])"
         :has-variants="product.has_variants"
       />
-    </section>
-
-    <section class="mt-8">
-      <div class="flex items-end justify-end">
-        <BasePagination
-            :active-page="page"
-            :total-pages="totalPages"
-            @change="setPage"
-          />
-      </div>
     </section>
   </div>
 </template>
