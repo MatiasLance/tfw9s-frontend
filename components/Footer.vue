@@ -32,7 +32,11 @@
                 </a>
             </div>
 					</aside> <!-- col .// -->
-					<aside class="mb-5 w-1/2 flex-auto sm:w-auto">
+					<aside
+            v-if="showFirstLinks"
+            class="mb-5 flex-auto sm:w-auto"
+            :class="!showFirstLinks ? 'w-full' : 'w-1/2'"
+          >
 						<ul class="mt-2 space-y-1 text-center sm:text-left">
  							<li
                 v-for="(link, linkIndex) in links"
@@ -64,7 +68,10 @@
 							</li>
 						</ul>
 					</aside> <!-- col .// -->
-					<aside  class="mb-5 w-1/2 flex-auto  sm:w-auto">
+					<aside
+            v-if="showSecondLinks"
+            class="mb-5 w-1/2 flex-auto  sm:w-auto"
+          >
 						<ul class="mt-2 space-y-1 text-center sm:text-left">
  							<li
                 v-for="(link, linkIndex) in links2"
@@ -158,6 +165,8 @@
 export default {
   data() {
     return {
+      showFirstLinks: true,
+      showSecondLinks: false,
       links: [
         {
           to: '/',

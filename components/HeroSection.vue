@@ -1,39 +1,26 @@
 <template>
   <section
     id="hero"
-    class="relative flex min-h-screen flex-col justify-center
-    overflow-hidden"
+    class="relative flex min-h-screen flex-col justify-center overflow-hidden"
   >
     <img
-      class="absolute w-full object-cover"
-      src="/img/hero/drum.jpg"
+      class="absolute min-h-screen min-w-full object-cover"
+      src="/img/hero/drum.webp"
       alt=""
     />
     <div
-    class="absolute inset-0 bg-gradient-to-r
-      from-slate-800/50 to-black/50"
+    class="absolute inset-0 min-h-screen
+    bg-gradient-to-r from-slate-800/50 to-black/50"
     ></div>
     <BaseSection>
       <div
-        class="
-          col-span-12
-          mt-12
-          px-6
-          text-center
-          sm:space-y-8 lg:col-span-12
-        "
+        class="col-span-12 mt-12 px-6 text-center sm:space-y-8 lg:col-span-12"
       >
         <span
           v-if="showContent.superheadline"
           data-aos="fade-right"
           data-aos-once="true"
-          class="
-            pb-3
-            text-base
-            font-semibold
-            uppercase
-            text-white
-          "
+          class="pb-3 text-base font-semibold uppercase text-white "
         >
           {{ superheadline }}
         </span>
@@ -58,8 +45,7 @@
           data-aos="fade-down"
           data-aos-once="true"
           data-aos-delay="300"
-          class="hidden
-          text-white sm:block"
+          class="hidden text-white sm:block"
         >
           {{ contentblurb }}
         </p>
@@ -67,28 +53,16 @@
           data-aos="fade-up"
           data-aos-once="true"
           data-aos-delay="700"
-          class="
-            shop-cta
-            sm:shop-cta-sm
-            flex
-            flex-col items-center
-            justify-center space-y-4
-            sm:flex-row
-            sm:space-y-0
-            sm:space-x-4 md:mb-10
-          "
+          class="shop-cta sm:shop-cta-sm flex flex-col items-center
+          justify-center space-y-4 sm:flex-row sm:space-y-0
+          sm:space-x-4 md:mb-10"
         >
           <NuxtLink to="/shop">
             <BaseButtonLight
-              class="
-                max-w-full
-                rounded-lg border border-white
-                bg-transparent py-8 px-14
-                uppercase
-                hover:bg-brand-yellow
-                hover:text-black
-                focus:ring-1 focus:ring-white focus:ring-offset-2
-              "
+              class="max-w-full rounded-lg border border-white bg-transparent
+              py-8 px-14 uppercase hover:bg-brand-yellow
+              hover:text-brand-dgrey
+              focus:ring-1 focus:ring-white focus:ring-offset-2"
             >
               {{ cta }}
             </BaseButtonLight>

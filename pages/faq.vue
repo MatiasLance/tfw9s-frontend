@@ -101,7 +101,7 @@ export default {
   },
   head() {
     return {
-      title: 'FAQs | Revamped Official',
+      title: 'FAQs | Drum HQ',
       meta: [
         {
           hid: 'description',

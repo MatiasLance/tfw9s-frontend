@@ -1,4 +1,4 @@
-# straddie-world-frontend
+# drum-hq-frontend
 
 ## Build Setup
 

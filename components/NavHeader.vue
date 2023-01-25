@@ -4,7 +4,7 @@
   >
     <div class="container">
       <div class="relative flex max-w-6xl justify-between">
-        <div class="w-24 self-center px-4 lg:w-32">
+        <div class="hidden self-center px-4 lg:block lg:w-32">
           <NuxtLink to="/">
             <span class="navbar-logo block w-full py-2">
               <img
@@ -19,7 +19,7 @@
         class="flex w-full items-center
         justify-between px-4"
         >
-          <div>
+          <div class="custom-pl-16 lg:custom-pl-0">
             <button
               id="navbarToggler"
               type="button"
@@ -376,7 +376,18 @@
               </ul>
             </nav>
           </div>
-          <div class="topBarInMenuCell hidden lg:flex"></div>
+          <div class="topBarInMenuCell hidden px-2 lg:block"></div>
+          <div class="block w-16 justify-center lg:hidden">
+            <NuxtLink to="/">
+              <span class="navbar-logo block py-2">
+                <img
+                  src="~/assets/images/logo_brand.svg"
+                  alt="logo"
+                  class="header-logo w-full"
+                />
+              </span>
+            </NuxtLink>
+          </div>
           <div class="justify-end sm:flex lg:pr-0">
             <NuxtLink to="/cart" class="self-center">
               <button
