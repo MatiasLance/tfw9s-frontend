@@ -370,7 +370,7 @@ module.exports = {
     "vue/no-static-inline-styles": [
       "warn",
       {
-        "allowBinding": true,
+        "allowBinding": false,
       }
     ],
     "vue/no-unused-properties": [ "error" ],
