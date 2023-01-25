@@ -1,11 +1,12 @@
 <template>
   <VBtn
-    large
-    light
-    text
+    x-large
+    dark
+    outlined
     class="btn text-button rounded-none text-center text-[24px] font-bold
-    transition duration-300 hover:shadow-lg hover:shadow-slate-300/60"
+    transition duration-300 hover:shadow-lg"
     v-bind="$attrs"
+    style="font-weight:600"
     v-on="$listeners"
   >
     <slot></slot>

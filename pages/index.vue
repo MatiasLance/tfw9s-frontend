@@ -34,19 +34,19 @@ export default {
   },
   head() {
     return {
-      title: 'Revamped - GC\'S Finest Store: NIKE DUNKS, JORDANS, YEEZYS & MORE! | Revamped Official',
+      title: 'Home | Drum HQ',
       meta: [
         {
           hid: 'description',
           name: 'description',
-          content: 'Gold Coast\'s finest sneaker, clothing and accessories store',
+          content: '',
         },
       ],
       keywords: [
         {
           hid: 'keywords',
           name: 'keywords',
-          content: 'sneakers, clothing, accessories, nike dunks, jordans, yeezys, online store',
+          content: '',
         },
       ],
     };

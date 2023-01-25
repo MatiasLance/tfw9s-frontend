@@ -39,6 +39,16 @@ module.exports = {
       },
     },
   },
-  variants: { extend: { visibility: ['group-hover'] } },
-  plugins: [require('@tailwindcss/forms')],
+  variants: {
+    lineClamp: [
+      'responsive',
+      'hover'
+    ],
+    extend: { visibility: [ 'group-hover' ] }
+  },
+  plugins: [
+    require('@tailwindcss/typography')({ className: 'wysiwyg' }),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/line-clamp'),
+  ],
 }
