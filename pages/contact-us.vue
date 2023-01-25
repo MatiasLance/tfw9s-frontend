@@ -53,7 +53,7 @@
                   text-[#1a1d18]
                 "
               >
-                Contact Revamped
+                Contact Drum HQ
               </span>
             </h2>
             <h1 class="text-[3.75rem] leading-[1]">
@@ -74,24 +74,29 @@
               </span>
             </h1>
             <div class="mt-0 pt-3 text-[1.125rem] leading-[1.5em]">
-              <div class="my-4">
-                <iframe src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69fb-11ed-a163-6117b7a7504e&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-27.932873&amp;long=153.38002&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a="" style="width: 100%; height: 350px;"></iframe>
-              </div>
-              <button
-                type="button"
-                class="rounded-xl
-                bg-brand-black px-6 py-3
-                text-base text-white hover:bg-slate-200
-                hover:text-black"
-                @click="getDirectionsLink"
-              >
-              Get directions
-            </button>
+              <template v-if="showMap">
+                  <div class="my-4">
+                    <iframe src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69fb-11ed-a163-6117b7a7504e&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-27.932873&amp;long=153.38002&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a="" style="width: 100%; height: 350px;"></iframe>
+                  </div>
+                  <button
+                    type="button"
+                    class="rounded-xl
+                    bg-brand-black px-6 py-3
+                    text-base text-white hover:bg-slate-200
+                    hover:text-black"
+                    @click="getDirectionsLink"
+                  >
+                  Get directions
+                </button>
+              </template>
               <address class="my-4">
                   <!-- eslint-disable-next-line vue/no-v-html -->
                   <p v-html="address">
                   </p>
-                  <p class="my-3 text-[16px] sm:text-sm">
+                  <p
+                    v-if="showNote"
+                    class="my-3 text-[16px] sm:text-sm"
+                  >
                     Note: {{ importantNotes }}
                   </p>
               </address>
@@ -118,7 +123,10 @@
             </div>
           </header>
           <div class="mb-[40px]"></div>
-          <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
+          <div
+            v-if="showHours"
+            class="max-w-[calc(100% + 40px)] grid grid-cols-12"
+          >
             <div class="col-span-12 md:col-span-6">
               <h5 class="text-[1.563rem] font-bold leading-[1] text-[#1a1d18]">
                 Hours
@@ -141,11 +149,14 @@
           <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
             <div class="col-span-12 md:col-span-6">
               <h5 class="text-[1.563rem] font-bold leading-[1] text-[#1a1d18]">
-                Social
+                Follow us
               </h5>
               <div class="mb-3"></div>
               <div class="flex justify-start gap-2">
-                <a :href="socials.fb">
+                <a
+                  v-if="socials.fb.length != 0"
+                  :href="socials.fb"
+                >
                   <div
                     class="
                       flex
@@ -161,7 +172,10 @@
                     <i class="ri-facebook-line text-2xl"></i>
                   </div>
                 </a>
-                <a :href="socials.ig">
+                <a
+                  v-if="socials.ig.length != 0"
+                  :href="socials.ig"
+                >
                   <div
                     class="
                       flex
@@ -177,7 +191,10 @@
                     <i class="ri-instagram-line text-2xl"></i>
                   </div>
                 </a>
-                <a :href="socials.youtube">
+                <a
+                  v-if="socials.youtube != 0"
+                  :href="socials.youtube"
+                >
                   <div
                     class="
                       flex
@@ -193,7 +210,10 @@
                     <i class="ri-youtube-line text-2xl"></i>
                   </div>
                 </a>
-                <a :href="socials.tiktok">
+                <a
+                  v-if="socials.tiktok.length != 0"
+                  :href="socials.tiktok"
+                >
                   <div
                     class="
                       flex
@@ -223,8 +243,8 @@
 
 <script>
 import 'remixicon/fonts/remixicon.css';
-import BaseHeader from '../components/base/BaseHeader.vue';
-import ContactSection from '../components/ContactSection.vue';
+import BaseHeader from '~/components/base/BaseHeader.vue';
+import ContactSection from '~/components/ContactSection.vue';
 export default {
   name: 'contact-us',
   components: {
@@ -237,11 +257,11 @@ export default {
       importantNotes: 'For local (Gold Coast) customers and order pickups only. Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.',
       mapslink: 'https://www.google.com/maps/dir/?api=1&destination=280+Brisbane+Road+Labrador+QLD+4215',
       mobile: '0451 620 707',
-      email: 'finn@revampedofficial.com',
-      toemail: 'mailto:finn@revampedoffical.com',
-      headline: 'How can we help?',
+      email: 'sample@thedrumhq.com.au',
+      toemail: 'mailto:finn@thedrumhq.com.au',
+      headline: 'ENQUIRE/BOOK TO VISIT US!',
       pageSEO: {
-        title: 'Contact Us - Revamped',
+        title: 'Contact Us - Drum HQ',
         description: 'How can we help? Reach out to us for more information.',
       },
       time1: '9:00AM - 4:00PM',
@@ -249,16 +269,16 @@ export default {
       time3: '10:00AM - 3:00PM',
       time4: 'CLOSED',
       socials: {
-        fb: 'https://www.facebook.com/RevampedAustralia/',
-        ig: 'https://www.instagram.com/RevampedAustralia/',
-        tiktok: 'https://www.tiktok.com/@finnyboiflayva',
-        youtube: 'https://www.youtube.com/channel/UCZir79EizOj5uzzgSoSfljQ'
+        fb: '',
+        ig: '',
+        tiktok: '',
+        youtube: ''
       }
     }
   },
   head() {
     return {
-      title: 'Contact Us - Revamped',
+      title: 'Contact Us - Drum HQ',
       meta: [
         {
           hid: 'description',
