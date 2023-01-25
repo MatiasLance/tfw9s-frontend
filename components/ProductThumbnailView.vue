@@ -27,7 +27,7 @@
     </div>
 
     <div
-      class="flex w-full flex-col items-start space-y-1 p-3 lg:space-y-3 lg:p-6"
+      class="flex w-full flex-col items-start space-y-1 p-3 lg:space-y-3"
     >
       <div class="grid grid-cols-1">
         <div
@@ -52,10 +52,10 @@
       </div>
       <span
         class="
-          break-words
-          text-sm
+          h-9
+          break-words text-xs uppercase
           selection:bg-[#1a1d18]
-          selection:text-white md:text-lg lg:text-2xl
+          selection:text-white
         "
       >
         <NuxtLink :to="'/product/?id=' + uid">
@@ -63,7 +63,7 @@
             class="
               font-montserrat
               whitespace-normal
-              font-bold
+              font-semibold
               transition duration-200
               hover:text-[#1a1d18]
             "
@@ -72,10 +72,12 @@
           </span>
         </NuxtLink>
       </span>
-      <span class="w-9 border-t-2 border-slate-600"></span>
-      <span class="pt-2 pb-4 text-[17px] font-bold text-gray-900">
-        <span>{{ formatCurrency(price) }}</span>
-      </span>
+      <span class="hidden w-9 border-t-2 border-slate-600"></span>
+      <div class="h-7">
+        <span class="pt-2 pb-4 text-[18px] font-bold text-gray-900">
+          <span>{{ `${formatCurrency(price)} ${currencyCode}` }}</span>
+        </span>
+      </div>
 
       <VBtn
         dark
@@ -102,6 +104,7 @@
       </VBtn>
 
       <span
+        v-if="showComponent"
         class="pl-availability flex items-center justify-center space-x-1 py-3"
       >
         <template v-if="stock > 0">
@@ -150,6 +153,12 @@ export default {
     path: {
       type: String,
       required: true
+    }
+  },
+  data() {
+    return {
+      currencyCode: 'AUD',
+      showComponent: false
     }
   },
   computed: {

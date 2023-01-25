@@ -5,7 +5,7 @@
       page-link
       flex items-center justify-center
       h-8 w-8
-      md:h-12 md:w-12
+      md:h-11 md:w-11
       cursor-pointer
       border
       bg-gray-200
@@ -37,7 +37,7 @@ export default {
       if (this.active) {
         return 'bg-brand-black text-white'
       } else {
-        return 'text-gray-800 hover:bg-brand-black hover:text-white'
+        return 'text-gray-800 hover:bg-brand-yellow hover:text-white'
       }
     },
   },

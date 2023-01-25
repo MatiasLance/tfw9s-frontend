@@ -1,10 +1,13 @@
 <template>
   <div>
     <!-- CONTENT -->
-    <section class="w-full pb-28">
-      <div class="container mx-auto max-w-screen-xl px-4">
+    <section class="my-16 w-full pb-28">
+      <div class="container max-w-6xl">
         <!-- Categories Slider -->
-        <div class="mx-7">
+        <div
+          v-if="showComponent"
+          class="mx-7"
+        >
           <span
             class="mb-5 ml-3 block text-sm uppercase tracking-wider"
           >
@@ -16,14 +19,32 @@
         </div>
         <!-- / Categories Slider -->
         <!-- SORT & FILTER TOP ROW -->
-        <div class="my-7">
+        <div
+          v-if="showComponent"
+          class="my-7"
+        >
           <SortSearchTop
             @change="retrieveItems"
           />
         </div>
         <!-- / FILTER WRAP -->
-        <div class="-mx-4 flex flex-col md:flex-row">
-          <main class="px-4 lg:w-full">
+        <div
+          class="-mx-4 flex flex-col
+          sm:mx-0 sm:space-x-4 md:flex-row"
+        >
+          <aside class="max-w-full px-4 md:w-2/5 lg:w-1/4">
+            <SearchTop class="mb-8" />
+            <div class="my-5 w-full px-4 py-2">
+              <h3 class="text-left text-lg text-black">
+                Filter by
+              </h3>
+            </div>
+            <div class="my-5">
+              <ul class="shadow-box">
+              </ul>
+            </div>
+          </aside>
+          <main class="max-w-full md:w-3/5 lg:w-3/4">
             <ProductSection
               ref="products"
             />
@@ -55,7 +76,8 @@ export default {
       pageSEO: {
         title: 'Shop - Revamped',
         description: 'Featuring our exclusive Revamped Products. Shop with us here.'
-      }
+      },
+      showComponent: false,
     }
   },
   head() {

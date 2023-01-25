@@ -1,43 +1,42 @@
 <template>
   <section>
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-      <div class="col-span-3 md:col-span-1">
+    <select
+      v-model="sortBy"
+      class="
+        mt-1
+        block
+        w-full
+        appearance-none
+        rounded-md
+        border border-gray-200
+        bg-gray-100
+        text-base
+        font-normal outline-inherit
+        hover:border-gray-400
+        focus:border-gray-400
+        focus:bg-gray-100
+        focus:outline-none
+        focus:ring-0
+      "
+      @change="emitUpdate(this)"
+    >
+      <option
+        v-for="option in sortOptions"
+        :key="option.value"
+        :value="option.value"
+      >
+        {{ option.name }}
+      </option>
+    </select>
+    <div v-if="showComponent" class="grid grid-cols-1 lg:grid-cols-3">
+      <div class="col-span-1 lg:col-span-3">
         <div>
-          <select
-            v-model="sortBy"
-            class="
-              mt-1
-              block
-              w-full
-              appearance-none
-              rounded-md
-              border border-gray-200
-              bg-gray-100
-              py-[13px]
-              px-[15px]
-              font-normal
-              outline-inherit
-              hover:border-gray-400
-              focus:border-gray-400
-              focus:bg-white
-              focus:outline-none
-              focus:ring-0
-            "
-            @change="emitUpdate(this)"
-          >
-            <option
-              v-for="option in sortOptions"
-              :key="option.value"
-              :value="option.value"
-            >
-              {{ option.name }}
-            </option>
-          </select>
         </div>
       </div>
-      <div class="col-span-3 md:col-span-1"></div>
-      <div class="col-span-3 md:col-span-1">
-        <div class="col-span-1">
+      <div v-if="showComponent" class="col-span-3 lg:col-span-3">
+        <div
+          class="col-span-1"
+        >
           <div class="flex justify-center">
             <div class="xl:w-96">
               <form @submit.prevent="emitUpdate(this)">
@@ -74,6 +73,7 @@ export default {
           value: 'high_to_low',
         },
       ],
+      showComponent: false
     };
   },
   computed: {
