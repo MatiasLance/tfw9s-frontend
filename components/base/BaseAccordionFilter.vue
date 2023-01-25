@@ -8,14 +8,14 @@
         <span class="text-xl font-medium">{{ accordion.title }}</span>
         <VIcon
             v-if="selected"
-            size="15" color="black"
+            size="20" color="black"
             class="rotate-180 transition duration-300"
         >
             mdi-chevron-down
         </VIcon>
         <VIcon
             v-else
-            size="15"
+            size="20"
             class="rotate-0 transition duration-300"
         >
             mdi-chevron-down
@@ -29,31 +29,34 @@
         class="relative overflow-hidden transition-all duration-700"
       >
         <ul class="space-y-1">
-          <li>
+          <li
+            v-for="filter in accordion.options"
+            :key="filter.id"
+          >
             <label
             class="
             shipping-option
             flex cursor-pointer
             items-center
-            border border-gray-200
-            bg-gray-50
+            bg-transparent
             p-3
             "
             >
                 <span>
                     <input
-                      v-model="selectedFilter"
-                      value="In Stock"
+                      :value="filter.name"
                       type="checkbox"
-                      name="filterValue"
+                      name="filterValues"
                       class="
                       mt-1 h-4 w-4 bg-gray-200
                       text-brand-black focus:ring-slate-500"
-                      :disabled="checkDisabledAll()"
                     >
                 </span>
-                <p class="ml-2">
-                  In Stock (13)
+                <p v-if="filter.count !== null" class="ml-2">
+                  {{ filter.name }} ({{ filter.count }})
+               </p>
+               <p v-else class="ml-2">
+                {{ filter.name }}
                </p>
             </label>
           </li>

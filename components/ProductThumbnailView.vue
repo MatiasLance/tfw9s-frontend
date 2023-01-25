@@ -53,7 +53,7 @@
       <span
         class="
           h-9
-          break-words text-xs uppercase
+          break-words text-xs
           selection:bg-[#1a1d18]
           selection:text-white
         "
@@ -63,7 +63,6 @@
             class="
               font-montserrat
               whitespace-normal
-              font-semibold
               transition duration-200
               hover:text-[#1a1d18]
             "
@@ -72,9 +71,10 @@
           </span>
         </NuxtLink>
       </span>
-      <span class="hidden w-9 border-t-2 border-slate-600"></span>
+      <div class="mt-2"></div>
+      <span class="w-9 border-t-2 border-slate-600"></span>
       <div class="h-7">
-        <span class="pt-2 pb-4 text-[18px] font-bold text-gray-900">
+        <span class="pt-2 pb-4 text-[18px] text-gray-900">
           <span>{{ `${formatCurrency(price)} ${currencyCode}` }}</span>
         </span>
       </div>

@@ -82,14 +82,14 @@ export default {
       productsStatic: [
         {
           id: 1,
-          name: 'Chamois cloth 50 cm',
+          name: 'CHERRY HILL 14x6 5 Dark Wood Stave Snare Drum',
           categories: [
             {
               id: 1,
-              name: 'Detailing'
+              name: 'Cherry Hill'
             }
           ],
-          price: '169.00',
+          price: '1690.00',
           stock: 3,
           media: [],
           // eslint-disable-next-line camelcase
@@ -97,14 +97,14 @@ export default {
         },
         {
           id: 2,
-          name: 'High pressure washer noob',
+          name: 'FRANKLIN 1445 5 Aged Steel Snare Drum',
           categories: [
             {
               id: 1,
-              name: 'Tools'
+              name: 'Franklin'
             }
           ],
-          price: '129.00',
+          price: '1650.00',
           stock: 5,
           media: [],
           // eslint-disable-next-line camelcase
@@ -112,14 +112,14 @@ export default {
         },
         {
           id: 3,
-          name: 'Polish microfiber cloth',
+          name: 'SONOR 135 75 Benny Greb Signature Brass Snare Drum',
           categories: [
             {
               id: 1,
-              name: 'Polishing'
+              name: 'Sonor'
             }
           ],
-          price: '9.95',
+          price: '1899.00',
           stock: 20,
           media: [],
           // eslint-disable-next-line camelcase

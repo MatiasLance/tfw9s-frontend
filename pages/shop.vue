@@ -41,6 +41,11 @@
             </div>
             <div class="my-5">
               <ul class="shadow-box">
+                <BaseAccordionFilter
+                    v-for="(filter, index) in filters"
+                    :key="index"
+                    :accordion="filter"
+                />
               </ul>
             </div>
           </aside>
@@ -62,6 +67,7 @@ import 'vue-slick-carousel/dist/vue-slick-carousel.css';
 import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css';
 import CategorySlider from '../components/CategorySlider.vue';
 import SortSearchTop from '../components/SortSearchTop.vue';
+import BaseAccordionFilter from '../components/base/BaseAccordionFilter.vue';
 import aosMixin from '@/mixins/aos';
 
 export default {
@@ -69,6 +75,7 @@ export default {
   components: {
     CategorySlider,
     SortSearchTop,
+    BaseAccordionFilter,
   },
   mixins: [ aosMixin ],
   data() {
@@ -78,6 +85,48 @@ export default {
         description: 'Featuring our exclusive Revamped Products. Shop with us here.'
       },
       showComponent: false,
+      filters: [
+        {
+          title: 'Availability',
+          options: [
+            {
+              id: 1,
+              name: 'In Stock',
+              count: 3
+            },
+            {
+              id: 2,
+              name: 'Out of Stock',
+              count: 0
+            },
+          ]
+        },
+        {
+          title: 'Categories',
+          options: [
+            {
+              id: 1,
+              name: 'Cherry Hill',
+              count: null
+            },
+            {
+              id: 2,
+              name: 'Franklin',
+              count: null
+            },
+            {
+              id: 3,
+              name: 'Sonor',
+              count: null
+            },
+            {
+              id: 4,
+              name: 'Uncategorised',
+              count: null
+            },
+          ]
+        }
+      ]
     }
   },
   head() {
