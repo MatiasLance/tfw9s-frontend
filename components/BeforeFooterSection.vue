@@ -30,14 +30,14 @@
                     </li>
                     <li class="cta-address flex">
                         <i class="ri-map-pin-fill mr-2"></i>
-                        {{ address }}*
+                        {{ address }}
                     </li>
                     <li class="cta-time flex">
                         <i class="ri-time-fill mr-2"></i>
                         {{ hours }}
                     </li>
                 </ul>
-                <div class="my-7">
+                <div v-if="showNotes" class="my-7">
                     <p
                         v-for="note in importantNotes"
                         :key="note"
@@ -88,6 +88,7 @@ export default {
       title1: 'Visit our store',
       phone: '0411 965 954',
       address: '123 Address',
+      showNotes: false,
       importantNotes: [
         'For local (Gold Coast) customers and order pickups only.',
         'Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.'
