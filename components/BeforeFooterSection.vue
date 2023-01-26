@@ -86,13 +86,13 @@ export default {
   data() {
     return {
       title1: 'Visit our store',
-      phone: '0451 620 707',
-      address: '280 Brisbane Road\nLabrador, Queensland 4215',
+      phone: '0411 965 954',
+      address: '123 Address',
       importantNotes: [
         'For local (Gold Coast) customers and order pickups only.',
         'Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.'
       ],
-      email: 'finn@revampedofficial.com',
+      email: 'hello@thedrumhq.com.au',
       hours: 'Mon - Fri: 9am-4pm, Sat: 10am-3pm, Sun: CLOSED',
       title2: 'Join our mailing list',
       description: 'Stay in touch with latest updates about our products and offers',

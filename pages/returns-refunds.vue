@@ -86,11 +86,11 @@ export default {
             All return and exchange requests
             should be emailed to:
             <a
-                href="mailto:finn@revampedofficial.com"
+                href="mailto:hello@thedrumhq.com.au"
                 class="opacity-70 hover:underline hover:decoration-brand-grey
                 hover:decoration-4 hover:opacity-100 hover:underline-offset-8"
             >
-                finn@revampedofficial.com
+                hello@thedrumhq.com.au
             </a>
             `
           ]

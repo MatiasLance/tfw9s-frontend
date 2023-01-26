@@ -123,8 +123,8 @@ export default {
                     hover:decoration-4
                     hover:underline-offset-8
                 "
-                href="mailto:finn@revampedofficial.com">
-                finn@revampedofficial.com
+                href="mailto:hello@thedrumhq.com.au">
+                hello@thedrumhq.com.au
             </a>`
           ]
         }

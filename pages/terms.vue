@@ -72,7 +72,7 @@ export default {
   components: { BaseHeader },
   data() {
     return {
-      adminEmail: 'admin@revampedofficial.com.au',
+      adminEmail: 'admin@thedrumhq.com.au.au',
       contents: [
         {
           type: 'section',
