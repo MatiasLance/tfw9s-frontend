@@ -36,7 +36,7 @@
       v-bind="$attrs"
     >
       <ProductThumbnailView
-        v-for="product in productsStatic"
+        v-for="product in products"
         :key="product.id"
         :uid="product.id"
         :name="product.name"
