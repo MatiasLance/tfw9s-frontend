@@ -173,6 +173,25 @@
                   </div>
                 </a>
                 <a
+                  v-if="socials.linkedin.length != 0"
+                  :href="socials.linkedin"
+                >
+                  <div
+                    class="
+                      flex
+                      h-[48px]
+                      w-[48px]
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      bg-gray-200
+                      hover:bg-slate-400 hover:text-white
+                    "
+                  >
+                    <i class="ri-linkedin-box-line text-2xl"></i>
+                  </div>
+                </a>
+                <a
                   v-if="socials.ig.length != 0"
                   :href="socials.ig"
                 >
@@ -270,6 +289,7 @@ export default {
       time4: 'CLOSED',
       socials: {
         fb: '',
+        linkedin: '',
         ig: '',
         tiktok: '',
         youtube: ''
