@@ -10,13 +10,10 @@
         block
         h-12
         w-full
-        min-w-0
-        flex-auto
-        rounded-l-xl border border-solid
-        border-gray-300 bg-white
-        bg-clip-padding py-[13.008px]
-        pr-[60px]
-        pl-[15px]
+        min-w-0 flex-auto
+        rounded-l-xl
+        border border-solid border-gray-300
+        bg-white bg-clip-padding
         text-base
         font-normal
         text-gray-700
@@ -47,7 +44,7 @@
         transition
         duration-150
         ease-in-out
-        hover:bg-slate-400 hover:shadow-lg
+        hover:bg-brand-yellow hover:shadow-lg
         focus:bg-brand-grey focus:shadow-lg focus:outline-none focus:ring-0
         active:bg-brand-grey active:shadow-lg
       "

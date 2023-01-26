@@ -1267,8 +1267,8 @@ export default {
       newCategoryName: '',
       moveDialog: false,
       pageSEO: {
-        title: 'Products Admin - Revamped',
-        description: 'Page for creating product items for Revamped',
+        title: 'Products Admin - Drum HQ',
+        description: 'Page for creating product items for Drum HQ',
       },
       isEdit: true, // True for editing item, false for adding variant
     };

@@ -90,7 +90,7 @@ export default {
     };
   },
   head() {
-    return { title: 'Reset Password - Revamped' };
+    return { title: 'Reset Password - Drum HQ' };
   },
   methods: {
     resetPassword() {

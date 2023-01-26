@@ -4,17 +4,25 @@
 
       <div class="flex">
         <PaymentTab
-          :active="paymentMethod === 'square'"
-          @click="paymentMethod = 'square'"
-        >
-          Credit Card
-        </PaymentTab>
-        <PaymentTab
           v-if="showPaypal"
           :active="paymentMethod === 'paypal'"
           @click="paymentMethod = 'paypal'"
         >
           Paypal
+        </PaymentTab>
+        <PaymentTab
+          v-if="showStripe"
+          :active="paymentMethod === 'stripe'"
+          @click="paymentMethod = 'stripe'"
+        >
+          Credit Card
+        </PaymentTab>
+        <PaymentTab
+          v-if="showSquare"
+          :active="paymentMethod === 'square'"
+          @click="paymentMethod = 'square'"
+        >
+          Square
         </PaymentTab>
       </div>
 
@@ -23,6 +31,13 @@
         id="paypal-payment-form"
         class="payment-module p-10"
         :cart-total="total"
+        @active-step="activeStepPrev"
+      />
+
+      <StripeCheckout
+        v-show="paymentMethod === 'stripe'"
+        class="payment-module gap-3 text-gray-600"
+        @active-step="activeStepPrev"
       />
 
       <SquareCheckout
@@ -78,12 +93,14 @@ import PaypalCheckout from '~/components/PaypalCheckout.vue';
 import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency';
+import StripeCheckout from '~/components/StripeCheckout.vue';
 
 export default {
   components: {
     PaypalCheckout,
     SquareCheckout,
-    PaymentTab
+    PaymentTab,
+    StripeCheckout
   },
   mixins: [ currencyMixin ],
   props: {
@@ -98,12 +115,14 @@ export default {
   },
   data() {
     return {
-      paymentMethod: 'square',
+      paymentMethod: 'paypal',
       isStepperLoading: false,
       overallTotal: 0,
       newSubTotal: 0,
       newGST: 0,
-      showPaypal: false
+      showPaypal: true,
+      showSquare: false,
+      showStripe: true
     };
   },
   computed: {
@@ -158,7 +177,10 @@ export default {
         .finally(() => {
           this.isStepperLoading = false
         })
-    }
+        .catch((err) => {
+          console.log(err.message)
+        })
+    },
   }
 };
 </script>

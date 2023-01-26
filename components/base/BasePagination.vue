@@ -2,7 +2,7 @@
   <div class="flex justify-center">
     <nav>
       <ul class="list-style-none page-numbers flex flex-wrap justify-end">
-        <li class="page-item">
+        <li class="page-item text-sm">
           <BasePaginationButton @click="setPage('prev')">
             <i class="ri-arrow-left-s-line"></i>
           </BasePaginationButton>
@@ -10,7 +10,7 @@
         <li
           v-for="page in pages"
           :key="page"
-          class="page-item"
+          class="page-item text-sm"
         >
           <BasePaginationButton
             :active="page == activePage"
@@ -19,7 +19,7 @@
             {{ page }}
           </BasePaginationButton>
         </li>
-        <li class="page-item">
+        <li class="page-item text-sm">
           <BasePaginationButton @click="setPage('next')">
             <i class="ri-arrow-right-s-line"></i>
           </BasePaginationButton>

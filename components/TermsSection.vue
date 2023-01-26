@@ -34,7 +34,7 @@
 export default {
   data() {
     return {
-      adminEmail: 'admin@revampedofficial.com',
+      adminEmail: 'admin@thedrumhq.com.au',
       contents: [
         {
           type: 'section',

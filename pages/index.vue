@@ -34,7 +34,7 @@ export default {
   },
   head() {
     return {
-      title: 'Home | Drum HQ',
+      title: 'Home - Drum HQ',
       meta: [
         {
           hid: 'description',

@@ -1,10 +1,12 @@
 <template>
   <div>
     <!-- CONTENT -->
-    <section class="w-full pb-28">
-      <div class="container mx-auto max-w-screen-xl px-4">
+    <section class="my-16 w-full pb-28">
+      <div class="container max-w-6xl">
         <!-- Categories Slider -->
-        <div class="mx-7">
+        <div
+          class="mx-7"
+        >
           <span
             class="mb-5 ml-3 block text-sm uppercase tracking-wider"
           >
@@ -16,13 +18,18 @@
         </div>
         <!-- / Categories Slider -->
         <!-- SORT & FILTER TOP ROW -->
-        <div class="my-7">
+        <div
+          class="my-7"
+        >
           <SortSearchTop
             @change="retrieveItems"
           />
         </div>
         <!-- / FILTER WRAP -->
-        <div class="-mx-4 flex flex-col md:flex-row">
+        <div
+          class="-mx-4 flex flex-col
+          sm:mx-0 sm:space-x-4 md:flex-row"
+        >
           <main class="px-4 lg:w-full">
             <ProductSection
               ref="products"
@@ -53,9 +60,10 @@ export default {
   data() {
     return {
       pageSEO: {
-        title: 'Shop - Revamped',
-        description: 'Featuring our exclusive Revamped Products. Shop with us here.'
-      }
+        title: 'Shop - Drum HQ',
+        description: ''
+      },
+      showComponent: false,
     }
   },
   head() {

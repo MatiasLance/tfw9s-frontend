@@ -63,7 +63,7 @@ export default {
     return { email: '' };
   },
   head() {
-    return { title: 'Forgot Password - Revamped' };
+    return { title: 'Forgot Password - Drum HQ' };
   },
   methods: {
     sendPasswordLink() {

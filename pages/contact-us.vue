@@ -173,6 +173,25 @@
                   </div>
                 </a>
                 <a
+                  v-if="socials.linkedin.length != 0"
+                  :href="socials.linkedin"
+                >
+                  <div
+                    class="
+                      flex
+                      h-[48px]
+                      w-[48px]
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      bg-gray-200
+                      hover:bg-slate-400 hover:text-white
+                    "
+                  >
+                    <i class="ri-linkedin-box-line text-2xl"></i>
+                  </div>
+                </a>
+                <a
                   v-if="socials.ig.length != 0"
                   :href="socials.ig"
                 >
@@ -253,12 +272,12 @@ export default {
   },
   data() {
     return {
-      address: '280 Brisbane Road<br>Labrador, Queensland 4215<br>Australia',
+      address: '123 Address Street<br>Australia',
       importantNotes: 'For local (Gold Coast) customers and order pickups only. Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.',
       mapslink: 'https://www.google.com/maps/dir/?api=1&destination=280+Brisbane+Road+Labrador+QLD+4215',
       mobile: '0451 620 707',
-      email: 'sample@thedrumhq.com.au',
-      toemail: 'mailto:finn@thedrumhq.com.au',
+      email: 'hello@thedrumhq.com.au',
+      toemail: 'mailto:hello@thedrumhq.com.au',
       headline: 'ENQUIRE/BOOK TO VISIT US!',
       pageSEO: {
         title: 'Contact Us - Drum HQ',
@@ -270,6 +289,7 @@ export default {
       time4: 'CLOSED',
       socials: {
         fb: '',
+        linkedin: '',
         ig: '',
         tiktok: '',
         youtube: ''

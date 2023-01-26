@@ -2,8 +2,8 @@
   <div
     class="ud-header top-0 left-0 z-40 flex w-full items-center bg-brand-yellow"
   >
-    <div class="container">
-      <div class="relative flex max-w-6xl justify-between">
+    <div class="container max-w-6xl">
+      <div class="relative flex justify-between">
         <div class="hidden self-center px-4 lg:block lg:w-32">
           <NuxtLink to="/">
             <span class="navbar-logo block w-full py-2">

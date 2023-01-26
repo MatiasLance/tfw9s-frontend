@@ -70,6 +70,53 @@ export default {
       totalPages: 0,
       isProductsLoading: false,
       products: [],
+      productsStatic: [
+        {
+          id: 1,
+          name: 'CHERRY HILL 14x6 5 Dark Wood Stave Snare Drum',
+          categories: [
+            {
+              id: 1,
+              name: 'Cherry Hill'
+            }
+          ],
+          price: '1690.00',
+          stock: 3,
+          media: [],
+          // eslint-disable-next-line camelcase
+          has_variants: false
+        },
+        {
+          id: 2,
+          name: 'FRANKLIN 1445 5 Aged Steel Snare Drum',
+          categories: [
+            {
+              id: 1,
+              name: 'Franklin'
+            }
+          ],
+          price: '1650.00',
+          stock: 5,
+          media: [],
+          // eslint-disable-next-line camelcase
+          has_variants: false
+        },
+        {
+          id: 3,
+          name: 'SONOR 135 75 Benny Greb Signature Brass Snare Drum',
+          categories: [
+            {
+              id: 1,
+              name: 'Sonor'
+            }
+          ],
+          price: '1899.00',
+          stock: 20,
+          media: [],
+          // eslint-disable-next-line camelcase
+          has_variants: false
+        },
+      ]
     };
   },
   computed: {
@@ -90,7 +137,7 @@ export default {
     },
   },
   mounted() {
-    this.retrieveProducts()
+    // this.retrieveProducts()
   },
   methods: {
     retrieveProducts() {

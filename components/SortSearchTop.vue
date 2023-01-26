@@ -74,6 +74,7 @@ export default {
           value: 'high_to_low',
         },
       ],
+      showComponent: false
     };
   },
   computed: {
