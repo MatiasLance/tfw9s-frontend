@@ -6,9 +6,10 @@
           col-span-12
           mt-12
           space-y-3
-          px-6
+          px-2
           text-center
-          sm:space-y-3 sm:text-left
+          sm:space-y-3
+          sm:px-6 sm:text-left
           lg:col-span-6
           xl:mt-10
         "
@@ -134,8 +135,10 @@ const GATEWAY_AFTERPAY = 'afterpay'
 const SUPPORTED_GATEWAYS = [
   GATEWAY_STRIPE,
   GATEWAY_PAYPAL,
-  GATEWAY_SQUARE,
-  GATEWAY_AFTERPAY,
+  /*
+   * GATEWAY_SQUARE,
+   * GATEWAY_AFTERPAY,
+   */
 ]
 
 export default {
@@ -181,6 +184,7 @@ export default {
             payment_method: this.paymentGateway,
           })
           .then((response) => {
+            console.log(response)
             const status = response.data.status
             if (status === 'complete') {
               this.status = 'success'
@@ -194,7 +198,8 @@ export default {
               this.bannerText = 'Order failed'
             }
           })
-          .catch(() => {
+          .catch((err) => {
+            console.log(err.message)
             this.status = 'failed'
             this.bannerText = 'Order failed'
           })

@@ -6,14 +6,14 @@
         <PaymentTab
           v-if="showPaypal"
           :active="paymentMethod === 'paypal'"
-          @click="paymentMethod = 'paypal'"
+          @click="setAsPaymentMethod('paypal')"
         >
           Paypal
         </PaymentTab>
         <PaymentTab
           v-if="showStripe"
           :active="paymentMethod === 'stripe'"
-          @click="paymentMethod = 'stripe'"
+          @click="setAsPaymentMethod('stripe')"
         >
           Credit Card
         </PaymentTab>
@@ -27,7 +27,7 @@
       </div>
 
       <PaypalCheckout
-        v-show="paymentMethod === 'paypal'"
+        v-if="paymentMethod === 'paypal'"
         id="paypal-payment-form"
         class="payment-module p-10"
         :cart-total="total"
@@ -35,13 +35,13 @@
       />
 
       <StripeCheckout
-        v-show="paymentMethod === 'stripe'"
+        v-if="paymentMethod === 'stripe'"
         class="payment-module gap-3 text-gray-600"
         @active-step="activeStepPrev"
       />
 
       <SquareCheckout
-        v-show="paymentMethod === 'square'"
+        v-if="paymentMethod === 'square'"
         class="payment-module p-10"
         :cart-total="total"
         @active-step="activeStepPrev"
@@ -144,9 +144,14 @@ export default {
     },
   },
   mounted() {
+    this.$store.commit('order/setPaymentMethod', this.paymentMethod)
     this.initialize()
   },
   methods: {
+    setAsPaymentMethod(val) {
+      this.paymentMethod = val
+      this.$store.commit('order/setPaymentMethod', this.paymentMethod)
+    },
     activeStepPrev(stepNo) {
       this.$emit('active-step', stepNo)
     },
