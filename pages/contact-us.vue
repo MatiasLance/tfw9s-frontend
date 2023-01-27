@@ -278,7 +278,7 @@ export default {
       mobile: '0451 620 707',
       email: 'hello@thedrumhq.com.au',
       toemail: 'mailto:hello@thedrumhq.com.au',
-      headline: 'ENQUIRE/BOOK TO VISIT US!',
+      headline: 'ENQUIRE / BOOK TO VISIT US!',
       pageSEO: {
         title: 'Contact Us - Drum HQ',
         description: 'How can we help? Reach out to us for more information.',

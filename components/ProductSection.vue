@@ -70,6 +70,8 @@ export default {
       totalPages: 0,
       isProductsLoading: false,
       products: [],
+      isScroll: false,
+      scrollValue: 0,
       productsStatic: [
         {
           id: 1,
@@ -137,7 +139,12 @@ export default {
     },
   },
   mounted() {
-    // this.retrieveProducts()
+    this.$nextTick(() => {
+      if (localStorage.getItem('scrollTop') !== null) {
+        this.scrollValue = Number.parseInt(localStorage.getItem('scrollTop'))
+      }
+      this.retrieveProductsWithScroll()
+    })
   },
   methods: {
     retrieveProducts() {
@@ -167,6 +174,47 @@ export default {
           this.totalPages = response.data.last_page
           this.from = response.data.from
           this.to = response.data.to
+        })
+        .finally(() => {
+          this.isProductsLoading = false
+        })
+    },
+    retrieveProductsWithScroll() {
+      this.isProductsLoading = true
+      this.isScroll = this.$route.query.scroll
+
+      const query = {
+        q: this.$store.state.shop.q,
+        sort: this.$store.state.shop.sortBy,
+        page: this.$store.state.shop.page,
+        category: this.$store.state.shop.selectedCategory,
+      };
+
+      // Sanitize and remove null values
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/items?${queryString}`)
+        .then((response) => {
+          this.products = response.data.items
+          this.totalItems = response.data.total_items
+          this.totalPages = response.data.last_page
+          this.from = response.data.from
+          this.to = response.data.to
+          this.$nextTick(() => {
+            if (this.cartCount > 0 || this.isScroll) {
+              window.scrollTo({
+                top: this.scrollValue,
+                behavior: 'smooth'
+              })
+            }
+          })
         })
         .finally(() => {
           this.isProductsLoading = false
