@@ -81,6 +81,7 @@ export default {
       this.$emit('active-step', 1)
     },
     createOrder(data, actions) {
+      // create Order runs when button is clicked
       return actions.order
         .create({
           // eslint-disable-next-line camelcase
