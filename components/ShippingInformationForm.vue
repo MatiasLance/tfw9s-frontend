@@ -13,6 +13,7 @@
         <label class="mb-1 block"> First name* </label>
         <input
           v-model="firstName"
+          name="firstname"
           class="
             w-full
             appearance-none
@@ -33,6 +34,7 @@
         <label class="mb-1 block"> Last name* </label>
         <input
           v-model="lastName"
+          name="lastname"
           class="
             w-full
             appearance-none
@@ -56,6 +58,7 @@
         <div class="flex w-full">
           <input
             v-model="phoneCode"
+            name="phoneCode"
             class="
               w-24
               appearance-none
@@ -72,6 +75,7 @@
           />
           <input
             v-model="phoneDigits"
+            name="phoneDigits"
             class="
               flex-1
               appearance-none
@@ -93,6 +97,7 @@
         <label class="mb-1 block"> Email* </label>
         <input
           v-model="email"
+          name="email"
           class="
             w-full
             appearance-none
@@ -415,6 +420,7 @@
         </label>
         <input
           v-model="address"
+          name="address1"
           class="
             w-full
             appearance-none
@@ -436,6 +442,7 @@
         </label>
         <input
           v-model="postCode"
+          name="postcode"
           class="
             w-full
             appearance-none
@@ -457,6 +464,7 @@
       <label class="mb-1 block"> Other info </label>
       <textarea
         v-model="remarks"
+        name="comments"
         placeholder="Comments"
         class="
           w-full

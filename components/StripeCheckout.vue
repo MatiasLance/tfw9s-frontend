@@ -51,7 +51,7 @@ let elements;
 
 export default {
   data() {
-    return { paymentMethod: 'stripe' }
+    return { isStepperLoading: false }
   },
   computed: {
     cart: {
@@ -67,6 +67,14 @@ export default {
         this.$store.commit('order/setShippingInformation', v);
       },
     },
+    paymentMethod: {
+      get() {
+        return this.$store.state.order.paymentMethod;
+      },
+      set(v) {
+        this.$store.commit('order/setPaymentMethod', v);
+      }
+    }
   },
   mounted() {
     this.initialize()
@@ -88,7 +96,7 @@ export default {
         })
         .then((response) => {
           this.activeStep = 2;
-          return response;
+          return response.stripeToken;
         })
         .finally(() => {
           this.isStepperLoading = false;
@@ -112,8 +120,10 @@ export default {
         },
       };
 
+      const paymentElementOptions = { layout: 'tabs' };
+
       elements = this.$stripe.elements({ clientSecret, appearance });
-      const paymentElement = elements.create('payment');
+      const paymentElement = elements.create('payment', paymentElementOptions);
       paymentElement.mount('#payment-element');
     },
     async handleSubmit() {

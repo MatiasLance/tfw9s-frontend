@@ -50,6 +50,14 @@ export default {
         this.$store.commit('order/setShippingInformation', v);
       },
     },
+    paymentMethod: {
+      get() {
+        return this.$store.state.order.paymentMethod;
+      },
+      set(v) {
+        this.$store.commit('order/setPaymentMethod', v);
+      }
+    }
   },
   beforeCreate() {
     loadScript({ 'client-id': this.$config.paypal.clientId })

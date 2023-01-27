@@ -30,6 +30,7 @@
             :to="`/product?id=${product.id}`"
           >
             <div
+              v-if="product.is_featured === true"
               class="
                 flex aspect-square
                 cursor-pointer

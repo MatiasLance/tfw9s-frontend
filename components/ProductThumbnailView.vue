@@ -53,9 +53,9 @@
       <span
         class="
           h-9
-          break-words text-xs
+          break-words text-sm
           selection:bg-[#1a1d18]
-          selection:text-white
+          selection:text-white md:text-lg
         "
       >
         <NuxtLink :to="'/product/?id=' + uid">
@@ -63,7 +63,7 @@
             class="
               font-montserrat
               whitespace-normal
-              transition duration-200
+              font-bold transition duration-200
               hover:text-[#1a1d18]
             "
           >
@@ -74,7 +74,7 @@
       <div class="mt-2"></div>
       <span class="w-9 border-t-2 border-slate-600"></span>
       <div class="h-7">
-        <span class="pt-2 pb-4 text-[18px] text-gray-900">
+        <span class="pt-2 pb-4 text-[18px] font-bold text-gray-900">
           <span>{{ formatCurrency(price) }}</span>
         </span>
       </div>
@@ -174,9 +174,13 @@ export default {
   },
   methods: {
     viewItem() {
+      const scrollYValue = window.scrollY
+      localStorage.setItem('scrollTop', scrollYValue);
       this.$router.push(`/product/?id=${this.uid}`)
     },
     addToCart() {
+      const scrollYValue = window.scrollY
+      localStorage.setItem('scrollTop', scrollYValue);
       this.$store
         .dispatch('cart/addItemToCart', {
           id: this.uid,

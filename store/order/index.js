@@ -13,6 +13,7 @@ export const state = () => ({
     postCode: '',
     remarks: '',
   },
+  paymentMethod: '',
   toggleMasterSetting1: true,
   toggleMasterSetting2: true
 })
@@ -37,6 +38,9 @@ export const mutations = {
     state.shippingInformation.address = shippingInformation.address
     state.shippingInformation.postCode = shippingInformation.postCode
     state.shippingInformation.remarks = shippingInformation.remarks
+  },
+  setPaymentMethod(state, paymentMethod) {
+    state.paymentMethod = paymentMethod
   },
   setToggleMasterSetting1(state, settingValue) {
     state.toggleMasterSetting1 = settingValue
