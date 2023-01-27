@@ -83,7 +83,6 @@ export default {
     createOrder(data, actions) {
       return actions.order
         .create({
-          prefer: 'return=minimal',
           // eslint-disable-next-line camelcase
           purchase_units: [ { amount: { value: this.cartTotal } } ]
         })
