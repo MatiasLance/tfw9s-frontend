@@ -81,9 +81,9 @@ export default {
       this.$emit('active-step', 1)
     },
     createOrder(data, actions) {
+      // create Order runs when button is clicked
       return actions.order
         .create({
-          prefer: 'return=minimal',
           // eslint-disable-next-line camelcase
           purchase_units: [ { amount: { value: this.cartTotal } } ]
         })

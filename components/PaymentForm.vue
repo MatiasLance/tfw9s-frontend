@@ -30,7 +30,7 @@
         v-if="paymentMethod === 'paypal'"
         id="paypal-payment-form"
         class="payment-module p-10"
-        :cart-total="total"
+        :cart-total="overallTotal"
         @active-step="activeStepPrev"
       />
 
@@ -43,7 +43,7 @@
       <SquareCheckout
         v-if="paymentMethod === 'square'"
         class="payment-module p-10"
-        :cart-total="total"
+        :cart-total="overallTotal"
         @active-step="activeStepPrev"
       />
     </div>
@@ -105,10 +105,6 @@ export default {
   mixins: [ currencyMixin ],
   props: {
     subtotal: {
-      type: [ Number ],
-      required: true,
-    },
-    total: {
       type: [ Number ],
       required: true,
     },
