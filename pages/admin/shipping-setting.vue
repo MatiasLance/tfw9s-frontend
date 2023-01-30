@@ -873,7 +873,6 @@ focus:outline-none disabled:opacity-75"
                                 mt-1 mr-1
                                 h-4 w-4 bg-gray-200 text-brand-black
                                 focus:ring-brand-black"
-                                readonly
                                 />
                             </span>
                             <span>Activate</span>
@@ -1061,6 +1060,7 @@ focus:outline-none disabled:opacity-75"
                                 mt-1 mr-1
                                 h-4 w-4 bg-gray-200 text-brand-black
                                 focus:ring-brand-black"
+                                readonly
                                 />
                             </span>
                             <span>Activate</span>
