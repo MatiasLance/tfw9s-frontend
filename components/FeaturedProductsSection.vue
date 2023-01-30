@@ -23,6 +23,7 @@
             sm:grid-cols-2
             lg:grid-cols-4
           "
+          data-aos="fade-up"
         >
           <div
             v-for="product in filterFeaturedProducts"

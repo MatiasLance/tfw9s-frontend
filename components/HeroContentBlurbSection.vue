@@ -36,14 +36,11 @@ export default {
         cta: false,
         contentblurb: false
       },
-      heading: 'The Drum HQ',
+      heading: '#1 For New & Used Drum Kits Australia',
       paragraphs: [
         {
           id: '1',
-          content: `At WPI we enjoy helping people to
-            find what they need and promise
-            to care about your parts as much
-            as you would.`
+          content: 'Browse the online store for all the best brands in new drumming gear or find pre-loved and high end drum kits and gear right here. Order online or contact us to arrange a meeting on site in our Brisbane store.'
         }
       ]
     };
