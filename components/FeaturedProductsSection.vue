@@ -24,66 +24,68 @@
             lg:grid-cols-4
           "
         >
-          <NuxtLink
-            v-for="product in featuredProducts"
+          <div
+            v-for="product in filterFeaturedProducts"
             :key="product.id"
-            :to="`/product?id=${product.id}`"
           >
-            <div
-              v-if="product.is_featured === true"
-              class="
-                flex aspect-square
-                cursor-pointer
-                flex-col
-                rounded-lg border
-                border-transparent
-                transition
-                duration-200
-                hover:border-gray-400
-              "
+            <NuxtLink
+              :to="`/product?id=${product.id}`"
             >
-              <img
-                :src="getMediaURL(product.media[0])"
-                class="mb-8 rounded-t-lg object-contain"
-                alt=""
-              />
-              <div class="p-2">
-                <span
-                  class="
-                    block
-                    pb-2
-                    text-[18px]
-                    font-bold
-                    uppercase
-                    text-brand-dgrey
-                  "
-                >
-                  {{ product.brand }}
-                </span>
-                <h2
-                  class="
-                    pb-2
-                    text-base
-                    font-normal
-                    uppercase
-                    text-brand-black
-                  "
-                >
-                  {{ product.name }}
-                </h2>
-                <span
-                  class="
-                    text-[14px]
-                    leading-[20px]
-                    text-brand-grey
-                    transition-all
-                  "
-                >
-                  A{{ formatCurrency(product.price) }}
-                </span>
+              <div
+                class="
+                  flex aspect-square
+                  cursor-pointer
+                  flex-col
+                  rounded-lg border
+                  border-transparent
+                  transition
+                  duration-200
+                  hover:border-gray-400
+                "
+              >
+                <img
+                  :src="getMediaURL(product.media[0])"
+                  class="mb-8 rounded-t-lg object-contain"
+                  alt=""
+                />
+                <div class="p-2">
+                  <span
+                    class="
+                      block
+                      pb-2
+                      text-[18px]
+                      font-bold
+                      uppercase
+                      text-brand-dgrey
+                    "
+                  >
+                    {{ product.brand }}
+                  </span>
+                  <h2
+                    class="
+                      pb-2
+                      text-base
+                      font-normal
+                      uppercase
+                      text-brand-black
+                    "
+                  >
+                    {{ product.name }}
+                  </h2>
+                  <span
+                    class="
+                      text-[14px]
+                      leading-[20px]
+                      text-brand-grey
+                      transition-all
+                    "
+                  >
+                    A{{ formatCurrency(product.price) }}
+                  </span>
+                </div>
               </div>
-            </div>
-          </NuxtLink>
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </BaseSection>
@@ -103,7 +105,8 @@ export default {
   data() {
     return {
       headline: 'Featured Products',
-      featuredProducts: [],
+      products: [],
+      filterFeaturedProducts: []
     };
   },
   mounted() {
@@ -128,7 +131,12 @@ export default {
       this.$axios
         .$get(`v1/items?${queryString}`)
         .then((response) => {
-          this.featuredProducts = response.data.items;
+          this.products = response.data.items;
+          this.products.forEach(element => {
+            if (element.is_featured === true) {
+              this.filterFeaturedProducts.push(element)
+            }
+          });
         })
         .finally(() => {
           this.isProductsLoading = false;

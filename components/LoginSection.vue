@@ -192,10 +192,10 @@ export default {
               });
           })
           .catch((err) => {
-            const errorDetail = err.response.data;
+            const errorDetail = err.message;
             this.$oruga.notification.open({
               duration: 5000,
-              message: `${errorDetail.title} - ${errorDetail.data}`,
+              message: errorDetail,
               position: 'bottom',
               variant: 'danger',
               closable: true,
