@@ -87,7 +87,7 @@ export default {
     return {
       title1: 'Visit our store',
       phone: '0411 965 954',
-      address: '123 Address',
+      address: 'Suite 11 / 1407 Logan Rd Mt Gravatt QLD 4122',
       showNotes: false,
       importantNotes: [
         'For local (Gold Coast) customers and order pickups only.',

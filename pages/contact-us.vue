@@ -76,7 +76,10 @@
             <div class="mt-0 pt-3 text-[1.125rem] leading-[1.5em]">
               <template v-if="showMap">
                   <div class="my-4">
-                    <iframe src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69fb-11ed-a163-6117b7a7504e&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-27.932873&amp;long=153.38002&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a="" style="width: 100%; height: 350px;"></iframe>
+                    <iframe
+src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69fb-11ed-a163-6117b7a7504e&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-27.932873&amp;long=153.38002&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a=""
+                    style="width: 100%; height: 350px;"
+></iframe>
                   </div>
                   <button
                     type="button"
@@ -147,7 +150,7 @@
           </div>
           <div class="mb-[40px]"></div>
           <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
-            <div class="col-span-12 md:col-span-6">
+            <div v-if="socials.activate" class="col-span-12 md:col-span-6">
               <h5 class="text-[1.563rem] font-bold leading-[1] text-[#1a1d18]">
                 Follow us
               </h5>
@@ -272,10 +275,10 @@ export default {
   },
   data() {
     return {
-      address: '123 Address Street<br>Australia',
+      address: 'Suite 11 / 1407 Logan Rd<br>Mt Gravatt QLD 4122',
       importantNotes: 'For local (Gold Coast) customers and order pickups only. Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.',
       mapslink: 'https://www.google.com/maps/dir/?api=1&destination=280+Brisbane+Road+Labrador+QLD+4215',
-      mobile: '0451 620 707',
+      mobile: '0411 965 954',
       email: 'hello@thedrumhq.com.au',
       toemail: 'mailto:hello@thedrumhq.com.au',
       headline: 'ENQUIRE / BOOK TO VISIT US!',
@@ -288,6 +291,7 @@ export default {
       time3: '10:00AM - 3:00PM',
       time4: 'CLOSED',
       socials: {
+        activate: false,
         fb: '',
         linkedin: '',
         ig: '',
