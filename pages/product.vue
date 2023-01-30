@@ -88,10 +88,28 @@
             ></p>
             <p class="font-bold">
               <template v-if="product.stock > 0">
-                In Stock
+                <div class="flex space-x-1">
+                  <i class="ri-check-line text-green-500"></i>
+                  <span class="mt-1 text-sm font-bold uppercase">
+                    In Stock
+                  </span>
+                </div>
               </template>
               <template v-else>
-                Out of stock
+                <div class="ml-1 flex space-x-1">
+                  <i class="ri-forbid-line text-red-500"></i>
+                  <span class="mt-1 text-sm font-bold uppercase">
+                    Out of Stock
+                  </span>
+                </div>
+                <template v-if="product.has_variants">
+                  <div class="flex space-x-1">
+                    <i class="ri-check-line text-green-500"></i>
+                    <span class="mt-1 text-sm font-bold uppercase">
+                      Variants In Stock
+                    </span>
+                  </div>
+                </template>
               </template>
             </p>
           </div>
@@ -118,7 +136,7 @@
                       focus:border-gray-500 focus:bg-white focus:ring-0
                     "
                     step="1"
-                    min="1"
+                    min="0"
                     :max="product.stock"
                     :disabled="!product.stock > 0"
                     name="quantity"
@@ -370,6 +388,9 @@ export default {
         .$get(`v1/items/${itemId}`)
         .then((response) => {
           this.product = response.data.item
+          if (this.product.stock === 0) {
+            this.quantity = 0
+          }
           this.activeImageURL = this.getMediaURL(this.product.media[0])
           this.photos = this.product.media
         })
