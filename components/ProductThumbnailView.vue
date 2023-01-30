@@ -50,9 +50,8 @@
           </span>
         </div>
       </div>
-      <span
+      <h3
         class="
-          h-9
           break-words text-sm
           selection:bg-[#1a1d18]
           selection:text-white md:text-lg
@@ -70,7 +69,7 @@
             {{ name }}
           </span>
         </NuxtLink>
-      </span>
+      </h3>
       <div class="mt-2"></div>
       <span class="w-9 border-t-2 border-slate-600"></span>
       <div class="h-7">

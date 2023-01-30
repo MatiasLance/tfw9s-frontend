@@ -20,9 +20,9 @@
                   >
                     <a
                       :href="`${$config.baseURL}/storage/${photo.path}`"
-                      class="hover:border-brand-black mx-1
-                      inline-block border border-gray-200 p-1
-                      py-2 px-1 text-center"
+                      class="mx-1 inline-block
+                      border border-gray-200 p-1 py-2
+                      px-1 text-center hover:border-brand-black"
                       @click.prevent="setActiveMedia(photo)"
                       @mouseover="setActiveMedia(photo)"
                     >
@@ -130,11 +130,11 @@
                     <BaseButton
                       type="button"
                       class="
-                        bg-brand-black
                         h-14
                         w-full
-                        cursor-pointer rounded-lg
-                        border
+                        cursor-pointer
+                        rounded-lg border
+                        bg-brand-black
                         py-4
                         px-5
                         font-bold
@@ -154,11 +154,11 @@
                     <BaseButton
                       type="button"
                       class="
-                        bg-brand-black
                         h-14
                         w-full
-                        cursor-pointer rounded-lg
-                        border
+                        cursor-pointer
+                        rounded-lg border
+                        bg-brand-green
                         py-4
                         px-5
                         font-bold
@@ -181,11 +181,11 @@
                       <BaseButton
                         type="button"
                         class="
-                          bg-brand-green
                           h-14
                           w-full
-                          cursor-pointer rounded-lg
-                          border
+                          cursor-pointer
+                          rounded-lg border
+                          bg-brand-black
                           py-4
                           px-5
                           font-bold
@@ -206,16 +206,16 @@
                   <NuxtLink :to="`/shop?scroll=${true}`">
                     <span
                       class="
-                        text-brand-grey flex
-                        w-full items-center
-                        justify-center
+                        flex w-full
+                        items-center justify-center
                         border
-                        border-gray-200 bg-white
-                        py-3
+                        border-gray-200
+                        bg-white py-3
                         px-4
                         text-center
                         text-lg
-                        font-medium shadow-sm hover:bg-gray-100
+                        font-medium
+                        text-brand-grey shadow-sm hover:bg-gray-100
                       "
                     >
                     <i class="ri-arrow-left-s-line mr-2"></i>
