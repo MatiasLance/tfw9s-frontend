@@ -291,10 +291,10 @@ export default {
       time3: '10:00AM - 3:00PM',
       time4: 'CLOSED',
       socials: {
-        activate: false,
-        fb: '',
+        activate: true,
+        fb: '#',
         linkedin: '',
-        ig: '',
+        ig: '#',
         tiktok: '',
         youtube: ''
       }
