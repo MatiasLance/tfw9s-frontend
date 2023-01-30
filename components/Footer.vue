@@ -174,7 +174,7 @@ export default {
         },
         {
           to: '/shop',
-          text: 'Store',
+          text: 'Shop',
         },
         {
           to: '/contact-us',
