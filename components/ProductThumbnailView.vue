@@ -50,9 +50,8 @@
           </span>
         </div>
       </div>
-      <span
+      <h3
         class="
-          h-9
           break-words text-sm
           selection:bg-[#1a1d18]
           selection:text-white md:text-lg
@@ -70,7 +69,7 @@
             {{ name }}
           </span>
         </NuxtLink>
-      </span>
+      </h3>
       <div class="mt-2"></div>
       <span class="w-9 border-t-2 border-slate-600"></span>
       <div class="h-7">
@@ -104,19 +103,32 @@
       </VBtn>
 
       <span
-        class="pl-availability flex items-center justify-center space-x-1 py-3"
+        class="pl-availability flex flex-col
+        items-start justify-start space-x-1 py-3"
       >
         <template v-if="stock > 0">
-        <i class="ri-check-line text-green-500"></i>
-          <span class="mt-1 text-sm font-bold uppercase">
-            In Stock
-          </span>
+          <div class="flex space-x-1">
+            <i class="ri-check-line text-green-500"></i>
+            <span class="mt-1 text-sm font-bold uppercase">
+              In Stock
+            </span>
+          </div>
         </template>
         <template v-else>
-          <i class="ri-forbid-line text-orange-500"></i>
-          <span class="mt-1 text-sm font-bold uppercase">
-            Out of stock
-          </span>
+          <div class="ml-1 flex space-x-1">
+            <i class="ri-forbid-line text-red-500"></i>
+            <span class="mt-1 text-sm font-bold uppercase">
+              Out of stock
+            </span>
+          </div>
+          <template v-if="hasVariants">
+            <div class="flex space-x-1">
+              <i class="ri-check-line text-green-500"></i>
+              <span class="mt-1 text-sm font-bold uppercase">
+                Variants In Stock
+              </span>
+            </div>
+          </template>
         </template>
       </span>
     </div>
@@ -151,6 +163,10 @@ export default {
     },
     path: {
       type: String,
+      required: true
+    },
+    hasVariants: {
+      type: Boolean,
       required: true
     }
   },

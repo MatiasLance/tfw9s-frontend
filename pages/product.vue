@@ -20,9 +20,9 @@
                   >
                     <a
                       :href="`${$config.baseURL}/storage/${photo.path}`"
-                      class="hover:border-brand-black mx-1
-                      inline-block border border-gray-200 p-1
-                      py-2 px-1 text-center"
+                      class="mx-1 inline-block
+                      border border-gray-200 p-1 py-2
+                      px-1 text-center hover:border-brand-black"
                       @click.prevent="setActiveMedia(photo)"
                       @mouseover="setActiveMedia(photo)"
                     >
@@ -88,10 +88,32 @@
             ></p>
             <p class="font-bold">
               <template v-if="product.stock > 0">
-                In Stock
+                <div class="flex space-x-1">
+                  <i class="ri-check-line text-green-500"></i>
+                  <span class="mt-1 text-sm font-bold uppercase">
+                    In Stock
+                  </span>
+                </div>
               </template>
               <template v-else>
-                Out of stock
+                <div class="ml-1 flex space-x-1">
+                  <i class="ri-forbid-line text-red-500"></i>
+                  <span class="mt-1 text-sm font-bold uppercase">
+                    Out of Stock
+                  </span>
+                </div>
+                <template v-if="product.has_variants">
+                  <div class="flex space-x-1">
+                    <i class="ri-check-line text-green-500"></i>
+                    <!--
+                      show in stock when a particular product
+                      contains variants
+                    -->
+                    <span class="mt-1 text-sm font-bold uppercase">
+                      Variants In Stock
+                    </span>
+                  </div>
+                </template>
               </template>
             </p>
           </div>
@@ -118,7 +140,7 @@
                       focus:border-gray-500 focus:bg-white focus:ring-0
                     "
                     step="1"
-                    min="1"
+                    min="0"
                     :max="product.stock"
                     :disabled="!product.stock > 0"
                     name="quantity"
@@ -130,11 +152,11 @@
                     <BaseButton
                       type="button"
                       class="
-                        bg-brand-black
                         h-14
                         w-full
-                        cursor-pointer rounded-lg
-                        border
+                        cursor-pointer
+                        rounded-lg border
+                        bg-brand-black
                         py-4
                         px-5
                         font-bold
@@ -154,11 +176,11 @@
                     <BaseButton
                       type="button"
                       class="
-                        bg-brand-black
                         h-14
                         w-full
-                        cursor-pointer rounded-lg
-                        border
+                        cursor-pointer
+                        rounded-lg border
+                        bg-brand-green
                         py-4
                         px-5
                         font-bold
@@ -181,11 +203,11 @@
                       <BaseButton
                         type="button"
                         class="
-                          bg-brand-green
                           h-14
                           w-full
-                          cursor-pointer rounded-lg
-                          border
+                          cursor-pointer
+                          rounded-lg border
+                          bg-brand-black
                           py-4
                           px-5
                           font-bold
@@ -206,16 +228,16 @@
                   <NuxtLink :to="`/shop?scroll=${true}`">
                     <span
                       class="
-                        text-brand-grey flex
-                        w-full items-center
-                        justify-center
+                        flex w-full
+                        items-center justify-center
                         border
-                        border-gray-200 bg-white
-                        py-3
+                        border-gray-200
+                        bg-white py-3
                         px-4
                         text-center
                         text-lg
-                        font-medium shadow-sm hover:bg-gray-100
+                        font-medium
+                        text-brand-grey shadow-sm hover:bg-gray-100
                       "
                     >
                     <i class="ri-arrow-left-s-line mr-2"></i>
@@ -370,6 +392,9 @@ export default {
         .$get(`v1/items/${itemId}`)
         .then((response) => {
           this.product = response.data.item
+          if (this.product.stock === 0) {
+            this.quantity = 0
+          }
           this.activeImageURL = this.getMediaURL(this.product.media[0])
           this.photos = this.product.media
         })
