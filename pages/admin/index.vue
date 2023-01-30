@@ -8,18 +8,14 @@
           <li>
             <button
                 type="button"
-                class="flex h-10 w-10 items-center
-                justify-center overflow-hidden rounded-full border
-                border-transparent bg-gray-200 hover:border-brand-black"
+                class="flex h-10 w-36 items-center
+                justify-center overflow-hidden border
+                border-transparent text-base font-bold
+                hover:border-brand-black hover:bg-gray-200"
                 aria-label="Button name"
                 @click="toggle"
             >
-             <img
-             src="~/assets/images/avatars/avatar.jpg"
-             width="32"
-             height="32"
-             class="h-10 w-10 rounded-full"
-             >
+             Account
             </button>
           </li>
         </ul>

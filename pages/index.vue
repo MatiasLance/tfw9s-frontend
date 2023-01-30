@@ -2,12 +2,14 @@
 <template>
   <div class="max-w-full overflow-hidden">
     <HeroSection />
+    <HeroContentBlurbSection />
     <FeaturedProductsSection />
     <BeforeFooterSection v-if="showSections.beforeFooter" />
   </div>
 </template>
 
 <script>
+import HeroContentBlurbSection from '../components/HeroContentBlurbSection.vue';
 import FeaturedProductsSection from '~/components/FeaturedProductsSection.vue';
 import BeforeFooterSection from '~/components/BeforeFooterSection.vue';
 import HeroSection from '~/components/HeroSection'
@@ -18,7 +20,8 @@ export default {
   components: {
     HeroSection,
     BeforeFooterSection,
-    FeaturedProductsSection
+    FeaturedProductsSection,
+    HeroContentBlurbSection
   },
   mixins: [ aosMixin ],
   data() {

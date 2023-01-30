@@ -1,26 +1,29 @@
 <template>
-  <section
-    id="hero"
-    class="relative flex min-h-screen flex-col justify-center overflow-hidden"
-  >
-    <img
-      class="absolute min-h-screen min-w-full object-cover"
-      src="/img/hero/drum.webp"
-      alt=""
-    />
-    <div
-    class="absolute inset-0 min-h-screen
-    bg-gradient-to-r from-slate-800/50 to-black/50"
-    ></div>
+  <section id="hero" class="my-16 w-full">
     <BaseSection>
       <div
-        class="col-span-12 mt-12 px-6 text-center sm:space-y-8 lg:col-span-12"
+        class="
+          col-span-12
+          mt-12
+          space-y-4
+          px-6
+          sm:space-y-6
+          md:text-left
+          lg:col-span-6
+          xl:mt-10
+        "
       >
         <span
-          v-if="showContent.superheadline"
           data-aos="fade-right"
           data-aos-once="true"
-          class="pb-3 text-base font-semibold uppercase text-white "
+          class="
+            font-montserrat
+            pb-3
+            text-base
+            font-semibold
+            capitalize
+            text-brand-yellow
+          "
         >
           {{ superheadline }}
         </span>
@@ -29,14 +32,13 @@
           data-aos-once="true"
           class="
             font-montserrat
-            break-words
-            text-center text-[2rem]
-            font-black uppercase
-            leading-snug
-            tracking-wider
-            text-white
-            sm:text-5xl
-            xl:text-6xl
+            text-[2.5rem]
+            font-bold
+            uppercase
+            leading-tight
+            text-black
+            sm:pr-8 sm:text-5xl
+            xl:pr-10 xl:text-6xl
           "
         >
           {{ headline }}
@@ -45,7 +47,7 @@
           data-aos="fade-down"
           data-aos-once="true"
           data-aos-delay="300"
-          class="hidden text-white sm:block"
+          class="paragraph hidden sm:block"
         >
           {{ contentblurb }}
         </p>
@@ -53,20 +55,47 @@
           data-aos="fade-up"
           data-aos-once="true"
           data-aos-delay="700"
-          class="shop-cta sm:shop-cta-sm flex flex-col items-center
-          justify-center space-y-4 sm:flex-row sm:space-y-0
-          sm:space-x-4 md:mb-10"
+          class="
+            shop-cta
+            sm:shop-cta-sm
+            flex
+            flex-col
+            items-center space-y-4
+            sm:flex-row
+            sm:space-y-0
+            sm:space-x-4 md:mt-2 md:mb-10
+            md:items-start md:justify-start
+          "
         >
           <NuxtLink to="/shop">
-            <BaseButtonLight
-              class="max-w-full rounded-lg border border-white bg-transparent
-              py-8 px-14 uppercase hover:bg-brand-yellow
-              hover:text-brand-dgrey
-              focus:ring-1 focus:ring-white focus:ring-offset-2"
+            <BaseButton
+              class="
+                max-w-full
+                border border-gray-200
+                bg-gradient-to-r
+                from-brand-yellow
+                to-brand-yellow
+                py-4
+                px-8
+                font-bold
+                uppercase
+                text-white
+              "
             >
               {{ cta }}
-            </BaseButtonLight>
+            </BaseButton>
           </NuxtLink>
+        </div>
+      </div>
+      <div class="col-span-12 sm:block lg:col-span-6">
+        <div class="mt-[30px] w-full">
+          <img
+            data-aos="fade-up"
+            data-aos-once="true"
+            src="/img/hero/drum.webp"
+            class="p-4 shadow-lg sm:p-7 lg:-mt-4"
+            alt=""
+          />
         </div>
       </div>
     </BaseSection>
@@ -75,13 +104,9 @@
 
 <script>
 import BaseSection from './base/BaseSection.vue';
-import BaseButtonLight from './base/BaseButtonLight.vue';
 export default {
   name: 'HeroSection',
-  components: {
-    BaseSection,
-    BaseButtonLight
-  },
+  components: { BaseSection },
   data() {
     return {
       showContent: {
@@ -90,10 +115,10 @@ export default {
         cta: false,
         contentblurb: false
       },
-      superheadline: '',
-      headline: 'The Drum HQ',
+      superheadline: 'The Best In New & Used Drum Kits',
+      headline: 'Buy Premium New & Used Drum Kits',
       cta: 'Start Shopping',
-      contentblurb: 'Where drumming what you dream of becomes a tad closer',
+      contentblurb: 'Buy Online or Book To Visit Our Brisbane Store',
     };
   },
 };
