@@ -105,6 +105,10 @@
                 <template v-if="product.has_variants">
                   <div class="flex space-x-1">
                     <i class="ri-check-line text-green-500"></i>
+                    <!--
+                      show in stock when a particular product
+                      contains variants
+                    -->
                     <span class="mt-1 text-sm font-bold uppercase">
                       Variants In Stock
                     </span>
