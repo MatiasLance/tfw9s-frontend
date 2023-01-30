@@ -140,8 +140,11 @@
                         "
                         />
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
-
+                  <div
+                    class="grid grid-cols-2 gap-4"
+                  >
+                  <!-- COUNTRY own -->
+                  <div class="col-span-2 grid grid-cols-3 gap-4">
                     <div class="col-span-3 flex flex-col space-y-3">
                         <hr class="my-3 w-32" />
                         <h3 class="mb-5 text-xl font-bold">
@@ -165,12 +168,12 @@
         class="
         mt-1 mr-2 h-4 w-4 self-center bg-gray-200
         text-brand-black focus:ring-brand-black"
+        @change="toggleOtherStateOwnCountry()"
         />
     </span>
     <span class="self-center">Activate</span>
 </label>
                     </div>
-                        <!-- COUNTRY own -->
                     <section
                         id="ownCountry"
                         class="col-span-3 grid grid-cols-3 gap-4"
@@ -203,7 +206,7 @@ focus:outline-none disabled:opacity-75"
                                 </option>
                             </select>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!own.country.activate ? 'opacity-75' : ''"
@@ -233,10 +236,11 @@ focus:outline-none disabled:opacity-75"
                                     step=".01"
                                     min="0"
                                     @keydown="handleDecimal"
+                            @change="setOtherStateOwnCountryShippingValues()"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!own.country.activate ? 'opacity-75' : ''"
@@ -266,10 +270,11 @@ focus:outline-none disabled:opacity-75"
                                     step=".01"
                                     min="0"
                                     @keydown="handleDecimal"
+                            @change="setOtherStateOwnCountryShippingValues()"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!own.country.activate ? 'opacity-75' : ''"
@@ -300,13 +305,14 @@ focus:outline-none disabled:opacity-75"
                               step=".01"
                               min="0"
                               @keydown="handleDecimal"
+                              @change="setOtherStateOwnCountryShippingValues()"
                                 />
                             </div>
                         </div>
                         <div class="col-span-3 mb-4">
                             <div class="grid w-full grid-cols-3 gap-2">
                                 <div
-                                    class="col-span-1 flex flex-col
+                                    class="col-span-3 flex flex-col
                                     justify-start space-y-2"
                                 >
                                 <label
@@ -346,13 +352,16 @@ focus:outline-none disabled:opacity-75"
                                 step=".01"
                                 min="0"
                                 @keydown="handleDecimal"
+                          @change="setOtherStateOwnCountryShippingValues()"
                                     />
                                 </div>
                                 </div>
                             </div>
                         </div>
                     </section>
-
+                  </div>
+                  <!-- STATE own -->
+                  <div class="col-span-2 grid grid-cols-3 gap-4">
                     <div class="col-span-3 flex flex-col space-y-3">
                         <hr class="my-3 w-32" />
                         <h3 class="mb-5 text-xl font-bold">
@@ -381,7 +390,6 @@ focus:outline-none disabled:opacity-75"
     <span>Activate</span>
 </label>
                     </div>
-                        <!-- STATE own -->
                     <section
                         id="ownState"
                         class="col-span-3 grid grid-cols-3 gap-4"
@@ -455,7 +463,7 @@ focus:outline-none disabled:opacity-75"
                                 />
                             </template>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                             class="mb-1 block"
                             :class="!own.state.activate ? 'opacity-75' : ''"
@@ -496,7 +504,7 @@ focus:outline-none disabled:opacity-75"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!own.state.activate ? 'opacity-75' : ''"
@@ -530,7 +538,7 @@ focus:outline-none disabled:opacity-75"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!own.state.activate ? 'opacity-75' : ''"
@@ -568,7 +576,7 @@ focus:outline-none disabled:opacity-75"
 <div class="col-span-3 mb-4">
     <div class="grid w-full grid-cols-3 gap-2">
         <div
-            class="col-span-1 flex flex-col
+            class="col-span-3 flex flex-col
             justify-start space-y-2"
         >
             <label
@@ -614,7 +622,9 @@ focus:outline-none disabled:opacity-75"
     </div>
 </div>
                     </section>
-
+                  </div>
+                  <!-- CITY own -->
+                  <div class="col-span-2 grid grid-cols-3 gap-4">
                     <div class="col-span-3 flex flex-col space-y-3">
                         <hr class="my-3 w-32" />
                         <h3 class="mb-5 text-xl font-bold">
@@ -643,8 +653,7 @@ focus:outline-none disabled:opacity-75"
                             </span>
                             <span>Activate</span>
                         </label>
-                </div>
-                        <!-- CITY own -->
+                    </div>
                     <section
                         id="ownCity"
                         class="col-span-3 grid grid-cols-3 gap-4"
@@ -676,7 +685,7 @@ focus:outline-none disabled:opacity-75"
                                 :disabled="!own.city.activate"
                             />
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!own.city.activate ? 'opacity-75' : ''"
@@ -717,7 +726,7 @@ focus:outline-none disabled:opacity-75"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                             class="mb-1 block"
                             :class="!own.city.activate ? 'opacity-75' : ''"
@@ -751,7 +760,7 @@ focus:outline-none disabled:opacity-75"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!own.city.activate ? 'opacity-75' : ''"
@@ -789,7 +798,7 @@ focus:outline-none disabled:opacity-75"
 <div class="col-span-3 mb-4">
     <div class="grid w-full grid-cols-3 gap-2">
         <div
-            class="col-span-1 flex flex-col
+            class="col-span-3 flex flex-col
             justify-start space-y-2"
         >
         <label
@@ -836,7 +845,10 @@ focus:outline-none disabled:opacity-75"
     </div>
 </div>
                     </section>
+                  </div>
 
+                  <!-- COUNTRY other -->
+                  <div class="col-span-2 grid grid-cols-3 gap-4">
                     <div class="col-span-3 flex flex-col space-y-3">
                         <hr class="my-3 w-32" />
                         <h3 class="mb-5 text-xl font-bold">
@@ -866,12 +878,11 @@ focus:outline-none disabled:opacity-75"
                             <span>Activate</span>
                         </label>
                     </div>
-                        <!-- COUNTRY other -->
                     <section
                         id="otherCountry"
                         class="col-span-3 grid grid-cols-3 gap-4"
                     >
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                           :class="!other.country.activate ? 'opacity-75' : ''"
@@ -904,7 +915,7 @@ focus:outline-none disabled:opacity-75"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                           :class="!other.country.activate ? 'opacity-75' : ''"
@@ -938,7 +949,7 @@ focus:outline-none disabled:opacity-75"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                           :class="!other.country.activate ? 'opacity-75' : ''"
@@ -976,7 +987,7 @@ focus:outline-none disabled:opacity-75"
 <div class="col-span-3 mb-4">
     <div class="grid w-full grid-cols-3 gap-2">
         <div
-            class="col-span-1 flex flex-col
+            class="col-span-3 flex flex-col
             justify-start space-y-2"
         >
         <label
@@ -998,17 +1009,17 @@ focus:outline-none disabled:opacity-75"
                 v-model="other.country.insuranceValue"
                 class="
                 shipping-option
-                    w-full
-                    appearance-none
-                    border border-transparent
-                    bg-gray-100 py-4 px-5
-                    pr-12
-                    pl-8
-                    text-base
-                    hover:border-gray-400
-                    focus:border-gray-500
-                    focus:outline-none focus:ring-0
-                    disabled:opacity-75
+                w-full
+                appearance-none
+                border border-transparent
+                bg-gray-100 py-4 px-5
+                pr-12
+                pl-8
+                text-base
+                hover:border-gray-400
+                focus:border-gray-500
+                focus:outline-none focus:ring-0
+                disabled:opacity-75
                 "
             :class="!other.country.activate ? 'disabled' : ''"
                 type="number"
@@ -1022,7 +1033,9 @@ focus:outline-none disabled:opacity-75"
     </div>
 </div>
                     </section>
+                  </div>
 
+                  <div class="col-span-2 grid grid-cols-3 gap-4">
                     <div class="col-span-3 flex flex-col space-y-3">
                         <hr class="my-3 w-32" />
                         <h3 class="mb-5 text-xl font-bold">
@@ -1047,17 +1060,22 @@ focus:outline-none disabled:opacity-75"
                                 mt-1 mr-1
                                 h-4 w-4 bg-gray-200 text-brand-black
                                 focus:ring-brand-black"
+                                readonly
                                 />
                             </span>
                             <span>Activate</span>
                         </label>
+                        <small class="text-xs">
+                          This setting auto copies from
+                          <span class="font-bold">Own Country</span> setting
+                        </small>
                     </div>
                         <!-- STATE other -->
                     <section
                         id="otherState"
                         class="col-span-3 grid grid-cols-3 gap-4"
                     >
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!other.state.activate ? 'opacity-75' : ''"
@@ -1094,11 +1112,45 @@ focus:outline-none disabled:opacity-75"
                                   step=".01"
                                   min="0"
                                   :disabled="!other.state.activate"
+                                  readonly
                                   @keydown="handleDecimal"
                                 />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
+                            <label
+                              class="mb-1 block"
+                              :class="!other.state.activate ? 'opacity-75' : ''"
+                            >
+                                Express Post Added Value
+                            </label>
+                            <input
+                                v-model.trim="other.state.expressPostValue"
+                                class="
+                                shipping-option
+                                    w-full
+                                    appearance-none
+                                    border border-transparent
+                                    bg-gray-100
+                                    py-4
+                                    px-5 pl-8
+                                    text-base
+                                    hover:border-gray-400
+                                    focus:border-gray-500
+                                    focus:outline-none focus:ring-0
+                                    disabled:opacity-75
+                                "
+                                :class="!other.state.activate ? 'disabled' : ''"
+                                type="number"
+                                required
+                                step=".01"
+                                min="0"
+                                :disabled="!other.state.activate"
+                                readonly
+                                @keydown="handleDecimal"
+                            />
+                        </div>
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!other.state.activate ? 'opacity-75' : ''"
@@ -1138,46 +1190,15 @@ focus:outline-none disabled:opacity-75"
                             step=".01"
                             min="0"
                             :disabled="!other.state.activate"
+                            readonly
                             @keydown="handleDecimal"
                             />
                             </div>
                         </div>
-                        <div class="col-span-3 mb-4 lg:col-span-1">
-                            <label
-                              class="mb-1 block"
-                              :class="!other.state.activate ? 'opacity-75' : ''"
-                            >
-                                Express Post Added Value
-                            </label>
-                            <input
-                                v-model.trim="other.state.expressPostValue"
-                                class="
-                                shipping-option
-                                    w-full
-                                    appearance-none
-                                    border border-transparent
-                                    bg-gray-100
-                                    py-4
-                                    px-5 pl-8
-                                    text-base
-                                    hover:border-gray-400
-                                    focus:border-gray-500
-                                    focus:outline-none focus:ring-0
-                                    disabled:opacity-75
-                                "
-                                :class="!other.state.activate ? 'disabled' : ''"
-                                type="number"
-                                required
-                                step=".01"
-                                min="0"
-                                :disabled="!other.state.activate"
-                                @keydown="handleDecimal"
-                            />
-                        </div>
 <div class="col-span-3 mb-4">
     <div class="grid w-full grid-cols-3 gap-2">
         <div
-            class="col-span-1 flex flex-col
+            class="col-span-3 flex flex-col
             justify-start space-y-2"
         >
         <label
@@ -1216,6 +1237,7 @@ focus:outline-none disabled:opacity-75"
                 step=".01"
                 min="0"
                 :disabled="!other.state.activate"
+                readonly
                 @keydown="handleDecimal"
             />
         </div>
@@ -1223,7 +1245,9 @@ focus:outline-none disabled:opacity-75"
     </div>
 </div>
                     </section>
+                  </div>
 
+                  <div class="col-span-2 grid grid-cols-3 gap-4">
                     <div class="col-span-3 flex flex-col space-y-3">
                         <hr class="my-3 w-32" />
                         <h3 class="mb-5 text-xl font-bold">
@@ -1258,7 +1282,7 @@ focus:outline-none disabled:opacity-75"
                         id="otherCity"
                         class="col-span-3 grid grid-cols-3 gap-4"
                     >
-                        <div class="col-span-3 mb-4 lg:col-span-1">
+                        <div class="col-span-3 mb-4">
                             <label
                               class="mb-1 block"
                               :class="!other.city.activate ? 'opacity-75' : ''"
@@ -1298,7 +1322,7 @@ focus:outline-none disabled:opacity-75"
                                 />
                             </div>
                         </div>
-<div class="col-span-3 mb-4 lg:col-span-1">
+<div class="col-span-3 mb-4">
     <label
       class="mb-1 block"
       :class="!other.city.activate ? 'opacity-75' : ''"
@@ -1342,7 +1366,7 @@ focus:outline-none disabled:opacity-75"
     />
     </div>
 </div>
-<div class="col-span-3 mb-4 lg:col-span-1">
+<div class="col-span-3 mb-4">
     <label
       class="mb-1 block"
       :class="!other.city.activate ? 'opacity-75' : ''"
@@ -1377,7 +1401,7 @@ focus:outline-none disabled:opacity-75"
 <div class="col-span-3 mb-4">
     <div class="grid w-full grid-cols-3 gap-2">
         <div
-            class="col-span-1 flex flex-col
+            class="col-span-3 flex flex-col
             justify-start space-y-2"
         >
             <label
@@ -1422,54 +1446,55 @@ focus:outline-none disabled:opacity-75"
     </div>
 </div>
                     </section>
-                        <!-- BUTTONS -->
-                        <div class="col-span-3 my-4">
-                            <hr class="my-4" />
-                            <div
-                                class="flex flex-col justify-start
-                                sm:flex-row sm:justify-end
-                                sm:space-x-4"
-                            >
-                                <button
-                                type="submit"
-                                class="
-                                    my-2
-                                    inline-block
-                                    w-full
-                                    border border-transparent
-                                    bg-brand-green
-                                    py-3
-                                    px-5
-                                    text-center
-                                    font-bold
-                                    text-white
-                                    hover:bg-brand-dgrey
-                                "
-                                >
-                                Confirm
-                                </button>
-                                <button
-                                type="button"
-                                class="
-                                    my-2
-                                    inline-block
-                                    w-full
-                                    border border-transparent
-                                    bg-brand-lgrey
-                                    py-3
-                                    px-5
-                                    text-center
-                                    font-bold
-                                    text-brand-black
-                                    hover:bg-brand-dgrey hover:text-white
-                                "
-                                @click="cancel"
-                                >
-                                Cancel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                  </div>
+                      <!-- BUTTONS -->
+                      <div class="col-span-3 my-4">
+                          <hr class="my-4" />
+                          <div
+                              class="flex flex-col justify-start
+                              sm:flex-row sm:justify-end
+                              sm:space-x-4"
+                          >
+                              <button
+                              type="submit"
+                              class="
+                                  my-2
+                                  inline-block
+                                  w-full
+                                  border border-transparent
+                                  bg-brand-green
+                                  py-3
+                                  px-5
+                                  text-center
+                                  font-bold
+                                  text-white
+                                  hover:bg-brand-dgrey
+                              "
+                              >
+                              Confirm
+                              </button>
+                              <button
+                              type="button"
+                              class="
+                                  my-2
+                                  inline-block
+                                  w-full
+                                  border border-transparent
+                                  bg-brand-lgrey
+                                  py-3
+                                  px-5
+                                  text-center
+                                  font-bold
+                                  text-brand-black
+                                  hover:bg-brand-dgrey hover:text-white
+                              "
+                              @click="cancel"
+                              >
+                              Cancel
+                              </button>
+                          </div>
+                      </div>
+                  </div>
                 </form>
             </div>
             <div class="my-16">
@@ -1966,6 +1991,16 @@ export default {
         '.'
       ]
       return keyCodes.includes(event.code) ? true : !isNaN(Number(event.key)) && event.code!=='Space'
+    },
+    toggleOtherStateOwnCountry() {
+      this.other.state.activate = this.own.country.activate
+    },
+    setOtherStateOwnCountryShippingValues() {
+      this.other.state.expressPostValue = this.own.country.expressPostValue
+      this.other.state.registeredPostValue =
+        this.own.country.registeredPostValue
+      this.other.state.shippingValue = this.own.country.shippingValue
+      this.other.state.insuranceValue = this.own.country.insuranceValue
     },
     testFunc6() {
       this.showOwnCity = true
