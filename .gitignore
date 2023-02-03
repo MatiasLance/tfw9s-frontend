@@ -93,4 +93,4 @@ sw.*
 .bash_history
 
 # Image Zone Identifier
-*:Zone.Identifier
+**:Zone.Identifier

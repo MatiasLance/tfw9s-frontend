@@ -2,6 +2,29 @@
     <div class="w-full">
         <BaseSection class="my-16 sm:my-12 sm:px-12">
             <div
+            data-aos="fade-right"
+            class="col-span-12
+            mt-4
+            space-y-6
+            py-8
+            md:text-left
+            lg:space-y-8"
+            >
+            <span
+            data-aos="fade-right"
+            data-aos-once="true"
+            class="
+                font-montserrat
+                pb-3
+                text-2xl
+                font-semibold
+                capitalize
+            "
+            >
+            Who is The Drum HQ
+            </span>
+            </div>
+            <div
                 data-aos="fade-right"
                 data-aos-delay="300"
                 class="col-span-12 hidden sm:block lg:col-span-6"

@@ -451,7 +451,7 @@ export default {
         },
         {
           to: '/about-us',
-          text: 'About',
+          text: 'About  ',
         },
         {
           to: '/contact-us',
