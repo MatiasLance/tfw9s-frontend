@@ -37,8 +37,6 @@
             placeholder="Name"
           />
         </div>
-      </div>
-      <div class="-mx-3 mb-6 flex flex-wrap">
         <div class="w-full px-3">
           <label
             class="
