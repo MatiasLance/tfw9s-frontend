@@ -450,6 +450,10 @@ export default {
           text: 'Shop',
         },
         {
+          to: '/about-us',
+          text: 'About  ',
+        },
+        {
           to: '/contact-us',
           text: 'Contact',
         },
