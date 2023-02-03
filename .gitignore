@@ -91,3 +91,6 @@ sw.*
 
 # Shell History
 .bash_history
+
+# Image Zone Identifier
+:Zone.Identifier
