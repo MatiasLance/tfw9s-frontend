@@ -36,7 +36,7 @@ export default {
         cta: false,
         contentblurb: false
       },
-      heading: '#1 For New & Used Drum Kits Australia',
+      heading: 'Some of the best drum gear the world has to offer….',
       paragraphs: [
         {
           id: '1',
