@@ -115,8 +115,8 @@ export default {
         cta: false,
         contentblurb: false
       },
-      superheadline: 'The Best In New & Used Drum Kits',
-      headline: 'Buy Premium New & Used Drum Kits',
+      superheadline: 'The Ultimate drum-nerd, and collectable drum gear from all over the world',
+      headline: 'BUY PREMIUM NEW & USED DRUM GEAR',
       cta: 'Start Shopping',
       contentblurb: 'Buy Online or Book To Visit Our Brisbane Store',
     };
