@@ -434,6 +434,34 @@
                   </span>
                   <span>Out of stock</span>
                 </label>
+                <div
+                  v-if="inStockRadio === 'No'"
+                  class="col-span-2"
+                >
+                <label
+                  class="
+                  flex
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
+                  bg-transparent p-3
+                  hover:border-brand-black
+                  hover:bg-slate-50
+                  "
+                >
+                  <span>
+                    <input
+                      v-model="hideOutOfStock"
+                      name="hideOutOfStock"
+                      type="checkbox"
+                      class="
+                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                      focus:ring-brand-black"
+                    />
+                  </span>
+                  <span>Hide 'Out of stock' label if variants have stock</span>
+                </label>
+                </div>
               </div>
               <div class="grid w-full grid-cols-2 gap-2">
                 <input
@@ -799,6 +827,34 @@
                 </span>
                 <span>Out of stock</span>
                 </label>
+                <div
+                  v-if="inStockRadio === 'No'"
+                  class="col-span-2"
+                >
+                <label
+                  class="
+                  flex
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
+                  bg-transparent p-3
+                  hover:border-brand-black
+                  hover:bg-slate-50
+                  "
+                >
+                  <span>
+                    <input
+                      v-model="hideOutOfStock"
+                      name="hideOutOfStock"
+                      type="checkbox"
+                      class="
+                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
+                      focus:ring-brand-black"
+                    />
+                  </span>
+                  <span>Hide 'Out of stock' label if variants have stock</span>
+                </label>
+                </div>
               </div>
               <div class="grid w-full grid-cols-2 gap-2">
                 <input
@@ -1259,6 +1315,7 @@ export default {
       multipleCategoryCounter: 1,
       multipleCategoryBuffer: [ 1 ],
       inStockRadio: 'Yes',
+      hideOutOfStock: false,
       isOpen: false,
       fullName: '',
       firstname: '',
@@ -1722,6 +1779,7 @@ export default {
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
           this.isItemFeatured = response.data.item.is_featured;
+          this.hideOutOfStock = response.data.item.isHideOutOfStock;
           this.imgUrlEdit = response.data.item.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
@@ -1803,6 +1861,7 @@ export default {
             description: this.description,
             categoryId: this.selectedCategory.map(x => x.id),
             inStock: this.inStock,
+            isHideOutOfStock: this.hideOutOfStock,
             tags: this.tags.map((x) => x.id),
             photo: this.imgList,
             shippingowncountry: this.selectedShipSetting.own.country,
@@ -1818,6 +1877,7 @@ export default {
           form.append('description', product.description);
           form.append('price', product.price);
           form.append('stock', product.inStock);
+          form.append('isHideOutOfStock', product.isHideOutOfStock);
           form.append('shipping_owncountryid', product.shippingowncountry);
           form.append('shipping_ownstateid', product.shippingownstate);
           form.append('shipping_owncityid', product.shippingowncity);
@@ -1884,6 +1944,7 @@ export default {
         price: this.price,
         description: this.description,
         inStock: this.inStock,
+        isHideOutOfStock: this.hideOutOfStock,
         categoryId: this.selectedCategory.map(x => x.id),
         tags: this.tags.map((x) => x.id),
         photo: this.imgListEdit,
@@ -1896,6 +1957,7 @@ export default {
       form.append('description', editedProduct.description);
       form.append('price', editedProduct.price);
       form.append('stock', editedProduct.inStock);
+      form.append('isHideOutOfStock', editedProduct.isHideOutOfStock);
       form.append('isFeatured', editedProduct.isFeatured);
       for (let i = 0; i < editedProduct.tags.length; i++) {
         form.append('tags[]', editedProduct.tags[i]);
@@ -2107,6 +2169,7 @@ export default {
       }
       if (this.inStockRadio === 'Yes') {
         this.inStock = 1
+        this.hideOutOfStock = false
       }
     },
     handleNegativeValue() {
