@@ -96,7 +96,7 @@
                 </div>
               </template>
               <template v-else>
-                <template v-if="showOutOfStock">
+                <template v-if="!product.isHideOutOfStock">
                   <div class="ml-1 flex space-x-1">
                     <i class="ri-forbid-line text-red-500"></i>
                     <span class="mt-1 text-sm font-bold uppercase">
@@ -340,7 +340,6 @@ export default {
         description: '',
         price: '',
         stock: '',
-        isHideOutOfStock: false,
         parent: null,
         categories: [],
         tags: [],
@@ -380,9 +379,6 @@ export default {
   },
   mounted() {
     this.retrieveItem(this.$route.query.id);
-    if (this.product.isHideOutOfStock && this.product.has_variants) {
-      this.showOutOfStock = false;
-    }
   },
   methods: {
     viewVariantSlider() {
