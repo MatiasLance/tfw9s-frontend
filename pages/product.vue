@@ -96,12 +96,14 @@
                 </div>
               </template>
               <template v-else>
-                <div class="ml-1 flex space-x-1">
-                  <i class="ri-forbid-line text-red-500"></i>
-                  <span class="mt-1 text-sm font-bold uppercase">
-                    Out of Stock
-                  </span>
-                </div>
+                <template v-if="showOutOfStock">
+                  <div class="ml-1 flex space-x-1">
+                    <i class="ri-forbid-line text-red-500"></i>
+                    <span class="mt-1 text-sm font-bold uppercase">
+                      Out of Stock
+                    </span>
+                  </div>
+                </template>
                 <template v-if="product.has_variants">
                   <div class="flex space-x-1">
                     <i class="ri-check-line text-green-500"></i>
@@ -338,12 +340,16 @@ export default {
         description: '',
         price: '',
         stock: '',
+        isHideOutOfStock: false,
         parent: null,
         categories: [],
         tags: [],
         variants: [],
         related: [],
+        // eslint-disable-next-line camelcase
+        has_variants: false,
       },
+      showOutOfStock: true,
       activeImageURL: '',
       photos: [],
       quantity: 1,
@@ -374,6 +380,9 @@ export default {
   },
   mounted() {
     this.retrieveItem(this.$route.query.id);
+    if (this.product.isHideOutOfStock && this.product.has_variants) {
+      this.showOutOfStock = false;
+    }
   },
   methods: {
     viewVariantSlider() {

@@ -45,6 +45,7 @@
         :stock="product.stock"
         :path="getMediaURL(product.media[0])"
         :has-variants="product.has_variants"
+        :is-hide-out-of-stock="product.isHideOutOfStock"
       />
     </section>
   </div>

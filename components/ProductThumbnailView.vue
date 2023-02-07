@@ -115,12 +115,14 @@
           </div>
         </template>
         <template v-else>
-          <div class="ml-1 flex space-x-1">
-            <i class="ri-forbid-line text-red-500"></i>
-            <span class="mt-1 text-sm font-bold uppercase">
-              Out of stock
-            </span>
-          </div>
+          <template v-if="showOutOfStock">
+            <div class="ml-1 flex space-x-1">
+              <i class="ri-forbid-line text-red-500"></i>
+              <span class="mt-1 text-sm font-bold uppercase">
+                Out of stock
+              </span>
+            </div>
+          </template>
           <template v-if="hasVariants">
             <div class="flex space-x-1">
               <i class="ri-check-line text-green-500"></i>
@@ -168,12 +170,17 @@ export default {
     hasVariants: {
       type: Boolean,
       required: true
+    },
+    isHideOutOfStock: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
     return {
       currencyCode: 'AUD',
-      showComponent: false
+      showComponent: false,
+      showOutOfStock: true
     }
   },
   computed: {
@@ -187,6 +194,15 @@ export default {
         return this.$store.getters['cart/cartCount']
       },
     },
+  },
+  mounted() {
+    this.$nextTick(() => {
+      if (this.isHideOutOfStock && this.hasVariants) {
+        this.showOutOfStock = false
+      } else {
+        this.showOutOfStock = true
+      }
+    })
   },
   methods: {
     viewItem() {
