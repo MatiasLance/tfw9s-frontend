@@ -1554,7 +1554,8 @@ import aosMixin from '~/mixins/aos';
 import currencyMixin from '@/mixins/currency';
 import ShippingSettingElement from '~/components/ShippingSettingElement.vue';
 
-const countryList = {
+const COUNTRY = 'Australia';
+const COUNTRYLIST = {
   'AF': 'Afghanistan',
   'AX': 'Åland Islands',
   'AL': 'Albania',
@@ -1916,7 +1917,6 @@ export default {
           activate: false,
         },
       },
-      country: 'Australia',
       ownCountry: '',
       state: '',
       city: '',
@@ -1961,8 +1961,6 @@ export default {
       showFreeShippingNoteCountry: false,
       showFreeShippingNoteState: false,
       showFreeShippingNoteCity: false,
-      shippingChoice: 'AU',
-      countries: countryList,
       showInsurance: false,
       showInsurance2: false,
       showInsurance3: false,
@@ -1976,6 +1974,18 @@ export default {
       showOtherCity: false,
       showSelectState: false,
       showSelectCity: false
+    }
+  },
+  computed: {
+    country: {
+      get() {
+        return COUNTRY
+      }
+    },
+    countries: {
+      get() {
+        return COUNTRYLIST
+      }
     }
   },
   mounted() {
@@ -2002,144 +2012,11 @@ export default {
       this.other.state.shippingValue = this.own.country.shippingValue
       this.other.state.insuranceValue = this.own.country.insuranceValue
     },
-    testFunc6() {
-      this.showOwnCity = true
-      this.showOtherCity = false
-    },
-    testFunc7() {
-      this.showOtherCity = true
-      this.showOwnCity = false
-    },
-    testFunc4() {
-      this.showOwnState = true
-      this.showOtherState = false
-      this.showSelectCity = true
-    },
-    testFunc5() {
-      this.showOtherState = true
-      this.showOwnState = false
-      this.showSelectCity = true
-    },
-    testFunc2() {
-      this.showSelectState = true
-    },
-    testFunc1() {
-      this.showOwnState = false
-      this.showOtherState = false
-      this.showOwnCity = false
-      this.showOtherCity = false
-      this.showSelectState = false
-      this.showSelectCity = false
-      this.ownOrOtherState = ''
-      this.ownOrOtherCity = ''
-    },
     categoriesLink() {
       this.$router.push('/admin/categories')
     },
     productsLink() {
       this.$router.push('/admin/parts-list')
-    },
-    toggleShippingMode() {
-      if (this.selectShippingMode === 'standard') {
-        this.showRegisteredPost = true
-        this.showExpressPost = false
-        this.own.country.expressPostValue = 0.00
-      }
-      if (this.selectShippingMode === 'express') {
-        this.showExpressPost = true
-        this.showRegisteredPost = false
-        this.own.country.registeredPostValue = 0.00
-      }
-    },
-    toggleInsurance() {
-      if (this.insuranceCheck === true) {
-        this.showInsurance = true
-      } else {
-        this.showInsurance = false
-        this.own.country.insuranceValue = 0.00
-      }
-    },
-    toggleInsurance2() {
-      if (this.insuranceCheck2 === true) {
-        this.showInsurance2 = true
-      } else {
-        this.showInsurance2 = false
-        this.own.state.insuranceValue = 0.00
-      }
-    },
-    toggleInsurance3() {
-      if (this.insuranceCheck3 === true) {
-        this.showInsurance3 = true
-      } else {
-        this.showInsurance3 = false
-        this.own.city.insuranceValue = 0.00
-      }
-    },
-    toggleInsurance4() {
-      if (this.insuranceCheck4 === true) {
-        this.showInsurance4 = true
-      } else {
-        this.showInsurance4 = false
-        this.other.country.insuranceValue = 0.00
-      }
-    },
-    toggleInsurance5() {
-      if (this.insuranceCheck5 === true) {
-        this.showInsurance5 = true
-      } else {
-        this.showInsurance5 = false
-        this.other.state.insuranceValue = 0.00
-      }
-    },
-    toggleInsurance6() {
-      if (this.insuranceCheck6 === true) {
-        this.showInsurance6 = true
-      } else {
-        this.showInsurance6 = false
-        this.other.city.insuranceValue = 0.00
-      }
-    },
-    toggleMaxShippingCountry() {
-      if (this.own.country.maxShippingCheck === true) {
-        this.own.country.showMaxShipping = true
-      } else {
-        this.own.country.showMaxShipping = false
-      }
-    },
-    toggleMaxShippingCountryOther() {
-      if (this.other.country.maxShippingCheck === true) {
-        this.other.country.showMaxShipping = true
-      } else {
-        this.other.country.showMaxShipping = false
-      }
-    },
-    toggleMaxShippingState() {
-      if (this.own.state.maxShippingCheck === true) {
-        this.own.state.showMaxShipping = true
-      } else {
-        this.own.state.showMaxShipping = false
-      }
-    },
-    toggleMaxShippingStateOther() {
-      if (this.other.state.maxShippingCheck === true) {
-        this.other.state.showMaxShipping = true
-      } else {
-        this.other.state.showMaxShipping = false
-      }
-    },
-    toggleMaxShippingCity() {
-      if (this.own.city.maxShippingCheck === true) {
-        this.own.city.showMaxShipping = true
-      } else {
-        this.own.city.showMaxShipping = false
-      }
-    },
-    toggleMaxShippingCityOther() {
-      if (this.other.city.maxShippingCheck === true) {
-        this.other.city.showMaxShipping = true
-      } else {
-        this.other.city.showMaxShipping = false
-      }
     },
     addShip() {
       this.showAddShippingSettingForm = true
@@ -2509,16 +2386,6 @@ export default {
           })
         })
     },
-    // todo: hide update Shipping for now
-    updateShipping() {
-      this.$oruga.notification.open({
-        message: 'Work in progress',
-        variant: 'warning',
-        duration: 3000,
-        position: 'bottom',
-        queue: true
-      })
-    },
     removeShipping(index) {
       this.$axios
         .$delete(`/v1/shipping/${index}`)
@@ -2544,13 +2411,6 @@ export default {
     },
     cancel() {
       this.hideShip()
-    },
-    setOwnCountry() {
-      if (!this.isDefaultCountry) {
-        this.ownCountry = ''
-      } else {
-        this.ownCountry = this.country
-      }
     },
   }
 }

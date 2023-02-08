@@ -116,7 +116,7 @@ Here is what's happening with your shop today:
                   </template>
                   <hr class="my-4">
                   <NuxtLink
-                    to="/admin/parts-list"
+                    :to="panel.route"
                     class="hover:text-brand-black"
                   >
                     <i
