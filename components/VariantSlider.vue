@@ -14,6 +14,7 @@
       :stock="item.stock"
       :path="getMediaURL(item.media[0])"
       :has-variants="item.has_variants"
+      :is-hide-out-of-stock="item.isHideOutOfStock"
     />
   </VueSlickCarousel>
 </template>
