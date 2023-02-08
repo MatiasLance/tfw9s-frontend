@@ -95,79 +95,36 @@ Here is what's happening with your shop today:
             class="mb-5 grid gap-6 md:grid-cols-2
             lg:grid-cols-3 xl:grid-cols-3"
         >
-            <article class="rounded border border-gray-200 bg-white shadow-sm">
+            <article
+              v-for="panel in panels"
+              :key="panel"
+              class="rounded border border-gray-200 bg-white shadow-sm"
+            >
               <div class="p-5">
                   <h2 class="text-lg font-semibold text-black">
-                    Products
+                    {{ panel.title }}
                   </h2>
-                  <small
-                  class="mb-1 font-bold  uppercase text-gray-400"
-                  >TOTAL</small>
-                  <div class="flex items-start">
-                    <h4 class="mr-2 text-3xl font-bold" data-aos="fade-up">
-                        {{ totalItems }}
-                    </h4>
-                  </div>
+                  <template v-if="panel.count !== 0">
+                    <small
+                    class="mb-1 font-bold  uppercase text-gray-400"
+                    >TOTAL</small>
+                    <div class="flex items-start">
+                      <h4 class="mr-2 text-3xl font-bold" data-aos="fade-up">
+                        {{ panel.count }}
+                      </h4>
+                    </div>
+                  </template>
                   <hr class="my-4">
                   <NuxtLink
                     to="/admin/parts-list"
                     class="hover:text-brand-black"
                   >
-                    See all products
+                    <i
+                      v-if="panel.desc === 'Edit'"
+                      class="ri-pencil-line mr-1"
+                    ></i>
+                    {{ panel.desc }}
                   </NuxtLink>
-              </div>
-            </article>
-
-            <article class="rounded border border-gray-200 bg-white shadow-sm">
-              <div class="p-5">
-                  <h2 class="text-lg font-semibold text-black">
-                    Categories / Subcategories
-                  </h2>
-                  <small
-                  class="mb-1 font-bold  uppercase text-gray-400"
-                  >TOTAL</small>
-                  <div class="flex items-start">
-                    <h4 class="mr-2 text-3xl font-bold" data-aos="fade-up">
-                        {{ totalCategories }}
-                    </h4>
-                  </div>
-                  <hr class="my-4">
-                  <NuxtLink
-                  to="/admin/categories"
-                  class="hover:text-brand-black"
-                  >See all categories</NuxtLink>
-              </div>
-            </article>
-
-            <article class="rounded border border-gray-200 bg-white shadow-sm">
-              <div class="flex flex-col justify-start space-y-4 p-5">
-                <h2 class="text-xl font-semibold">
-                  Shipping Settings
-                </h2>
-                <hr class="my-4" />
-                <NuxtLink
-                  to="/admin/shipping-setting"
-                  class="font-semibold hover:text-brand-black"
-                >
-                  <i class="ri-pencil-line mr-1"></i>
-                  Edit
-                </NuxtLink>
-              </div>
-            </article>
-
-            <article class="rounded border border-gray-200 bg-white shadow-sm">
-              <div class="flex flex-col justify-start space-y-4 p-5">
-                <h2 class="text-xl font-semibold">
-                  Shipping Master Controls
-                </h2>
-                <hr class="my-4" />
-                <NuxtLink
-                  to="/admin/shipping-master"
-                  class="font-semibold hover:text-brand-black"
-                >
-                  <i class="ri-pencil-line mr-1"></i>
-                  Edit
-                </NuxtLink>
               </div>
             </article>
         </div> <!-- grid.// -->
@@ -196,7 +153,37 @@ export default {
         title: 'Admin Page - Drum HQ',
         description: 'Admin Page',
         url: 'admin',
-      }
+      },
+      panels: [
+        {
+          title: 'Products',
+          icon: 'fas fa-shopping-cart',
+          route: '/admin/parts-list',
+          desc: 'See all products',
+          count: 0
+        },
+        {
+          title: 'Categories',
+          icon: 'fas fa-folder',
+          route: '/admin/categories',
+          desc: 'See all categories',
+          count: 0
+        },
+        {
+          title: 'Shipping Settings',
+          icon: 'fas fa-truck',
+          route: '/admin/shipping-setting',
+          desc: 'Edit',
+          count: 0
+        },
+        {
+          title: 'Shipping Master Controls',
+          icon: 'fas fa-cog',
+          route: '/admin/shipping-master',
+          desc: 'Edit',
+          count: 0
+        },
+      ]
     }
   },
   head() {
@@ -289,6 +276,7 @@ export default {
         .$get('v1/items/')
         .then((response) => {
           this.$store.commit('admin/setTotalItems', response.data.total_items)
+          this.panels[0].count = this.totalItems
         })
     },
     retrieveTotalCategories() {
@@ -296,6 +284,7 @@ export default {
         .$get('/v1/categories/')
         .then((response) => {
           this.$store.commit('admin/setTotalCategories', response.data.total_categories)
+          this.panels[1].count = this.totalCategories
         })
     },
     toggle() {
