@@ -140,6 +140,8 @@
 <script>
 import currencyMixin from '~/mixins/currency';
 
+const CURRENCY_CODE = 'AUD'
+
 export default {
   mixins: [ currencyMixin ],
   props: {
@@ -178,7 +180,6 @@ export default {
   },
   data() {
     return {
-      currencyCode: 'AUD',
       showComponent: false,
       showOutOfStock: true
     }
@@ -194,10 +195,15 @@ export default {
         return this.$store.getters['cart/cartCount']
       },
     },
+    currencyCode: {
+      get() {
+        return CURRENCY_CODE
+      },
+    }
   },
   mounted() {
     this.$nextTick(() => {
-      if (this.isHideOutOfStock && this.hasVariants) {
+      if (this.isHideOutOfStock) {
         this.showOutOfStock = false
       } else {
         this.showOutOfStock = true

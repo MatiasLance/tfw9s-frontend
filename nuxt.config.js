@@ -13,7 +13,6 @@ export default {
         name: 'description',
         content: ''
       },
-      { name: 'format-detection', content: 'telephone=no' },
       {
         hid: 'og:title',
         name: 'og:title',
