@@ -97,7 +97,7 @@ src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69f
                   <p v-html="address">
                   </p>
                   <p
-                    v-if="showNote"
+                    v-if="showNotes"
                     class="my-3 text-[16px] sm:text-sm"
                   >
                     Note: {{ importantNotes }}
@@ -307,6 +307,7 @@ export default {
       showTimes: false,
       showAppointmentMsg: true,
       showMap: false,
+      showNotes: false
     }
   },
   head() {

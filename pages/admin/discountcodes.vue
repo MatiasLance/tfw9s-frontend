@@ -93,53 +93,56 @@
             />
           </div>
         </section>
-
-        <article
-          v-for="code in discountCodeList"
-          :key="code.id"
-          class="
-          group
-          mb-5 flex
-          rounded
-          border border-gray-200
-          shadow-sm
-          transition
-          duration-200
-          hover:shadow-xl
-          "
-          data-aos="fade-up"
+        <div
+            class="grid grid-cols-1 gap-x-0 gap-y-6
+            sm:grid-cols-2 sm:gap-x-4
+            md:grid-cols-3 md:gap-x-4 md:gap-y-8
+            xl:grid-cols-6 xl:gap-x-4 xl:gap-y-12
+            "
         >
-          <div class="md:w-3/4">
+        <article
+            v-for="code in discountCodeList"
+            :key="code.id"
+            class="
+            group
+            mb-5 flex
+            rounded
+            border border-gray-200
+            shadow-sm
+            transition
+            duration-200
+            hover:shadow-xl
+            "
+            data-aos="fade-up"
+        >
+            <div class="w-full">
             <div class="p-5">
-              <div class="mb-9 space-y-2">
+                <div class="mb-9 space-y-2">
                 <span
-                class="text-xl selection:bg-yellow-600 selection:text-white"
+                class="text-3xl selection:bg-yellow-600 selection:text-white"
                 >
-                  <span
+                    <span
                     class="
-                      font-michroma font-bold
-                      transition
-                      duration-200
+                        font-michroma font-bold
+                        transition
+                        duration-200
                     "
-                  >
-                      {{ code.code }}
-                  </span>
+                    >
+                        {{ code.code }}
+                    </span>
                 </span>
-                <small class="paragraph text-xs sm:block">
-                  {{ $moment(code.created_at).format('MMMM D, YYYY') }}
-                </small>
-              </div>
-              <div class="mb-6 w-full">
+                </div>
+                <div class="mb-6 w-full">
                 <p
-                  class="paragraph text-left"
-                  v-html="code.description"
+                    class="paragraph text-left"
+                    v-html="code.description"
                 >
                 </p>
-              </div>
-              <div class="mt-4 flex flex-wrap justify-start gap-2">
+                </div>
+                <div class="mt-4 flex flex-wrap justify-start gap-2">
                 <button
-                  type="button"
-                  class="
+                    type="button"
+                    class="
                     hover:text-swd-red
                     hover:decoration-swd-red
                     mr-2
@@ -147,14 +150,14 @@
                     cursor-pointer
                     items-center
                     text-sm hover:underline
-                  "
-                  @click="editNews(code.id)"
+                    "
+                    @click="editNews(code.id)"
                 >
-                  <i class="ri-edit-line"></i> Edit
+                    <i class="ri-edit-line"></i> Edit
                 </button>
                 <button
-                  type="button"
-                  class="
+                    type="button"
+                    class="
                     text-swd-red
                     hover:text-swd-red
                     hover:decoration-swd-red
@@ -163,29 +166,33 @@
                     cursor-pointer
                     items-center
                     text-sm hover:underline
-                  "
-                  @click="removeNews(code.id)"
+                    "
+                    @click="removeNews(code.id)"
                 >
-                  <i class="ri-delete-bin-5-line"></i> Remove
+                    <i class="ri-delete-bin-5-line"></i> Remove
                 </button>
-              </div>
+                </div>
             </div>
-          </div>
-          <div class="w-full overflow-hidden border-l border-gray-200 md:w-1/4">
+            </div>
+            <div
+            v-if="showThumbnail"
+            class="w-full overflow-hidden border-l border-gray-200 md:w-1/4"
+        >
             <img
-              class="
+                class="
                 mx-auto
                 cursor-pointer
                 object-cover
                 transition
                 duration-200
                 group-hover:scale-125
-              "
-              :src="getMediaURL([])"
-              :alt="code.name"
+                "
+                :src="getMediaURL([])"
+                :alt="code.name"
             />
-          </div>
+            </div>
         </article>
+        </div>
       </div>
        <!-- showAdd modal component -->
        <OModal
@@ -532,7 +539,26 @@ export default {
       totalPages: 0,
       totalItems: 0,
       newsList: [],
+      showThumbnail: false,
       discountCodeList: [],
+      discountCodeListTest: [
+        {
+          id: 1,
+          code: 'CODE1',
+          description: 'This is a test',
+          rate: 30,
+          // eslint-disable-next-line camelcase
+          created_at: '2023-10-21 00:00:00'
+        },
+        {
+          id: 2,
+          code: 'CODE2',
+          description: 'This is a test',
+          rate: 20,
+          // eslint-disable-next-line camelcase
+          created_at: '2023-10-22 04:30:00'
+        },
+      ],
       editingNo: -1,
       isNewsLoading: false,
       isNewsAdded: false,

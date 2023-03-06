@@ -174,6 +174,13 @@ export default {
 </script>
 
 <style>
+  .croppa-container {
+  background-color: #abb8c3;
+  border: 3px solid #3981da;
+  }
+  .o-inputit__item--danger {
+  background-color: #e73538 !important;
+  }
 /* Variables */
 #payment-message {
   color: rgb(105, 115, 134);
