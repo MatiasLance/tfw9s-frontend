@@ -135,7 +135,7 @@ src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69f
                 Hours
               </h5>
               <div class="mb-3"></div>
-              <div class="flex justify-start gap-2">
+              <div v-if="showTimes" class="flex justify-start gap-2">
                 <small class="paragraph my-3 block text-sm">
                   MONDAY: {{ time1 }}<br>
                   TUESDAY: {{ time1 }}<br>
@@ -144,6 +144,11 @@ src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69f
                   FRIDAY: {{ time1 }}<br>
                   SATURDAY: {{ time3 }}<br>
                   SUNDAY: {{ time4 }}
+                </small>
+              </div>
+              <div v-if="showAppointmentMsg" class="flex justify-start gap-2">
+                <small class="paragraph my-3 block text-base">
+                  By Appointment Only
                 </small>
               </div>
             </div>
@@ -294,10 +299,14 @@ export default {
         activate: true,
         fb: '#',
         linkedin: '',
-        ig: '#',
+        ig: 'https://www.instagram.com/the_drum_hq/',
         tiktok: '',
         youtube: ''
-      }
+      },
+      showHours: true,
+      showTimes: false,
+      showAppointmentMsg: true,
+      showMap: false,
     }
   },
   head() {

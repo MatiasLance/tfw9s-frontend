@@ -34,7 +34,7 @@
                     </li>
                     <li class="cta-time flex">
                         <i class="ri-time-fill mr-2"></i>
-                        {{ hours }}
+                        {{ hours2 }}
                     </li>
                 </ul>
                 <div v-if="showNotes" class="my-7">
@@ -94,7 +94,8 @@ export default {
         'Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.'
       ],
       email: 'hello@thedrumhq.com.au',
-      hours: 'Mon - Fri: 9am-4pm, Sat: 10am-3pm, Sun: CLOSED',
+      hours: 'Mon - Fri: 9am-4pm, Sat: 10am-3pm, Sun: CLOSED', // time
+      hours2: 'By Appointment Only', // appointment only
       title2: 'Join our mailing list',
       description: 'Stay in touch with latest updates about our products and offers',
       newsletter: 'Newsletter'
