@@ -252,6 +252,20 @@
               </small>
                 </div>
             </div>
+            <div class="col-span-3 mb-4 lg:col-span-1">
+              <div class="flex flex-wrap">
+            <label class="mb-1 block">Applied to carts with at least:</label>
+                  <OInput
+                      v-model="discount.amountapplied"
+                      placeholder="Amount"
+                      type="number"
+                      icon="currency-usd"
+                      min="0"
+                      max="100"
+                      class="w-40"
+                  ></OInput>
+              </div>
+            </div>
             <div class="col-span-3 mb-4">
               <label class="mb-1 block"> Short Description: </label>
               <input
@@ -360,6 +374,20 @@
                 required
             ></OInput>
             </div>
+        </div>
+        <div class="col-span-3 mb-4 lg:col-span-1">
+          <div class="flex flex-wrap">
+        <label class="mb-1 block">Applied to carts with at least:</label>
+              <OInput
+                  v-model="discount.amountapplied"
+                  placeholder="Amount"
+                  type="number"
+                  icon="currency-usd"
+                  min="0"
+                  max="100"
+                  class="w-40"
+              ></OInput>
+          </div>
         </div>
         <div class="col-span-3 mb-4">
             <label class="mb-1 block"> Short Description: </label>
@@ -514,6 +542,7 @@ export default {
         codename: '',
         rate: '',
         description: '',
+        amountapplied: '',
       },
       showAddNewsError: {
         codename: {
@@ -609,6 +638,7 @@ export default {
     },
     addNews() {
       this.showAddNewsModal = true;
+      this.reset()
     },
     close() {
       this.showAddNewsModal = false;
@@ -806,12 +836,14 @@ export default {
         const discountcode = {
           code: this.discount.codename,
           rate: decimalRate,
-          description: this.discount.description
+          description: this.discount.description,
+          amountapplied: this.discount.amountapplied
         };
         const form = new FormData();
         form.append('code', discountcode.code);
         form.append('rate', discountcode.rate);
         form.append('description', discountcode.description);
+        form.append('amountapplied', discountcode.amountapplied);
         const config = { headers: { 'Content-Type': 'multipart/form-data' } };
         this.$axios
           .$post('/v1/discountcode', form, config)
@@ -892,6 +924,8 @@ export default {
           this.discount.codename = response.data.discountcode.code;
           this.discount.rate = response.data.discountcode.rate * 100;
           this.discount.description = response.data.discountcode.description;
+          this.discount.amountapplied = response.data
+            .discountcode.amountapplied;
           this.showEditNewsModal = true;
         })
         .catch((err) => {
@@ -914,12 +948,14 @@ export default {
         code: this.discount.codename,
         rate: decimalRate,
         description: this.discount.description,
+        amountapplied: this.discount.amountapplied
       };
       const form = new FormData();
       form.append('_method', 'PATCH');
       form.append('code', editedNews.code);
       form.append('rate', editedNews.rate);
       form.append('description', editedNews.description);
+      form.append('amountapplied', editedNews.amountapplied);
       form.append('id', index);
       this.$axios
         .$post(`v1/discountcode/${editObject.id}`, form)
@@ -989,6 +1025,10 @@ export default {
     reset() {
       this.headline = '';
       this.content = '';
+      this.discount.codename = ''
+      this.discount.rate = ''
+      this.discount.description = ''
+      this.discount.amountapplied = ''
       this.imgList = []
       this.imgUrl = []
     },
