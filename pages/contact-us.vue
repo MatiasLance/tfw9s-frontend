@@ -299,7 +299,7 @@ export default {
         activate: true,
         fb: '#',
         linkedin: '',
-        ig: '#',
+        ig: 'https://www.instagram.com/the_drum_hq/',
         tiktok: '',
         youtube: ''
       },
