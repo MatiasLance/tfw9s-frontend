@@ -1,6 +1,7 @@
 export const state = () => ({
   totalItems: 0,
   totalCategories: 0,
+  totalDiscount: 0,
   selectedCategories: [],
 })
 
@@ -10,6 +11,9 @@ export const mutations = {
   },
   setTotalCategories(state, totalCategories) {
     state.totalCategories = totalCategories
+  },
+  setTotalDiscount(state, totalDiscount) {
+    state.totalDiscount = totalDiscount
   },
   addSelectedCategory(state, id) {
     const index = state.selectedCategories.indexOf(id)

@@ -104,7 +104,7 @@ Here is what's happening with your shop today:
                   <h2 class="text-lg font-semibold text-black">
                     {{ panel.title }}
                   </h2>
-                  <template v-if="panel.count !== 0">
+                  <template v-if="panel.count !== -1">
                     <small
                     class="mb-1 font-bold  uppercase text-gray-400"
                     >TOTAL</small>
@@ -174,15 +174,22 @@ export default {
           icon: 'fas fa-truck',
           route: '/admin/shipping-setting',
           desc: 'Edit',
-          count: 0
+          count: -1
         },
         {
           title: 'Shipping Master Controls',
           icon: 'fas fa-cog',
           route: '/admin/shipping-master',
           desc: 'Edit',
-          count: 0
+          count: -1
         },
+        {
+          title: 'Discount Codes',
+          icon: 'fas fa-dollar-sign',
+          route: '/admin/discountcodes',
+          desc: 'See all discount codes',
+          count: 0
+        }
       ]
     }
   },
@@ -235,7 +242,15 @@ export default {
       set(value) {
         this.$store.commit('admin/setTotalCategories', value)
       }
-    }
+    },
+    totalDiscount: {
+      get() {
+        return this.$store.state.admin.totalDiscount
+      },
+      set(value) {
+        this.$store.commit('admin/setTotalDiscount', value)
+      }
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -255,6 +270,7 @@ export default {
       document.addEventListener('click', this.close)
       this.retrieveTotalProducts()
       this.retrieveTotalCategories()
+      // todo: call retrieveTotalDiscounts() here
       this.retrieveShippingNotes()
 
     })
@@ -285,6 +301,15 @@ export default {
         .then((response) => {
           this.$store.commit('admin/setTotalCategories', response.data.total_categories)
           this.panels[1].count = this.totalCategories
+        })
+    },
+    retrieveTotalDiscounts() {
+      // todo: endpoint from backend
+      this.$axios
+        .$get('/v1/discountcode/')
+        .then((response) => {
+          this.$store.commit('admin/setTotalDiscount', response.data.total_discountcode)
+          this.panels[4].count = this.totalDiscount
         })
     },
     toggle() {
