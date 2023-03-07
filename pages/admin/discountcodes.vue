@@ -97,7 +97,7 @@
             class="grid grid-cols-1 gap-x-0 gap-y-6
             sm:grid-cols-2 sm:gap-x-4
             md:grid-cols-3 md:gap-x-4 md:gap-y-8
-            xl:grid-cols-6 xl:gap-x-4 xl:gap-y-12
+            xl:grid-cols-3 xl:gap-x-4 xl:gap-y-12
             "
         >
         <article
@@ -111,7 +111,7 @@
             shadow-sm
             transition
             duration-200
-            hover:shadow-xl
+            hover:cursor-pointer hover:shadow-xl
             "
             data-aos="fade-up"
         >
@@ -119,7 +119,7 @@
             <div class="p-5">
                 <div class="mb-9 space-y-2">
                 <span
-                class="text-3xl selection:bg-yellow-600 selection:text-white"
+                class="text-2xl selection:bg-yellow-600 selection:text-white"
                 >
                     <span
                     class="
