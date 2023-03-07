@@ -67,7 +67,7 @@
       <div class="mb-6 border-b border-gray-200 pb-6">
         <form
           v-if="showDiscountCodeForm"
-          @submit.prevent="applyDiscount"
+          @submit.prevent="applyDiscount()"
         >
           <div class="-mx-2 flex items-end justify-end">
             <div class="grow px-2 lg:max-w-xs">
@@ -86,8 +86,8 @@
                         placeholder="XXXXXXX"
                         maxlength="20"
                         type="text"
-                        @keyup.space.prevent
-                        @keyup="checkDiscountCodeField()"
+                        @keydown.space.prevent
+                        @change="checkDiscountCodeField()"
                       />
                   </div>
             </div>
@@ -118,11 +118,28 @@
                 </VBtn>
             </div>
           </div>
+          <p
+            v-if="showMinimumAmountMessage"
+            class="my-2 text-sm text-center text-gray-300"
+          >
+            {{ ResponseMessage2 }}
+          </p>
+          <div class="my-2">
+                  <small
+                    v-if="showErrorMessage"
+                    class="text-sm font-semibold text-brand-dred"
+                  >
+                  {{ ResponseMessage }}
+                </small>
+          </div>
         </form>
       </div>
       <ul class="px-2">
         <li v-if="isDiscountCodeMatch" class="mb-1 flex justify-between">
-          <span>Subtotal (30% discount applied):</span>
+          <span>Subtotal
+            <span class="font-bold">
+              ({{ discountRate * 100 }}% discount applied):</span>
+          </span>
           <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li v-else class="mb-1 flex justify-between">
@@ -173,6 +190,7 @@ export default {
     return {
       paymentMethod: 'paypal',
       isStepperLoading: false,
+      minimumAmount: 500,
       originalAmount: {
         subtotal: 0,
         gst: 0,
@@ -191,6 +209,10 @@ export default {
       discountRate: 0,
       isDiscountCodeMatch: false,
       isFormNotFilled: true,
+      showErrorMessage: false,
+      ResponseMessage: '',
+      showMinimumAmountMessage: false,
+      ResponseMessage2: ''
     };
   },
   computed: {
@@ -212,16 +234,17 @@ export default {
     },
   },
   mounted() {
-    this.originalAmount.subtotal = this.subtotal
-    this.originalAmount.gst = this.newGST
-    this.originalAmount.total = this.overallTotal
     this.$store.commit('order/setPaymentMethod', this.paymentMethod)
     this.initialize()
   },
   methods: {
+    toCurrency(x) {
+      return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(x)
+    },
     checkDiscountCodeField() {
       if (this.discountcode.length !== 0) {
         this.isFormNotFilled = false;
+        this.showMinimumAmountMessage = false;
       } else {
         this.isFormNotFilled = true;
       }
@@ -229,6 +252,11 @@ export default {
     setAsPaymentMethod(val) {
       this.paymentMethod = val
       this.$store.commit('order/setPaymentMethod', this.paymentMethod)
+    },
+    checkLesserMinimumAmount(minAmount) {
+      const isLesserThanMinimumAmount = (
+        this.subtotal < minAmount)
+      return isLesserThanMinimumAmount;
     },
     applyDiscount() {
       this.$oruga.notification.open({
@@ -238,33 +266,45 @@ export default {
         position: 'bottom',
         queue: true,
       });
-      // todo: uncomment backend endpoint for checkDiscountCode
-
       const endpoint = '/v1/discountcode/verifycode';
-      // const endpoint = '';
       const data = { code: this.discountcode }
       this.$axios
         .$post(endpoint, data)
         .then((response) => {
           if (response.isExist) {
-            setTimeout(() => {
-              this.discountRate = response.discountcode.rate
-              this.newSubTotal = this.subtotal * (1 - this.discountRate)
-              this.newGST = this.newSubTotal * 0.1
-              this.overallTotal = this.newGST + this.newSubTotal;
-
-              this.$store.commit('cart/setSubtotal', this.newSubTotal)
-              this.$store.commit('cart/setGst', this.newGST)
-              this.$store.commit('cart/setTotal', this.overallTotal)
-              this.$oruga.notification.open({
-                message: response.message,
-                variant: 'success',
-                duration: 5000,
-                position: 'bottom',
-                queue: true,
-              });
-              this.isDiscountCodeMatch = true
-            }, 2000);
+            this.minimumAmount = +response.discountcode.amountapplied;
+            this.showMinimumAmountMessage = true;
+            this.ResponseMessage2 = `
+            ${this.toCurrency(this.minimumAmount)} minimum order required`
+            // todo: check overall total if less than the minimum amount set
+            if (this.checkLesserMinimumAmount(this.minimumAmount)) {
+              this.showErrorMessage = true
+              this.ResponseMessage = `
+Cart Subtotal is less than $${this.minimumAmount} minimum order required
+for this code.
+`
+              setTimeout(() => {
+                this.showErrorMessage = false
+              }, 5000);
+            } else {
+              setTimeout(() => {
+                this.discountRate = response.discountcode.rate
+                this.newSubTotal = this.subtotal * (1 - this.discountRate)
+                this.newGST = this.newSubTotal * 0.1
+                this.overallTotal = this.newGST + this.newSubTotal;
+                this.$store.commit('cart/setSubtotal', this.newSubTotal)
+                this.$store.commit('cart/setGst', this.newGST)
+                this.$store.commit('cart/setTotal', this.overallTotal)
+                this.$oruga.notification.open({
+                  message: response.message,
+                  variant: 'success',
+                  duration: 5000,
+                  position: 'bottom',
+                  queue: true,
+                });
+                this.isDiscountCodeMatch = true
+              }, 2000);
+            }
           } else {
             setTimeout(() => {
               this.$store.commit('cart/setSubtotal', this.originalAmount.subtotal)
@@ -305,6 +345,8 @@ export default {
         this.$store.commit('cart/setSubtotal', this.originalAmount.subtotal)
         this.$store.commit('cart/setGst', this.originalAmount.gst)
         this.$store.commit('cart/setTotal', this.originalAmount.total)
+        this.newGST = this.originalAmount.gst
+        this.overallTotal = this.originalAmount.total
         this.isDiscountCodeMatch = false
       }, 1000)
     },
@@ -334,6 +376,9 @@ export default {
           this.newSubTotal = (this.subtotal + (this.shipping));
           this.newGST = this.newSubTotal * 0.1;
           this.overallTotal = this.newGST + this.newSubTotal;
+          this.originalAmount.subtotal = this.subtotal
+          this.originalAmount.gst = this.newGST
+          this.originalAmount.total = this.overallTotal
         })
         .finally(() => {
           this.isStepperLoading = false
