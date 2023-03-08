@@ -118,17 +118,11 @@
                 </VBtn>
             </div>
           </div>
-          <p
-            v-if="showMinimumAmountMessage"
-            class="my-2 text-sm text-center text-gray-300"
-          >
-            {{ ResponseMessage2 }}
-          </p>
           <div class="my-2">
-                  <small
-                    v-if="showErrorMessage"
-                    class="text-sm font-semibold text-brand-dred"
-                  >
+                <small
+                  v-if="showErrorMessage"
+                  class="text-sm font-semibold text-brand-dred"
+                >
                   {{ ResponseMessage }}
                 </small>
           </div>
@@ -273,9 +267,6 @@ export default {
         .then((response) => {
           if (response.isExist) {
             this.minimumAmount = +response.discountcode.amountapplied;
-            this.showMinimumAmountMessage = true;
-            this.ResponseMessage2 = `
-            ${this.toCurrency(this.minimumAmount)} minimum order required`
             // todo: check overall total if less than the minimum amount set
             if (this.checkLesserMinimumAmount(this.minimumAmount)) {
               this.showErrorMessage = true
