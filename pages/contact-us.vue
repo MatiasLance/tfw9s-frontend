@@ -164,6 +164,7 @@ src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69f
                 <a
                   v-if="socials.fb.length != 0"
                   :href="socials.fb"
+                  target="_blank"
                 >
                   <div
                     class="
@@ -183,6 +184,7 @@ src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69f
                 <a
                   v-if="socials.linkedin.length != 0"
                   :href="socials.linkedin"
+                  target="_blank"
                 >
                   <div
                     class="
@@ -202,6 +204,7 @@ src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69f
                 <a
                   v-if="socials.ig.length != 0"
                   :href="socials.ig"
+                  target="_blank"
                 >
                   <div
                     class="
@@ -221,6 +224,7 @@ src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69f
                 <a
                   v-if="socials.youtube != 0"
                   :href="socials.youtube"
+                  target="_blank"
                 >
                   <div
                     class="
@@ -240,6 +244,7 @@ src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69f
                 <a
                   v-if="socials.tiktok.length != 0"
                   :href="socials.tiktok"
+                  target="_blank"
                 >
                   <div
                     class="
@@ -297,7 +302,7 @@ export default {
       time4: 'CLOSED',
       socials: {
         activate: true,
-        fb: '#',
+        fb: 'https://www.facebook.com/profile.php?id=100090914588551',
         linkedin: '',
         ig: 'https://www.instagram.com/the_drum_hq/',
         tiktok: '',
