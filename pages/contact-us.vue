@@ -297,7 +297,7 @@ export default {
       time4: 'CLOSED',
       socials: {
         activate: true,
-        fb: '#',
+        fb: 'https://www.facebook.com/profile.php?id=100090914588551',
         linkedin: '',
         ig: 'https://www.instagram.com/the_drum_hq/',
         tiktok: '',

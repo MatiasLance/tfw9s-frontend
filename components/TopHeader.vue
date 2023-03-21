@@ -116,10 +116,10 @@ export default {
       address: '280 Brisbane Road\nLabrador, Queensland 4215 Australia',
       mobile: '0451 620 707',
       socials: {
-        fb: 'https://www.facebook.com/RevampedAustralia/',
-        ig: 'https://www.instagram.com/RevampedAustralia/',
-        tiktok: 'https://www.tiktok.com/@finnyboiflayva',
-        youtube: 'https://www.youtube.com/channel/UCZir79EizOj5uzzgSoSfljQ'
+        fb: 'https://www.facebook.com/people/The-Drum-HQ/100090914588551/',
+        ig: 'https://www.instagram.com/the_drum_hq/',
+        tiktok: '',
+        youtube: ''
       }
     }
   },
