@@ -71,12 +71,16 @@
           <article class="mb-5 bg-white p-3 shadow-sm lg:p-5">
             <ul class="mb-5">
               <li class="mb-1 flex justify-between text-gray-600">
-                <span>Subtotal (Price before GST added):</span>
+                <span>Subtotal:</span>
                 <span class="pl-2">{{ formatCurrency(subtotal) }}</span>
               </li>
               <li class="mb-1 flex justify-between text-gray-600">
                 <span>GST:</span>
-                <span class="pl-2">{{ formatCurrency(gst) }}</span>
+                <span
+                  v-if="showGST"
+                  class="pl-2"
+                >{{ formatCurrency(gst) }}</span>
+                <span v-if="showGSTIncluded" class="pl-2">GST Inclusive*</span>
               </li>
               <li
                 class="
@@ -89,8 +93,13 @@
                   font-bold
                 "
               >
-                <span>Total price (including GST):</span>
+                <span>Total price:</span>
                 <span class="pl-2">{{ formatCurrency(total) }}</span>
+              </li>
+              <li v-if="showTaxInfo">
+                <small class="text-xs font-light">
+                  * Tax of {{ gstrate }} is included in the displayed price
+                </small>
               </li>
             </ul>
 
@@ -183,7 +192,14 @@ export default {
     handlesMedia
   ],
   data() {
-    return { items: [] }
+    return {
+      items: [],
+      showGSTIncluded: true,
+      showGST: false,
+      gstrate: '10%',
+      gstrateValue: 0.10,
+      showTaxInfo: true
+    }
   },
   computed: {
     cartItems: {
@@ -282,7 +298,7 @@ export default {
       })
       this.gst = gst
       this.subtotal = subtotal
-      this.total = gst + subtotal
+      this.total = subtotal
     },
     removeCartItem(id) {
       this.$store.commit('cart/removeCartItem', id)

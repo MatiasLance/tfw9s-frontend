@@ -146,13 +146,18 @@
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
-          <span>{{ formatCurrency(newGST) }}</span>
+          <span>GST Inclusive*</span>
         </li>
         <li class="mt-3 flex justify-between border-t pt-3">
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
             {{ formatCurrency(overallTotal) }}
           </span>
+        </li>
+        <li v-if="showTaxInfo">
+          <small class="text-xs font-light">
+            * Tax of {{ gstrate }} is included in the displayed price
+          </small>
         </li>
       </ul>
     </article>
@@ -206,7 +211,10 @@ export default {
       showErrorMessage: false,
       ResponseMessage: '',
       showMinimumAmountMessage: false,
-      ResponseMessage2: ''
+      ResponseMessage2: '',
+      showTaxInfo: true,
+      gstrate: '10%',
+      gstrateValue: 0.1
     };
   },
   computed: {
@@ -267,7 +275,6 @@ export default {
         .then((response) => {
           if (response.isExist) {
             this.minimumAmount = +response.discountcode.amountapplied;
-            // todo: check overall total if less than the minimum amount set
             if (this.checkLesserMinimumAmount(this.minimumAmount)) {
               this.showErrorMessage = true
               this.ResponseMessage = `
@@ -282,7 +289,8 @@ for this code.
                 this.discountRate = response.discountcode.rate
                 this.newSubTotal = this.subtotal * (1 - this.discountRate)
                 this.newGST = this.newSubTotal * 0.1
-                this.overallTotal = this.newGST + this.newSubTotal;
+                // todo: remove newGST
+                this.overallTotal = this.newSubTotal;
                 this.$store.commit('cart/setSubtotal', this.newSubTotal)
                 this.$store.commit('cart/setGst', this.newGST)
                 this.$store.commit('cart/setTotal', this.overallTotal)
@@ -366,7 +374,8 @@ for this code.
           this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
           this.newSubTotal = (this.subtotal + (this.shipping));
           this.newGST = this.newSubTotal * 0.1;
-          this.overallTotal = this.newGST + this.newSubTotal;
+          // todo: remove newGST from the overallTotal
+          this.overallTotal = this.newSubTotal;
           this.originalAmount.subtotal = this.subtotal
           this.originalAmount.gst = this.newGST
           this.originalAmount.total = this.overallTotal
