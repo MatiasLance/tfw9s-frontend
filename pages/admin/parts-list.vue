@@ -582,13 +582,13 @@
           <option :value="0" selected>
               Choose Shipping Setting
           </option>
+          <!-- Shipping Settings Own Country -->
           <option
-              v-for="shipping in shippings"
-              :key="shipping.id"
-              :value="shipping.id"
-              aria-placeholder="Select Shipping Setting"
+              v-for="option in shippings1"
+              :key="option.id"
+              :value="option.id"
           >
-              {{ shipping.name }}
+              {{ option.name }} - Own County:{{ option.country }}
           </option>
       </select>
     </div>
@@ -976,7 +976,7 @@
                     Choose Shipping Setting
                   </option>
                   <option
-                    v-for="shipping in shippings"
+                    v-for="shipping in shippings1"
                     :key="shipping.id"
                     :value="shipping.id"
                   >
@@ -1242,6 +1242,13 @@ export default {
       showShipValuesOtherCountry: false,
       showShipValuesOtherState: false,
       showShipValuesOtherCity: false,
+      shippings: [],
+      shippings1: [],
+      shippings2: [],
+      shippings3: [],
+      shippings4: [],
+      shippings5: [],
+      shippings6: [],
       name: '',
       price: '',
       description: '',
@@ -1453,7 +1460,7 @@ export default {
       this.$axios
         .$get('v1/shipping/country/')
         .then((response) => {
-          this.shippings = response.list.data
+          this.shippings1 = response.list.data
         })
     },
     retrieveShippingCalcOwnCountry() {
@@ -1783,6 +1790,10 @@ export default {
           this.imgUrlEdit = response.data.item.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
+
+          // todo: change to selected_shippingid from backend
+          this.selectedShippingSettingEdit = response.data.item.id;
+
           const categoryLineages = response.data.item.categoryLineages
           this.multipleCategoryCounter = categoryLineages.length
           this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
@@ -1864,6 +1875,7 @@ export default {
             isHideOutOfStock: this.hideOutOfStock,
             tags: this.tags.map((x) => x.id),
             photo: this.imgList,
+            selectedshippingId: this.selectedShippingSetting,
             shippingowncountry: this.selectedShipSetting.own.country,
             shippingownstate: this.selectedShipSetting.own.state,
             shippingowncity: this.selectedShipSetting.own.city,
@@ -1878,6 +1890,11 @@ export default {
           form.append('price', product.price);
           form.append('stock', product.inStock);
           form.append('isHideOutOfStock', product.isHideOutOfStock);
+          /*
+           * todo: check if selected_shippingid and shipping related
+           * id are on the ItemController create
+           */
+          form.append('selected_shippingid', product.selectedshippingId);
           form.append('shipping_owncountryid', product.shippingowncountry);
           form.append('shipping_ownstateid', product.shippingownstate);
           form.append('shipping_owncityid', product.shippingowncity);
@@ -1948,6 +1965,13 @@ export default {
         categoryId: this.selectedCategory.map(x => x.id),
         tags: this.tags.map((x) => x.id),
         photo: this.imgListEdit,
+        selectedshippingId: this.selectedShippingSettingEdit,
+        shippingowncountry: this.selectedShipSettingEdited.own.country,
+        shippingownstate: this.selectedShipSettingEdited.own.state,
+        shippingowncity: this.selectedShipSettingEdited.own.city,
+        shippingothercountry: this.selectedShipSettingEdited.other.country,
+        shippingotherstate: this.selectedShipSettingEdited.other.state,
+        shippingothercity: this.selectedShipSettingEdited.other.city,
         isFeatured: this.isItemFeatured.toString(),
       };
 
@@ -1958,6 +1982,17 @@ export default {
       form.append('price', editedProduct.price);
       form.append('stock', editedProduct.inStock);
       form.append('isHideOutOfStock', editedProduct.isHideOutOfStock);
+      /*
+       * todo: check if selected_shippingid and other shipping related
+       * id are on the ItemController update
+       */
+      form.append('selected_shippingid', editedProduct.selectedshippingId);
+      form.append('shipping_owncountryid', editedProduct.shippingowncountry);
+      form.append('shipping_ownstateid', editedProduct.shippingownstate);
+      form.append('shipping_owncityid', editedProduct.shippingowncity);
+      form.append('shipping_othercountryid', editedProduct.shippingothercountry);
+      form.append('shipping_otherstateid', editedProduct.shippingotherstate);
+      form.append('shipping_othercityid', editedProduct.shippingothercity);
       form.append('isFeatured', editedProduct.isFeatured);
       for (let i = 0; i < editedProduct.tags.length; i++) {
         form.append('tags[]', editedProduct.tags[i]);
