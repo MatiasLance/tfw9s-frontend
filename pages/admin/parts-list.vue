@@ -583,12 +583,19 @@
               Choose Shipping Setting
           </option>
           <!-- Shipping Settings Own Country -->
+          <!-- todo: go back here when other areas have different size -->
+          <!--
+            for now we assume that shippings1
+            shares the same name and the same number
+            of settings per Shipping Area
+            (e.g Own Country/State/City Other Country/State/City)
+          -->
           <option
               v-for="option in shippings1"
               :key="option.id"
               :value="option.id"
           >
-              {{ option.name }} - Own County:{{ option.country }}
+              {{ option.name }}
           </option>
       </select>
     </div>
@@ -1792,7 +1799,8 @@ export default {
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
 
           // todo: change to selected_shippingid from backend
-          this.selectedShippingSettingEdit = response.data.item.id;
+          this.selectedShippingSettingEdit = response.data
+            .item.selected_shippingid;
 
           const categoryLineages = response.data.item.categoryLineages
           this.multipleCategoryCounter = categoryLineages.length
