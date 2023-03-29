@@ -7,23 +7,23 @@
         <div id="spinner" class="spinner hidden"></div>
         <span id="button-text">Pay now</span>
         </button>
-        <a
-        class="
-            mt-3
-            block
-            w-full
-            border border-gray-200
-            bg-white
-            py-[16px]
-            px-[12px]
-            text-center text-gray-700
-            shadow-sm
-            hover:bg-gray-100 hover:text-[#1a1d18]
-        "
-        href="/cart"
+        <NuxtLink
+          class="
+              mt-3
+              block
+              w-full
+              border border-gray-200
+              bg-white
+              py-[16px]
+              px-[12px]
+              text-center text-gray-700
+              shadow-sm
+              hover:bg-gray-100 hover:text-[#1a1d18]
+          "
+          to="/cart"
         >
         Return to cart
-        </a>
+        </NuxtLink>
         <button
             type="button"
             class="

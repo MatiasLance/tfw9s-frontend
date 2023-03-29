@@ -5,6 +5,23 @@
         class="mx-8 flex min-h-[250px] items-center justify-center"
       ></div>
       <button
+        type="button"
+        class="
+          block
+          w-full bg-white py-[16px]
+          px-[12px]
+          text-center
+          text-gray-700
+          shadow-sm
+          outline outline-1
+          outline-gray-200
+      hover:bg-gray-100 hover:text-[#1a1d18]
+        "
+        @click="cartLink()"
+      >
+        Return to Cart
+      </button>
+      <button
             type="button"
             class="
             mt-3
@@ -108,6 +125,9 @@ export default {
           this.$router.push(`/thank-you?paypal_transaction_id=${data.orderID}`)
         })
     },
+    cartLink() {
+      this.$router.push('/cart')
+    }
   }
 }
 </script>
