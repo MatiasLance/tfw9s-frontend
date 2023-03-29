@@ -209,8 +209,8 @@
                 selection:bg-brand-black
                 selection:text-white"
               >
-                <a
-                  :href="`/product/?id=${prod.id}`"
+                <NuxtLink
+                  :to="`/product/?id=${prod.id}`"
                   target="_self"
                   :title="prod.name"
                   class="
@@ -221,7 +221,7 @@
                   "
                 >
                   {{ prod.name }}
-                </a>
+                </NuxtLink>
                 <span v-if="prod.is_featured" class="ml-2">
                   <FeaturedChip />
                 </span>
