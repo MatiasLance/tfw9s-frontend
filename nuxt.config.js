@@ -33,6 +33,10 @@ export default {
         name: 'og:site_name',
         content: 'Drum HQ Website',
       },
+      {
+        name: 'google-site-verification',
+        content: 'KninbX5hpjrkV2j6g1xc7Hix4ahJTxeRzQYylzQGga0'
+      },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
