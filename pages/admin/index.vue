@@ -189,7 +189,14 @@ export default {
           route: '/admin/discountcodes',
           desc: 'See all discount codes',
           count: 0
-        }
+        },
+        {
+          title: 'Master Settings',
+          icon: 'fas fa-cog',
+          route: '/admin/master-setting',
+          desc: 'Edit',
+          count: -1
+        },
       ]
     }
   },
