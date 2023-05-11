@@ -40,7 +40,6 @@
     <div class="container mt-32 py-[30px]">
       <div class="flex flex-col gap-4 md:flex-row">
         <main class="md:w-3/4">
-
           <template v-if="!items.length > 0">
             <article
               class="mb-5 rounded border border-gray-200 bg-white shadow-sm"
@@ -65,7 +64,6 @@
               @remove="removeCartItem(item.id)"
             />
           </template>
-
         </main>
         <aside class="md:w-1/4">
           <article class="mb-5 bg-white p-3 shadow-sm lg:p-5">
@@ -73,6 +71,10 @@
               <li class="mb-1 flex justify-between text-gray-600">
                 <span>Subtotal:</span>
                 <span class="pl-2">{{ formatCurrency(subtotal) }}</span>
+              </li>
+              <li class="mb-1 flex justify-between text-gray-600">
+                <span>Tax:</span>
+                <span class="pl-2">{{ formatCurrency(tax) }}</span>
               </li>
               <li class="mb-1 flex justify-between text-gray-600">
                 <span>GST:</span>
@@ -98,7 +100,7 @@
               </li>
               <li v-if="showTaxInfo">
                 <small class="text-xs font-light">
-                  * Tax of {{ gstrate }} is included in the displayed price
+                  * Tax of {{ tax }}% is included in the displayed price
                 </small>
               </li>
             </ul>
@@ -196,8 +198,8 @@ export default {
       items: [],
       showGSTIncluded: true,
       showGST: false,
-      gstrate: '10%',
-      gstrateValue: 0.10,
+      taxrate: '10%',
+      taxrateValue: 0.10,
       showTaxInfo: true
     }
   },
@@ -206,6 +208,14 @@ export default {
       get() {
         return this.$store.state.cart.cart
       },
+    },
+    tax: {
+      get() {
+        return this.$store.state.cart.tax
+      },
+      set(v) {
+        this.$store.commit('cart/setTax', v)
+      }
     },
     subtotal: {
       get() {
@@ -296,9 +306,14 @@ export default {
         subtotal = currency(subtotal, { fromCents: false })
           .add(preTaxSubtotal).value
       })
+
+      // calculate total with dynamic tax percent
+      const taxPercent = this.tax
+      const total = (subtotal * (100 + taxPercent)) / 100
       this.gst = gst
       this.subtotal = subtotal
-      this.total = subtotal
+      this.total = total
+      this.$store.commit('cart/setTotal', total)
     },
     removeCartItem(id) {
       this.$store.commit('cart/removeCartItem', id)
