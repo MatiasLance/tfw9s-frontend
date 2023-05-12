@@ -277,9 +277,8 @@ export default {
       document.addEventListener('click', this.close)
       this.retrieveTotalProducts()
       this.retrieveTotalCategories()
-      // todo: call retrieveTotalDiscounts() here
+      this.retrieveTotalDiscounts()
       this.retrieveShippingNotes()
-
     })
   },
   beforeDestroy() {

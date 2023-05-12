@@ -1,7 +1,7 @@
 export const state = () => ({
   cart: [],
   subtotal: 0,
-  tax: 10,
+  tax: 0,
   gst: 0,
   total: 0,
   shipping: 0,

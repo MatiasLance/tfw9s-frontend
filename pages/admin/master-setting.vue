@@ -1,44 +1,44 @@
 <template>
     <div>
       <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
-              <div
-                  class="
-                  space-y-3
-                  px-6
-                  text-left
-                  sm:text-left
-                  lg:col-span-6 lg:mt-10
-                  xl:mt-10
-                  "
+          <div
+              class="
+              space-y-3
+              px-6
+              text-left
+              sm:text-left
+              lg:col-span-6 lg:mt-10
+              xl:mt-10
+              "
+          >
+              <span
+              class="
+                  superheadline
+                  flex flex-row
+                  items-center
+                  pb-3
+                  text-[1rem]
+                  font-normal
+              "
               >
-                  <span
-                  class="
-                      superheadline
-                      flex flex-row
-                      items-center
-                      pb-3
-                      text-[1rem]
-                      font-normal
-                  "
-                  >
-                  <span class="font-medium">
-                      <NuxtLink to="/">
-                      <VBtn text color="white">Home</VBtn>
-                      </NuxtLink>
-                      <NuxtLink to="/admin">
-                      <VBtn text color="white">Admin</VBtn>
-                      </NuxtLink>
-                  </span>
-                  </span>
-                  <h1
-                      class="flex flex-row text-3xl font-bold
-                      text-white lg:text-6xl"
-                  >
-                    Master Controls
-                  </h1>
-              </div>
-          </BaseHeader>
-  
+              <span class="font-medium">
+                  <NuxtLink to="/">
+                  <VBtn text color="white">Home</VBtn>
+                  </NuxtLink>
+                  <NuxtLink to="/admin">
+                  <VBtn text color="white">Admin</VBtn>
+                  </NuxtLink>
+              </span>
+              </span>
+              <h1
+                  class="flex flex-row text-3xl font-bold
+                  text-white lg:text-6xl"
+              >
+                Master Settings
+              </h1>
+          </div>
+      </BaseHeader>
+
       <section class="container mx-auto max-w-screen-lg px-4">
           <div class="mb-20 mt-10 w-full">
               <article
@@ -50,14 +50,16 @@
                   lg:p-6
                   "
               >
-            <form @submit.prevent="proceed">
+<!-- todo: change this back to proceed when backend endpoint is ready -->
+            <form @submit.prevent="proceedDemo">
               <div class="mb-4">
                 <div class="flex flex-wrap items-start justify-start gap-4">
                   <div class="flex w-full flex-col sm:flex-row">
                     <div class="mr-1 mt-3">
                       <VSwitch
-                      v-model="toggleMasterSetting1"
+                      v-model="toggleControl1"
                       color="black"
+                      @change="toggleControl2 = false"
                       ></VSwitch>
                     </div>
                     <label
@@ -69,12 +71,12 @@
                     <input
                       v-model.number="addTaxOnCartPrice"
                       type="number"
-                      name="maxShipping"
+                      name="addTaxOnCartPrice"
                       class="
                           form-input
                           mt-1
                           ml-4 block
-                          w-32 appearance-none
+                          w-28 appearance-none
                           self-center
                           border border-gray-100 bg-gray-100
                           py-2 px-3
@@ -82,12 +84,12 @@
                           focus:border-gray-400 focus:outline-none
                           disabled:cursor-not-allowed
                           disabled:bg-gray-400"
-                      :disabled="!toggleMasterSetting1"
+                      :disabled="!toggleControl1"
                       step=".01"
                       min="0"
                     />
                     <span class="ml-3 mb-1 mt-3 block self-center text-xl">
-                        on top of the product prices in the cart.
+                        % on top of prices in cart stage.
                     </span>
                   </div>
                 </div>
@@ -100,25 +102,26 @@
                   >
                     <div class="mr-1 mt-3">
                       <VSwitch
-                      v-model="toggleMasterSetting2"
+                      v-model="toggleControl2"
                       color="black"
+                      @change="toggleControl1 = false"
                       ></VSwitch>
                     </div>
                     <label
                     class="mb-1 block self-center
                     text-xl font-bold sm:mt-0"
                     >
-                      Include Tax of:
+                      Show inclusive tax amount of
                     </label>
                     <input
-                      v-model="includeTaxOnCartPrice"
+                      v-model.number="includeTaxOnCartPrice"
                       type="number"
-                      name="freeShippingValue"
+                      name="includeTaxOnCartPrice"
                       class="
                         form-input
                         mt-1
                         block
-                        w-32
+                        w-28
                         appearance-none
                         self-center border
                         border-gray-100 bg-gray-100
@@ -129,19 +132,19 @@
                         focus:outline-none disabled:cursor-not-allowed
                         disabled:bg-gray-400
                       "
-                      :disabled="!toggleMasterSetting2"
+                      :disabled="!toggleControl2"
                       step=".01"
                       min="0"
                       @keydown="handleDecimal"
                     />
                     <span class="ml-3 mb-1 mt-3 block self-center text-xl">
-                        on top of the product prices in the cart.
+                        % in cart stage.
                     </span>
                   </div>
                 </div>
               </div>
               <hr class="my-4">
-  
+
               <button
                 type="submit"
                 class="
@@ -187,12 +190,190 @@
 import 'remixicon/fonts/remixicon.css'
 
 export default {
-    name: 'master-setting',
-    data() {
-        return {
-            addTaxOnCartPrice: 0,
-            includeTaxOnCartPrice: 0
-        }
+  name: 'master-setting',
+  data() {
+    return {
+      addTaxOnCartPrice: 0,
+      includeTaxOnCartPrice: 0
     }
+  },
+  computed: {
+    toggleControl1: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl1
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl1', val)
+      }
+    },
+    toggleControl2: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl2
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl2', val)
+      }
+    },
+    tax: {
+      get() {
+        return (
+          this.$store.state.cart.tax
+        )
+      },
+      set(val) {
+        if (!this.toggleControl1 && !this.toggleControl2) {
+          this.$store.commit('cart/setTax', 0)
+        } else {
+          this.$store.commit('cart/setTax', val)
+        }
+      }
+    }
+  },
+  mounted() {
+    const { tax } = this.$store.state.cart;
+    this.addTaxOnCartPrice = tax;
+    /*
+     * TODO: uncomment this.retrieveControlValues() if backend is ready
+     * this.retrieveToggleControl()
+     */
+  },
+  methods: {
+    handleDecimal(event) {
+      const keyCodes = [
+        'Backspace',
+        'Delete',
+        'ArrowLeft',
+        'ArrowRight',
+        '.'
+      ]
+      return keyCodes.includes(event.code) ? true : !isNaN(Number(event.key)) && event.code!=='Space'
+    },
+    saveControl1() {
+      this.$store.commit('master/setToggleControl1', this.toggleControl1)
+    },
+    saveControl2() {
+      this.$store.commit('master/setToggleControl2', this.toggleControl2)
+    },
+    retrieveControlValues() {
+      // TODO: pending endpoint
+      this.$axios
+        .$get('v1/control/1')
+        .then((response) => {
+          this.addTaxOnCartPrice = response.data[0].addtax_value
+          this.includeTaxOnCartPrice = response.data[0].includetax_value
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
+    updateToggleControl() {
+      const form = new FormData();
+      form.append('_method', 'PATCH')
+      form.append('togglecontrol1', this.toggleControl1)
+      form.append('togglecontrol2', this.toggleControl2)
+
+      // todo: insert final endpoint here when backend is ready.
+      const endpoint = 'v1/togglecontrol/1'
+      this.$axios
+        .$post(endpoint, form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: `Toggle setting: ${response.Message}`,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom'
+          })
+          this.retrieveToggleControl()
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
+    retrieveToggleControl() {
+      // todo: check endpoint
+      const endpoint = 'v1/togglecontrol/1'
+      this.$axios
+        .$get(endpoint)
+        .then((response) => {
+          this.toggleControl1 = response.data.togglecontrol1
+          this.toggleControl2 = response.data.togglecontrol2
+          this.$store.commit('master/setToggleControl1', response.data.togglecontrol1)
+          this.$store.commit('master/setToggleControl2', response.data.togglecontrol2)
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
+    proceedDemo() {
+      this.$oruga.notification.open({
+        message: 'Work in progress',
+        duration: 5000,
+        variant: 'info',
+        queue: true,
+        position: 'bottom'
+      })
+      if (!this.toggleControl1 && !this.toggleControl2) {
+        this.$store.commit('cart/setTax', 0)
+      } else {
+        this.$store.commit('cart/setTax', this.addTaxOnCartPrice)
+      }
+      this.$store.commit('master/setAddTaxValue', this.addTaxOnCartPrice);
+      this.$store.commit('master/setIncludeTaxValue', this.includeTaxOnCartPrice);
+      this.saveControl1()
+      this.saveControl2()
+    },
+    proceed() {
+      const form = new FormData();
+      form.append('_method', 'PATCH')
+      form.append('addtax_value', this.addTaxOnCartPrice)
+      form.append('includetax_value', this.includeTaxOnCartPrice)
+      // todo: check endpoint in backend
+      const endpoint = 'v1/control/1'
+      this.$axios
+        .$post(endpoint, form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: `Master settings: ${response.Message}`,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom'
+          })
+          this.retrieveControlValues()
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+
+      this.updateToggleControl()
+    }
+  }
 }
 </script>
