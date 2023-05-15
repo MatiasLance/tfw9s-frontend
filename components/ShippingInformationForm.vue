@@ -202,7 +202,16 @@
                 "
                 :class="[
                   isOwnCountryActive ? 'bg-transparent' : 'disabled bg-gray-50',
-                  shippingChoiceCalc === 'Own Country' ? 'bg-brand-green' : ''
+                  shippingChoiceCalc === 'Own Country'
+                    ? 'bg-brand-green' : '',
+                  shippingChoiceCalc === 'Own State'
+                    ? 'bg-brand-green' : '',
+                  shippingChoiceCalc === 'Own City'
+                    ? 'bg-brand-green' : '',
+                  shippingChoiceCalc === 'Other State'
+                    ? 'bg-brand-green' : '',
+                  shippingChoiceCalc === 'Other City'
+                    ? 'bg-brand-green' : '',
                 ]"
                 >
                 <span>
@@ -240,7 +249,8 @@
                 "
 :class="[
   isOtherCountryActive ? 'bg-transparent' : 'disabled bg-gray-50',
-  shippingChoiceCalc === 'Other Country' ? 'bg-brand-green' : ''
+  shippingChoiceCalc === 'Other Country'
+    ? 'bg-brand-green' : ''
 ]"
                 >
                 <span>
@@ -279,8 +289,16 @@
                 :class="[
                   isOwnStateActive ?
                   'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Own Country'
+                    ? 'border-brand-green border-2' : '',
                   shippingChoiceCalc === 'Other Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent'
+                  'disabled bg-gray-50' : 'bg-transparent',
+                  shippingChoiceCalc === 'Own State'
+                    ? 'bg-brand-green' : '',
+                  shippingChoiceCalc === 'Own City'
+                    ? 'bg-brand-green' : '',
+                  shippingChoiceCalc === 'Other City'
+                    ? 'bg-brand-green' : '',
                 ]"
                 >
                 <span>
@@ -318,8 +336,12 @@
                 :class="[
                   isOtherStateActive ?
                   'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Own Country'
+                    ? 'border-brand-green border-2' : '',
                   shippingChoiceCalc === 'Other Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent'
+                  'disabled bg-gray-50' : 'bg-transparent',
+                  shippingChoiceCalc === 'Other State'
+                    ? 'bg-brand-green' : ''
                 ]"
                 >
                 <span>
@@ -363,8 +385,16 @@
                 :class="[
                   isOwnCityActive ?
                   'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Own Country' ?
+                  'disabled bg-gray-50' : 'bg-transparent',
                   shippingChoiceCalc === 'Other Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent'
+                  'disabled bg-gray-50' : 'bg-transparent',
+                  shippingChoiceCalc === 'Other State' ?
+                  'disabled bg-gray-50' : 'bg-transparent',
+                  shippingChoiceCalc === 'Own City'
+                    ? 'bg-brand-green' : '',
+                  shippingChoiceCalc === 'Own State'
+                    ? 'border-brand-green border-2' : '',
                 ]"
                 >
                 <span>
@@ -378,8 +408,9 @@
                   text-brand-black focus:ring-slate-500
                   disabled:cursor-not-allowed"
                   :disabled="
-                    !isOwnCityActive  ||
-                    shippingChoiceCalc === 'Other Country'
+                    !isOwnCityActive ||
+                    shippingChoiceCalc === 'Other Country' ||
+                    shippingChoiceCalc === 'Other State'
                   "
                     />
                 </span>
@@ -404,8 +435,16 @@
                 :class="[
                   isOtherCityActive ?
                   'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Own Country' ?
+                  'disabled bg-gray-50' : 'bg-transparent',
                   shippingChoiceCalc === 'Other Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent'
+                  'disabled bg-gray-50' : 'bg-transparent',
+                  shippingChoiceCalc === 'Other State' ?
+                  'disabled bg-gray-50' : 'bg-transparent',
+                  shippingChoiceCalc === 'Other City'
+                    ? 'bg-brand-green' : '',
+                  shippingChoiceCalc === 'Own State'
+                    ? 'border-brand-green border-2' : '',
                 ]"
                 >
                 <span>
@@ -420,7 +459,8 @@
                   disabled:cursor-not-allowed"
                   :disabled="
                     !isOtherCityActive ||
-                    shippingChoiceCalc === 'Other Country'
+                    shippingChoiceCalc === 'Other Country' ||
+                    shippingChoiceCalc === 'Other State'
                   "
                     />
                 </span>
