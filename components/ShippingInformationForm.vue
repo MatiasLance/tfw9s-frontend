@@ -200,9 +200,10 @@
                     hover:border-brand-grey
                     hover:bg-blue-50
                 "
-                :class="
-                  isOwnCountryActive ?
-                  'bg-transparent' : 'disabled bg-gray-50'"
+                :class="[
+                  isOwnCountryActive ? 'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Own Country' ? 'bg-brand-green' : ''
+                ]"
                 >
                 <span>
                     <input
@@ -237,9 +238,10 @@
                     hover:border-brand-grey
                     hover:bg-blue-50
                 "
-                :class="
-                  isOtherCountryActive ?
-                  'bg-transparent' : 'disabled bg-gray-50'"
+:class="[
+  isOtherCountryActive ? 'bg-transparent' : 'disabled bg-gray-50',
+  shippingChoiceCalc === 'Other Country' ? 'bg-brand-green' : ''
+]"
                 >
                 <span>
                     <input
@@ -274,9 +276,12 @@
                     hover:border-brand-grey
                     hover:bg-blue-50
                 "
-                :class="
+                :class="[
                   isOwnStateActive ?
-                  'bg-transparent' : 'disabled bg-gray-50'"
+                  'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Other Country' ?
+                  'disabled bg-gray-50' : 'bg-transparent'
+                ]"
                 >
                 <span>
                     <input
@@ -286,8 +291,12 @@
                     type="radio"
                     class="
                   mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500"
-                  :disabled="!isOwnStateActive"
+                  text-brand-black focus:ring-slate-500
+                  disabled:cursor-not-allowed"
+                  :disabled="
+                    !isOwnStateActive ||
+                    shippingChoiceCalc === 'Other Country'
+                  "
                     />
                 </span>
                 <span v-if="!isOwnStateActive">
@@ -306,9 +315,12 @@
                     hover:border-brand-grey
                     hover:bg-blue-50
                 "
-                :class="
+                :class="[
                   isOtherStateActive ?
-                  'bg-transparent' : 'disabled bg-gray-50'"
+                  'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Other Country' ?
+                  'disabled bg-gray-50' : 'bg-transparent'
+                ]"
                 >
                 <span>
                     <input
@@ -318,8 +330,12 @@
                     type="radio"
                     class="
                   mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500"
-                  :disabled="!isOtherStateActive"
+                  text-brand-black focus:ring-slate-500
+                  disabled:cursor-not-allowed"
+                  :disabled="
+                    !isOtherStateActive ||
+                    shippingChoiceCalc === 'Other Country'
+                  "
                     />
                 </span>
                 <template v-if="!isOtherStateActive">
@@ -344,9 +360,12 @@
                     hover:border-brand-grey
                     hover:bg-blue-50
                 "
-                :class="
+                :class="[
                   isOwnCityActive ?
-                  'bg-transparent' : 'disabled bg-gray-50'"
+                  'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Other Country' ?
+                  'disabled bg-gray-50' : 'bg-transparent'
+                ]"
                 >
                 <span>
                     <input
@@ -356,8 +375,12 @@
                     type="radio"
                     class="
                   mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500"
-                  :disabled="!isOwnCityActive"
+                  text-brand-black focus:ring-slate-500
+                  disabled:cursor-not-allowed"
+                  :disabled="
+                    !isOwnCityActive  ||
+                    shippingChoiceCalc === 'Other Country'
+                  "
                     />
                 </span>
                   <template v-if="!isOwnCityActive">
@@ -378,10 +401,12 @@
                     hover:border-brand-grey
                     hover:bg-blue-50
                 "
-                :class="
+                :class="[
                   isOtherCityActive ?
-                  'bg-transparent' : 'disabled bg-gray-50'
-                "
+                  'bg-transparent' : 'disabled bg-gray-50',
+                  shippingChoiceCalc === 'Other Country' ?
+                  'disabled bg-gray-50' : 'bg-transparent'
+                ]"
                 >
                 <span>
                     <input
@@ -391,8 +416,12 @@
                     type="radio"
                     class="
                   mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500"
-                  :disabled="!isOtherCityActive"
+                  text-brand-black focus:ring-slate-500
+                  disabled:cursor-not-allowed"
+                  :disabled="
+                    !isOtherCityActive ||
+                    shippingChoiceCalc === 'Other Country'
+                  "
                     />
                 </span>
                   <template v-if="!isOtherCityActive">
