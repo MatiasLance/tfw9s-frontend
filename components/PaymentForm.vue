@@ -145,6 +145,10 @@
           <span>{{ formatCurrency(shipping) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
+          <span>Tax:</span>
+          <span>{{ formatCurrency(tax) }}</span>
+        </li>
+        <li class="mb-1 flex justify-between">
           <span>GST:</span>
           <span>GST Inclusive*</span>
         </li>
@@ -156,7 +160,7 @@
         </li>
         <li v-if="showTaxInfo">
           <small class="text-xs font-light">
-            * Tax of {{ gstrate }} is included in the displayed price
+            * Tax of {{ tax }}% is included in the displayed price
           </small>
         </li>
       </ul>
@@ -226,6 +230,14 @@ export default {
         this.$store.commit('cart/setShipping', v)
       }
     },
+    tax: {
+      get() {
+        return this.$store.state.cart.tax
+      },
+      set(v) {
+        this.$store.commit('cart/setTax', v)
+      }
+    },
     shippingInformation: {
       get() {
         return this.$store.state.order.shippingInformation;
@@ -290,7 +302,9 @@ for this code.
                 this.newSubTotal = this.subtotal * (1 - this.discountRate)
                 this.newGST = this.newSubTotal * 0.1
                 // todo: remove newGST
-                this.overallTotal = this.newSubTotal;
+                const taxPercent = this.tax
+                const total = (this.newSubTotal * (100 + taxPercent)) / 100
+                this.overallTotal = total;
                 this.$store.commit('cart/setSubtotal', this.newSubTotal)
                 this.$store.commit('cart/setGst', this.newGST)
                 this.$store.commit('cart/setTotal', this.overallTotal)
@@ -374,8 +388,9 @@ for this code.
           this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
           this.newSubTotal = (this.subtotal + (this.shipping));
           this.newGST = this.newSubTotal * 0.1;
-          // todo: remove newGST from the overallTotal
-          this.overallTotal = this.newSubTotal;
+          // calculate total with dynamic tax percent
+          const total = (this.newSubTotal * (100 + this.tax)) / 100
+          this.overallTotal = total;
           this.originalAmount.subtotal = this.subtotal
           this.originalAmount.gst = this.newGST
           this.originalAmount.total = this.overallTotal
