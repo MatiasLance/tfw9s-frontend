@@ -51,7 +51,7 @@
                   "
               >
 <!-- todo: change this back to proceed when backend endpoint is ready -->
-            <form @submit.prevent="proceedDemo">
+            <form @submit.prevent="proceed">
               <div class="mb-4">
                 <div class="flex flex-wrap items-start justify-start gap-4">
                   <div class="flex w-full flex-col sm:flex-row">
@@ -236,6 +236,10 @@ export default {
   mounted() {
     const { tax } = this.$store.state.cart;
     this.addTaxOnCartPrice = tax;
+    this.retrieveToggleControl();
+    setTimeout(() => {
+      this.retrieveControlValues();
+    }, 1000);
     /*
      * TODO: uncomment this.retrieveControlValues() if backend is ready
      * this.retrieveToggleControl()
@@ -259,12 +263,16 @@ export default {
       this.$store.commit('master/setToggleControl2', this.toggleControl2)
     },
     retrieveControlValues() {
-      // TODO: pending endpoint
       this.$axios
-        .$get('v1/control/1')
+        .$get('v1/tax/1')
         .then((response) => {
-          this.addTaxOnCartPrice = response.data[0].addtax_value
-          this.includeTaxOnCartPrice = response.data[0].includetax_value
+          this.addTaxOnCartPrice = response.me.addTaxValue
+          this.includeTaxOnCartPrice = response.me.includeTaxValue
+          if (!this.toggleControl1 && !this.toggleControl2) {
+            this.$store.commit('cart/setTax', 0)
+          } else {
+            this.$store.commit('cart/setTax', this.addTaxOnCartPrice)
+          }
         })
         .catch((err) => {
           this.$oruga.notification.open({
@@ -277,18 +285,20 @@ export default {
         })
     },
     updateToggleControl() {
+      this.saveControl1()
+      this.saveControl2()
       const form = new FormData();
       form.append('_method', 'PATCH')
-      form.append('togglecontrol1', this.toggleControl1)
-      form.append('togglecontrol2', this.toggleControl2)
+      form.append('toggleControl1', this.toggleControl1)
+      form.append('toggleControl2', this.toggleControl2)
 
       // todo: insert final endpoint here when backend is ready.
-      const endpoint = 'v1/togglecontrol/1'
+      const endpoint = 'v1/toogletax/1'
       this.$axios
         .$post(endpoint, form)
         .then((response) => {
           this.$oruga.notification.open({
-            message: `Toggle setting: ${response.Message}`,
+            message: `Toggle setting: ${response.message}`,
             variant: 'success',
             duration: 5000,
             position: 'bottom'
@@ -307,14 +317,14 @@ export default {
     },
     retrieveToggleControl() {
       // todo: check endpoint
-      const endpoint = 'v1/togglecontrol/1'
+      const endpoint = 'v1/toogletax/1'
       this.$axios
         .$get(endpoint)
         .then((response) => {
-          this.toggleControl1 = response.data.togglecontrol1
-          this.toggleControl2 = response.data.togglecontrol2
-          this.$store.commit('master/setToggleControl1', response.data.togglecontrol1)
-          this.$store.commit('master/setToggleControl2', response.data.togglecontrol2)
+          this.toggleControl1 = response.me.toggleControl1
+          this.toggleControl2 = response.me.toggleControl2
+          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
+          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
         })
         .catch((err) => {
           this.$oruga.notification.open({
@@ -347,15 +357,15 @@ export default {
     proceed() {
       const form = new FormData();
       form.append('_method', 'PATCH')
-      form.append('addtax_value', this.addTaxOnCartPrice)
-      form.append('includetax_value', this.includeTaxOnCartPrice)
+      form.append('addTaxValue', this.addTaxOnCartPrice)
+      form.append('includeTaxValue', this.includeTaxOnCartPrice)
       // todo: check endpoint in backend
-      const endpoint = 'v1/control/1'
+      const endpoint = 'v1/tax/1'
       this.$axios
         .$post(endpoint, form)
         .then((response) => {
           this.$oruga.notification.open({
-            message: `Master settings: ${response.Message}`,
+            message: `Master settings: ${response.message}`,
             variant: 'success',
             duration: 5000,
             position: 'bottom'
