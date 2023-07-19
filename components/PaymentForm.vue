@@ -204,7 +204,7 @@ export default {
       newGST: 0,
       showPaypal: true,
       showSquare: false,
-      showStripe: true,
+      showStripe: false,
       showDiscountCodeForm: true,
       discountcode: null,
       discount: -1,
