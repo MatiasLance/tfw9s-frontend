@@ -201,10 +201,9 @@ export default {
       },
       overallTotal: 0,
       newSubTotal: 0,
-      newGST: 0,
       showPaypal: true,
       showSquare: false,
-      showStripe: false,
+      showStripe: true,
       showDiscountCodeForm: true,
       discountcode: null,
       discount: -1,
@@ -300,13 +299,11 @@ for this code.
               setTimeout(() => {
                 this.discountRate = response.discountcode.rate
                 this.newSubTotal = this.subtotal * (1 - this.discountRate)
-                this.newGST = this.newSubTotal * 0.1
                 // todo: remove newGST
                 const taxPercent = this.tax
                 const total = (this.newSubTotal * (100 + taxPercent)) / 100
                 this.overallTotal = total;
                 this.$store.commit('cart/setSubtotal', this.newSubTotal)
-                this.$store.commit('cart/setGst', this.newGST)
                 this.$store.commit('cart/setTotal', this.overallTotal)
                 this.$oruga.notification.open({
                   message: response.message,
@@ -358,7 +355,6 @@ for this code.
         this.$store.commit('cart/setSubtotal', this.originalAmount.subtotal)
         this.$store.commit('cart/setGst', this.originalAmount.gst)
         this.$store.commit('cart/setTotal', this.originalAmount.total)
-        this.newGST = this.originalAmount.gst
         this.overallTotal = this.originalAmount.total
         this.isDiscountCodeMatch = false
       }, 1000)
@@ -387,12 +383,10 @@ for this code.
           this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
           this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
           this.newSubTotal = (this.subtotal + (this.shipping));
-          this.newGST = this.newSubTotal * 0.1;
           // calculate total with dynamic tax percent
           const total = (this.newSubTotal * (100 + this.tax)) / 100
           this.overallTotal = total;
           this.originalAmount.subtotal = this.subtotal
-          this.originalAmount.gst = this.newGST
           this.originalAmount.total = this.overallTotal
         })
         .finally(() => {
