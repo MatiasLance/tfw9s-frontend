@@ -137,7 +137,7 @@
           <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li v-else class="mb-1 flex justify-between">
-          <span>Subtotal:</span>
+          <span>Subtotal (Pre-GST amount):</span>
           <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
@@ -145,8 +145,8 @@
           <span>{{ formatCurrency(shipping) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
-          <span>Tax:</span>
-          <span>{{ formatCurrency(tax) }}</span>
+          <span>Tax Amount:</span>
+          <span>{{ formatCurrency(taxAmount) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
@@ -235,6 +235,14 @@ export default {
       },
       set(v) {
         this.$store.commit('cart/setTax', v)
+      }
+    },
+    taxAmount: {
+      get() {
+        return this.$store.state.cart.taxAmount
+      },
+      set(v) {
+        this.$store.commit('cart/setTaxAmount', v)
       }
     },
     shippingInformation: {
