@@ -1,6 +1,6 @@
 <template>
     <div>
-      <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
+      <BaseHeader class="from-brand-grey to-brand-black bg-gradient-to-r">
           <div
               class="
               space-y-3
@@ -148,17 +148,17 @@
               <button
                 type="submit"
                 class="
-                  my-2
-                  inline-block
-                  w-full
-                  border border-transparent
                   bg-brand-black
+                  hover:bg-brand-slate
+                  my-2
+                  inline-block w-full
+                  border
+                  border-transparent
                   py-3
                   px-5
                   text-center
                   font-bold
                   text-white
-                  hover:bg-brand-slate
                 "
               >
                 Apply changes
@@ -167,12 +167,12 @@
                 <NuxtLink
                   to="/admin"
                   class="
-                    mx-auto
-                    flex items-center
                     text-brand-slate
-                    hover:text-brand-black
+                    hover:text-brand-black hover:decoration-brand-black
+                    mx-auto
+                    flex
+                    items-center
                     hover:underline
-                    hover:decoration-brand-black
                   "
                 >
                   <i class="ri-arrow-left-line mr-2"></i>
@@ -263,8 +263,9 @@ export default {
       this.$store.commit('master/setToggleControl2', this.toggleControl2)
     },
     retrieveControlValues() {
+      const id = 1;
       this.$axios
-        .$get('v1/tax/1')
+        .$get(`v1/tax/${id}`)
         .then((response) => {
           this.addTaxOnCartPrice = response.me.addTaxValue
           this.includeTaxOnCartPrice = response.me.includeTaxValue
@@ -316,8 +317,9 @@ export default {
         })
     },
     retrieveToggleControl() {
+      const id = 1;
       // todo: check endpoint
-      const endpoint = 'v1/toogletax/1'
+      const endpoint = `v1/toogletax/${id}`
       this.$axios
         .$get(endpoint)
         .then((response) => {
@@ -360,7 +362,8 @@ export default {
       form.append('addTaxValue', this.addTaxOnCartPrice)
       form.append('includeTaxValue', this.includeTaxOnCartPrice)
       // todo: check endpoint in backend
-      const endpoint = 'v1/tax/1'
+      const id = 1
+      const endpoint = `v1/tax/${id}`
       this.$axios
         .$post(endpoint, form)
         .then((response) => {

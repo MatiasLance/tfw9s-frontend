@@ -351,8 +351,9 @@ export default {
       this.$store.dispatch('cart/cullZeroQuantityItems')
     },
     retrieveTaxValue() {
+      const id = 1
       this.$axios
-        .$get('v1/tax/1')
+        .$get(`v1/tax/${id}`)
         .then((response) => {
           this.addTaxOnCartPrice = response.me.addTaxValue
           this.includeTaxOnCartPrice = response.me.includeTaxValue
