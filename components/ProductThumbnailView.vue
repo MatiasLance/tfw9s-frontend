@@ -72,10 +72,30 @@
       </h3>
       <div class="mt-2"></div>
       <span class="w-9 border-t-2 border-slate-600"></span>
-      <div class="h-7">
+      <div class="mb-8 h-7">
         <span class="pt-2 pb-4 text-[18px] font-bold text-gray-900">
-          <span>{{ formatCurrency(price) }}</span>
+          <span>
+            <span v-if="isOnSaleMock && showRRP">RRP</span>
+            <span
+              v-if="isOnSaleMock && salePrice
+              && salePrice > 0"
+              class="text-red-500 line-through"
+            >
+              {{ formatCurrency(price) }}
+            </span>
+            <span v-else>
+              {{ formatCurrency(price) }}
+            </span>
+          </span>
         </span>
+        <div>
+          <span class="text-brand-green pt-2 pb-4 text-[18px] font-bold">
+            <span
+              v-if="isOnSaleMock && salePrice
+              && salePrice > 0 && salePrice < price"
+            >SALE {{ formatCurrency(salePrice) }}</span>
+          </span>
+        </div>
       </div>
 
       <VBtn
@@ -157,6 +177,10 @@ export default {
       type: Number,
       required: true,
     },
+    /*
+     * todo: add salePrice, showRRP, isOnSale
+     * prop value after, once backend has those fields
+     */
     categories: {
       type: Array,
       required: true,
@@ -180,6 +204,10 @@ export default {
   },
   data() {
     return {
+      rrp: this.price, // Regular Price (RRP)
+      salePrice: 100, // Initialize with a default value
+      showRRP: true, // remove when backend has showRRP field
+      isOnSaleMock: true,
       showComponent: false,
       showOutOfStock: true
     }
