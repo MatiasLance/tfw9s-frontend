@@ -75,8 +75,12 @@
       <div class="mb-8 h-7">
         <span class="pt-2 pb-4 text-[18px] font-bold text-gray-900">
           <span>
-            RRP
-            <span v-if="salePrice" class="text-red-500 line-through">
+            <span v-if="isOnSaleMock && showRRP">RRP</span>
+            <span
+              v-if="isOnSaleMock && salePrice
+              && salePrice > 0"
+              class="text-red-500 line-through"
+            >
               {{ formatCurrency(price) }}
             </span>
             <span v-else>
@@ -87,7 +91,8 @@
         <div>
           <span class="text-brand-green pt-2 pb-4 text-[18px] font-bold">
             <span
-              v-if="salePrice && salePrice > 0 && salePrice < price"
+              v-if="isOnSaleMock && salePrice
+              && salePrice > 0 && salePrice < price"
             >SALE {{ formatCurrency(salePrice) }}</span>
           </span>
         </div>
@@ -172,7 +177,10 @@ export default {
       type: Number,
       required: true,
     },
-    // todo: add salePrice prop value after, once backend has salePrice field
+    /*
+     * todo: add salePrice, showRRP, isOnSale
+     * prop value after, once backend has those fields
+     */
     categories: {
       type: Array,
       required: true,
@@ -198,6 +206,8 @@ export default {
     return {
       rrp: this.price, // Regular Price (RRP)
       salePrice: 100, // Initialize with a default value
+      showRRP: true, // remove when backend has showRRP field
+      isOnSaleMock: true,
       showComponent: false,
       showOutOfStock: true
     }
