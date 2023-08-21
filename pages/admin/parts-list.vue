@@ -226,7 +226,28 @@
                   <FeaturedChip />
                 </span>
               </span>
-              <p class="mb-1">
+              <p v-if="isOnSaleMock" class="mb-1">
+                <span v-if="isRRPMock" class="text-lg font-semibold">RRP</span>
+                <span
+                  v-if="salePriceMock && salePriceMock > 0"
+                  class="mb-2 pt-2 pb-4 text-lg
+                  font-semibold text-red-500 line-through"
+                >
+                  <span>{{ formatCurrency(prod.price) }}</span>
+                </span>
+                <span class="block">
+                  <span
+                    class="text-brand-green pt-2 pb-4
+                    text-lg font-semibold"
+                  >
+                    <span
+                        v-if="salePriceMock
+                        && salePriceMock > 0 && salePriceMock < prod.price"
+                      >SALE {{ formatCurrency(salePriceMock) }}</span>
+                    </span>
+                </span>
+              </p>
+              <p v-else class="mb-1">
                 <span
                   class="mb-2 pt-2 pb-4 text-lg font-semibold text-gray-900"
                 >
@@ -1291,6 +1312,9 @@ export default {
   ],
   data() {
     return {
+      isOnSaleMock: false, // remove when done
+      isRRPMock: true, // remove when done
+      salePriceMock: 100, // remove when done
       query: '',
       from: 0,
       to: 0,
@@ -1944,6 +1968,9 @@ export default {
           const product = {
             name: this.name,
             price: this.price,
+            salePrice: this.salePrice,
+            isRRP: this.isRRP,
+            isOnSale: this.isOnSale,
             description: this.description,
             categoryId: this.selectedCategory.map(x => x.id),
             inStock: this.inStock,
@@ -1963,6 +1990,9 @@ export default {
           form.append('name', product.name);
           form.append('description', product.description);
           form.append('price', product.price);
+          form.append('salePrice', product.salePrice);
+          form.append('isRRP', product.isRRP);
+          form.append('isOnSale', product.isOnSale);
           form.append('stock', product.inStock);
           form.append('isHideOutOfStock', product.isHideOutOfStock);
           /*
