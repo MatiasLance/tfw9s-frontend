@@ -42,10 +42,13 @@
         :uid="product.id"
         :name="product.name"
         :price="product.price"
+        :saleprice="product.saleprice"
         :categories="product.categories"
         :stock="product.stock"
         :path="getMediaURL(product.media[0])"
         :has-variants="product.has_variants"
+        :is-rrp="product.show_rrp"
+        :is-on-sale="product.is_on_sale"
         :is-hide-out-of-stock="product.isHideOutOfStock"
       />
     </section>

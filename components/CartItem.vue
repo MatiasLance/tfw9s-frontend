@@ -70,9 +70,22 @@
             <p class="font-semibold not-italic">
               {{ formatCurrency(totalItemCost) }}
             </p>
-            <small class="text-gray-400">
-              {{ formatCurrency(price) }} / item
-            </small>
+            <span v-if="isOnSale" class="text-sm">
+              <span class="block">
+                <span v-if="showRrp">RRP</span>
+                <span class="text-red-400 line-through">
+                  {{ formatCurrency(price) }} / item
+                </span>
+              </span>
+              <span class="block">
+                <span class="text-brand-green">
+                  SALE {{ formatCurrency(finalPrice) }} / item
+                </span>
+              </span>
+            </span>
+            <span v-else class="text-gray-400 text-sm">
+              {{ formatCurrency(finalPrice) }} / item
+            </span>
           </div>
         </div>
       </div>
@@ -123,6 +136,18 @@ export default {
       type: Number,
       required: true,
     },
+    saleprice: {
+      type: Number,
+      required: true
+    },
+    isOnSale: {
+      type: Boolean,
+      required: true
+    },
+    showRrp: {
+      type: Boolean,
+      required: true
+    },
     stock: {
       type: Number,
       required: true,
@@ -141,20 +166,30 @@ export default {
     },
   },
   data() {
-    return { editableQuantity: 1 }
+    return {
+      editableQuantity: 1,
+      originalPrice: this.price,
+      finalPrice: this.isOnSale ? this.saleprice : this.price
+    }
   },
   computed: {
     totalItemCost: {
       get() {
         return currency(this.editableQuantity, { fromCents: false })
-          .multiply(this.price)
+          .multiply(this.finalPrice)
       },
     },
   },
   mounted() {
     this.editableQuantity = this.quantity
+    // if item is on sale, apply saleprice value to price
+    this.updatePrices(); // Call the updatePrices function to set initial prices
   },
   methods: {
+    updatePrices() {
+      this.originalPrice = this.price;
+      this.finalPrice = this.isOnSale ? this.saleprice : this.price;
+    },
     quantityChanged() {
       this.$emit('change', {
         id: this.uid,

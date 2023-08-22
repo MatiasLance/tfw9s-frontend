@@ -226,10 +226,13 @@
                   <FeaturedChip />
                 </span>
               </span>
-              <p v-if="isOnSaleMock" class="mb-1">
-                <span v-if="isRRPMock" class="text-lg font-semibold">RRP</span>
+              <p v-if="prod.is_on_sale" class="mb-1">
                 <span
-                  v-if="salePriceMock && salePriceMock > 0"
+                  v-if="prod.show_rrp"
+                  class="text-lg font-semibold"
+                >RRP</span>
+                <span
+                  v-if="prod.saleprice && prod.saleprice > 0"
                   class="mb-2 pt-2 pb-4 text-lg
                   font-semibold text-red-500 line-through"
                 >
@@ -241,13 +244,17 @@
                     text-lg font-semibold"
                   >
                     <span
-                        v-if="salePriceMock
-                        && salePriceMock > 0 && salePriceMock < prod.price"
-                      >SALE {{ formatCurrency(salePriceMock) }}</span>
+                        v-if="prod.saleprice
+                        && prod.saleprice > 0 && prod.saleprice < prod.price"
+                      >SALE {{ formatCurrency(prod.saleprice) }}</span>
                     </span>
                 </span>
               </p>
               <p v-else class="mb-1">
+                <span
+                  v-if="prod.show_rrp"
+                  class="text-lg font-semibold"
+                >RRP</span>
                 <span
                   class="mb-2 pt-2 pb-4 text-lg font-semibold text-gray-900"
                 >
@@ -1312,9 +1319,6 @@ export default {
   ],
   data() {
     return {
-      isOnSaleMock: false, // remove when done
-      isRRPMock: true, // remove when done
-      salePriceMock: 100, // remove when done
       query: '',
       from: 0,
       to: 0,
@@ -1877,9 +1881,11 @@ export default {
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
         .then((response) => {
-          console.log(response.data.item)
           this.name = response.data.item.name;
           this.price = response.data.item.price;
+          this.salePrice = response.data.item.saleprice;
+          this.isRRP = response.data.item.show_rrp;
+          this.isOnSale = response.data.item.is_on_sale;
           this.description = response.data.item.description;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
@@ -2064,6 +2070,9 @@ export default {
       const editedProduct = {
         name: this.name,
         price: this.price,
+        salePrice: this.salePrice,
+        isRRP: this.isRRP,
+        isOnSale: this.isOnSale,
         description: this.description,
         inStock: this.inStock,
         isHideOutOfStock: this.hideOutOfStock,
@@ -2085,6 +2094,9 @@ export default {
       form.append('name', editedProduct.name);
       form.append('description', editedProduct.description);
       form.append('price', editedProduct.price);
+      form.append('salePrice', editedProduct.salePrice);
+      form.append('isRRP', editedProduct.isRRP);
+      form.append('isOnSale', editedProduct.isOnSale);
       form.append('stock', editedProduct.inStock);
       form.append('isHideOutOfStock', editedProduct.isHideOutOfStock);
       /*
