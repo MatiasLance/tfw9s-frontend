@@ -56,6 +56,9 @@
               :uid="item.id"
               :name="item.name"
               :price="item.price"
+              :saleprice="item.saleprice"
+              :is-on-sale="item.is_on_sale"
+              :show-rrp="item.show_rrp"
               :stock="item.stock"
               :categories="item.categories"
               :quantity="getQuantity(item.id)"
@@ -296,42 +299,30 @@ export default {
     calculatePriceAggregates() {
       const itemCostData = this.items.map((item) => {
         const quantity = this.getQuantity(item.id)
+        const price = item.is_on_sale ? item.saleprice : item.price;
         return {
           id: item.id,
           quantity,
-          price: item.price,
-        }
+          price,
+        };
       })
 
-      let gst = 0
-      let subtotal = 0
-      itemCostData.forEach((item) => {
-        const gstCut = currency(item.price, { fromCents: false })
-          .divide(10)
-          .multiply(item.quantity)
-          .value
+      let subtotal = 0;
 
+      itemCostData.forEach((item) => {
         const preTaxSubtotal = currency(item.price, { fromCents: false })
           .multiply(item.quantity)
-          .value
+          .value;
 
-        gst = currency(gst, { fromCents: false })
-          .add(gstCut).value
         subtotal = currency(subtotal, { fromCents: false })
-          .add(preTaxSubtotal).value
-      })
-
-      /*
-       * const total = (subtotal * (100 + taxPercent)) / 100
-       * const taxPercent = this.tax
-       * todo: check if this formula is correct, otherwise change to subtotal
-       */
+          .add(preTaxSubtotal)
+          .value;
+      });
       // calculate pre gst amount subtotal
       this.subtotal = currency(subtotal, { fromCents: false })
         .divide(1 + this.taxrateValue)
-        .value
+        .value;
       const total = subtotal
-      this.gst = gst
       this.total = total
       this.taxAmount = this.total - this.subtotal
       this.$store.commit('cart/setTaxAmount', this.taxAmount)
