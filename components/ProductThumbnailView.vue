@@ -74,26 +74,26 @@
       <span class="w-9 border-t-2 border-slate-600"></span>
       <div class="mb-8 h-7">
         <span class="pt-2 pb-4 text-[18px] font-bold text-gray-900">
-          <span>
-            <span v-if="isOnSaleMock && showRRP">RRP</span>
+          <span v-if="isOnSale">
+            <span v-if="isRrp">RRP</span>
             <span
-              v-if="isOnSaleMock && salePrice
-              && salePrice > 0"
+              v-if="saleprice
+              && saleprice > 0"
               class="text-red-500 line-through"
             >
               {{ formatCurrency(price) }}
             </span>
-            <span v-else>
-              {{ formatCurrency(price) }}
-            </span>
+          </span>
+          <span v-else>
+            {{ formatCurrency(price) }}
           </span>
         </span>
         <div>
           <span class="text-brand-green pt-2 pb-4 text-[18px] font-bold">
             <span
-              v-if="isOnSaleMock && salePrice
-              && salePrice > 0 && salePrice < price"
-            >SALE {{ formatCurrency(salePrice) }}</span>
+              v-if="isOnSale && saleprice
+              && saleprice > 0 && saleprice < price"
+            >SALE {{ formatCurrency(saleprice) }}</span>
           </span>
         </div>
       </div>
@@ -177,10 +177,10 @@ export default {
       type: Number,
       required: true,
     },
-    /*
-     * todo: add salePrice, showRRP, isOnSale
-     * prop value after, once backend has those fields
-     */
+    saleprice: {
+      type: Number,
+      required: true,
+    },
     categories: {
       type: Array,
       required: true,
@@ -194,6 +194,14 @@ export default {
       required: true
     },
     hasVariants: {
+      type: Boolean,
+      required: true
+    },
+    isRrp: {
+      type: Boolean,
+      required: true
+    },
+    isOnSale: {
       type: Boolean,
       required: true
     },

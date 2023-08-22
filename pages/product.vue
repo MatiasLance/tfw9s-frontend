@@ -81,18 +81,18 @@
           >
           <!-- todo: add Sale Price (if there is) and slash the RRP (price) -->
           <span class="amount">
-              <span>
-                <span v-if="isOnSaleMock && showRRP">RRP</span>
+              <span v-if="product.is_on_sale">
+                <span v-if="product.show_rrp">RRP</span>
                 <span
-                  v-if="isOnSaleMock && salePriceMock
-                  && salePriceMock > 0"
+                  v-if="product.saleprice
+                  && product.saleprice > 0"
                   class="text-red-500 line-through"
                 >
                   {{ formatCurrency(product.price) }}
                 </span>
-                <span v-else>
-                  {{ formatCurrency(product.price) }}
-                </span>
+              </span>
+              <span v-else>
+                {{ formatCurrency(product.price) }}
               </span>
             </span>
           </p>
@@ -110,10 +110,10 @@
             <span class="amount text-brand-green">
               <span
                 v-if="
-                  isOnSaleMock && salePriceMock
-                  && salePriceMock > 0
-                  && salePriceMock < product.price"
-              >SALE {{ formatCurrency(salePriceMock) }}</span>
+                  product.is_on_sale && product.saleprice
+                  && product.saleprice > 0
+                  && product.saleprice < product.price"
+              >SALE {{ formatCurrency(product.saleprice) }}</span>
             </span>
           </p>
           <div class="w-full">
@@ -378,8 +378,6 @@ export default {
         description: '',
         price: '',
         salePrice: '',
-        showRRP: false,
-        isOnSale: false,
         stock: '',
         parent: null,
         categories: [],
