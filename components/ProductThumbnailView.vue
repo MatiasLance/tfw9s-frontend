@@ -72,10 +72,30 @@
       </h3>
       <div class="mt-2"></div>
       <span class="w-9 border-t-2 border-slate-600"></span>
-      <div class="h-7">
+      <div class="mb-8 h-7">
         <span class="pt-2 pb-4 text-[18px] font-bold text-gray-900">
-          <span>{{ formatCurrency(price) }}</span>
+          <span v-if="isOnSale">
+            <span v-if="isRrp">RRP</span>
+            <span
+              v-if="saleprice
+              && saleprice > 0"
+              class="text-red-500 line-through"
+            >
+              {{ formatCurrency(price) }}
+            </span>
+          </span>
+          <span v-else>
+            {{ formatCurrency(price) }}
+          </span>
         </span>
+        <div>
+          <span class="text-brand-green pt-2 pb-4 text-[18px] font-bold">
+            <span
+              v-if="isOnSale && saleprice
+              && saleprice > 0 && saleprice < price"
+            >SALE {{ formatCurrency(saleprice) }}</span>
+          </span>
+        </div>
       </div>
 
       <VBtn
@@ -157,6 +177,10 @@ export default {
       type: Number,
       required: true,
     },
+    saleprice: {
+      type: Number,
+      required: true,
+    },
     categories: {
       type: Array,
       required: true,
@@ -173,6 +197,14 @@ export default {
       type: Boolean,
       required: true
     },
+    isRrp: {
+      type: Boolean,
+      required: true
+    },
+    isOnSale: {
+      type: Boolean,
+      required: true
+    },
     isHideOutOfStock: {
       type: Boolean,
       required: true
@@ -180,6 +212,10 @@ export default {
   },
   data() {
     return {
+      rrp: this.price, // Regular Price (RRP)
+      salePrice: 100, // Initialize with a default value
+      showRRP: true, // remove when backend has showRRP field
+      isOnSaleMock: true,
       showComponent: false,
       showOutOfStock: true
     }

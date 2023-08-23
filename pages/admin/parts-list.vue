@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
+    <BaseHeader class="from-brand-dgrey to-brand-black bg-gradient-to-r">
       <div
         class="
           space-y-3
@@ -46,16 +46,16 @@
             <button
               type="button"
               class="
-                w-40
-                rounded-xl
-                border border-solid border-brand-black
+                border-brand-black
                 bg-brand-black
+                focus:bg-brand-grey w-40 rounded-xl
+                border
+                border-solid
                 px-4
                 py-2
                 text-center
                 text-white
                 hover:bg-slate-400
-                focus:bg-brand-grey
               "
               @click="addPr"
             >
@@ -67,15 +67,15 @@
             <button
               type="button"
               class="
+                border-brand-black bg-brand-black focus:bg-brand-grey
                 block w-40 rounded-xl
-                border border-solid border-brand-black
-                bg-brand-black
+                border
+                border-solid
                 px-4
                 py-2
                 text-center
                 text-white
                 hover:bg-slate-400
-                focus:bg-brand-grey
                 md:inline-block
               "
               @click="categoriesLink"
@@ -108,10 +108,10 @@
               <button
                 type="button"
                 class="
-                  mr-4
-                  rounded-xl border border-solid
                   border-brand-green
-                  bg-brand-green
+                  bg-brand-green mr-4 rounded-xl
+                  border
+                  border-solid
                   px-4
                   py-2
                   text-center
@@ -197,16 +197,16 @@
                     <i class="ri-price-tag-3-line text-brand-black"></i>
                   </span>
                   <span
-                    class="text-[16px]
-                    selection:bg-brand-black selection:text-white"
+                    class="selection:bg-brand-black
+                    text-[16px] selection:text-white"
                   >
                     {{ category.name }}
                   </span>
                 </div>
               </div>
               <span
-                class="text-2xl
-                selection:bg-brand-black
+                class="selection:bg-brand-black
+                text-2xl
                 selection:text-white"
               >
                 <NuxtLink
@@ -214,10 +214,10 @@
                   target="_self"
                   :title="prod.name"
                   class="
-                    font-montserrat font-bold
+                    font-montserrat hover:text-brand-black
+                    font-bold
                     transition
                     duration-200
-                    hover:text-brand-black
                   "
                 >
                   {{ prod.name }}
@@ -226,7 +226,35 @@
                   <FeaturedChip />
                 </span>
               </span>
-              <p class="mb-1">
+              <p v-if="prod.is_on_sale" class="mb-1">
+                <span
+                  v-if="prod.show_rrp"
+                  class="text-lg font-semibold"
+                >RRP</span>
+                <span
+                  v-if="prod.saleprice && prod.saleprice > 0"
+                  class="mb-2 pt-2 pb-4 text-lg
+                  font-semibold text-red-500 line-through"
+                >
+                  <span>{{ formatCurrency(prod.price) }}</span>
+                </span>
+                <span class="block">
+                  <span
+                    class="text-brand-green pt-2 pb-4
+                    text-lg font-semibold"
+                  >
+                    <span
+                        v-if="prod.saleprice
+                        && prod.saleprice > 0 && prod.saleprice < prod.price"
+                      >SALE {{ formatCurrency(prod.saleprice) }}</span>
+                    </span>
+                </span>
+              </p>
+              <p v-else class="mb-1">
+                <span
+                  v-if="prod.show_rrp"
+                  class="text-lg font-semibold"
+                >RRP</span>
                 <span
                   class="mb-2 pt-2 pb-4 text-lg font-semibold text-gray-900"
                 >
@@ -251,12 +279,12 @@
               <button
                 type="button"
                 class="
+                  hover:text-brand-slate
+                  hover:decoration-brand-slate
                   mr-2
                   flex
                   cursor-pointer
-                  items-center
-                  hover:text-brand-slate
-                  hover:underline hover:decoration-brand-slate
+                  items-center hover:underline
                 "
                 @click="editPr(prod.id)"
               >
@@ -265,12 +293,12 @@
               <button
                 type="button"
                 class="
+                  hover:text-brand-slate
+                  hover:decoration-brand-slate
                   mr-2
                   flex
                   cursor-pointer
-                  items-center
-                  hover:text-brand-slate
-                  hover:underline hover:decoration-brand-slate
+                  items-center hover:underline
                 "
                 @click="duplicate(prod.id)"
               >
@@ -282,12 +310,12 @@
               <button
                 type="button"
                 class="
+                  hover:text-brand-slate
+                  hover:decoration-brand-slate
                   mr-2
                   flex
                   cursor-pointer
-                  items-center
-                  hover:text-brand-slate
-                  hover:underline hover:decoration-brand-slate
+                  items-center hover:underline
                 "
                 @click="addVariant(prod.id)"
               >
@@ -318,13 +346,13 @@
               <button
                 type="button"
                 class="
+                  text-brand-red
+                  hover:decoration-brand-slate
                   mr-2
                   flex
                   cursor-pointer
                   items-center
-                  text-brand-red
-                  hover:text-red-900
-                  hover:underline hover:decoration-brand-slate
+                  hover:text-red-900 hover:underline
                 "
                 @click="removePr(prod.id)"
               >
@@ -346,7 +374,7 @@
      <OModal :active="showAddProductModal" @close="showAddProductModal = false">
       <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <form @submit.prevent="create">
-          <h3 class="mb-3 font-bold text-brand-black">
+          <h3 class="text-brand-black mb-3 font-bold">
             Add Product
           </h3>
           <hr class="my-3">
@@ -370,14 +398,45 @@
               />
             </div>
             <div class="col-span-3 mb-4 lg:col-span-1">
-              <label class="mb-1 block">Price:</label>
-              <div class="flex flex-wrap">
-                <OInput
-                  v-model="price"
-                  placeholder="Amount"
-                  type="text"
-                  icon="currency-usd"
-                ></OInput>
+              <div class="flex flex-col">
+                <div class="mb-3">
+                  <label class="mb-1 block">Price:</label>
+                  <div class="flex flex-wrap">
+                    <OInput
+                      v-model="price"
+                      placeholder="Amount"
+                      type="text"
+                      icon="currency-usd"
+                    ></OInput>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <VSwitch
+                    v-model="isRRP"
+                    color="black"
+                    label="RRP"
+                  >
+                  </VSwitch>
+                </div>
+                <div class="mb-3">
+                  <label class="mb-1 block">Sale Price:</label>
+                  <div class="flex flex-wrap">
+                    <OInput
+                      v-model="salePrice"
+                      placeholder="Amount"
+                      type="text"
+                      icon="currency-usd"
+                    ></OInput>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <VSwitch
+                    v-model="isOnSale"
+                    color="black"
+                    label="Product On Sale"
+                  >
+                  </VSwitch>
+                </div>
               </div>
             </div>
             <div class="col-span-3 mb-4 lg:col-span-2">
@@ -385,12 +444,12 @@
               <div class="grid w-full grid-cols-2 gap-2">
                 <label
                   class="
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    bg-transparent p-3
                     hover:border-brand-black
+                    flex
+                    w-full cursor-pointer
+                    border
+                    border-gray-200 bg-transparent
+                    p-3
                     hover:bg-slate-100
                   "
                   >
@@ -401,8 +460,8 @@
                       name="stockRadio"
                       type="radio"
                       class="
-                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
+                      text-brand-black focus:ring-brand-black mt-1 mr-1 h-4 w-4
+                      bg-gray-200"
                       @change="toggleStock"
                     />
                   </span>
@@ -410,12 +469,12 @@
                 </label>
                 <label
                   class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
                   hover:border-brand-black
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
                   hover:bg-slate-50
                   "
                 >
@@ -427,8 +486,8 @@
                       type="radio"
                       :checked="inStock === 0"
                       class="
-                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
+                      text-brand-black focus:ring-brand-black mt-1 mr-1 h-4 w-4
+                      bg-gray-200"
                       @change="toggleStock"
                     />
                   </span>
@@ -440,12 +499,12 @@
                 >
                 <label
                   class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
                   hover:border-brand-black
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
                   hover:bg-slate-50
                   "
                 >
@@ -455,8 +514,8 @@
                       name="hideOutOfStock"
                       type="checkbox"
                       class="
-                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
+                      text-brand-black focus:ring-brand-black mt-1 mr-1 h-4 w-4
+                      bg-gray-200"
                     />
                   </span>
                   <span>Hide 'Out of stock' label if variants have stock</span>
@@ -487,12 +546,12 @@
                 <div class="item-center mt-4 flex">
                   <label
                     class="
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    bg-transparent p-3
                     hover:border-brand-black
+                    flex
+                    w-full cursor-pointer
+                    border
+                    border-gray-200 bg-transparent
+                    p-3
                     hover:bg-slate-50
                     "
                   >
@@ -502,8 +561,9 @@
                         name="itemFeatured"
                         type="checkbox"
                         class="
-                        mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                        focus:ring-brand-black"
+                        text-brand-black
+                        focus:ring-brand-black mt-1 mr-1 h-4 w-4
+                        bg-gray-200"
                       />
                     </span>
                     <span>Featured Item</span>
@@ -522,11 +582,11 @@
                 <button
                   type="button"
                   class="
-                    flex
-                    items-center
-                    justify-center
-                    border border-solid border-brand-black
+                    border-brand-black
                     bg-brand-black
+                    flex
+                    items-center justify-center border
+                    border-solid
                     px-4
                     py-2
                     text-white
@@ -550,10 +610,10 @@
                   <button
                     type="button"
                     class="
-                      my-4
-                      h-6 w-6
                       text-brand-black
-                      hover:bg-brand-black hover:text-white
+                      hover:bg-brand-black my-4
+                      h-6
+                      w-6 hover:text-white
                     "
                     @click="removeCategoryPicker(categoryPickerIndex)"
                   >
@@ -656,7 +716,7 @@
                 v-if="showGenerateCreatedImageBtn"
                 dark
                 large
-                class="bg-gradient-to-r from-brand-black to-brand-black"
+                class="from-brand-black to-brand-black bg-gradient-to-r"
                 @click="generateImage"
               >
                 GENERATE
@@ -677,12 +737,12 @@
                   <button
                     type="button"
                     class="
-                      absolute
-                      left-0 my-2
-                      h-6
-                      w-6 text-brand-lgrey
+                      text-brand-lgrey
+                      hover:bg-brand-black absolute
+                      left-0
+                      my-2 h-6
+                      w-6
                       shadow-sm
-                      hover:bg-brand-black
                       hover:text-white
                     "
                     @click="removeImage(photoIndex)"
@@ -698,17 +758,17 @@
             <button
               type="submit"
               class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
                 bg-brand-green
+                hover:bg-brand-green/30
+                my-2
+                inline-block w-full
+                border
+                border-transparent
                 py-3
                 px-5
                 text-center
                 font-bold
                 text-white
-                hover:bg-brand-green/30
                 lg:mx-4 lg:w-48
               "
             >
@@ -717,17 +777,17 @@
             <button
               type="button"
               class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
                 bg-brand-red
+                hover:bg-brand-red/30
+                my-2
+                inline-block w-full
+                border
+                border-transparent
                 py-3
                 px-5
                 text-center
                 font-bold
                 text-white
-                hover:bg-brand-red/30
                 lg:mx-4 lg:w-48
               "
               @click="close"
@@ -745,7 +805,7 @@
     >
       <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
         <form @submit.prevent="confirmItemEdit(editingNo)">
-          <h3 class="mb-3 font-bold text-brand-black">
+          <h3 class="text-brand-black mb-3 font-bold">
             {{ editModalTitle }}
           </h3>
           <hr class="my-3">
@@ -769,14 +829,45 @@
               />
             </div>
             <div class="col-span-3 mb-4 lg:col-span-1">
-              <label class="mb-1 block">Price:</label>
-              <div class="flex flex-wrap">
-                <OInput
-                  v-model="price"
-                  placeholder="Amount"
-                  type="text"
-                  icon="currency-usd"
-                ></OInput>
+              <div class="flex flex-col">
+                <div class="mb-3">
+                  <label class="mb-1 block">Price:</label>
+                  <div class="flex flex-wrap">
+                    <OInput
+                      v-model="price"
+                      placeholder="Amount"
+                      type="text"
+                      icon="currency-usd"
+                    ></OInput>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <VSwitch
+                    v-model="isRRP"
+                    color="black"
+                    label="RRP"
+                  >
+                  </VSwitch>
+                </div>
+                <div class="mb-3">
+                  <label class="mb-1 block">Sale Price:</label>
+                  <div class="flex flex-wrap">
+                    <OInput
+                      v-model="salePrice"
+                      placeholder="Amount"
+                      type="text"
+                      icon="currency-usd"
+                    ></OInput>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <VSwitch
+                    v-model="isOnSale"
+                    color="black"
+                    label="Product On Sale"
+                  >
+                  </VSwitch>
+                </div>
               </div>
             </div>
             <div class="col-span-3 mb-4 lg:col-span-2">
@@ -784,12 +875,12 @@
               <div class="grid w-full grid-cols-2 gap-2">
                 <label
                   class="
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    bg-transparent p-3
                     hover:border-brand-black
+                    flex
+                    w-full cursor-pointer
+                    border
+                    border-gray-200 bg-transparent
+                    p-3
                     hover:bg-slate-50
                   "
                   >
@@ -801,8 +892,8 @@
                       name="stockRadio"
                       type="radio"
                       class="
-                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
+                      text-brand-black focus:ring-brand-black mt-1 mr-1 h-4 w-4
+                      bg-gray-200"
                       @change="toggleStock"
                     />
                   </span>
@@ -810,12 +901,12 @@
                 </label>
                 <label
                   class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
                   hover:border-brand-black
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
                   hover:bg-slate-50
                   "
                 >
@@ -827,8 +918,8 @@
                     name="stockRadio"
                     type="radio"
                     class="
-                    mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
+                    text-brand-black focus:ring-brand-black mt-1 mr-1 h-4 w-4
+                    bg-gray-200"
                     @change="toggleStock"
                   />
                 </span>
@@ -840,12 +931,12 @@
                 >
                 <label
                   class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
                   hover:border-brand-black
+                  flex
+                  w-full cursor-pointer
+                  border
+                  border-gray-200 bg-transparent
+                  p-3
                   hover:bg-slate-50
                   "
                 >
@@ -855,8 +946,8 @@
                       name="hideOutOfStock"
                       type="checkbox"
                       class="
-                      mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
+                      text-brand-black focus:ring-brand-black mt-1 mr-1 h-4 w-4
+                      bg-gray-200"
                     />
                   </span>
                   <span>Hide 'Out of stock' label if variants have stock</span>
@@ -887,12 +978,12 @@
                 <div class="item-center mt-4 flex">
                   <label
                     class="
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    bg-transparent p-3
                     hover:border-brand-black
+                    flex
+                    w-full cursor-pointer
+                    border
+                    border-gray-200 bg-transparent
+                    p-3
                     hover:bg-slate-50
                     "
                   >
@@ -902,8 +993,9 @@
                         name="itemFeatured"
                         type="checkbox"
                         class="
-                        mt-1 mr-1 h-4 w-4 bg-gray-200 text-brand-black
-                        focus:ring-brand-black"
+                        text-brand-black
+                        focus:ring-brand-black mt-1 mr-1 h-4 w-4
+                        bg-gray-200"
                       />
                     </span>
                     <span>Featured Item</span>
@@ -921,11 +1013,11 @@
                 <button
                   type="button"
                   class="
-                    flex
-                    items-center
-                    justify-center
-                    border border-solid border-brand-black
+                    border-brand-black
                     bg-brand-black
+                    flex
+                    items-center justify-center border
+                    border-solid
                     px-4
                     py-2
                     text-white
@@ -950,10 +1042,10 @@
                   <button
                     type="button"
                     class="
-                      my-4
-                      h-6 w-6
                       text-brand-black
-                      hover:bg-brand-black hover:text-white
+                      hover:bg-brand-black my-4
+                      h-6
+                      w-6 hover:text-white
                     "
                     @click="removeCategoryPicker(categoryPickerIndex)"
                   >
@@ -1046,7 +1138,7 @@
               <VBtn
                 v-if="showGenerateEditedImageBtn"
                 dark
-                class="mt-2 bg-gradient-to-r from-brand-black to-brand-black"
+                class="from-brand-black to-brand-black mt-2 bg-gradient-to-r"
                 @click="generateEditedImage"
               >
                 GENERATE
@@ -1065,12 +1157,12 @@
                   <button
                     type="button"
                     class="
-                      absolute
-                      left-0 my-2
-                      h-6
-                      w-6 text-brand-lgrey
+                      text-brand-lgrey
+                      hover:bg-brand-black absolute
+                      left-0
+                      my-2 h-6
+                      w-6
                       shadow-sm
-                      hover:bg-brand-black
                       hover:text-white
                     "
                     @click="removeEditedImage(photoIndex)"
@@ -1086,17 +1178,17 @@
             <button
               type="submit"
               class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
                 bg-brand-green
+                hover:bg-brand-green/30
+                my-2
+                inline-block w-full
+                border
+                border-transparent
                 py-3
                 px-5
                 text-center
                 font-bold
                 text-white
-                hover:bg-brand-green/30
                 lg:mx-4 lg:w-48
               "
             >
@@ -1105,17 +1197,17 @@
             <button
               type="button"
               class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
                 bg-brand-red
+                hover:bg-brand-red/30
+                my-2
+                inline-block w-full
+                border
+                border-transparent
                 py-3
                 px-5
                 text-center
                 font-bold
                 text-white
-                hover:bg-brand-red/30
                 lg:mx-4 lg:w-48
               "
               @click="closeEdit"
@@ -1132,7 +1224,7 @@
       @close="showRemoveProductModal = false"
     >
       <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-        <h3 class="mb-3 font-bold text-brand-black">
+        <h3 class="text-brand-black mb-3 font-bold">
           Remove Product
         </h3>
         <hr class="my-3">
@@ -1143,17 +1235,17 @@
         <button
           type="button"
           class="
-            my-2
-            inline-block
-            w-full
-            border border-transparent
             bg-brand-green
+            hover:bg-brand-green/30
+            my-2
+            inline-block w-full
+            border
+            border-transparent
             py-3
             px-5
             text-center
             font-bold
             text-white
-            hover:bg-brand-green/30
             lg:mx-4 lg:w-48
           "
           @click="remove(editingNo)"
@@ -1163,17 +1255,17 @@
         <button
           type="button"
           class="
-            my-2
-            inline-block
-            w-full
-            border border-transparent
             bg-brand-red
+            hover:bg-brand-red/30
+            my-2
+            inline-block w-full
+            border
+            border-transparent
             py-3
             px-5
             text-center
             font-bold
             text-white
-            hover:bg-brand-red/30
             lg:mx-4 lg:w-48
           "
           @click="closeRemove"
@@ -1258,9 +1350,12 @@ export default {
       shippings6: [],
       name: '',
       price: '',
+      salePrice: '',
       description: '',
       subcategory: '',
       inStock: '',
+      isRRP: false,
+      isOnSale: false,
       categoryLineages: [],
       tags: [
         { id: 1, name: 'foo' },
@@ -1786,9 +1881,11 @@ export default {
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
         .then((response) => {
-          console.log(response.data.item)
           this.name = response.data.item.name;
           this.price = response.data.item.price;
+          this.salePrice = response.data.item.saleprice;
+          this.isRRP = response.data.item.show_rrp;
+          this.isOnSale = response.data.item.is_on_sale;
           this.description = response.data.item.description;
           this.inStock = response.data.item.stock;
           this.tags = response.data.item.tags;
@@ -1877,6 +1974,9 @@ export default {
           const product = {
             name: this.name,
             price: this.price,
+            salePrice: this.salePrice,
+            isRRP: this.isRRP,
+            isOnSale: this.isOnSale,
             description: this.description,
             categoryId: this.selectedCategory.map(x => x.id),
             inStock: this.inStock,
@@ -1896,6 +1996,9 @@ export default {
           form.append('name', product.name);
           form.append('description', product.description);
           form.append('price', product.price);
+          form.append('salePrice', product.salePrice);
+          form.append('isRRP', product.isRRP);
+          form.append('isOnSale', product.isOnSale);
           form.append('stock', product.inStock);
           form.append('isHideOutOfStock', product.isHideOutOfStock);
           /*
@@ -1967,6 +2070,9 @@ export default {
       const editedProduct = {
         name: this.name,
         price: this.price,
+        salePrice: this.salePrice,
+        isRRP: this.isRRP,
+        isOnSale: this.isOnSale,
         description: this.description,
         inStock: this.inStock,
         isHideOutOfStock: this.hideOutOfStock,
@@ -1988,6 +2094,9 @@ export default {
       form.append('name', editedProduct.name);
       form.append('description', editedProduct.description);
       form.append('price', editedProduct.price);
+      form.append('salePrice', editedProduct.salePrice);
+      form.append('isRRP', editedProduct.isRRP);
+      form.append('isOnSale', editedProduct.isOnSale);
       form.append('stock', editedProduct.inStock);
       form.append('isHideOutOfStock', editedProduct.isHideOutOfStock);
       /*

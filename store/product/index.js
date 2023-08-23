@@ -3,6 +3,9 @@
 export const state = () => ({
   name: '',
   price: '',
+  salePrice: '',
+  showRRP: false,
+  isOnSale: false,
   description: '',
   categories: [],
   inStock: '',
@@ -120,6 +123,15 @@ export const mutations = {
   setPrice(state, price) {
     state.price = price
   },
+  setSalePrice(state, salePrice) {
+    state.salePrice = salePrice
+  },
+  setShowRRP(state, showRRP) {
+    state.showRRP = showRRP
+  },
+  setIsOnSale(state, isOnSale) {
+    state.isOnSale = isOnSale
+  },
   setDescription(state, description) {
     state.description = description
   },
@@ -135,6 +147,9 @@ export const actions = {
   setProduct({ commit }, product) {
     commit('setName', product.name)
     commit('setPrice', product.price)
+    commit('setSalePrice', product.salePrice)
+    commit('setShowRRP', product.showRRP)
+    commit('setIsOnSale', product.isOnSale)
     commit('setDescription', product.description)
     commit('setInStock', product.inStock)
     commit('setCategories', product.categories)
@@ -145,6 +160,9 @@ export const actions = {
   clearProduct({ commit }) {
     commit('setName', '')
     commit('setPrice', '')
+    commit('setSalePrice', '')
+    commit('setShowRRP', false)
+    commit('setIsOnSale', false)
     commit('setDescription', '')
     commit('setInStock', '')
     commit('setTags', [])

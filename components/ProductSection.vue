@@ -35,16 +35,20 @@
       "
       v-bind="$attrs"
     >
+      <!-- todo: add saleprice prop after :price -->
       <ProductThumbnailView
         v-for="product in products"
         :key="product.id"
         :uid="product.id"
         :name="product.name"
         :price="product.price"
+        :saleprice="product.saleprice"
         :categories="product.categories"
         :stock="product.stock"
         :path="getMediaURL(product.media[0])"
         :has-variants="product.has_variants"
+        :is-rrp="product.show_rrp"
+        :is-on-sale="product.is_on_sale"
         :is-hide-out-of-stock="product.isHideOutOfStock"
       />
     </section>
@@ -84,6 +88,7 @@ export default {
             }
           ],
           price: '1690.00',
+          salePrice: '1540.00',
           stock: 3,
           media: [],
           // eslint-disable-next-line camelcase
@@ -98,7 +103,8 @@ export default {
               name: 'Franklin'
             }
           ],
-          price: '1650.00',
+          price: '120.00',
+          salePrice: '100.00',
           stock: 5,
           media: [],
           // eslint-disable-next-line camelcase
@@ -114,6 +120,23 @@ export default {
             }
           ],
           price: '1899.00',
+          salePrice: '0.00', // default is 0.00 if there is no sale price
+          stock: 20,
+          media: [],
+          // eslint-disable-next-line camelcase
+          has_variants: false
+        },
+        {
+          id: 4,
+          name: 'VK Drums 14x6 Snare Drum Titanium Shell',
+          categories: [
+            {
+              id: 1,
+              name: 'Sonor'
+            }
+          ],
+          price: '1899.00',
+          salePrice: '0.00', // default is 0.00 if there is no sale price
           stock: 20,
           media: [],
           // eslint-disable-next-line camelcase

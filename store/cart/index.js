@@ -2,6 +2,7 @@ export const state = () => ({
   cart: [],
   subtotal: 0,
   tax: 0,
+  taxAmount: 0,
   gst: 0,
   total: 0,
   shipping: 0,
@@ -54,6 +55,9 @@ export const mutations = {
   },
   setTax(state, tax) {
     state.tax = tax
+  },
+  setTaxAmount(state, taxAmount) {
+    state.taxAmount = taxAmount
   },
   setShipping(state, shipping) {
     state.shipping = shipping

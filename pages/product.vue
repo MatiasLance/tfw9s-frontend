@@ -20,9 +20,9 @@
                   >
                     <a
                       :href="`${$config.baseURL}/storage/${photo.path}`"
-                      class="mx-1 inline-block
-                      border border-gray-200 p-1 py-2
-                      px-1 text-center hover:border-brand-black"
+                      class="hover:border-brand-black mx-1
+                      inline-block border border-gray-200 p-1
+                      py-2 px-1 text-center"
                       @click.prevent="setActiveMedia(photo)"
                       @mouseover="setActiveMedia(photo)"
                     >
@@ -71,6 +71,34 @@
           <p
             class="
               price
+              mb-[0.7em] pb-3
+              text-[3em]
+              font-bold
+              leading-[1]
+              tracking-tighter
+              text-[#181818]
+            "
+          >
+          <!-- todo: add Sale Price (if there is) and slash the RRP (price) -->
+          <span class="amount">
+              <span v-if="product.is_on_sale">
+                <span v-if="product.show_rrp">RRP</span>
+                <span
+                  v-if="product.saleprice
+                  && product.saleprice > 0"
+                  class="text-red-500 line-through"
+                >
+                  {{ formatCurrency(product.price) }}
+                </span>
+              </span>
+              <span v-else>
+                {{ formatCurrency(product.price) }}
+              </span>
+            </span>
+          </p>
+          <p
+            class="
+              price
               mb-[0.5em]
               text-[3em]
               font-bold
@@ -79,7 +107,14 @@
               text-[#181818]
             "
           >
-            <span class="amount">{{ formatCurrency(product.price) }}</span>
+            <span class="amount text-brand-green">
+              <span
+                v-if="
+                  product.is_on_sale && product.saleprice
+                  && product.saleprice > 0
+                  && product.saleprice < product.price"
+              >SALE {{ formatCurrency(product.saleprice) }}</span>
+            </span>
           </p>
           <div class="w-full">
             <p
@@ -154,11 +189,11 @@
                     <BaseButton
                       type="button"
                       class="
+                        bg-brand-black
                         h-14
                         w-full
-                        cursor-pointer
-                        rounded-lg border
-                        bg-brand-black
+                        cursor-pointer rounded-lg
+                        border
                         py-4
                         px-5
                         font-bold
@@ -178,11 +213,11 @@
                     <BaseButton
                       type="button"
                       class="
+                        bg-brand-green
                         h-14
                         w-full
-                        cursor-pointer
-                        rounded-lg border
-                        bg-brand-green
+                        cursor-pointer rounded-lg
+                        border
                         py-4
                         px-5
                         font-bold
@@ -205,11 +240,11 @@
                       <BaseButton
                         type="button"
                         class="
+                          bg-brand-black
                           h-14
                           w-full
-                          cursor-pointer
-                          rounded-lg border
-                          bg-brand-black
+                          cursor-pointer rounded-lg
+                          border
                           py-4
                           px-5
                           font-bold
@@ -230,16 +265,16 @@
                   <NuxtLink :to="`/shop?scroll=${true}`">
                     <span
                       class="
-                        flex w-full
-                        items-center justify-center
+                        text-brand-grey flex
+                        w-full items-center
+                        justify-center
                         border
-                        border-gray-200
-                        bg-white py-3
+                        border-gray-200 bg-white
+                        py-3
                         px-4
                         text-center
                         text-lg
-                        font-medium
-                        text-brand-grey shadow-sm hover:bg-gray-100
+                        font-medium shadow-sm hover:bg-gray-100
                       "
                     >
                     <i class="ri-arrow-left-s-line mr-2"></i>
@@ -334,11 +369,15 @@ export default {
   data() {
     return {
       isSelected: '',
+      salePriceMock: 100,
+      showRRP: true,
+      isOnSaleMock: true,
       product: {
         id: 0,
         name: '',
         description: '',
         price: '',
+        salePrice: '',
         stock: '',
         parent: null,
         categories: [],
