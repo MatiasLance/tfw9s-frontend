@@ -1350,7 +1350,7 @@ export default {
       shippings6: [],
       name: '',
       price: '',
-      salePrice: '',
+      salePrice: 0,
       description: '',
       subcategory: '',
       inStock: '',
@@ -1969,6 +1969,11 @@ export default {
     create() {
       // create item
       this.getSelected();
+
+      // Check if salePrice is null and set it to 0 by default
+      if (this.salePrice === '') {
+        this.salePrice = 0;
+      }
       this.myCroppa.generateBlob(
         (blob) => {
           const product = {
@@ -2042,7 +2047,7 @@ export default {
             .catch((err) => {
               this.$oruga.notification.open({
                 duration: 5000,
-                message: err.title,
+                message: err.message,
                 position: 'bottom',
                 variant: 'danger',
                 closable: true,
@@ -2062,6 +2067,10 @@ export default {
       }
     },
     updateItem(index) {
+      // Check if salePrice is null and set it to 0 by default
+      if (this.salePrice === '') {
+        this.salePrice = 0;
+      }
       const editObject = this.productList.find(
         (product) => product.id === this.editingNo
       );
@@ -2142,7 +2151,7 @@ export default {
         .catch((err) => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: err.title,
+            message: err.message,
             position: 'bottom',
             variant: 'danger',
             closable: true,
@@ -2159,11 +2168,16 @@ export default {
       const editedProduct = {
         name: this.name,
         price: this.price,
+        salePrice: this.salePrice,
+        isRRP: this.isRRP,
+        isOnSale: this.isOnSale,
         description: this.description,
         inStock: this.inStock,
         categoryId: this.selectedCategory.map(x => x.id),
         tags: this.tags.map((x) => x.id),
         photo: this.imgListEdit,
+        selectedshippingId: this.selectedShippingSettingEdit,
+        isFeatured: this.isItemFeatured.toString(),
       };
 
       const form = new FormData();
@@ -2171,7 +2185,11 @@ export default {
       form.append('name', editedProduct.name);
       form.append('description', editedProduct.description);
       form.append('price', editedProduct.price);
+      form.append('salePrice', editedProduct.salePrice);
+      form.append('isRRP', editedProduct.isRRP);
+      form.append('isOnSale', editedProduct.isOnSale);
       form.append('stock', editedProduct.inStock);
+      form.append('isFeatured', editedProduct.isFeatured);
       for (let i = 0; i < editedProduct.tags.length; i++) {
         form.append('tags[]', editedProduct.tags[i]);
       }
@@ -2203,7 +2221,7 @@ export default {
         .catch((err) => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: err.title,
+            message: err.message,
             position: 'bottom',
             variant: 'danger',
             closable: true,
