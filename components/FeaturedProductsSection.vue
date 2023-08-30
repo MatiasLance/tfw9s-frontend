@@ -52,32 +52,32 @@
                 <div class="p-2">
                   <span
                     class="
+                      text-brand-dgrey
                       block
                       pb-2
                       text-[18px]
                       font-bold
                       uppercase
-                      text-brand-dgrey
                     "
                   >
                     {{ product.brand }}
                   </span>
                   <h2
                     class="
+                      text-brand-black
                       pb-2
                       text-base
                       font-normal
                       uppercase
-                      text-brand-black
                     "
                   >
                     {{ product.name }}
                   </h2>
                   <span
                     class="
+                      text-brand-grey
                       text-[14px]
                       leading-[20px]
-                      text-brand-grey
                       transition-all
                     "
                   >
@@ -116,7 +116,7 @@ export default {
   methods: {
     retrieveFeaturedItems() {
       const query = {
-        sort: 'a_to_z',
+        sort: 'latest',
         maxItemsPerPage: 64,
       };
 
