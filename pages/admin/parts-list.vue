@@ -1654,7 +1654,7 @@ export default {
 
       const query = {
         q: this.query,
-        sort: 'a_to_z',
+        sort: 'latest',
         page: this.page,
         itemVariant: this.activeVariantItem,
       };
@@ -1883,7 +1883,7 @@ export default {
         .then((response) => {
           this.name = response.data.item.name;
           this.price = response.data.item.price;
-          this.salePrice = response.data.item.saleprice;
+          this.salePrice = response.data.item.saleprice ?? 0;
           this.isRRP = response.data.item.show_rrp;
           this.isOnSale = response.data.item.is_on_sale;
           this.description = response.data.item.description;
