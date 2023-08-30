@@ -1654,7 +1654,7 @@ export default {
 
       const query = {
         q: this.query,
-        sort: 'latest',
+        sort: 'a_to_z',
         page: this.page,
         itemVariant: this.activeVariantItem,
       };

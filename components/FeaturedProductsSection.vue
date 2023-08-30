@@ -116,7 +116,7 @@ export default {
   methods: {
     retrieveFeaturedItems() {
       const query = {
-        sort: 'latest',
+        sort: 'a_to_z',
         maxItemsPerPage: 64,
       };
 
