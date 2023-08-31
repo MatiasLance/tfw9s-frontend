@@ -16,6 +16,18 @@
         </h2>
       </div>
       <div class="col-span-12 w-full px-4 sm:px-6">
+        <section
+          class="mb-8"
+          data-aos="fade-up"
+        >
+          <BasePagination
+            :active-page="page"
+            :total-pages="totalPages"
+            @change="setPage"
+          />
+        </section>
+      </div>
+      <div class="col-span-12 w-full px-4 sm:px-6">
         <div
           class="
             grid grid-flow-row grid-cols-1
@@ -26,7 +38,7 @@
           data-aos="fade-up"
         >
           <div
-            v-for="product in filterFeaturedProducts"
+            v-for="product in featuredIndexProducts"
             :key="product.id"
           >
             <NuxtLink
@@ -95,6 +107,7 @@
 
 <script>
 import handlesMedia from '~/mixins/shop/handlesMedia';
+import BasePagination from '~/components/base/BasePagination';
 import currency from '~/mixins/currency';
 
 export default {
@@ -102,22 +115,52 @@ export default {
   mixins: [
     currency,
     handlesMedia,
+    BasePagination
   ],
   data() {
     return {
+      query: '',
+      from: 0,
+      to: 0,
+      totalPages: 0,
+      totalItems: 0,
       headline: 'Featured Products',
       products: [],
-      filterFeaturedProducts: []
+      filterFeaturedProducts: [],
+      currentPage: 1,
+      productsPerPage: 8
     };
+  },
+  computed: {
+    page: {
+      get() {
+        return this.$store.state.shop.page;
+      },
+      set(value) {
+        this.$store.commit('shop/setPage', value);
+      },
+    },
+    featuredIndexProducts() {
+      return this.products.filter(element => element.is_featured);
+    },
+  },
+  watch: {
+    totalPages() {
+      if (this.page > this.totalPages) {
+        this.setPage(1)
+      }
+    }
   },
   mounted() {
     this.retrieveFeaturedItems();
+    this.page = 1
   },
   methods: {
     retrieveFeaturedItems() {
       const query = {
         sort: 'a_to_z',
-        maxItemsPerPage: 64,
+        page: this.page,
+        maxItemsPerPage: 64
       };
 
       // Sanitize and remove null values
@@ -133,16 +176,19 @@ export default {
         .$get(`v1/items?${queryString}`)
         .then((response) => {
           this.products = response.data.items;
-          this.products.forEach(element => {
-            if (element.is_featured === true) {
-              this.filterFeaturedProducts.push(element)
-            }
-          });
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
         })
         .finally(() => {
           this.isProductsLoading = false;
         });
     },
+    setPage(page) {
+      this.page = page;
+      this.retrieveFeaturedItems();
+    }
   },
 };
 </script>

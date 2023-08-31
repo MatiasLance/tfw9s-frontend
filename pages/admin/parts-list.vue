@@ -1676,7 +1676,6 @@ export default {
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
-          console.log(response.data.items)
         })
         .finally(() => {
           this.isProductsLoading = false;
