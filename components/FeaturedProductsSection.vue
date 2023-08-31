@@ -85,7 +85,22 @@
                   >
                     {{ product.name }}
                   </h2>
+                  <span v-if="product.is_on_sale">
+                    <span
+                      v-if="product.show_rrp"
+                      class="text-[14px] leading-[20px]"
+                    >RRP</span>
+                    <span
+                      v-if="product.saleprice
+                      && product.saleprice > 0"
+                      class="text-[14px] leading-[20px] text-red-500
+                      line-through"
+                    >
+                      A{{ formatCurrency(product.price) }}
+                    </span>
+                </span>
                   <span
+                    v-else
                     class="
                       text-brand-grey
                       text-[14px]
@@ -95,6 +110,20 @@
                   >
                     A{{ formatCurrency(product.price) }}
                   </span>
+                  <div>
+                  <span
+                    class="text-brand-green pt-2 pb-4
+                    text-[14px]
+                    font-bold
+                    leading-[20px]"
+                  >
+                    <span
+                      v-if="product.is_on_sale && product.saleprice
+                      && product.saleprice > 0 &&
+                      product.saleprice < product.price"
+                    >SALE A{{ formatCurrency(product.saleprice) }}</span>
+                  </span>
+                </div>
                 </div>
               </div>
             </NuxtLink>
