@@ -309,8 +309,9 @@ for this code.
                 this.newSubTotal = this.subtotal * (1 - this.discountRate)
                 // todo: remove newGST
                 const taxPercent = this.tax
-                const total = (this.newSubTotal * (100 + taxPercent)) / 100
-                this.overallTotal = total;
+                const total = ((this.newSubTotal * (100 + taxPercent)) / 100)
+                  .toFixed(2)
+                this.overallTotal = parseFloat(total);
                 this.$store.commit('cart/setSubtotal', this.newSubTotal)
                 this.$store.commit('cart/setTotal', this.overallTotal)
                 this.$oruga.notification.open({
@@ -392,8 +393,9 @@ for this code.
           this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
           this.newSubTotal = (this.subtotal + (this.shipping));
           // calculate total with dynamic tax percent
-          const total = (this.newSubTotal * (100 + this.tax)) / 100
-          this.overallTotal = total;
+          const total = ((this.newSubTotal * (100 + this.tax)) / 100)
+            .toFixed(2)
+          this.overallTotal = parseFloat(total);
           this.originalAmount.subtotal = this.subtotal
           this.originalAmount.total = this.overallTotal
         })

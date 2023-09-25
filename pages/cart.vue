@@ -301,32 +301,29 @@ export default {
         const quantity = this.getQuantity(item.id)
         const price = item.is_on_sale ? item.saleprice : item.price;
         return {
-          id: item.id,
-          quantity,
-          price,
+          id: item.id, quantity, price
         };
-      })
+      });
 
-      let subtotal = 0;
-
-      itemCostData.forEach((item) => {
+      const subtotal = itemCostData.reduce((acc, item) => {
         const preTaxSubtotal = currency(item.price, { fromCents: false })
           .multiply(item.quantity)
           .value;
-
-        subtotal = currency(subtotal, { fromCents: false })
+        return currency(acc, { fromCents: false })
           .add(preTaxSubtotal)
           .value;
-      });
-      // calculate pre gst amount subtotal
+      }, 0);
+
       this.subtotal = currency(subtotal, { fromCents: false })
         .divide(1 + this.taxrateValue)
         .value;
-      const total = subtotal
-      this.total = total
-      this.taxAmount = this.total - this.subtotal
-      this.$store.commit('cart/setTaxAmount', this.taxAmount)
-      this.$store.commit('cart/setTotal', total)
+
+      const total = subtotal;
+      this.total = total;
+
+      this.taxAmount = this.total - this.subtotal;
+      this.$store.commit('cart/setTaxAmount', this.taxAmount);
+      this.$store.commit('cart/setTotal', total);
     },
     removeCartItem(id) {
       this.$store.commit('cart/removeCartItem', id)
@@ -341,30 +338,27 @@ export default {
     cullZeroQuantityItems() {
       this.$store.dispatch('cart/cullZeroQuantityItems')
     },
-    retrieveTaxValue() {
-      const id = 1
-      this.$axios
-        .$get(`v1/tax/${id}`)
-        .then((response) => {
-          this.addTaxOnCartPrice = response.me.addTaxValue
-          this.includeTaxOnCartPrice = response.me.includeTaxValue
-          if (this.includeTaxOnCartPrice > 0) {
-            this.$store.commit('cart/setTax', this.includeTaxOnCartPrice) // inclusive
-          } else {
-            this.$store.commit('cart/setTax', this.addTaxOnCartPrice) // exclusive
-          }
-          const taxPercent = this.tax
-          this.taxrateValue = taxPercent / 100
+    async retrieveTaxValue() {
+      try {
+        const id = 1
+        const response = await this.$axios.$get(`v1/tax/${id}`)
+        this.addTaxOnCartPrice = response.me.addTaxValue
+        this.includeTaxOnCartPrice = response.me.includeTaxValue
+        if (this.includeTaxOnCartPrice > 0) {
+          this.$store.commit('cart/setTax', this.includeTaxOnCartPrice) // inclusive
+        } else {
+          this.$store.commit('cart/setTax', this.addTaxOnCartPrice) // exclusive
+        }
+        this.taxrateValue = this.tax / 100
+      } catch (err) {
+        this.$oruga.notification.open({
+          message: err.message,
+          duration: 5000,
+          variant: 'danger',
+          queue: true,
+          position: 'bottom'
         })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
+      }
     }
   },
 };
