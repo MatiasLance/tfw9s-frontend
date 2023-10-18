@@ -6,7 +6,7 @@ LABEL app_environment="development"
 WORKDIR /home/node
 COPY . /home/node/
 
-RUN npm i -g npm
+RUN npm i -g npm@8.5.0
 
 USER node
 
