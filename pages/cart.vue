@@ -76,8 +76,8 @@
                 <span class="pl-2">{{ formatCurrency(subtotal) }}</span>
               </li>
               <li class="mb-1 flex justify-between text-gray-600">
-                <span>Tax Amount:</span>
-                <span class="pl-2">{{ formatCurrency(taxAmount) }}</span>
+                <span>( Tax Amount:</span>
+                <span>{{ formatCurrency(taxAmount) + ' )' }}</span>
               </li>
               <li class="mb-1 flex justify-between text-gray-600">
                 <span>GST:</span>

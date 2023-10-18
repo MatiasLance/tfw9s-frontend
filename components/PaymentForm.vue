@@ -145,8 +145,8 @@
           <span>{{ formatCurrency(shipping) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
-          <span>Tax Amount:</span>
-          <span>{{ formatCurrency(taxAmount) }}</span>
+          <span>( Tax Amount:</span>
+          <span>{{ formatCurrency(taxAmount) + ' )' }}</span>
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
