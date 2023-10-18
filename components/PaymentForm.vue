@@ -145,10 +145,6 @@
           <span>{{ formatCurrency(shipping) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
-          <span>Tax Amount:</span>
-          <span>{{ formatCurrency(taxAmount) }}</span>
-        </li>
-        <li class="mb-1 flex justify-between">
           <span>GST:</span>
           <span>GST Inclusive*</span>
         </li>
@@ -157,6 +153,10 @@
           <span class="font-bold text-gray-900">
             {{ formatCurrency(overallTotal) }}
           </span>
+        </li>
+        <li class="mb-1 flex justify-between text-xs font-light">
+          <span>( Tax Amount:</span>
+          <span>{{ formatCurrency(taxAmount) + ' )' }}</span>
         </li>
         <li v-if="showTaxInfo">
           <small class="text-xs font-light">
