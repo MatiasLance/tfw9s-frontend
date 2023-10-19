@@ -137,11 +137,11 @@
           <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li v-else class="mb-1 flex justify-between">
-          <span>Subtotal (Pre-GST amount):</span>
+          <span>Subtotal (tax inclusive):</span>
           <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
-          <span>Shipping:</span>
+          <span>Shipping (tax inclusive):</span>
           <span>{{ formatCurrency(shipping) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
