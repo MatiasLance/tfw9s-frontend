@@ -72,12 +72,12 @@
           <article class="mb-5 bg-white p-3 shadow-sm lg:p-5">
             <ul class="mb-5">
               <li class="mb-1 flex justify-between text-gray-600">
-                <span>Subtotal (tax inclusive):</span>
+                <span>Subtotal:</span>
                 <span class="pl-2">{{ formatCurrency(subtotal) }}</span>
               </li>
               <li class="mb-1 flex justify-between text-gray-600">
-                <span>( Tax Amount:</span>
-                <span>{{ formatCurrency(taxAmount) + ' )' }}</span>
+                <span>Tax Amount:</span>
+                <span>{{ formatCurrency(taxAmount) }}</span>
               </li>
               <li class="mb-1 flex justify-between text-gray-600">
                 <span>GST:</span>
@@ -100,11 +100,6 @@
               >
                 <span>Total price:</span>
                 <span class="pl-2">{{ formatCurrency(total) }}</span>
-              </li>
-              <li v-if="showTaxInfo">
-                <small class="text-xs font-light">
-                  * Tax of {{ tax }}% is included in the displayed price
-                </small>
               </li>
             </ul>
 
