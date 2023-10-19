@@ -72,7 +72,7 @@
           <article class="mb-5 bg-white p-3 shadow-sm lg:p-5">
             <ul class="mb-5">
               <li class="mb-1 flex justify-between text-gray-600">
-                <span>Subtotal (Pre-GST amount):</span>
+                <span>Subtotal (tax inclusive):</span>
                 <span class="pl-2">{{ formatCurrency(subtotal) }}</span>
               </li>
               <li class="mb-1 flex justify-between text-gray-600">
