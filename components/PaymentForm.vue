@@ -137,11 +137,11 @@
           <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li v-else class="mb-1 flex justify-between">
-          <span>Subtotal (tax inclusive):</span>
+          <span>Subtotal:</span>
           <span>{{ formatCurrency(subtotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
-          <span>Shipping (tax inclusive):</span>
+          <span>Shipping:</span>
           <span>{{ formatCurrency(shipping) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
@@ -157,11 +157,6 @@
         <li class="mb-1 flex justify-between text-xs font-light">
           <span>( Tax Amount:</span>
           <span>{{ formatCurrency(taxAmount) + ' )' }}</span>
-        </li>
-        <li v-if="showTaxInfo">
-          <small class="text-xs font-light">
-            * Tax of {{ tax }}% is included in the displayed price
-          </small>
         </li>
       </ul>
     </article>
