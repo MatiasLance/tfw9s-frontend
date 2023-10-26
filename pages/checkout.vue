@@ -129,6 +129,28 @@ export default {
     },
   },
   methods: {
+    retrieveToggleTaxControl() {
+      const id = 1;
+      // todo: check endpoint
+      const endpoint = `v1/toogletax/retrieve/${id}`
+      this.$axios
+        .$get(endpoint)
+        .then((response) => {
+          this.toggleControl1 = response.me.toggleControl1
+          this.toggleControl2 = response.me.toggleControl2
+          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
+          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
     setPreviousStep(stepNo) {
       this.activeStep = stepNo
     },

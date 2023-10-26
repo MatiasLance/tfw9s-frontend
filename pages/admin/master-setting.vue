@@ -1,6 +1,6 @@
 <template>
     <div>
-      <BaseHeader class="from-brand-grey to-brand-black bg-gradient-to-r">
+      <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
           <div
               class="
               space-y-3
@@ -148,17 +148,17 @@
               <button
                 type="submit"
                 class="
-                  bg-brand-black
-                  hover:bg-brand-slate
                   my-2
-                  inline-block w-full
-                  border
-                  border-transparent
+                  inline-block
+                  w-full
+                  border border-transparent
+                  bg-brand-black
                   py-3
                   px-5
                   text-center
                   font-bold
                   text-white
+                  hover:bg-brand-slate
                 "
               >
                 Apply changes
@@ -167,12 +167,12 @@
                 <NuxtLink
                   to="/admin"
                   class="
-                    text-brand-slate
-                    hover:text-brand-black hover:decoration-brand-black
                     mx-auto
-                    flex
-                    items-center
+                    flex items-center
+                    text-brand-slate
+                    hover:text-brand-black
                     hover:underline
+                    hover:decoration-brand-black
                   "
                 >
                   <i class="ri-arrow-left-line mr-2"></i>

@@ -146,7 +146,8 @@
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
-          <span>GST Inclusive*</span>
+          <span v-if="showGSTIncluded" class="pl-2">GST Inclusive</span>
+          <span v-if="showGSTExcluded" class="pl-2">GST Exclusive</span>
         </li>
         <li class="mt-3 flex justify-between border-t pt-3">
           <span>Total price:</span>
@@ -164,6 +165,7 @@
 </template>
 
 <script>
+import currency from 'currency.js';
 import PaypalCheckout from '~/components/PaypalCheckout.vue';
 import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
@@ -186,6 +188,8 @@ export default {
   },
   data() {
     return {
+      showGSTIncluded: true,
+      showGSTExcluded: false,
       paymentMethod: 'paypal',
       isStepperLoading: false,
       minimumAmount: 500,
@@ -204,6 +208,7 @@ export default {
       discount: -1,
       discountRateFixed: 0.3,
       discountRate: 0,
+      taxrateValue: 0,
       isDiscountCodeMatch: false,
       isFormNotFilled: true,
       showErrorMessage: false,
@@ -248,12 +253,63 @@ export default {
         this.$store.commit('order/setShippingInformation', v);
       },
     },
+    toggleControl1: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl1
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl1', val)
+      }
+    },
+    toggleControl2: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl2
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl2', val)
+      }
+    },
   },
   mounted() {
+    this.retrieveToggleTaxControl();
     this.$store.commit('order/setPaymentMethod', this.paymentMethod)
     this.initialize()
   },
   methods: {
+    retrieveToggleTaxControl() {
+      const id = 1;
+      // todo: check endpoint
+      const endpoint = `v1/toogletax/retrieve/${id}`
+      this.$axios
+        .$get(endpoint)
+        .then((response) => {
+          this.toggleControl1 = response.me.toggleControl1
+          this.toggleControl2 = response.me.toggleControl2
+          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
+          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
+          if (this.toggleControl1) {
+            this.showGSTExcluded = true;
+            this.showGSTIncluded = false;
+          }
+          if (this.toggleControl2) {
+            this.showGSTExcluded = false;
+            this.showGSTIncluded = true;
+          }
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
     toCurrency(x) {
       return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(x)
     },
@@ -387,10 +443,31 @@ for this code.
           this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
           this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
           this.newSubTotal = (this.subtotal + (this.shipping));
-          // calculate total with dynamic tax percent
-          const total = ((this.newSubTotal * (100 + this.tax)) / 100)
-            .toFixed(2)
-          this.overallTotal = parseFloat(total);
+          console.log(this.newSubTotal)
+          let total = 0
+          let taxamount = 0
+          if (this.toggleControl1) {
+            total = currency(this.newSubTotal, { fromCents: false })
+              .multiply(1 + this.tax / 100)
+              .value;
+            taxamount = currency(total, { fromCents: false })
+              .multiply(this.tax)
+              .divide(100)
+              .value
+            this.taxAmount = taxamount;
+          } else {
+            total = this.newSubTotal
+            if (this.shipping > 0) {
+              taxamount = currency(total, { fromCents: false })
+                .multiply(this.tax)
+                .divide(100)
+                .value
+              this.taxAmount = taxamount;
+            }
+          }
+          console.log(total)
+          console.log(taxamount)
+          this.overallTotal = total;
           this.originalAmount.subtotal = this.subtotal
           this.originalAmount.total = this.overallTotal
         })
