@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="from-brand-dgrey to-brand-black bg-gradient-to-r">
+    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
       <div
         class="
           col-span-12
@@ -85,7 +85,8 @@
                   v-if="showGST"
                   class="pl-2"
                 >{{ formatCurrency(gst) }}</span>
-                <span v-if="showGSTIncluded" class="pl-2">GST Inclusive*</span>
+                <span v-if="showGSTIncluded" class="pl-2">GST Inclusive</span>
+                <span v-if="showGSTExcluded" class="pl-2">GST Exclusive</span>
               </li>
               <li
                 class="
@@ -107,12 +108,12 @@
               <NuxtLink to="/checkout">
                 <span
                   class="
-                    bg-brand-green
                     mb-2
                     inline-block
                     w-full
-                    select-none border
-                    border-transparent
+                    select-none
+                    border border-transparent
+                    bg-brand-green
                     py-3
                     px-4
                     text-center text-lg
@@ -148,15 +149,15 @@
             <NuxtLink to="/shop">
               <span
                 class="
-                  text-brand-green
                   inline-block
-                  w-full border
-                  border-gray-200
+                  w-full
+                  border border-gray-200
                   bg-white
                   py-3
-                  px-4 text-center
-                  text-lg
+                  px-4
+                  text-center text-lg
                   font-medium
+                  text-brand-green
                   shadow-sm
                   hover:bg-gray-100
                 "
@@ -195,6 +196,7 @@ export default {
     return {
       items: [],
       showGSTIncluded: true,
+      showGSTExcluded: false,
       showGST: false,
       taxrate: '10%',
       taxrateValue: 0,
@@ -250,9 +252,30 @@ export default {
         this.$store.commit('cart/setTotal', v)
       },
     },
+    toggleControl1: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl1
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl1', val)
+      }
+    },
+    toggleControl2: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl2
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl2', val)
+      }
+    },
   },
   mounted() {
     this.retrieveTaxValue()
+    this.retrieveToggleTaxControl()
     setTimeout(() => {
       this.getItemData()
     }, 700);
@@ -261,6 +284,28 @@ export default {
     this.cullZeroQuantityItems()
   },
   methods: {
+    retrieveToggleTaxControl() {
+      const id = 1;
+      // todo: check endpoint
+      const endpoint = `v1/toogletax/retrieve/${id}`
+      this.$axios
+        .$get(endpoint)
+        .then((response) => {
+          this.toggleControl1 = response.me.toggleControl1
+          this.toggleControl2 = response.me.toggleControl2
+          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
+          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
     getItemData() {
       const itemPromises = this.cartItems.map((item) => {
         return this.$axios
@@ -308,15 +353,31 @@ export default {
           .add(preTaxSubtotal)
           .value;
       }, 0);
-
-      this.subtotal = currency(subtotal, { fromCents: false })
+      if (this.toggleControl1) {
+        this.showGSTExcluded = true;
+        this.showGSTIncluded = false;
+      }
+      if (this.toggleControl2) {
+        this.showGSTExcluded = false;
+        this.showGSTIncluded = true;
+      }
+      // gst exclusive
+      const exclusiveValue = currency(subtotal, { fromCents: false })
+        .multiply(1 + this.taxrateValue)
+        .value;
+      // gst inclusive
+      const inclusiveValue = currency(subtotal, { fromCents: false })
         .divide(1 + this.taxrateValue)
         .value;
 
-      const total = subtotal;
+      this.subtotal = subtotal;
+
+      const total = this.toggleControl1 ? exclusiveValue : subtotal;
       this.total = total;
 
-      this.taxAmount = this.total - this.subtotal;
+      this.taxAmount = this.toggleControl2 ?
+        this.total - inclusiveValue :
+        this.total - this.subtotal
       this.$store.commit('cart/setTaxAmount', this.taxAmount);
       this.$store.commit('cart/setTotal', total);
     },
@@ -339,11 +400,10 @@ export default {
         const response = await this.$axios.$get(`v1/tax/${id}`)
         this.addTaxOnCartPrice = response.me.addTaxValue
         this.includeTaxOnCartPrice = response.me.includeTaxValue
-        if (this.includeTaxOnCartPrice > 0) {
-          this.$store.commit('cart/setTax', this.includeTaxOnCartPrice) // inclusive
-        } else {
-          this.$store.commit('cart/setTax', this.addTaxOnCartPrice) // exclusive
-        }
+        const taxAmount = this.toggleControl1 ?
+          this.addTaxOnCartPrice :
+          (this.toggleControl2 ? this.includeTaxOnCartPrice : 0);
+        this.$store.commit('cart/setTax', taxAmount);
         this.taxrateValue = this.tax / 100
       } catch (err) {
         this.$oruga.notification.open({

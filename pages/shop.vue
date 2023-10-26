@@ -78,10 +78,76 @@ export default {
       ],
     };
   },
+  computed: {
+    toggleControl1: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl1
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl1', val)
+      }
+    },
+    toggleControl2: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl2
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl2', val)
+      }
+    },
+  },
+  mounted() {
+    this.retrieveTaxValue()
+    this.retrieveToggleTaxControl()
+  },
   methods: {
     retrieveItems() {
       this.$refs.products.retrieveProducts()
     },
+    retrieveToggleTaxControl() {
+      const id = 1;
+      // todo: check endpoint
+      const endpoint = `v1/toogletax/retrieve/${id}`
+      this.$axios
+        .$get(endpoint)
+        .then((response) => {
+          this.toggleControl1 = response.me.toggleControl1
+          this.toggleControl2 = response.me.toggleControl2
+          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
+          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
+    async retrieveTaxValue() {
+      try {
+        const id = 1
+        const response = await this.$axios.$get(`v1/tax/${id}`)
+        const taxAmount = this.toggleControl1 ?
+          response.me.addTaxValue :
+          (this.toggleControl2 ? response.me.includeTaxValue : 0);
+        this.$store.commit('cart/setTax', taxAmount);
+      } catch (err) {
+        this.$oruga.notification.open({
+          message: err.message,
+          duration: 5000,
+          variant: 'danger',
+          queue: true,
+          position: 'bottom'
+        })
+      }
+    }
   },
 };
 </script>
