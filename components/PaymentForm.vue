@@ -190,6 +190,7 @@ export default {
     return {
       showGSTIncluded: true,
       showGSTExcluded: false,
+      isGSTInclusive: true,
       paymentMethod: 'paypal',
       isStepperLoading: false,
       minimumAmount: 500,
@@ -294,10 +295,12 @@ export default {
           if (this.toggleControl1) {
             this.showGSTExcluded = true;
             this.showGSTIncluded = false;
+            this.isGSTInclusive = false;
           }
           if (this.toggleControl2) {
             this.showGSTExcluded = false;
             this.showGSTIncluded = true;
+            this.isGSTInclusive = true;
           }
         })
         .catch((err) => {
@@ -357,12 +360,18 @@ for this code.
             } else {
               setTimeout(() => {
                 this.discountRate = response.discountcode.rate
-                this.newSubTotal = this.subtotal * (1 - this.discountRate)
-                // todo: remove newGST
-                const taxPercent = this.tax
-                const total = ((this.newSubTotal * (100 + taxPercent)) / 100)
-                  .toFixed(2)
-                this.overallTotal = parseFloat(total);
+                this.newSubTotal = currency(this.subtotal)
+                  .multiply(1 - this.discountRate);
+
+                if (this.isGSTInclusive) {
+                // If GST is inclusive, overallTotal is the discounted subtotal
+                  this.overallTotal = this.newSubTotal.value;
+                } else {
+                // If GST is exclusive, add GST to the discounted subtotal
+                  const taxPercent = this.tax
+                  const gstAmount = this.newSubTotal.multiply(taxPercent / 100);
+                  this.overallTotal = this.newSubTotal.add(gstAmount).value;
+                }
                 this.$store.commit('cart/setSubtotal', this.newSubTotal)
                 this.$store.commit('cart/setTotal', this.overallTotal)
                 this.$oruga.notification.open({
@@ -373,6 +382,7 @@ for this code.
                   queue: true,
                 });
                 this.isDiscountCodeMatch = true
+                this.initialize()
               }, 2000);
             }
           } else {
@@ -426,6 +436,8 @@ for this code.
       this.isStepperLoading = true
       const items = this.$store.state.cart.cart
       const metadata = this.shippingInformation
+      const discounted = this.isDiscountCodeMatch
+      const discountcode = this.discountcode ?? ''
       // eslint-disable-next-line camelcase
       const payment_method = this.paymentMethod
       this.$axios
@@ -433,7 +445,10 @@ for this code.
           items,
           metadata,
           // eslint-disable-next-line camelcase
-          payment_method
+          payment_method,
+          // todo: pass discounted and discountcode entered ?
+          discounted,
+          discountcode
         })
         .then((response) => {
           this.activeStep = 2
