@@ -31,12 +31,14 @@
         id="paypal-payment-form"
         class="payment-module p-10"
         :cart-total="overallTotal"
+        :discount-code="discountcode"
         @active-step="activeStepPrev"
       />
 
       <StripeCheckout
         v-if="paymentMethod === 'stripe'"
         class="payment-module gap-3 text-gray-600"
+        :discount-code="discountcode"
         @active-step="activeStepPrev"
       />
 
@@ -279,8 +281,15 @@ export default {
     this.retrieveToggleTaxControl();
     this.$store.commit('order/setPaymentMethod', this.paymentMethod)
     this.initialize()
+    setTimeout(() => {
+      this.setOriginalAmount()
+    }, 2000);
   },
   methods: {
+    setOriginalAmount() {
+      this.originalAmount.subtotal = this.subtotal
+      this.originalAmount.total = this.overallTotal
+    },
     retrieveToggleTaxControl() {
       const id = 1;
       // todo: check endpoint
@@ -458,7 +467,6 @@ for this code.
           this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
           this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
           this.newSubTotal = (this.subtotal + (this.shipping));
-          console.log(this.newSubTotal)
           let total = 0
           let taxamount = 0
           if (this.toggleControl1) {
@@ -480,11 +488,7 @@ for this code.
               this.taxAmount = taxamount;
             }
           }
-          console.log(total)
-          console.log(taxamount)
           this.overallTotal = total;
-          this.originalAmount.subtotal = this.subtotal
-          this.originalAmount.total = this.overallTotal
         })
         .finally(() => {
           this.isStepperLoading = false

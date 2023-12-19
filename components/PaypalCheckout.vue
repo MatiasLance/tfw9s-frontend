@@ -51,6 +51,10 @@ export default {
     cartTotal: {
       type: Number,
       required: true
+    },
+    discountCode: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -115,6 +119,7 @@ export default {
                 // eslint-disable-next-line camelcase
                 transaction_id: orderId
               },
+              discountcode: this.discountCode
             })
         });
     },
