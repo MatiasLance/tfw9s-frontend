@@ -50,6 +50,12 @@
 let elements;
 
 export default {
+  props: {
+    discountCode: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return { isStepperLoading: false }
   },
@@ -93,6 +99,7 @@ export default {
           payment_method: 'stripe',
           items,
           metadata,
+          discountcode: this.discountCode
         })
         .then((response) => {
           this.activeStep = 2;
