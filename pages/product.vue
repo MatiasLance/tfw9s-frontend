@@ -447,9 +447,6 @@ export default {
       if (this.quantity > this.product.stock) {
         this.quantity = this.product.stock
       }
-      if (this.quantity <= 0) {
-        this.quantity = 1
-      }
     },
     addToCart() {
       this.$store
