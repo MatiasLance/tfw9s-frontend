@@ -1,6 +1,11 @@
 <template>
   <div
-    class="ud-header top-0 left-0 z-40 flex w-full items-center bg-brand-yellow"
+    class="
+    ud-header
+    top-0 left-0 z-40
+    flex h-20
+    w-full items-center
+    bg-brand-black text-white"
   >
     <div class="container max-w-6xl">
       <div class="relative flex justify-between">
@@ -8,7 +13,7 @@
           <NuxtLink to="/">
             <span class="navbar-logo block w-full py-2">
               <img
-                src="~/assets/images/logo_brand.svg"
+                src="~/assets/images/the-final-whistle-logo.png"
                 alt="logo"
                 class="header-logo"
               />
@@ -381,7 +386,7 @@
             <NuxtLink to="/">
               <span class="navbar-logo block py-2">
                 <img
-                  src="~/assets/images/logo_brand.svg"
+                  src="~/assets/images/the-final-whistle-logo.png"
                   alt="logo"
                   class="header-logo w-full"
                 />
@@ -447,15 +452,27 @@ export default {
         },
         {
           to: '/shop',
-          text: 'Shop',
+          text: 'News',
         },
         {
           to: '/about-us',
-          text: 'About  ',
+          text: 'BarTV  ',
         },
         {
           to: '/contact-us',
-          text: 'Contact',
+          text: 'Draws',
+        },
+        {
+          to: '/contact-us',
+          text: 'Ladders',
+        },
+        {
+          to: '/contact-us',
+          text: 'shop',
+        },
+        {
+          to: '/contact-us',
+          text: 'Info',
         },
       ],
       more: [],
@@ -515,6 +532,14 @@ export default {
 </script>
 
 <style lang="postcss">
+.text-dark:hover {
+  color: lightgray;
+  text-decoration: underline;
+}
+.text-dark {
+  color: white;
+  text-decoration: none;
+}
   .custom-pl-16 {
     @apply pl-16
   }
@@ -529,7 +554,7 @@ export default {
 }
 
   .sticky {
-    @apply fixed z-[9999] bg-brand-yellow bg-opacity-80 transition;
+    @apply fixed z-[9999] bg-brand-black bg-opacity-80 transition;
     backdrop-filter: blur(5px);
     box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
   }
