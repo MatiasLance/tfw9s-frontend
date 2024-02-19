@@ -1,35 +1,22 @@
 <template>
   <!-- Footer -->
-  <footer class="bg-brand-yellow">
+  <footer class="bg-brand-black">
     <!-- section footer top -->
-    <section class="py-12 text-white">
+    <section class="py-8 text-white">
 			<div class="container mx-auto max-w-screen-xl px-4">
 				<div class="flex flex-wrap sm:space-x-8 md:space-x-16 lg:space-x-24">
 					<aside class="mx-auto mb-5 w-full self-center md:w-1/3 lg:w-1/4">
-						<NuxtLink to="/" class="py-5">
-              <img
-                src="~/assets/images/logo_brand_02.svg"
-                class="footer-logo w-52 mx-auto" height="38"
-              />
-            </NuxtLink>
             <div
               class="
               mx-auto
               my-4
               block
               max-w-full
-              text-center text-[16px] text-brand-black
+              text-center text-[16px] text-white
               lg:text-start
               "
             >
-              &copy; Copyright 2022, Drum HQ. | Built by
-                <a
-                href="https://pageone247.com/"
-                target="_blank"
-                class="swlink underline hover:text-brand-grey"
-                >
-                PageOne247
-                </a>
+              Copyright, All Rights Reserved TFW Rugby League 2024.
             </div>
 					</aside> <!-- col .// -->
 					<aside
@@ -51,7 +38,8 @@
                     inline-block
                     text-center
                     text-base
-                    leading-loose text-brand-black
+                    leading-loose
+                    text-white
                     opacity-70
                     transition
                     duration-300
@@ -86,8 +74,8 @@
                     inline-block
                     text-center text-base
                     leading-loose
-                    text-brand-black
-                    opacity-70 transition
+                    text-white opacity-70
+                    transition
                     duration-300
                     ease-in-out
                     hover:underline
@@ -116,16 +104,15 @@
                     inline-block
                     text-center text-base
                     leading-loose
-                    text-brand-black
-                    opacity-70 transition
+                    text-white opacity-70
+                    transition
                     duration-300
                     ease-in-out
                     hover:underline
                     hover:decoration-brand-grey
                     hover:decoration-4
                     hover:underline-offset-8
-                    hover:opacity-100
-                    "
+                    hover:opacity-100"
                   >
                     {{ link.text }}
                   </span>
@@ -138,26 +125,6 @@
 		</section>
 
     <!-- section footer bottom -->
-    <section class="bg-yellow-600 py-6">
-      <div class="container mx-auto max-w-screen-xl px-4">
-        <div class="justify-between lg:flex">
-          <div class="mb-3 flex flex-wrap gap-2">
-            <img
-              v-for="paymentimg in paymentchannels"
-              :key="paymentimg"
-              :src="`/img/misc/${paymentimg}`"
-              height="24"
-              class="h-6"
-              :alt="`Payment method - ${paymentimg}`"
-            />
-          </div>
-          <div class="space-x-6">
-            <nav class="space-x-4">
-            </nav>
-          </div>
-        </div>
-      </div>
-    </section>
   </footer>
 </template>
 
@@ -209,14 +176,14 @@ export default {
 
 <style>
 .bt-site-footer {
-  position: relative;
+  position: horizontal;
 }
 .swlink {
-  color: black !important;
+  color: rgb(255, 255, 255) !important;
   font-weight: 600;
 }
 .swlink:hover {
-  color: #191919 !important;
+  color: #f1ebeb !important;
   font-weight: 600;
 }
 </style>

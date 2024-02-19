@@ -40,6 +40,9 @@
             sm:pr-8 sm:text-5xl
             xl:pr-10 xl:text-6xl
           "
+          style="background: linear-gradient(45deg, #53B437, #050505);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;"
         >
           {{ headline }}
         </h1>
@@ -73,8 +76,8 @@
                 max-w-full
                 border border-gray-200
                 bg-gradient-to-r
-                from-brand-yellow
-                to-brand-yellow
+                from-brand-green
+                to-brand-black
                 py-4
                 px-8
                 font-bold
@@ -87,15 +90,20 @@
           </NuxtLink>
         </div>
       </div>
-      <div class="col-span-12 sm:block lg:col-span-6">
+      <div class="col-span-13 relative sm:block lg:col-span-6">
         <div class="mt-[30px] w-full">
           <img
             data-aos="fade-up"
             data-aos-once="true"
-            src="/img/hero/drum.webp"
-            class="p-4 shadow-lg sm:p-7 lg:-mt-4"
+            src="~/assets/images/kidsplaying.jpg"
+            class="relative z-10 p-4 shadow-lg sm:p-7 lg:-mt-4"
             alt=""
           />
+          <img
+      src="~/assets/images/the-final-whistle-logo.png"
+      class="absolute top-3 z-20 h-20 w-20 object-cover"
+      alt=""
+    />
         </div>
       </div>
     </BaseSection>
@@ -115,10 +123,10 @@ export default {
         cta: false,
         contentblurb: false
       },
-      superheadline: 'The Ultimate drum-nerd, and collectable drum gear from all over the world',
-      headline: 'BUY PREMIUM NEW & USED DRUM GEAR',
+      superheadline: '',
+      headline: 'TFW RL 9S',
       cta: 'Start Shopping',
-      contentblurb: 'Buy Online or Book To Visit Our Brisbane Store',
+      contentblurb: 'Content Content Content Content Content Content Content Content',
     };
   },
 };
