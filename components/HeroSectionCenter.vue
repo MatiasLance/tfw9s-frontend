@@ -1,7 +1,9 @@
 <template>
   <section
     id="hero"
-    class="relative flex min-h-screen flex-col justify-center overflow-hidden"
+    class="
+    min-h-screenflex-col relative flex justify-center
+    overflow-hidden"
   >
     <img
       class="absolute min-h-screen min-w-full object-cover"
@@ -92,7 +94,7 @@ export default {
       },
       superheadline: '',
       headline: 'The Drum HQ',
-      cta: 'Start Shopping',
+      cta: 'REGISTER NOW',
       contentblurb: 'Where drumming what you dream of becomes a tad closer',
     };
   },

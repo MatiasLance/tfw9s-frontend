@@ -3,8 +3,8 @@
     <BaseSection>
       <div
         class="
+          mb-15
           col-span-12
-          mt-12
           space-y-4
           px-6
           sm:space-y-6
@@ -13,20 +13,6 @@
           xl:mt-10
         "
       >
-        <span
-          data-aos="fade-right"
-          data-aos-once="true"
-          class="
-            font-montserrat
-            pb-3
-            text-base
-            font-semibold
-            capitalize
-            text-brand-yellow
-          "
-        >
-          {{ superheadline }}
-        </span>
         <h1
           data-aos="fade-right"
           data-aos-once="true"
@@ -90,20 +76,29 @@
           </NuxtLink>
         </div>
       </div>
-      <div class="col-span-13 relative sm:block lg:col-span-6">
-        <div class="mt-[30px] w-full">
+      <div
+         class=" mb-15
+          col-span-12
+          mt-10
+          space-y-4
+          px-6
+          sm:space-y-6
+          md:text-left
+          lg:col-span-6"
+>
+        <div class="aspect-w-16 aspect-h-9 w-full">
           <img
-            data-aos="fade-up"
-            data-aos-once="true"
             src="~/assets/images/kidsplaying.jpg"
-            class="relative z-10 p-4 shadow-lg sm:p-7 lg:-mt-4"
+            class="relative z-10 p-4 sm:p-7 lg:-mt-4"
             alt=""
           />
+        </div>
+        <div class="flex items-center justify-center">
           <img
-      src="~/assets/images/the-final-whistle-logo.png"
-      class="absolute top-3 z-20 h-20 w-20 object-cover"
-      alt=""
-    />
+           src="~/assets/images/the-final-whistle-logo.png"
+            class="h-30 absolute top-3 z-10 mt-3 w-20 object-cover"
+            alt=""
+           />
         </div>
       </div>
     </BaseSection>
@@ -118,15 +113,13 @@ export default {
   data() {
     return {
       showContent: {
-        superheadline: false,
         headline: false,
         cta: false,
         contentblurb: false
       },
-      superheadline: '',
-      headline: 'TFW RL 9S',
-      cta: 'Start Shopping',
-      contentblurb: 'Content Content Content Content Content Content Content Content',
+      headline: 'TFW RL 9’S',
+      cta: 'REGISTER NOW',
+      contentblurb: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas aliquam dictum risus sed rutrum. Sed bibendum lectus ac imperdiet elementum. Ut luctus erat a magna vehicula, in posuere urna sagittis. Quisque elementum sem mi, sit amet vehicula nisi posuere sit amet. Praesent iaculis sapien ac nunc auctor, nec sagittis orci egestas. Vivamus scelerisque vitae lorem eu tincidunt. Duis ac orci id urna dictum sodales. Suspendisse euismod lectus ac risus pellentesque facilisis. Sed est nulla, posuere vel pharetra in, viverra eu sem. Fusce gravida luctus nisl gravida convallis.',
     };
   },
 };

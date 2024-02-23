@@ -1,28 +1,20 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <template>
+  <div>
   <div class="max-w-full overflow-hidden">
     <HeroSection />
-    <HeroContentBlurbSection />
-    <FeaturedProductsSection />
-    <BeforeFooterSection v-if="showSections.beforeFooter" />
+    <Partnersponsor/>
   </div>
+</div>
 </template>
 
 <script>
-import HeroContentBlurbSection from '../components/HeroContentBlurbSection.vue';
-import FeaturedProductsSection from '~/components/FeaturedProductsSection.vue';
-import BeforeFooterSection from '~/components/BeforeFooterSection.vue';
 import HeroSection from '~/components/HeroSection'
 import aosMixin from '@/mixins/aos';
 
 export default {
   name: 'index',
-  components: {
-    HeroSection,
-    BeforeFooterSection,
-    FeaturedProductsSection,
-    HeroContentBlurbSection
-  },
+  components: { HeroSection },
   mixins: [ aosMixin ],
   data() {
     return {

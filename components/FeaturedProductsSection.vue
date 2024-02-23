@@ -64,23 +64,23 @@
                 <div class="p-2">
                   <span
                     class="
-                      text-brand-dgrey
                       block
                       pb-2
                       text-[18px]
                       font-bold
                       uppercase
+                      text-brand-dgrey
                     "
                   >
                     {{ product.brand }}
                   </span>
                   <h2
                     class="
-                      text-brand-black
                       pb-2
                       text-base
                       font-normal
                       uppercase
+                      text-brand-black
                     "
                   >
                     {{ product.name }}
@@ -102,9 +102,9 @@
                   <span
                     v-else
                     class="
-                      text-brand-grey
                       text-[14px]
                       leading-[20px]
+                      text-brand-grey
                       transition-all
                     "
                   >
@@ -112,10 +112,10 @@
                   </span>
                   <div>
                   <span
-                    class="text-brand-green pt-2 pb-4
-                    text-[14px]
+                    class="pt-2 pb-4 text-[14px]
                     font-bold
-                    leading-[20px]"
+                    leading-[20px]
+                    text-brand-green"
                   >
                     <span
                       v-if="product.is_on_sale && product.saleprice
