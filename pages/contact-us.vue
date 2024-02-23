@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
+    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
       <div
         class="
           col-span-12
@@ -8,7 +8,6 @@
           px-6
           text-center
           sm:space-y-3 sm:text-left
-          md:mt-12
           lg:col-span-6
           xl:mt-10
         "
@@ -30,7 +29,7 @@
           </span>
         </span>
         <h1 class="flex flex-row text-4xl font-bold text-white lg:text-6xl">
-          Contact Us
+          NEWS
         </h1>
       </div>
     </BaseHeader>
@@ -77,9 +76,9 @@
               <template v-if="showMap">
                   <div class="my-4">
                     <iframe
-src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69fb-11ed-a163-6117b7a7504e&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-27.932873&amp;long=153.38002&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a=""
+       src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69fb-11ed-a163-6117b7a7504e&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-27.932873&amp;long=153.38002&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a=""
                     style="width: 100%; height: 350px;"
-></iframe>
+      ></iframe>
                   </div>
                   <button
                     type="button"

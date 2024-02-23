@@ -7,7 +7,7 @@
     w-full items-center
     bg-brand-black text-white"
   >
-    <div class="container max-w-6xl">
+    <div class="container max-w-6xl " >
       <div class="relative flex justify-between">
         <div class="hidden self-center px-4 lg:block lg:w-32">
           <NuxtLink to="/">
@@ -451,15 +451,15 @@ export default {
           text: 'Home',
         },
         {
-          to: '/shop',
+          to: '/news',
           text: 'News',
         },
         {
-          to: '/about-us',
+          to: '/bar-tv',
           text: 'BarTV  ',
         },
         {
-          to: '/contact-us',
+          to: '/draws',
           text: 'Draws',
         },
         {
@@ -467,7 +467,7 @@ export default {
           text: 'Ladders',
         },
         {
-          to: '/contact-us',
+          to: '/shop2',
           text: 'shop',
         },
         {

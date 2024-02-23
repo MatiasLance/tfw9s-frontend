@@ -12,7 +12,7 @@
     >
     <div class="relative items-start py-10 lg:py-20">
         <div class="container">
-            <header class="relative max-w-[1000px] break-words">
+            <header class="relative max-w-[800px] break-words">
                 <slot></slot>
             </header>
         </div>

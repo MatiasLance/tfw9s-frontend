@@ -10,7 +10,7 @@
             data-aos-once="true"
             class="font-montserrat text-base font-semibold
             capitalize text-[#1a1d18]"
->
+        >
             {{ superheadline }}
         </span>
           <h1
