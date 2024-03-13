@@ -1,5 +1,5 @@
 <template>
-    <div class="container mx-auto py-12">
+    <div class="container mx-auto py-12 ">
     <div
      class="grid-cols1 grid gap-8 sm:grid-cols-2
             lg:grid-cols-4"

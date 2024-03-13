@@ -1,115 +1,64 @@
 <template>
-  <section id="hero" class="my-16 w-full">
-    <BaseSection>
-      <div
-        class="
-          mb-15
-          col-span-12
-          space-y-4
-          px-6
-          sm:space-y-6
-          md:text-left
-          lg:col-span-6
-          xl:mt-10
-        "
-      >
-        <h1
-          data-aos="fade-right"
-          data-aos-once="true"
-          class="
-            font-montserrat
-            text-[2.5rem]
-            font-bold
-            uppercase
-            leading-tight
-            text-black
-            sm:pr-8 sm:text-5xl
-            xl:pr-10 xl:text-6xl
-          "
-          style="background: linear-gradient(45deg, #53B437, #050505);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;"
-        >
-          {{ headline }}
-        </h1>
-        <p
-          data-aos="fade-down"
-          data-aos-once="true"
-          data-aos-delay="300"
-          class="paragraph hidden sm:block"
-        >
+  <div class="flex flex-wrap justify-center">
+    <div class="order-2 w-full px-4 py-8 sm:w-2/3 md:order-1 md:w-1/2">
+      <h1
+      class="font-montserrat mb-4
+          bg-gradient-to-br from-[#53B437]
+          to-[#050505]
+          bg-clip-text
+          text-[2.5rem]
+          font-bold uppercase
+          leading-tight
+          text-transparent sm:pr-8 sm:text-5xl
+          xl:pr-10 xl:text-6xl"
+          >
+      {{ headline }}
+      </h1>
+      <p class="mb-4 text-lg text-white">
           {{ contentblurb }}
-        </p>
-        <div
-          data-aos="fade-up"
-          data-aos-once="true"
-          data-aos-delay="700"
-          class="
-            shop-cta
-            sm:shop-cta-sm
-            flex
-            flex-col
-            items-center space-y-4
-            sm:flex-row
-            sm:space-y-0
-            sm:space-x-4 md:mt-2 md:mb-10
-            md:items-start md:justify-start
-          "
-        >
-          <NuxtLink to="/shop">
-            <BaseButton
-              class="
-                max-w-full
-                border border-gray-200
-                bg-gradient-to-r
-                from-brand-green
-                to-brand-black
-                py-4
-                px-8
-                font-bold
-                uppercase
-                text-white
-              "
-            >
-              {{ cta }}
-            </BaseButton>
-          </NuxtLink>
-        </div>
-      </div>
-      <div
-         class=" mb-15
-          col-span-12
-          mt-10
-          space-y-4
-          px-6
-          sm:space-y-6
-          md:text-left
-          lg:col-span-6"
->
-        <div class="aspect-w-16 aspect-h-9 w-full">
-          <img
-            src="~/assets/images/kidsplaying.jpg"
-            class="relative z-10 p-4 sm:p-7 lg:-mt-4"
-            alt=""
-          />
-        </div>
-        <div class="flex items-center justify-center">
-          <img
-           src="~/assets/images/the-final-whistle-logo.png"
-            class="h-30 absolute top-3 z-10 mt-3 w-20 object-cover"
-            alt=""
-           />
-        </div>
-      </div>
-    </BaseSection>
-  </section>
+      </p>
+      <NuxtLink to="/shop">
+          <BaseButton
+
+            class="
+              max-w-full
+              border border-gray-200
+              bg-gradient-to-r
+              from-brand-green
+              to-brand-black
+              py-4
+              px-8
+              font-bold
+              uppercase
+              text-white
+            "
+          >
+            {{ cta }}
+          </BaseButton>
+        </NuxtLink>
+    </div>
+    <div
+class=" relative w-full px-4  py-8 sm:order-1 md:order-2
+     md:w-1/2 "
+    >
+      <div class="mt-6">
+      <img
+       src="~/assets/images/kidsplaying.jpg"
+       class="h-auto w-auto"
+       >
+       </div>
+       <div class="absolute inset-0 flex items-center justify-center">
+      <img
+       src="~/assets/images/the-final-whistle-logo.png"
+       class="h-30 absolute top-3 mt-3 w-20"
+       >
+       </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import BaseSection from './base/BaseSection.vue';
 export default {
-  name: 'HeroSection',
-  components: { BaseSection },
   data() {
     return {
       showContent: {
@@ -127,10 +76,10 @@ export default {
 
 <style lang="postcss">
 .shop-cta{
-  @apply mt-16 mb-8
+@apply mt-16 mb-8
 }
 
 .shop-cta-sm{
-  @apply mt-2 mb-10
+@apply mt-2 mb-10
 }
 </style>

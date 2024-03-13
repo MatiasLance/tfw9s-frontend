@@ -211,7 +211,7 @@
                 top-full left-4 w-full
                 max-w-[250px]
                 rounded-lg
-                bg-white
+                bg-black
                 py-2
                 shadow-lg
                 transition-all

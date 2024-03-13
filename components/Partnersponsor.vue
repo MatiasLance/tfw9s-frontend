@@ -1,15 +1,18 @@
 <template>
   <section>
-    <div class="container mx-auto mb-10 py-8">
-      <div class="grid grid-cols-4 gap-4 ">
+    <div class="container mx-auto mb-10 py-8 ">
+      <div
+       class="grid grid-cols-2 gap-5 sm:grid-cols-2
+           md:grid-cols-3 xl:grid-cols-4"
+        >
         <div
        v-for="(item, index) in items"
         :key="index" class="flex items-center
-        justify-center rounded-lg bg-white p-4
-        shadow-md"
+        justify-center rounded-lg bg-[#1A1A1B] p-4
+        "
         >
           <div class="m-2 p-24 text-center">
-            <p class="text-black hover:text-white">
+            <p class="font-bold text-stone-800 hover:text-white">
           {{ item.text }}
          </p>
           </div>
@@ -27,7 +30,7 @@ export default {
         { text: 'PARTNER SPONSOR' },
         { text: 'PARTNER SPONSOR' },
         { text: 'PARTNER SPONSOR' },
-        { text: 'PARTNER SPONSOR' },
+        { text: 'PARTNER SPONSOR' }
       ],
     };
   },
