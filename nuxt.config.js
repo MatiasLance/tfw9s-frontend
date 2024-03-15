@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'Drum HQ',
+    title: 'TFW Rugby League',
     htmlAttrs: {
       lang: 'en',
     },
@@ -31,7 +31,7 @@ export default {
       {
         hid: 'og:site_name',
         name: 'og:site_name',
-        content: 'Drum HQ Website',
+        content: 'TFW Website',
       },
       {
         name: 'google-site-verification',

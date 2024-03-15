@@ -1,76 +1,100 @@
 <template>
-    <div class="container mx-auto py-12 ">
-    <div
-     class="grid-cols1 grid gap-8 sm:grid-cols-2
-            lg:grid-cols-4"
-            >
-    <div
-    v-for="(product, index) in products"
-    :key="index"
-    class="overflow-hidden rounded-lg bg-white shadow-lg"
-    >
-    <img
-   :src="product.image"
-     alt="Product Image"
-    class="h-64 w-full object-cover"
-    >
-    <div class="p-6">
-        <h3
-        class="text-xl font-semibold text-gray-800"
+    <div class="min-h-full bg-[#1A1A1B] pt-8  pb-20">
+      <section class="mx-auto max-w-screen-xl gap-4">
+        <div
+        class="grid grid-cols-1 gap-8 px-8
+        sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
-        {{ product.name }}</h3>
-        <p class="text-gray-600">
-            {{ product.description }}
-        </p>
-        <BaseButton
-                class=" mt-3
-                max-w-full border
-                border-gray-200
-                bg-gradient-to-r
-                from-brand-green
-                to-brand-black
-                py-4
-                px-8
-                text-xl
-                font-bold
-                uppercase text-white"
-                >
-                Add to Cart
-     </BaseButton>
+        <Item
+        v-for="(product, index) in products"
+        :key="index"
+        class="overflow-hidden rounded-lg bg-[#212121] shadow-lg"
+        data-aos="fade-up"
+        >
+        <img
+        :src="product.image"
+        alt="Product Image"
+        class="h-64 w-full object-cover"
+        >
+        <div class="grid grid-cols-1 gap-2 px-6 py-8">
 
-    </div>
+            <span class="col-span-1 text-[16px] text-white">
+              <i class="ri-price-tag-3-line"></i>  Merch
+            </span>
 
-    </div>
-    </div>
+            <span
+            class="col-span-1 text-xl font-medium text-white"
+            >
+              {{ product.name }}
+          </span>
+
+          <span class="col-span-1 text-white">
+          <hr class="my-3"/>
+          </span>
+
+            <span class="col-span-1 text-white">
+              {{ product.price }}
+            </span>
+
+            <BaseButton
+            class="from-40% via-95% to-100%
+            w-full rounded-lg
+            bg-gradient-to-tr
+            from-[#5EE738]
+            via-[#3e872a]
+            to-[#050505]
+            py-4
+            px-8
+            uppercase
+            text-white"
+            >
+            Add to Cart
+            </BaseButton>
+
+        </div>
+
+      </Item>
+        </div>
+      </section>
     </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {
-      products: [
-        {
-          name: 'Product 1',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
-        },
-        {
-          name: 'Product 1',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
-        },
-        {
-          name: 'Product 1',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
-        },
-        {
-          name: 'Product 1',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
-        },
-      ]
+    return { products: [] }
+  },
+  created() {
+    this.generateRandomData();
+  },
+  methods: {
+    generateRandomData() {
+      for (let i = 0; i < 14; i++) {
+        this.products.push({
+          index: i+1,
+          name: this.getRandomItem(),
+          price: this.getRandomPrice(),
+          image: require('~/assets/images/kidsplaying.jpg'),
+        });
+      }
+    },
+    getRandomItem() {
+      const items = [
+        'TFW Cooler',
+        'TFW Kids',
+        'TFW Tumbler',
+        'TFW Towel',
+      ];
+      return items[Math.floor(Math.random() * items.length)];
+    },
+    getRandomPrice() {
+      const prices = [
+        '$20',
+        '$15',
+        '$10',
+        '$5',
+      ];
+      return prices[Math.floor(Math.random() * prices.length)];
     }
   }
 }

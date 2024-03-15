@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <template>
-  <div class="bg-[#1A1A1B]">
+  <div class="min-h-full bg-[#1A1A1B]  pb-12">
   <div class="max-w-full overflow-hidden">
     <HeroSection />
     <Partnersponsor/>

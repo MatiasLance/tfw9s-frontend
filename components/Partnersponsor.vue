@@ -1,21 +1,19 @@
 <template>
-  <section>
-    <div class="container mx-auto mb-10 py-8 ">
+  <section class="mx-auto max-w-screen-xl gap-4 p-7">
+    <div
+    class="grid grid-cols-1 gap-2 sm:grid-cols-2
+    md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+      >
       <div
-       class="grid grid-cols-2 gap-5 sm:grid-cols-2
-           md:grid-cols-3 xl:grid-cols-4"
-        >
-        <div
-       v-for="(item, index) in items"
-        :key="index" class="flex items-center
-        justify-center rounded-lg bg-[#1A1A1B] p-4
-        "
-        >
-          <div class="m-2 p-24 text-center">
-            <p class="font-bold text-stone-800 hover:text-white">
-          {{ item.text }}
-         </p>
-          </div>
+      v-for="(item, index) in items"
+      :key="index" class="flex h-72 items-center justify-center
+      rounded-lg bg-[#1A1A1B] text-stone-800 hover:border-2 hover:text-white"
+      data-aos="fade-up"
+      >
+        <div class="text-center">
+          <p class="text-3xl font-bold ">
+            {{ item.text }}
+          </p>
         </div>
       </div>
     </div>
@@ -27,10 +25,13 @@ export default {
   data() {
     return {
       items: [
-        { text: 'PARTNER SPONSOR' },
-        { text: 'PARTNER SPONSOR' },
-        { text: 'PARTNER SPONSOR' },
-        { text: 'PARTNER SPONSOR' }
+        { text: 'Partner Sponsor' },
+        { text: 'Partner Sponsor' },
+        { text: 'Partner Sponsor' },
+        { text: 'Partner Sponsor' },
+        { text: 'Partner Sponsor' },
+        { text: 'Partner Sponsor' },
+        { text: 'Partner Sponsor' },
       ],
     };
   },

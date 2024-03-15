@@ -14,3 +14,36 @@
 .paragraph {
     @apply text-black tracking-wide leading-relaxed;
 }
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #1a1a1b;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3e872a;
+  border-radius: 5px;
+}
+
+.fade-in {
+  animation: fadeInSlideAnimation ease 0.3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInSlideAnimation {
+  0% {
+    opacity: 0;
+    transform: translateX(-130px); /* Initial position off the screen to the left */
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0); /* Final position, no translation */
+  }
+}
