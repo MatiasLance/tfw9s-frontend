@@ -1,60 +1,67 @@
 <template>
-  <div class="flex flex-wrap justify-center">
-    <div class="order-2 w-full px-4 py-8 sm:w-2/3 md:order-1 md:w-1/2">
-      <h1
-      class="font-montserrat mb-4
-          bg-gradient-to-br from-[#53B437]
-          to-[#050505]
-          bg-clip-text
-          text-[2.5rem]
-          font-bold uppercase
-          leading-tight
-          text-transparent sm:pr-8 sm:text-5xl
-          xl:pr-10 xl:text-6xl"
-          >
-      {{ headline }}
-      </h1>
-      <p class="mb-4 text-lg text-white">
-          {{ contentblurb }}
-      </p>
-      <NuxtLink to="/shop">
-          <BaseButton
+  <section class="mx-auto max-w-screen-xl gap-4 p-7">
+    <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+      <div class="relative col-span-1 mb-4 w-full p-4" data-aos="fade-right">
+        <h1
+        class="font-montserrat from-70%
+            via-95% to-100% mb-4
+            bg-gradient-to-b
+            from-[#5EE738]
+            via-[#3e872a]
+            to-[#050505]
+            bg-clip-text
+            text-[2.5rem]
+            font-bold uppercase
+            leading-tight
+            text-transparent sm:pr-8 sm:text-5xl
+            xl:pr-10 xl:text-6xl"
+            >
+        {{ headline }}
+        </h1>
+        <p class="mb-4 text-justify indent-10 text-lg text-white">
+            {{ contentblurb }}
+        </p>
+        <NuxtLink to="/shop">
+            <BaseButton
 
-            class="
-              max-w-full
-              border border-gray-200
-              bg-gradient-to-r
-              from-brand-green
-              to-brand-black
-              py-4
-              px-8
-              font-bold
-              uppercase
-              text-white
-            "
-          >
-            {{ cta }}
-          </BaseButton>
-        </NuxtLink>
+              class="
+                from-40% via-95% to-100%
+                max-w-full rounded-lg
+                border border-gray-200
+                bg-gradient-to-tr
+                from-[#5EE738]
+                via-[#3e872a]
+                to-[#050505]
+                py-4
+                px-8
+                font-bold
+                uppercase
+                text-white
+              "
+            >
+              {{ cta }}
+            </BaseButton>
+          </NuxtLink>
+      </div>
+      <div
+        class="relative col-span-1 mb-4 w-full p-4 py-8"
+        data-aos="fade-up"
+        >
+        <div class="mt-6">
+        <img
+        src="~/assets/images/kidsplaying.jpg"
+        class="h-auto w-auto"
+        >
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center">
+        <img
+        src="~/assets/images/the-final-whistle-logo.png"
+        class="h-30 absolute top-3 mt-3 w-20 contrast-125"
+        >
+        </div>
+      </div>
     </div>
-    <div
-class=" relative w-full px-4  py-8 sm:order-1 md:order-2
-     md:w-1/2 "
-    >
-      <div class="mt-6">
-      <img
-       src="~/assets/images/kidsplaying.jpg"
-       class="h-auto w-auto"
-       >
-       </div>
-       <div class="absolute inset-0 flex items-center justify-center">
-      <img
-       src="~/assets/images/the-final-whistle-logo.png"
-       class="h-30 absolute top-3 mt-3 w-20"
-       >
-       </div>
-    </div>
-  </div>
+  </section>
 </template>
 
 <script>

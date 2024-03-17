@@ -9,13 +9,13 @@
   >
     <div class="container max-w-6xl " >
       <div class="relative flex justify-between">
-        <div class="hidden self-center px-4 lg:block lg:w-32">
+        <div class="hidden self-center px-4 lg:block lg:w-28">
           <NuxtLink to="/">
             <span class="navbar-logo block w-full py-2">
               <img
                 src="~/assets/images/the-final-whistle-logo.png"
                 alt="logo"
-                class="header-logo"
+                class="header-logo contrast-125"
               />
             </span>
           </NuxtLink>
@@ -45,13 +45,13 @@
               @click="toggle"
             >
               <span
-                class="relative my-[6px] block h-[2px] w-[30px] bg-[#181818]"
+                class="relative my-[6px] block h-[2px] w-[30px] bg-white"
               ></span>
               <span
-                class="relative my-[6px] block h-[2px] w-[30px] bg-[#181818]"
+                class="relative my-[6px] block h-[2px] w-[30px] bg-white"
               ></span>
               <span
-                class="relative my-[6px] block h-[2px] w-[30px] bg-[#181818]"
+                class="relative my-[6px] block h-[2px] w-[30px] bg-white"
               ></span>
             </button>
             <nav
@@ -86,28 +86,29 @@
                     <span
                       class="
                         ud-menu-scroll
-                        text-dark
                         group-hover:text-primary
-                        font-montserrat mx-6
-                        flex
+                        font-montserrat
+                        mx-6
+                        flex whitespace-nowrap
                         py-2
-                        text-base transition
+                        text-base
+                        text-white transition
                         duration-300
                         ease-in-out
                         group-hover:underline
-                        group-hover:decoration-slate-600
+                        group-hover:decoration-[#5EE738]
                         group-hover:decoration-2
                         group-hover:underline-offset-8
                         lg:mr-0
                         lg:inline-flex
                         lg:py-4
                         lg:px-0
-                        lg:text-[#181818]
-                        lg:group-hover:text-slate-800 lg:group-hover:opacity-70
+                        lg:text-white
+                        lg:group-hover:text-[#5EE738]
                       "
                       :class="(link.to === $route.path)
                         ? 'underline underline-offset-8'
-                        : ''"
+                        : 'opacity-60'"
                     >
                       {{ link.text }}
                     </span>
@@ -119,7 +120,6 @@
                 >
                   <span
                     class="
-                      text-dark
                       font-montserrat
                       relative
                       mx-6
@@ -127,6 +127,7 @@
                       cursor-pointer
                       py-2
                       text-base
+                      text-white
                       after:absolute
                       after:top-1/2
                       after:right-1
@@ -145,9 +146,9 @@
                       lg:py-6
                       lg:pr-4
                       lg:pl-0
-                      lg:text-[#181818]
+                      lg:text-white
                       lg:after:right-0
-                      lg:group-hover:text-[#181818]
+                      lg:group-hover:text-white
                       lg:group-hover:opacity-70
                       xl:ml-12
                     "
@@ -236,23 +237,30 @@
                   <NuxtLink :to="link.to">
                     <span
                       class="
-                        ud-menu-scroll
-                        text-dark
-                        group-hover:text-primary
-                        font-montserrat
-                        mx-8
-                        flex
-                        py-2
-                        text-base
-                        hover:text-gray-500
-                        hover:underline
-                        lg:mr-0
-                        lg:inline-flex
-                        lg:py-6
-                        lg:px-0
-                        lg:text-[#181818]
-                        lg:group-hover:text-[#181818] lg:group-hover:opacity-70
+                      ud-menu-scroll
+                      group-hover:text-primary
+                      font-montserrat
+                      mx-6
+                      flex whitespace-nowrap
+                      py-2
+                      text-base
+                      text-white transition
+                      duration-300
+                      ease-in-out
+                      group-hover:text-[#5EE738]
+                      group-hover:underline
+                      group-hover:decoration-[#5EE738]
+                      group-hover:decoration-2
+                      group-hover:underline-offset-8
+                      lg:mr-0
+                      lg:inline-flex
+                      lg:py-4
+                      lg:px-0
+                      lg:text-white
                       "
+                      :class="(link.to === $route.path)
+                        ? 'underline underline-offset-8'
+                        : 'opacity-60'"
                     >
                       {{ link.text }}
                     </span>
@@ -266,22 +274,25 @@
                   <NuxtLink :to="link.to">
                     <span
                       class="
-                        ud-menu-scroll
-                        text-dark
-                        group-hover:text-primary
-                        font-montserrat
-                        mx-8
-                        flex
-                        py-2
-                        text-base
-                        hover:text-gray-500
-                        hover:underline
-                        lg:mr-0
-                        lg:inline-flex
-                        lg:py-6
-                        lg:px-0
-                        lg:text-[#181818]
-                        lg:group-hover:text-[#181818] lg:group-hover:opacity-70
+                      ud-menu-scroll
+                      group-hover:text-primary
+                      font-montserrat
+                      mx-6 flex
+                      py-2
+                      text-base
+                      text-white transition
+                      duration-300
+                      ease-in-out
+                      group-hover:underline
+                      group-hover:decoration-[#53B437]
+                      group-hover:decoration-2
+                      group-hover:underline-offset-8
+                      lg:mr-0
+                      lg:inline-flex
+                      lg:py-4
+                      lg:px-0
+                      lg:text-white
+                      lg:group-hover:text-[#53B437]
                       "
                     >
                       {{ link.text }}
@@ -295,7 +306,6 @@
                   <span
                     href="javascript:void(0)"
                     class="
-                      text-dark
                       group-hover:text-primary
                       font-montserrat
                       relative
@@ -304,6 +314,7 @@
                       cursor-pointer
                       py-2
                       text-base
+                      text-white
                       after:absolute
                       after:top-1/2
                       after:right-1
@@ -323,8 +334,8 @@
                       lg:py-6
                       lg:pr-4
                       lg:pl-0
-                      lg:text-[#181818]
-                      lg:after:right-0 lg:group-hover:text-[#181818]
+                      lg:text-white
+                      lg:after:right-0 lg:group-hover:text-white
                       lg:group-hover:opacity-70 xl:ml-12
                     "
                     @click="toggle2"
@@ -411,9 +422,9 @@
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
-                    width="40"
-                    height="40"
-                    class="fill-black"
+                    width="30"
+                    height="30"
+                    class="fill-white"
                   >
                     <path fill="none" d="M0 0h24v24H0z" />
                     <path
@@ -426,7 +437,7 @@
                     />
                   </svg>
                 </div>
-                <span class="mx-[0.35em] opacity-50">
+                <span class="mx-[0.35em] text-white">
                   {{ cartCount }}
                 </span>
               </button>
@@ -456,14 +467,14 @@ export default {
         },
         {
           to: '/bar-tv',
-          text: 'BarTV  ',
+          text: 'Bar TV  ',
         },
         {
           to: '/draws',
           text: 'Draws',
         },
         {
-          to: '/contact-us',
+          to: '/ladders',
           text: 'Ladders',
         },
         {
@@ -471,7 +482,7 @@ export default {
           text: 'shop',
         },
         {
-          to: '/contact-us',
+          to: '/info',
           text: 'Info',
         },
       ],
@@ -532,14 +543,6 @@ export default {
 </script>
 
 <style lang="postcss">
-.text-dark:hover {
-  color: lightgray;
-  text-decoration: underline;
-}
-.text-dark {
-  color: white;
-  text-decoration: none;
-}
   .custom-pl-16 {
     @apply pl-16
   }
@@ -564,7 +567,7 @@ export default {
   }
 
   .sticky #navbarToggler span {
-    @apply bg-brand-dgrey;
+    @apply bg-white;
   }
 
   .sticky #navbarCollapse li a {

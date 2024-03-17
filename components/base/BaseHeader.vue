@@ -10,7 +10,7 @@
         bg-no-repeat"
         v-bind="$attrs"
     >
-    <div class="relative items-start py-10 lg:py-20">
+    <div class="relative items-start p-4">
         <div class="container">
             <header class="relative max-w-[800px] break-words">
                 <slot></slot>

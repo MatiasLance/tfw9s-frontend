@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-full bg-[#1A1A1B]  pb-12">
+  <div class="bg-[#1A1A1B] pb-12  min-h-full">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -31,13 +31,13 @@
           </span>
         </span>
         <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Draws
+          Ladders
         </h1>
       </div>
     </BaseHeader>
     <section class="mx-auto max-w-screen-xl gap-4 p-7">
       <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-        <div class="col-span-1 p-4"  data-aos="fade-right">
+        <div class="col-span-2 p-4"  data-aos="fade-up">
           <Filters class="w-full">
             <VSelect
             v-model="selectedEvent"
@@ -62,55 +62,13 @@
             />
           </Filters>
           <section class="w-full md:pr-8 lg:pr-16">
-            <div
-            v-for="(match, index) in matches"
-            :key="index" class="grid grid-cols-6 p-4"
-            data-aos="fade-up"
-            >
-              <div class="col-span-6 text-xl font-medium text-white">
-                {{ match.date }}
-              </div>
-              <div class="col-span-6 text-lg font-medium text-slate-600">
-                {{ match.location }}
-              </div>
-              <div
-              class="col-span-2 text-left text-xl"
-              :class="(parseInt(match.team1score) > parseInt(match.team2score))
-               ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
-               >
-              {{ match.team1 }}
-              </div>
-              <div
-              class="col-span-1 text-center text-xl"
-              :class="(parseInt(match.team1score) > parseInt(match.team2score))
-               ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
-               >
-                {{ match.team1score }}
-              </div>
-              <div
-              class="col-span-1 text-center text-xl"
-              :class="(parseInt(match.team1score) < parseInt(match.team2score))
-               ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
-               >
-                {{ match.team2score }}
-              </div>
-              <div
-              class="col-span-2 text-right text-xl"
-              :class="(parseInt(match.team1score) < parseInt(match.team2score))
-               ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
-               >
-                {{ match.team2 }}
-              </div>
-            </div>
+            <VueTable
+            v-if="showVueTable"
+            :columns="dataColumns"
+            :data="data"
+            class="border"
+          />
           </section>
-        </div>
-        <div class="col-span-1 w-full"  data-aos="fade-left">
-          <VueTable
-          v-if="showVueTable"
-          :columns="dataColumns"
-          :data="data"
-          class="border"
-        />
         </div>
       </div>
     </section>
@@ -146,15 +104,15 @@ export default {
         '25 and above'
       ],
       dataColumns: [
-        { name: 'index', label: '' },
+        { name: 'index', label: 'Pos' },
         { name: 'team', label: 'Team' },
         { name: 'win', label: 'Win' },
         { name: 'loss', label: 'Loss' },
         { name: 'draw', label: 'Draw' },
-        { name: 'points', label: 'Points' },
         { name: 'for', label: 'For' },
         { name: 'against', label: 'Against' },
         { name: 'difference', label: 'Difference' },
+        { name: 'points', label: 'Points' },
       ],
       showVueTable: true,
       matches: [],
@@ -192,6 +150,7 @@ export default {
           team2score: Math.floor(Math.random() * 20),
         });
       }
+      console.log(this.matches)
     },
     getRandomTeam() {
       const teams = [
