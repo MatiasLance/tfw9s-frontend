@@ -32,7 +32,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .superheadline:before {
     width: 3.125rem;
-    border-top: 2px solid grey;
+    border-top: 2px solid white;
     margin-right: 10px;
     content: ' ';
 }

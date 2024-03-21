@@ -6,13 +6,13 @@
     >
       <div
         class="
-          fade-in
           col-span-12
           text-center
           sm:space-y-3
           sm:text-left
           lg:col-span-6
           xl:mt-10"
+          data-aos="fade-right"
       >
         <span
           class="

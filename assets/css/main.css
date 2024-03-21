@@ -47,3 +47,21 @@
     transform: translateX(0); /* Final position, no translation */
   }
 }
+
+.fade-up {
+  animation: fadeUpSlideAnimation ease 0.3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeUpSlideAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(130px); /* Initial position off the screen to the left */
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Final position, no translation */
+  }
+}

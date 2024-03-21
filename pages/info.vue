@@ -37,7 +37,7 @@
     </BaseHeader>
     <section class="mx-auto max-w-screen-xl gap-4 p-6">
       <div class="grid grid-cols-1 gap-4">
-        <span class="col-cpan-1"   data-aos="fade-up">
+        <span class="col-cpan-1">
           <VueSlickCarousel
             v-bind="slickSettings"
             draggable

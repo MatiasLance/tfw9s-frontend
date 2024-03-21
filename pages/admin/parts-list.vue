@@ -30,6 +30,7 @@
                     text-white`
                 :
                 'bg-[#212121] text-[#555555]'"
+                data-aos="flip-right"
                 @click="setActiveTab(tab.value)"
               >
                 {{ tab.label }}

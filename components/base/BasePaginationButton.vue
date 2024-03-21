@@ -2,13 +2,13 @@
   <button
     type="button"
     :class="`
+      rounded-md
       page-link
       flex items-center justify-center
       h-8 w-8
       md:h-11 md:w-11
       cursor-pointer
       border
-      bg-gray-200
       text-center text-lg
       md:text-2xl
       leading-[3rem]
@@ -16,6 +16,8 @@
       transition-all
       duration-300
       focus:shadow-none
+      hover:scale-110
+      transition
       ${activeClass}
     `"
     @click="$emit('click')"
@@ -35,9 +37,9 @@ export default {
   computed: {
     activeClass() {
       if (this.active) {
-        return 'bg-brand-black text-white'
+        return 'bg-gradient-to-tr from-[#5EE738] to-[#050505] text-white'
       } else {
-        return 'text-gray-800 hover:bg-brand-yellow hover:text-white'
+        return 'bg-[#2f2f2f] text-white opacity-50 hover:opacity-100'
       }
     },
   },
