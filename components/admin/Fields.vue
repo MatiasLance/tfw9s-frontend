@@ -31,21 +31,32 @@
               placeholder="Enter Field"
               hide-details
               required
-              :disabled="true"
+              :disabled="selectedData.id !== data.id"
               class="border-black bg-white text-lg flex-1 p-1 mr-0.5"
               />
               <select
               v-model="data.region"
               class="border-black bg-white text-lg flex-1 p-1"
-              :disabled="true"
+              :disabled="selectedData.id !== data.id"
               >
                 <option
-                v-for="(data, index) in Dataset"
-                :key="index"
-                >{{data.region}}</option>
+                v-for="(region) in RegionList"
+                :key="region.id"
+                >{{region.title}}</option>
               </select>
-              <i class="ri-pencil-fill text-white text-xl px-4"/>
-              <i class="ri-delete-bin-fill text-red-400 text-xl px-4"/>
+              <i
+              v-if="selectedData.id !== data.id"
+              class="ri-pencil-fill text-white text-xl px-4"
+              @click="editRegion(data)"
+              />
+              <i
+              v-if="selectedData.id === data.id"
+              class="ri-save-3-fill text-green-400 text-xl px-4"
+              @click="saveRegion(data)"
+              />
+              <i
+              class="ri-delete-bin-fill text-red-400 text-xl px-4"
+              />
             </div>
             </div>
           </div>
@@ -59,8 +70,10 @@
 export default {
   data() {
     return {
+      selectedData: [],
       Fields: [],
       Dataset: [],
+      RegionList: [],
       Rules: [
         value => {
           if (value) {
@@ -83,12 +96,38 @@ export default {
     this.generateRandomData();
   },
   methods: {
+    editRegion(selected) {
+      console.log(selected)
+      if (this.selectedData.length === 0) {
+        this.selectedData = selected;
+      } else {
+        this.Dataset = this.Dataset.map(data => {
+          if (data.id === this.selectedData.id) {
+            console.log('matched', data, this.selectedData);
+            return this.selectedData;
+          } else {
+            return data;
+          }
+        });
+        this.selectedData = selected;
+      }
+    },
+    saveRegion(data) {
+      console.log(data)
+      this.selectedData = []
+    },
     generateRandomData() {
       for (let i = 0; i < 14; i++) {
         this.Dataset.push({
           id: i,
           field: this.getRandomField(),
           region: this.getRandomRegion(),
+        });
+      }
+      for (let i = 0; i < 8; i++) {
+        this.RegionList.push({
+          id: i,
+          title: `Region Number ${i+1}`
         });
       }
     },

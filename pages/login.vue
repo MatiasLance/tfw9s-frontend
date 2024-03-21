@@ -2,7 +2,7 @@
     <div>
         <section
             class="relative min-h-[97vh] w-full
-            bg-[url('/img/hero/drum4.webp')]
+            bg-[#1A1A1B]
             bg-cover bg-fixed
             py-10"
         >

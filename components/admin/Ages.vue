@@ -1,76 +1,112 @@
 <template>
+  <div>
     <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
-        <div class="grid grid-cols-1 gap-4">
-          <div
-          v-for="(item, index) in items"
-          :key="index" class="group col-span-1 bg-[#212121]"
-          data-aos="fade-up"
+        <div class="grid grid-cols-6 gap-4">
+          <div class="col-span-1">
+            <button
+            type="button"
+            class="
+            from-40% via-95% to-100%
+            w-full rounded-md
+            bg-gradient-to-br
+            from-[#5EE738] via-[#3e872a]
+            to-[#050505] py-1.5
+            text-center
+            font-semibold
+            text-white"
           >
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-6">
-              <div class="col-span-1 p-4 md:col-span-3 lg:col-span-4 lg:p-8">
-
-                <h3
-                class="grid text-xl font-semibold text-white sm:grid-cols-1 "
-                >
-                  {{ item.title }}
-                </h3>
-
-                <p class="text-white">
-                  {{ item.text }}
-                </p>
-
-                <p class="mb-2 text-white  line-clamp-3">
-                  {{ item.description }}
-                </p>
-                <BaseButton
-                class="from-40% via-95% to-100%
-                max-w-full rounded-lg
-                bg-gradient-to-tr
-                from-[#5EE738]
-                via-[#3e872a]
-                to-[#050505]
-                py-4
-                px-8
-                uppercase
-                text-white"
-                >
-                READ MORE
-                </BaseButton>
-
-              </div>
+            +
+          </button>
+          </div>
+          <section class="col-span-6">
+            <div class="grid grid-cols-1">
               <div
-              class="col-span-1 overflow-hidden md:col-span-3 lg:col-span-2"
+              v-for="(Age) in Ages"
+              :key="Age.id" class="col-span-1 mb-0.5 gap-0"
               >
-                <img
-                :src="item.image"
-                alt="Product Image"
-                class="h-full w-full object-cover transition-all
-                group-hover:scale-110"
-              >
+              <div class="flex items-center justify-center">
+                <input
+                v-model="Age.title"
+                :rules="Rules"
+                placeholder="Enter Age"
+                hide-details
+                required
+                :disabled="true"
+                class="border-black bg-white text-lg flex-1 p-1"
+                />
+                <i
+                class="ri-pencil-fill text-white text-xl px-4"
+                />
+                <i
+                class="ri-delete-bin-fill text-red-400 text-xl px-4"
+                />
+              </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </section>
     </div>
-  </template>
+  </div>
+</template>
 
 <script>
 export default {
   data() {
     return {
-      items: [
+      selectedAge: [],
+      Ages: [
         {
-          title: 'Weekly Wrap up',
-          text: '00-00-00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
+          id: 1,
+          title: 'Under 8',
+          key: 'U8'
         },
-      ]
+        {
+          id: 2,
+          title: 'Under 10',
+          key: 'U10'
+        },
+        {
+          id: 3,
+          title: 'Under 12',
+          key: 'U12'
+        },
+        {
+          id: 4,
+          title: 'Under 15',
+          key: 'U15'
+        },
+        {
+          id: 5,
+          title: 'Under 18',
+          key: 'U18'
+        },
+        {
+          id: 6,
+          title: 'Above 18',
+          key: 'A18'
+        },
+
+      ],
+      Rules: [
+        value => {
+          if (value) {
+            return true
+          }
+
+          return 'Name is required.'
+        },
+        value => {
+          if (value?.length <= 10) {
+            return true
+          }
+
+          return 'Name must be less than 10 characters.'
+        },
+      ],
     };
-  }
+  },
 };
 </script>
 

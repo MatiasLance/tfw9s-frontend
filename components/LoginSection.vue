@@ -1,23 +1,21 @@
 <template>
   <!--  COMPONENT: LOGIN -->
-  <div class="mx-auto mt-10 mb-20 rounded bg-white p-4 shadow-lg md:p-7">
+  <div class="mx-auto mt-20 mb-20 rounded bg-transparent p-4 md:p-7">
     <form action="">
-      <h2 class="mb-5 text-4xl font-bold">
-        Login
-      </h2>
 
-      <div class="mb-4">
-        <label class="mb-1 block"> Username or email address </label>
+      <div class="mb-2">
         <input
           v-model="email"
           class="
             w-full
             appearance-none
-            border border-transparent
-            bg-gray-200
+            rounded-lg border
+            border-transparent
+            bg-brand-black
             py-4
             px-5
             text-base
+            text-white
             hover:border-gray-400
             focus:border-gray-500 focus:outline-none focus:ring-0
           "
@@ -28,31 +26,33 @@
         />
       </div>
 
-      <div class="mb-4">
-        <label class="mb-1 block"> Password </label>
+      <div class="mb-2">
         <div
           class="
             flex items-center justify-between
-            bg-gray-200
+            rounded-lg
+            bg-brand-black
           "
         >
           <input
             v-model="password"
             class="
+              form-input
               w-full
               appearance-none
-              border border-transparent
-              bg-gray-200
+              rounded-lg border
+              border-transparent
+              bg-transparent
               py-4
               px-5
               text-base
+              text-white
               hover:border-gray-400
               focus:border-gray-500 focus:outline-none focus:ring-0
             "
             :type="passwordFieldType"
-            placeholder=""
+            placeholder="Password"
             required
-            @keyup.enter="authenticate"
           />
           <span
             class="
@@ -61,51 +61,33 @@
               cursor-pointer items-center
               justify-center
               text-gray-400
-              hover:text-gray-700
+              hover:text-gray-100
             "
             @click="isPasswordRevealed = !isPasswordRevealed"
           >
             <template v-if="isPasswordRevealed">
-              <i class="ri-eye-off-line ri-xl"></i>
+              <i class="ri-eye-2-line ri-xl"></i>
             </template>
             <template v-else>
-              <i class="ri-eye-line ri-xl"></i>
+              <i class="ri-eye-close-line ri-xl"></i>
             </template>
           </span>
         </div>
       </div>
 
-      <label class="mb-5 flex w-max items-center">
-        <input
-          checked
-          name=""
-          type="checkbox"
-          class="
-            h-5
-            w-5
-            cursor-pointer
-            rounded-full
-            border-[3px] border-gray-300
-            bg-transparent
-            text-brand-black
-            hover:border-gray-700
-            focus:border-transparent
-            focus:bg-gray-200
-            focus:ring-1
-            focus:ring-gray-500
-            focus:ring-offset-2
-          "
-        />
-        <span class="ml-2 inline-block text-gray-500"> Remember me </span>
-      </label>
       <button
         type="submit"
         class="
-          my-2
-          inline-block
-          w-full
-          border border-transparent
-          bg-brand-black
+          from-40%
+          via-95%
+          to-100%
+          my-2 inline-block
+          w-full rounded-lg border
+          border-transparent
+          bg-gradient-to-br
+          from-[#5EE738]
+          via-[#3e872a]
+          to-[#050505]
           py-3
           px-5
           text-center
@@ -119,7 +101,7 @@
       </button>
       <p class="mt-5 text-center font-semibold">
         <a
-          class="text-brand-black hover:underline hover:decoration-brand-black"
+          class="text-white hover:underline hover:decoration-white"
           href="/forgot-password"
         >
           Lost your password ?

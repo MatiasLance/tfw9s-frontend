@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="min-h-full bg-[#1A1A1B] pt-8  pb-20">
     <!-- CONTENT -->
     <section class="my-16 w-full pb-28">
       <div class="container max-w-6xl">

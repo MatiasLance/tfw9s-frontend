@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center">
     <nav>
-      <ul class="list-style-none page-numbers flex flex-wrap justify-end">
+      <ul class="list-style-none page-numbers flex flex-wrap justify-end gap-2">
         <li class="page-item text-sm">
           <BasePaginationButton @click="setPage('prev')">
             <i class="ri-arrow-left-s-line"></i>

@@ -1,81 +1,114 @@
 <template>
-    <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
-      <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
-        <div class="grid grid-cols-1 gap-4">
-          <div
-          v-for="(item, index) in items"
-          :key="index" class="group col-span-1 bg-[#212121]"
-          data-aos="fade-up"
-          >
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-6">
-              <div class="col-span-1 p-4 md:col-span-3 lg:col-span-4 lg:p-8">
-
-                <h3
-                class="grid text-xl font-semibold text-white sm:grid-cols-1 "
+  <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
+    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
+      <div class="grid grid-cols-6 gap-4">
+        <div class="col-span-1">
+          <button
+          type="button"
+          class="
+          from-40% via-95% to-100%
+          w-full rounded-md
+          bg-gradient-to-br
+          from-[#5EE738] via-[#3e872a]
+          to-[#050505] py-1.5
+          text-center
+          font-semibold
+          text-white"
+        >
+          +
+        </button>
+        </div>
+        <section class="col-span-6">
+          <div class="grid grid-cols-1 gap-2">
+            <div
+            v-for="(data, index) in Dataset"
+            :key="index"
+            class="col-span-1 mb-0.5 gap-0 border-2 border-gray-500"
+            >
+              <Item class="grid grid-cols-3">
+                <div class="col-span-1">
+                  <ODatepicker
+                  v-model="pDates"
+                  placeholder="Click to select..."
+                  icon="calendar"
+                  />
+                </div>
+                <div
+                class="col-span-1 m-auto text-center
+                text-2xl font-semibold text-white"
                 >
-                  {{ item.title }}
-                </h3>
-
-                <p class="text-white">
-                  {{ item.text }}
-                </p>
-
-                <p class="mb-2 text-white  line-clamp-3">
-                  {{ item.description }}
-                </p>
-                <BaseButton
-                class="from-40% via-95% to-100%
-                max-w-full rounded-lg
-                bg-gradient-to-tr
-                from-[#5EE738]
-                via-[#3e872a]
-                to-[#050505]
-                py-4
-                px-8
-                uppercase
-                text-white"
-                >
-                READ MORE
-                </BaseButton>
-
-              </div>
-              <div
-              class="col-span-1 overflow-hidden md:col-span-3 lg:col-span-2"
-              >
-                <img
-                :src="item.image"
-                alt="Product Image"
-                class="h-full w-full object-cover transition-all
-                group-hover:scale-110"
-              >
-              </div>
+                  {{ data.manager }}
+                </div>
+                <div class="col-span-1">
+                  <select
+                  v-model="data.field"
+                  class="w-full bg-transparent p-1 text-lg text-white"
+                  >
+                    <option
+                    v-for="(field, index) in Fields"
+                    :key="index"
+                    >{{field}}</option>
+                  </select>
+                </div>
+              </Item>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
-  </template>
+        </section>
+      </div>
+    </section>
+  </div>
+</template>
 
 <script>
+
 export default {
   data() {
     return {
-      items: [
+      selectedData: [],
+      Fields: [
+        'West Boulevard',
+        'Grand George Canyon',
+        'Spring Fields',
+        'Tuggerah Football Grounds',
+      ],
+      Dataset: [
         {
-          title: 'Weekly Wrap up',
-          text: '00-00-00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
+          id: 1,
+          date: null,
+          manager: 'Kiko Pangilinan',
+          field: 'Tuggerah Football Grounds'
+        }
+      ],
+      RegionList: [],
+      Rules: [
+        value => {
+          if (value) {
+            return true
+          }
+
+          return 'Name is required.'
         },
-      ]
+        value => {
+          if (value?.length <= 10) {
+            return true
+          }
+
+          return 'Name must be less than 10 characters.'
+        },
+      ],
     };
-  }
+  },
 };
 </script>
 
 <style scoped>
 .superheadline {
 color: aliceblue;
+}
+select option {
+  background-color: #333131; /* Change to your desired background color */
+}
+ODatepicker {
+  background-color: #333131;
 }
 </style>

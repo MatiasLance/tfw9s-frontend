@@ -104,6 +104,7 @@
                         lg:py-4
                         lg:px-0
                         lg:text-white
+                        uppercase
                         lg:group-hover:text-[#5EE738]
                       "
                       :class="(link.to === $route.path)
@@ -237,6 +238,7 @@
                   <NuxtLink :to="link.to">
                     <span
                       class="
+                      uppercase
                       ud-menu-scroll
                       group-hover:text-primary
                       font-montserrat
@@ -479,7 +481,7 @@ export default {
         },
         {
           to: '/shop2',
-          text: 'shop',
+          text: 'Shop',
         },
         {
           to: '/info',

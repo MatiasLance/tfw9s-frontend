@@ -131,13 +131,13 @@ export default {
         this.data.push({
           index: i+1,
           team: this.getRandomTeam(),
-          win: this.getRandomTeam(),
-          loss: this.getRandomTeam(),
-          draw: Math.random() > 0.5 ? 'Yes' : 'No',
+          win: Math.floor(Math.random() * 30),
+          loss: Math.floor(Math.random() * 30),
+          draw: Math.floor(Math.random() * 30),
           points: Math.floor(Math.random() * 30),
-          for: '???',
-          against: this.getRandomTeam(),
-          difference: Math.floor(Math.random() * 20) - 10
+          for: Math.floor(Math.random() * 30),
+          against: Math.floor(Math.random() * 30),
+          difference: Math.floor(Math.random() * 30),
         });
       }
       for (let i = 0; i < 4; i++) {

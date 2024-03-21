@@ -32,7 +32,7 @@
                 placeholder="Enter Region"
                 hide-details
                 required
-                :disabled="selectedRegion.id !== region.id"
+                :disabled="true"
                 class="border-black bg-white text-lg flex-1 p-1"
                 />
                 <i

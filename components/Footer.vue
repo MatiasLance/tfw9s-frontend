@@ -20,7 +20,7 @@
           </span>
           <NuxtLink v-if="$store.state.auth.user === null" to="/login">
             <span
-            class="ext-white px-5 transition
+            class="px-5 text-white transition
             duration-300 ease-in-out hover:text-[#5EE738]"
             >
               Login
