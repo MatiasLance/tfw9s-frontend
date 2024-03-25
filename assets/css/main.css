@@ -15,6 +15,10 @@
     @apply text-black tracking-wide leading-relaxed;
 }
 
+.paragraph-white {
+    @apply text-white tracking-wide leading-relaxed;
+}
+
 ::-webkit-scrollbar {
   width: 0px;
   height: 0px;

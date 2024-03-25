@@ -1,13 +1,13 @@
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-            <form @submit.prevent="deleteRegion">
+            <form @submit.prevent="deletefield">
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Delete Region
+                    Delete Field
                 </h3>
                 <hr class="my-3"/>
                   <p>
-                    Are you sure you want to remove {{ regionData.name }}?
+                    Are you sure you want to remove {{fieldData.name}}?
                   </p>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end md:flex-row gap-2">
@@ -38,21 +38,21 @@
 import 'vue-croppa/dist/vue-croppa.css';
 
 export default {
-  name: 'DeleteRegionModal',
+  name: 'DeleteFieldModal',
   props: {
     active: {
       type: Boolean,
       required: true
     },
     // eslint-disable-next-line vue/prop-name-casing
-    region_data: {
+    field_data: {
       type: Array,
       required: true
     },
   },
   data() {
     return {
-      regionData: { name: '' },
+      fieldData: { name: '' },
       rules: [ value => !!value || 'Required' ],
     }
   },
@@ -60,7 +60,7 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.regionData = this.region_data;
+          this.fieldData = this.field_data;
         }
       },
       immediate: true,
@@ -68,10 +68,10 @@ export default {
   },
 
   methods: {
-    deleteRegion() {
-      console.log(this.regionData)
+    deletefield() {
+      console.log(this.fieldData)
       this.$axios
-        .$delete(`/v1/regions/${this.regionData.id}`)
+        .$delete(`/v1/fields/${this.fieldData.id}`)
         .catch(() => {
           this.$oruga.notification.open({
             duration: 5000,

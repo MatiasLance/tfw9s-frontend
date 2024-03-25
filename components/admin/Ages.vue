@@ -3,7 +3,7 @@
     <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
         <div class="grid grid-cols-6 gap-4">
-          <div class="col-span-1">
+          <div class="col-span-6">
             <button
             type="button"
             class="
@@ -14,7 +14,8 @@
             to-[#050505] py-1.5
             text-center
             font-semibold
-            text-white"
+            text-white
+            sm:w-36"
           >
             +
           </button>

@@ -113,6 +113,18 @@ export default {
           description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
           image: require('~/assets/images/kidsplaying.jpg')
         },
+        {
+          title: 'Weekly Wrap up',
+          text: '00-00-00',
+          description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          image: require('~/assets/images/kidsplaying.jpg')
+        },
+        {
+          title: 'Weekly Wrap up',
+          text: '00-00-00',
+          description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          image: require('~/assets/images/kidsplaying.jpg')
+        },
 
       ]
     };

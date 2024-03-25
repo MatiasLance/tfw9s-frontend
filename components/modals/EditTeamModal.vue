@@ -3,7 +3,7 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Edit Region
+                    Edit Team
                 </h3>
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -13,12 +13,30 @@
                     </label>
                     <VTextField
                     id="name"
-                    v-model="regionData.name"
-                    label="Enter Region Name"
+                    v-model="TeamData.name"
+                    label="Enter Field Name"
                     :rules="rules"
                     type="text"
                     solo
                     />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="fixingname" class="mb-1 block">
+                      Field:
+                    </label>
+                    <VSelect
+                    v-model="TeamData.field_id"
+                    :items="filteredField"
+                    placeholder="Choose a Field"
+                    :rules="rules"
+                    solo
+                    >
+                      <template #prepend-item>
+                        <div class="sticky-search-bar px-3">
+                          <SearchBar v-model="fieldQuery" />
+                        </div>
+                      </template>
+                    </VSelect>
                   </div>
                   <div class="col-span-1 md:col-span-2">
                     <label for="fixingname" class="mb-1 block">
@@ -26,8 +44,8 @@
                     </label>
                     <VTextarea
                     id="name"
-                    v-model="regionData.description"
-                    label="Enter Region Description"
+                    v-model="TeamData.description"
+                    label="Enter Field Description"
                     :rules="rules"
                     type="text"
                     solo
@@ -64,39 +82,56 @@
 import 'vue-croppa/dist/vue-croppa.css';
 
 export default {
-  name: 'EditRegionModal',
+  name: 'EditTeamModal',
   props: {
     active: {
       type: Boolean,
       required: true
     },
+    team: {
+      type: Object,
+      required: true
+    },
     // eslint-disable-next-line vue/prop-name-casing
-    region_data: {
+    field: {
       type: Array,
       required: true
     },
   },
   data() {
     return {
+      fieldQuery: '',
       valid: true,
-      regionData: {
+      TeamData: {
         name: null,
         description: null
       },
       rules: [ value => !!value || 'Required' ],
     }
   },
+  computed: {
+    formattedField() {
+      return this.field.map(field =>
+        ({ text: field.name, value: field.id }));
+    },
+    filteredField() {
+      return this.formattedField.filter(field =>
+        field && field.text && typeof field.text === 'string' ?
+          field.text.toLowerCase().includes(this.fieldQuery.toLowerCase()) :
+          false
+      );
+    },
+  },
   watch: {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.regionData = this.region_data;
+          this.TeamData = this.team;
         }
       },
       immediate: true,
     },
   },
-
   methods: {
     validate() {
       if (!this.$refs.form.validate()) {
@@ -108,7 +143,7 @@ export default {
           queue: true,
         });
         return false;
-      } else if (this.regionData.description === '') {
+      } else if (this.TeamData.description === '') {
         this.$oruga.notification.open({
           duration: 5000,
           message: 'Description should not be empty',
@@ -118,21 +153,22 @@ export default {
         });
         return false;
       } else {
-        this.confirmRegion();
+        this.confirmField();
         return true;
       }
     },
-    confirmRegion() {
-      this.editRegion()
+    confirmField() {
+      this.addField()
       this.$emit('confirm')
       this.closeDialog()
     },
-    editRegion() {
+    addField() {
       const formData = new FormData();
-      formData.append('name', this.regionData.name);
-      formData.append('description', this.regionData.description);
+      formData.append('name', this.TeamData.name);
+      formData.append('description', this.TeamData.description);
+      formData.append('field_id', this.TeamData.field_id);
       this.$axios
-        .$post(`v1/regions/${this.regionData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .$post(`v1/teams/${this.team.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
           console.log('Success')
@@ -149,7 +185,7 @@ export default {
       this.$emit('close')
     },
     reset() {
-      this.regionData = []
+      this.TeamData = []
     },
   }
 }

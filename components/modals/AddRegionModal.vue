@@ -3,7 +3,7 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Edit Region
+                    Add Region
                 </h3>
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -64,15 +64,10 @@
 import 'vue-croppa/dist/vue-croppa.css';
 
 export default {
-  name: 'EditRegionModal',
+  name: 'AddRegionModal',
   props: {
     active: {
       type: Boolean,
-      required: true
-    },
-    // eslint-disable-next-line vue/prop-name-casing
-    region_data: {
-      type: Array,
       required: true
     },
   },
@@ -85,16 +80,6 @@ export default {
       },
       rules: [ value => !!value || 'Required' ],
     }
-  },
-  watch: {
-    active: {
-      handler(newActive) {
-        if (newActive) {
-          this.regionData = this.region_data;
-        }
-      },
-      immediate: true,
-    },
   },
 
   methods: {
@@ -123,16 +108,16 @@ export default {
       }
     },
     confirmRegion() {
-      this.editRegion()
+      this.addRegion()
       this.$emit('confirm')
       this.closeDialog()
     },
-    editRegion() {
+    addRegion() {
       const formData = new FormData();
       formData.append('name', this.regionData.name);
       formData.append('description', this.regionData.description);
       this.$axios
-        .$post(`v1/regions/${this.regionData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .$post('v1/regions', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
           console.log('Success')
