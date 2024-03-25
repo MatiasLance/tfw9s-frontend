@@ -35,6 +35,18 @@
           />
         </section>
 
+        <div class="col-span-1 md:col-span-3">
+          <VPagination
+            v-model="page"
+            :length="totalPages"
+            @change="setPage"
+            dark
+            color="success"
+            :total-visible="7"
+            class="my-4 text-white"
+            />
+        </div>
+
       </div>
     </section>
   </div>
@@ -83,6 +95,12 @@ export default {
       showVueTable: true,
       matches: [],
       data: [],
+      from: 0,
+      to: 0,
+      page: 1,
+      perPage: 10,
+      totalPages: 1,
+      totalItems: 0,
     }
   },
   created() {

@@ -3,7 +3,7 @@
     <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
         <div class="grid grid-cols-6 gap-4">
-          <div class="col-span-1">
+          <div class="col-span-6">
             <button
             type="button"
             class="
@@ -14,7 +14,9 @@
             to-[#050505] py-1.5
             text-center
             font-semibold
-            text-white"
+            text-white
+            sm:w-36"
+            @click="openAddRegionDialog"
           >
             +
           </button>
@@ -22,12 +24,12 @@
           <section class="col-span-6">
             <div class="grid grid-cols-1">
               <div
-              v-for="(region) in Regions"
+              v-for="(region) in RegionList"
               :key="region.id" class="col-span-1 mb-0.5 gap-0"
               >
               <div class="flex items-center justify-center">
                 <input
-                v-model="region.title"
+                v-model="region.name"
                 :rules="Rules"
                 placeholder="Enter Region"
                 hide-details
@@ -47,9 +49,25 @@
               </div>
             </div>
           </section>
+          <div v-if="RegionList.length > 0" class="col-span-6 justify-center">
+            <VPagination
+              v-model="page"
+              :length="totalPages"
+              @change="setPage"
+              dark
+              color="success"
+              :total-visible="7"
+              class="my-4 text-white"
+              />
+          </div>
         </div>
       </section>
     </div>
+    <AddRegionModal
+    :active="showAddRegionModal"
+    @close="closeAddRegionDialog"
+    @confirm="AddRegion"
+    />
     <EditRegionModal
     :active="showEditRegionModal"
     :region_data="selectedRegion"
@@ -66,19 +84,29 @@
 </template>
 
 <script>
+import AddRegionModal from '~/components/modals/AddRegionModal.vue';
 import EditRegionModal from '~/components/modals/EditRegionModal.vue';
 import DeleteRegionModal from '~/components/modals/DeleteRegionModal.vue';
 export default {
   components: {
+    AddRegionModal,
     EditRegionModal,
     DeleteRegionModal
   },
   data() {
     return {
+      showAddRegionModal: false,
       showEditRegionModal: false,
       showDeleteRegionModal: false,
       selectedRegion: [],
-      Regions: [],
+      RegionList: [],
+      query: '',
+      from: 0,
+      to: 0,
+      page: 1,
+      perPage: 12,
+      totalPages: 0,
+      totalItems: 0,
       Rules: [
         value => {
           if (value) {
@@ -97,10 +125,29 @@ export default {
       ],
     };
   },
+  watch: {
+    totalPages() {
+      if (this.page > this.totalPages) {
+        this.setPage(1)
+      }
+    },
+    page: {
+      handler(newPage) {
+        this.retrieveRegions()
+      },
+      immediate: true,
+    },
+  },
   created() {
-    this.generateRandomData();
+    this.retrieveRegions();
   },
   methods: {
+    setPage() {
+      this.retrieveRegions();
+    },
+    openAddRegionDialog(a) {
+      this.showAddRegionModal = true
+    },
     openEditRegionDialog(data) {
       this.selectedRegion = data
       this.showEditRegionModal = true
@@ -109,6 +156,9 @@ export default {
       this.selectedRegion = data
       this.showDeleteRegionModal = true
     },
+    closeAddRegionDialog(a) {
+      this.showAddRegionModal = false
+    },
     closeEditRegionDialog(data) {
       this.selectedRegion = []
       this.showEditRegionModal = false
@@ -116,6 +166,17 @@ export default {
     closeDeleteRegionDialog(data) {
       this.selectedRegion = []
       this.showDeleteRegionModal = false
+    },
+    AddRegion() {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Region Added',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      })
+      this.showAddRegionModal = false;
+      this.retrieveRegions();
     },
     UpdateRegion(data) {
       this.$oruga.notification.open({
@@ -126,31 +187,45 @@ export default {
         queue: true
       })
       this.showEditRegionModal = false;
+      this.retrieveRegions();
     },
     DeleteRegion(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Region Deleted',
+        message: 'Region Removed',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
       this.showDeleteRegionModal = false;
+      this.retrieveRegions();
     },
-    generateRandomData() {
-      for (let i = 0; i < 14; i++) {
-        this.Regions.push({
-          id: i,
-          title: `Region Number ${i+1}`
-        });
-      }
+    retrieveRegions() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        maxRegionsPerPage: 10,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/regions?${queryString}`)
+        .then((response) => {
+          this.RegionList = response.data.regions;
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
+        })
     },
   }
 };
 </script>
-
-<style scoped>
-.superheadline {
-color: aliceblue;
-}
-</style>
