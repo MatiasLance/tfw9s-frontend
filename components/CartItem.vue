@@ -169,7 +169,7 @@ export default {
     return {
       editableQuantity: 1,
       originalPrice: this.price,
-      finalPrice: this.isOnSale ? this.saleprice : this.price
+      Price: this.isOnSale ? this.saleprice : this.price
     }
   },
   computed: {

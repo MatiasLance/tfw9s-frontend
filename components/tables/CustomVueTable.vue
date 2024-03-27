@@ -44,6 +44,7 @@
                   <template v-if="column.name === 'action'">
                     <VBtn
                     class="from-40% via-95% to-100%
+                    ml-2
                     rounded-lg
                     bg-gradient-to-tr
                     from-[#5EE738]
@@ -59,7 +60,13 @@
                     Submit
                   </VBtn>
                   </template>
-                  <template v-else>
+                  <template v-else-if="column.name === 'team1'">
+                      {{ row.team1.name }}
+                  </template>
+                  <template v-else-if="column.name === 'team2'">
+                      {{ row.team2.name }}
+                  </template>
+                  <template v-else-if="column.name !== 'time'">
                     {{ row[column.name] }}
                   </template>
                 </slot>

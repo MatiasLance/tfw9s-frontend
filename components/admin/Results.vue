@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
-      <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
+    <div class="bg-[#1A1A1B]" data-aos="fade-up">
+      <section class="mx-auto max-w-screen-xl gap-4 p-4">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div class="col-span-1">
             <ODatepicker
@@ -51,7 +51,7 @@ export default {
   components: { CustomVueTable },
   data() {
     return {
-      date: null,
+      date: new Date(),
       showCustomVueTable: true,
       Data: [],
       selectedData: [],
@@ -87,6 +87,14 @@ export default {
       totalPages: 1,
       totalItems: 0,
     };
+  },
+  watch: {
+    date: {
+      handler(newDate) {
+        console.log(newDate)
+      },
+      immediate: true,
+    },
   },
   created() {
     this.generateRandomData();

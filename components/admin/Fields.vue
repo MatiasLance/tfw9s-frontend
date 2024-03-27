@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
-      <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
-        <div class="grid grid-cols-6 gap-4">
-          <div class="col-span-6">
+    <div class="bg-[#1A1A1B]" data-aos="fade-up">
+      <section class="mx-auto max-w-screen-xl gap-4 p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-6 gap-4">
+          <div class="col-span-1 sm:col-span-2 flex items-center">
             <button
             type="button"
             class="
@@ -21,13 +21,30 @@
             +
           </button>
           </div>
+          <div
+          v-if="totalPages > 0"
+          class="col-span-1 sm:col-span-4 sm:flex justify-end"
+          data-aos="flip-up"
+          >
+            <VPagination
+              v-model="page"
+              :length="totalPages"
+              @change="setPage"
+              dark
+              color="success"
+              :total-visible="7"
+              class="my-4 text-white"
+              />
+          </div>
           <section class="col-span-6">
-            <div class="grid grid-cols-1">
+            <div class="grid grid-cols-1 overflow-x-auto">
               <div
-              v-for="(data, index) in Fields"
-              :key="index" class="gap-0 col-span-1 mb-0.5"
+              v-for="(data) in Fields"
+              :key="data.id" class="gap-0 col-span-1 mb-0.5"
+              data-aos="flip-down" data-aos-duration="500"
+              data-aos-offset="30"
               >
-              <div class="flex items-center justify-center">
+              <div class="w-[640px] flex items-center justify-center md:w-auto">
                 <input
                 v-model="data.name"
                 :rules="Rules"
@@ -59,17 +76,6 @@
               </div>
             </div>
           </section>
-          <div v-if="Fields.length > 0" class="col-span-6 justify-center">
-            <VPagination
-              v-model="page"
-              :length="totalPages"
-              @change="setPage"
-              dark
-              color="success"
-              :total-visible="7"
-              class="my-4 text-white"
-              />
-          </div>
         </div>
       </section>
     </div>
@@ -105,6 +111,13 @@ export default {
     EditFieldModal,
     DeleteFieldModal
   },
+  props: {
+    // eslint-disable-next-line vue/prop-name-casing
+    RegionList: {
+      type: Object,
+      required: true
+    },
+  },
   data() {
     return {
       selectedData: [],
@@ -113,7 +126,6 @@ export default {
       showDeleteFieldModal: false,
       Fields: [],
       Dataset: [],
-      RegionList: [],
       query: '',
       from: 0,
       to: 0,
@@ -153,7 +165,6 @@ export default {
     },
   },
   created() {
-    this.retrieveRegions();
     this.retrieveFields();
   },
   methods: {
@@ -247,27 +258,6 @@ export default {
           console.log(this.Fields)
         });
     },
-    retrieveRegions() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/regions?${queryString}`)
-        .then((response) => {
-          this.RegionList = response.data.regions;
-        })
-    }
   }
 };
 </script>

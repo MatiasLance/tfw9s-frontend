@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="mx-auto max-w-screen-xl pb-7">
+    <div class="mx-auto max-w-screen-xl">
       <div class="flex flex-wrap">
         <main class="w-full">
           <VueSlickCarousel
@@ -41,16 +41,24 @@
             <Regions />
           </div>
           <div v-if="activeTab === 'fields'">
-            <Fields />
+            <Fields
+            :RegionList="RegionList"
+            />
           </div>
           <div v-if="activeTab === 'ages'">
-            <Ages />
+            <AgeGroup />
           </div>
           <div v-if="activeTab === 'teams'">
-            <Teams />
+            <Teams
+            :FieldList="FieldList"
+            />
           </div>
           <div v-if="activeTab === 'fixings'">
-            <Fixings />
+            <Fixings
+            :ManagerList="ManagerList"
+            :FieldList="FieldList"
+            :TeamList="TeamList"
+            />
           </div>
           <div v-if="activeTab === 'results'">
             <Results />
@@ -76,7 +84,7 @@ import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css'
 import VueSlickCarousel from 'vue-slick-carousel'
 import Regions from '~/components/admin/Regions.vue';
 import Fields from '~/components/admin/Fields.vue';
-import Ages from '~/components/admin/Ages.vue';
+import AgeGroup from '~/components/admin/AgeGroup.vue';
 import Teams from '~/components/admin/Teams.vue';
 import Fixings from '~/components/admin/Fixings.vue';
 import Results from '~/components/admin/Results.vue';
@@ -87,7 +95,7 @@ export default {
     VueSlickCarousel,
     Regions,
     Fields,
-    Ages,
+    AgeGroup,
     Teams,
     Fixings,
     Results,
@@ -95,14 +103,10 @@ export default {
   },
   data() {
     return {
-      trainers: [],
-      fights: [],
-      venues: [],
-      fighters: [],
-      categories: [],
-      events: [],
-      promoters: [],
-      eventList: [],
+      RegionList: [],
+      FieldList: [],
+      Manager: [],
+      TeamList: [],
       totalEvents: [],
       totalPages: 0,
       from: 0,
@@ -166,9 +170,102 @@ export default {
       ],
     };
   },
+  created() {
+    this.retrieveRegions()
+    this.retrieveFields()
+    this.retrieveManagers()
+    this.retrieveFields()
+    this.retrieveTeams()
+  },
   methods: {
     setActiveTab(tab) {
       this.activeTab = tab;
+    },
+    retrieveRegions() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/regions?${queryString}`)
+        .then((response) => {
+          this.RegionList = response.data.regions;
+        })
+    },
+    retrieveFields() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/fields?${queryString}`)
+        .then((response) => {
+          this.FieldList= response.data.fields;
+        })
+    },
+    retrieveManagers() {
+      const query = {
+        q: this.query,
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/managers?${queryString}`)
+        .then((response) => {
+          this.ManagerList = response.data.managers;
+        })
+        .finally(() => {
+          console.log('Managers: ', this.Managers)
+        })
+    },
+    retrieveTeams() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/teams?${queryString}`)
+        .then((response) => {
+          this.TeamList = response.data.teams;
+        })
     },
   },
 };
