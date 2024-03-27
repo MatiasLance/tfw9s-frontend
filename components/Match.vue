@@ -7,6 +7,7 @@
       <input
       v-model="matchData.time" type="time"
       placeholder="Click to select..."
+      :rules="rules"
       />
     </div>
     <div class="col-span-1">
@@ -14,8 +15,8 @@
           Team 1:
       </label>
       <VSelect
-      v-model="matchData.team1"
-      :items="teamList"
+      v-model="matchData.team1.id"
+      :items="filteredTeam1"
       placeholder="Choose a Manager"
       :rules="rules"
       solo
@@ -32,8 +33,8 @@
           Team 2:
       </label>
       <VSelect
-      v-model="matchData.team2"
-      :items="teamList"
+      v-model="matchData.team2.id"
+      :items="filteredTeam2"
       placeholder="Choose a Manager"
       :rules="rules"
       solo
@@ -56,7 +57,7 @@ export default {
       required: true,
     },
     teamList: {
-      type: Object,
+      type: Array,
       required: true,
     }
   },
@@ -72,10 +73,31 @@ export default {
       },
     }
   },
+  computed: {
+    formattedTeam() {
+      return this.teamList.map(team =>
+        ({ text: team.name, value: team.id }));
+    },
+    filteredTeam1() {
+      return this.formattedTeam.filter(team =>
+        team && team.text && typeof team.text === 'string' ?
+          team.text.toLowerCase().includes(this.team1Query.toLowerCase()) :
+          false
+      );
+    },
+    filteredTeam2() {
+      return this.formattedTeam.filter(team =>
+        team && team.text && typeof team.text === 'string' ?
+          team.text.toLowerCase().includes(this.team2Query.toLowerCase()) :
+          false
+      );
+    },
+  },
   watch: {
     matchData: {
       handler(newMatch) {
         this.$emit('update-data', newMatch)
+        console.log(newMatch)
       },
       deep: true,
     },

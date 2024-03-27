@@ -16,7 +16,7 @@
             font-semibold
             text-white
             sm:w-36"
-            @click="openAddRegionDialog"
+            @click="openAddageGroupDialog"
           >
             +
           </button>
@@ -36,19 +36,19 @@
               class="my-4 text-white"
               />
           </div>
-          <section class="col-span-1 sm:col-span-6">
+          <section class="col-span-6">
             <div class="grid grid-cols-1 overflow-x-auto">
               <div
-              v-for="(region) in RegionList"
-              :key="region.id" class="col-span-1 mb-0.5 gap-0"
+              v-for="(ageGroup) in ageGroupList"
+              :key="ageGroup.id" class="col-span-1 mb-0.5 gap-0"
               data-aos="flip-down" data-aos-duration="500"
               data-aos-offset="30"
               >
               <div class="w-[640px] flex items-center justify-center md:w-auto">
                 <input
-                v-model="region.name"
+                v-model="ageGroup.name"
                 :rules="Rules"
-                placeholder="Enter Region"
+                placeholder="Enter Age Group"
                 hide-details
                 required
                 :disabled="true"
@@ -56,11 +56,11 @@
                 />
                 <i
                 class="ri-pencil-fill text-white text-xl px-4"
-                @click="openEditRegionDialog(region)"
+                @click="openEditageGroupDialog(ageGroup)"
                 />
                 <i
                 class="ri-delete-bin-fill text-red-400 text-xl px-4"
-                @click="openDeleteRegionDialog(region)"
+                @click="openDeleteageGroupDialog(ageGroup)"
                 />
               </div>
               </div>
@@ -69,43 +69,43 @@
         </div>
       </section>
     </div>
-    <AddRegionModal
-    :active="showAddRegionModal"
-    @close="closeAddRegionDialog"
-    @confirm="AddRegion"
+    <AddAgeGroupModal
+    :active="showAddageGroupModal"
+    @close="closeAddageGroupDialog"
+    @confirm="AddAgeGroup"
     />
-    <EditRegionModal
-    :active="showEditRegionModal"
-    :region_data="selectedRegion"
-    @close="closeEditRegionDialog"
-    @confirm="UpdateRegion"
+    <EditAgeGroupModal
+    :active="showEditageGroupModal"
+    :ageGroup_data="selectedageGroup"
+    @close="closeEditageGroupDialog"
+    @confirm="UpdateAgeGroup"
     />
-    <DeleteRegionModal
-    :active="showDeleteRegionModal"
-    :region_data="selectedRegion"
-    @close="closeDeleteRegionDialog"
-    @confirm="DeleteRegion"
+    <DeleteAgeGroupModal
+    :active="showDeleteageGroupModal"
+    :ageGroup_data="selectedageGroup"
+    @close="closeDeleteageGroupDialog"
+    @confirm="DeleteAgeGroup"
     />
   </div>
 </template>
 
 <script>
-import AddRegionModal from '~/components/modals/AddRegionModal.vue';
-import EditRegionModal from '~/components/modals/EditRegionModal.vue';
-import DeleteRegionModal from '~/components/modals/DeleteRegionModal.vue';
+import AddAgeGroupModal from '~/components/modals/AddAgeGroupModal.vue';
+import EditAgeGroupModal from '~/components/modals/EditAgeGroupModal.vue';
+import DeleteAgeGroupModal from '~/components/modals/DeleteAgeGroupModal.vue';
 export default {
   components: {
-    AddRegionModal,
-    EditRegionModal,
-    DeleteRegionModal
+    AddAgeGroupModal,
+    EditAgeGroupModal,
+    DeleteAgeGroupModal
   },
   data() {
     return {
-      showAddRegionModal: false,
-      showEditRegionModal: false,
-      showDeleteRegionModal: false,
-      selectedRegion: [],
-      RegionList: [],
+      selectedageGroup: [],
+      ageGroupList: [],
+      showAddageGroupModal: false,
+      showEditageGroupModal: false,
+      showDeleteageGroupModal: false,
       query: '',
       from: 0,
       to: 0,
@@ -139,79 +139,79 @@ export default {
     },
     page: {
       handler(newPage) {
-        this.retrieveRegions()
+        this.retrieveAgeGroups()
       },
       immediate: true,
     },
   },
   created() {
-    this.retrieveRegions();
+    this.retrieveAgeGroups();
   },
   methods: {
     setPage() {
-      this.retrieveRegions();
+      this.retrieveAgeGroups();
     },
-    openAddRegionDialog(a) {
-      this.showAddRegionModal = true
+    openAddageGroupDialog(a) {
+      this.showAddageGroupModal = true
     },
-    openEditRegionDialog(data) {
-      this.selectedRegion = data
-      this.showEditRegionModal = true
+    openEditageGroupDialog(data) {
+      this.selectedageGroup = data
+      this.showEditageGroupModal = true
     },
-    openDeleteRegionDialog(data) {
-      this.selectedRegion = data
-      this.showDeleteRegionModal = true
+    openDeleteageGroupDialog(data) {
+      this.selectedageGroup = data
+      this.showDeleteageGroupModal = true
     },
-    closeAddRegionDialog(a) {
-      this.showAddRegionModal = false
+    closeAddageGroupDialog(a) {
+      this.showAddageGroupModal = false
     },
-    closeEditRegionDialog(data) {
-      this.selectedRegion = []
-      this.showEditRegionModal = false
+    closeEditageGroupDialog(data) {
+      this.selectedageGroup = []
+      this.showEditageGroupModal = false
     },
-    closeDeleteRegionDialog(data) {
-      this.selectedRegion = []
-      this.showDeleteRegionModal = false
+    closeDeleteageGroupDialog(data) {
+      this.selectedageGroup = []
+      this.showDeleteageGroupModal = false
     },
-    AddRegion() {
+    AddAgeGroup() {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Region Added',
+        message: 'Age Group Added',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
-      this.showAddRegionModal = false;
-      this.retrieveRegions();
+      this.showAddageGroupModal = false;
+      this.retrieveAgeGroups();
     },
-    UpdateRegion(data) {
+    UpdateAgeGroup(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Region Updated',
+        message: 'Age Group Updated',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
-      this.showEditRegionModal = false;
-      this.retrieveRegions();
+      this.showEditageGroupModal = false;
+      this.retrieveAgeGroups();
     },
-    DeleteRegion(data) {
+    DeleteAgeGroup(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Region Removed',
+        message: 'Age Group Removed',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
-      this.showDeleteRegionModal = false;
-      this.retrieveRegions();
+      this.showDeleteageGroupModal = false;
+      this.retrieveAgeGroups();
     },
-    retrieveRegions() {
+    retrieveAgeGroups() {
       const query = {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
-        maxRegionsPerPage: 10,
+        maxAgeGroupsPerPage: 10,
       };
 
       Object.keys(query).forEach((key) => {
@@ -223,15 +223,24 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/regions?${queryString}`)
+        .$get(`v1/agegroups?${queryString}`)
         .then((response) => {
-          this.RegionList = response.data.regions;
+          this.ageGroupList = response.data.ageGroups;
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
         })
+        .finally(() => {
+          console.log(this.ageGroupList)
+        });
     },
   }
 };
 </script>
+
+<style scoped>
+.superheadline {
+color: aliceblue;
+}
+</style>

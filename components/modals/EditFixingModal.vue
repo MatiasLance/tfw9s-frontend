@@ -1,7 +1,7 @@
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-      <form @submit.prevent="updateFixing">
+      <VForm ref="form" v-model="valid" lazy-validation>
           <h3 class="mb-3 font-bold text-brand-black">
               Edit Fixing
           </h3>
@@ -12,7 +12,7 @@
                 Manager:
               </label>
               <VSelect
-              v-model="Data.manager"
+              v-model="Event.managerId"
               :items="filteredManagers"
               placeholder="Choose a Manager"
               :rules="rules"
@@ -30,7 +30,7 @@
                 Field:
               </label>
               <VSelect
-              v-model="Data.field"
+              v-model="Event.fieldId"
               :items="filteredFields"
               placeholder="Choose a Field"
               :rules="rules"
@@ -48,7 +48,7 @@
                 Date:
               </label>
               <ODatepicker
-              v-model="Data.date"
+              v-model="Event.date"
               placeholder="Click to select..."
               icon="calendar"
               />
@@ -110,8 +110,8 @@
                   </button>
                   <Match
                     :match="matchBuffer"
-                    :teamList="teamList"
-                    @update-data="updateMatch(matchIndex, $event)"
+                    :teamList="teams"
+                    @update-event="updateMatch(matchIndex, $event)"
                   />
                 </div>
               </div>
@@ -138,7 +138,7 @@
               Cancel
             </VBtn>
           </div>
-      </form>
+      </VForm>
     </div>
   </OModal>
 </template>
@@ -157,58 +157,63 @@ export default {
       required: true
     },
     // eslint-disable-next-line vue/prop-name-casing
-    data: {
+    event: {
       type: Object,
-      default: () => ({}),
+      required: true
+    },
+    managers: {
+      type: Object,
+      required: true
+    },
+    fields: {
+      type: Object,
+      required: true
+    },
+    teams: {
+      type: Object,
+      required: true
     },
   },
   data() {
     return {
+      valid: true,
       managerQuery: '',
       fieldQuery: '',
-      Data: {},
+      Event: {},
       multipleMatch: [
         {
-          time: '',
-          team1: '',
-          team2: ''
+          time: null,
+          team1: [],
+          team2: [],
         }
       ],
       rules: [ value => !!value || 'Required' ],
-      Managers: [
-        'Mike Tyson',
-        'John Doe',
-        'Markus Elle',
-        'Juan Dela Cruz',
-      ],
-      Fields: [
-        'West Boulevard',
-        'Grand George Canyon',
-        'Spring Fields',
-        'Tuggerah Football Grounds',
-      ],
-      teamList: [
-        'Barbarians',
-        'Valkeries',
-        'Saints',
-        'Knights',
-        'Banisher',
-        'Banshee',
-      ],
     }
   },
   computed: {
+    formattedField() {
+      return this.fields.map(field =>
+        ({ text: field.name, value: field.id }));
+    },
+    formattedManager() {
+      return this.managers.map(manager =>
+        ({
+          text: `${manager.user.first_name}
+           ${manager.user.last_name}`,
+          value: manager.id,
+        }));
+    },
     filteredFields() {
-      return this.Fields.filter(field =>
-        field && typeof field === 'string' ?
-          field.toLowerCase().includes(this.fieldQuery.toLowerCase()) :
+      return this.formattedField.filter(field =>
+        field && field.text && typeof field.text === 'string' ?
+          field.text.toLowerCase().includes(this.fieldQuery.toLowerCase()) :
           false
       );
     },
     filteredManagers() {
-      return this.Managers.filter(manager =>
-        manager && typeof manager === 'string' ?
-          manager.toLowerCase().includes(this.managerQuery.toLowerCase()) :
+      return this.formattedManager.filter(manager =>
+        manager && manager.text && typeof manager.text === 'string' ?
+          manager.text.toLowerCase().includes(this.managerQuery.toLowerCase()) :
           false
       );
     },
@@ -217,18 +222,49 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.Data = this.data;
-          this.multipleMatch = this.Data.match.map(data => ({
-            time: data.time,
-            team1: data.team1,
-            team2: data.team2
+          this.Event = this.event;
+          this.Event.managerId = this.Event.manager.id
+          this.Event.fieldId = this.Event.field.id
+          this.multipleMatch = this.Event.eventmatch.map(event => ({
+            time: this.reformatTime(event.match_time),
+            team1: event.team1,
+            team2: event.team2
           }));
         }
+        console.log(this.Event)
       },
       immediate: true,
     },
   },
   methods: {
+    reformatTime(timeString) {
+      const [
+        hours,
+        minutes
+      ] = timeString.split(':');
+      const formattedTime = `${hours}:${minutes}`;
+      return formattedTime;
+    },
+    validate() {
+      if (!this.$refs.form.validate()) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Fill out all required fields',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else {
+        this.confirmFixing();
+        return true;
+      }
+    },
+    confirmFixing() {
+      this.updateFixing()
+      this.$emit('confirm')
+      this.closeDialog()
+    },
     updateFixing() {
       this.multipleMatch = []
       this.$emit('confirm')
@@ -238,7 +274,7 @@ export default {
     },
     addMatchForm() {
       this.multipleMatch.push({
-        time: null, team1: '', team2: ''
+        time: null, team1: [], team2: []
       });
     },
     updateMatch(matchIndex, newMatch) {
@@ -250,7 +286,7 @@ export default {
         this.multipleMatch.splice(index, 1)
       } else {
         this.$oruga.notification.open({
-          message: 'Manager needs at least one match.',
+          message: 'Fixing needs at least one match.',
           variant: 'info',
           duration: 3000,
           position: 'bottom',

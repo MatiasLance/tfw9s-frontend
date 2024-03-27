@@ -36,10 +36,9 @@
         </h1>
       </div>
     </BaseHeader>
-    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
+    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12" data-aos="fade-up">
       <div
       class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
-      data-aos="fade-up"
       >
         <div class="col-span-1">
           <input
@@ -85,7 +84,7 @@
           class="mb-8 h-48 w-full
           rounded-lg object-cover"
           alt="Image"
-          >
+          />
           <div class="absolute bottom-0 w-full text-center line-clamp-1">
             <p class="text-sm text-white">
           {{item.description}}

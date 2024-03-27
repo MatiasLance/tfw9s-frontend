@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
-    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
+  <div class="bg-[#1A1A1B]" data-aos="fade-up">
+    <section class="mx-auto max-w-screen-xl gap-4 p-4">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
 
         <VSelect

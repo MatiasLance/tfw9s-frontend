@@ -1,9 +1,9 @@
 <template>
 <div>
-  <div class="min-h-full bg-[#1A1A1B]  pb-12" data-aos="fade-up">
-    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
-      <div class="grid grid-cols-6 gap-4">
-        <div class="col-span-6">
+  <div class="bg-[#1A1A1B]" data-aos="fade-up">
+    <section class="mx-auto max-w-screen-xl gap-4 p-4">
+      <div class="grid grid-cols-1 sm:grid-cols-6 gap-4">
+        <div class="col-span-1 sm:col-span-2 flex items-center">
           <button
           type="button"
           class="
@@ -20,44 +20,61 @@
           +
         </button>
         </div>
-        <section class="col-span-6">
-          <div class="grid grid-cols-1 gap-2">
+        <div
+        v-if="totalPages > 0"
+        class="col-span-1 sm:col-span-4 sm:flex justify-end"
+        data-aos="flip-up"
+        >
+          <VPagination
+            v-model="page"
+            :length="totalPages"
+            @change="setPage"
+            dark
+            color="success"
+            :total-visible="7"
+            class="my-4 text-white"
+            />
+        </div>
+        <section class="col-span-6 overflow-x-auto">
+          <div class="min-w-[640px] grid grid-cols-1 gap-2">
             <div
-            v-for="(data, index) in Dataset"
+            v-for="(event, index) in EventList"
             :key="index"
             class="col-span-1 mb-0.5 gap-0 border-2 border-gray-500"
+            data-aos="fade-up" data-aos-offset="30"
             >
               <Item class="grid grid-cols-3 p-2 gap-2">
-                <div class="col-span-1">
-                  <ODatepicker
-                  v-model="data.date"
-                  placeholder="Click to select..."
-                  icon="calendar"
-                  class="bg-black"
-                  />
+                <div
+                class="col-span-1 m-auto flex
+                text-lg font-medium text-white items-center"
+                >
+                  <i class="ri-calendar-event-fill mr-2 text-2xl"></i>
+                  {{ calendarDate(event.date) }}
                 </div>
                 <div
                 class="col-span-1 m-auto text-center
-                text-xl font-medium text-white"
+                text-lg font-medium text-white"
                 >
-                  {{ data.manager }}
+                  {{ event.manager_name }}
                 </div>
                 <div class="col-span-1">
                   <select
-                  v-model="data.field"
-                  class="w-full bg-transparent p-1 text-lg text-white"
+                  v-model="event.field.name"
+                  :disabled="true"
+                  class="w-full bg-transparent p-1
+                  text-center text-lg text-white"
                   >
                     <option
-                    v-for="(field, index) in Fields"
+                    v-for="(field, index) in FieldList"
                     :key="index"
-                    >{{field}}</option>
+                    >{{field.name}}</option>
                   </select>
                 </div>
                 <div class="col-span-3">
                   <CustomVueTable
                   v-if="showCustomVueTable"
                   :columns="dataColumns"
-                  :data="data.match"
+                  :data="event.eventmatch"
                 />
                 </div>
                 <div class="col-span-3 flex justify-end gap-4">
@@ -70,7 +87,7 @@
                     px-4
                     text-white
                     "
-                    @click="openEditFixingDialog(data)"
+                    @click="openEditFixingDialog(event)"
                   >
                     Edit
                   </BaseButton>
@@ -83,7 +100,7 @@
                     px-4
                     text-white
                     "
-                    @click="openDeleteFixingDialog(data)"
+                    @click="openDeleteFixingDialog(event)"
                   >
                     Delete
                   </BaseButton>
@@ -97,13 +114,16 @@
   </div>
   <EditFixingModal
   :active="showEditFixingModal"
-  :data="selectedFixing"
+  :managers="ManagerList"
+  :fields="FieldList"
+  :teams="TeamList"
+  :event="selectedFixing"
   @close="closeEditFixingDialog"
   @confirm="UpdateFixing"
   />
   <DeleteFixingModal
   :active="showDeleteFixingModal"
-  :data="selectedFixing"
+  :event="selectedFixing"
   @close="closeDeleteFixingDialog"
   @confirm="DeleteFixing"
   />
@@ -120,92 +140,40 @@ export default {
     EditFixingModal,
     DeleteFixingModal,
   },
+  props: {
+    // eslint-disable-next-line vue/prop-name-casing
+    ManagerList: {
+      type: Object,
+      required: true
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    FieldList: {
+      type: Object,
+      required: true
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    TeamList: {
+      type: Object,
+      required: true
+    },
+  },
   data() {
     return {
+      date: new Date(),
       selectedData: [],
-      Fields: [
-        'West Boulevard',
-        'Grand George Canyon',
-        'Spring Fields',
-        'Tuggerah Football Grounds',
-      ],
-      Dataset: [
-        {
-          id: 1,
-          date: new Date(),
-          manager: 'Mike Tyson',
-          field: 'Tuggerah Football Grounds',
-          match: [
-            {
-              time: null,
-              team1: 'Barbarians',
-              team2: 'Valkeries'
-            },
-            {
-              time: null,
-              team1: 'Saints',
-              team2: 'Knights'
-            },
-            {
-              time: null,
-              team1: 'Banisher',
-              team2: 'Banshee'
-            }
-          ],
-        },
-        {
-          id: 2,
-          date: new Date(),
-          manager: 'Markus Elle',
-          field: 'Grand George Canyon',
-          match: [
-            {
-              time: null,
-              team1: 'Barbarians',
-              team2: 'Valkeries'
-            },
-            {
-              time: null,
-              team1: 'Saints',
-              team2: 'Knights'
-            },
-            {
-              time: null,
-              team1: 'Banisher',
-              team2: 'Banshee'
-            }
-          ],
-        },
-        {
-          id: 3,
-          date: new Date(),
-          manager: 'John Doe',
-          field: 'Grand George Canyon',
-          match: [
-            {
-              time: null,
-              team1: 'Barbarians',
-              team2: 'Valkeries'
-            },
-            {
-              time: null,
-              team1: 'Saints',
-              team2: 'Knights'
-            },
-            {
-              time: null,
-              team1: 'Banisher',
-              team2: 'Banshee'
-            }
-          ],
-        }
-      ],
+      EventList: [],
+      query: '',
+      from: 0,
+      to: 0,
+      page: 1,
+      perPage: 12,
+      totalPages: 0,
+      totalItems: 0,
       dataColumns: [
         { name: 'time', label: 'Time' },
         { name: 'team1', label: 'Team 1' },
         { name: 'team2', label: 'Team 2' },
       ],
-      FixingList: [],
       Rules: [
         value => {
           if (value) {
@@ -228,7 +196,40 @@ export default {
       showDeleteFixingModal: false,
     };
   },
+  watch: {
+    totalPages() {
+      if (this.page > this.totalPages) {
+        this.setPage(1)
+      }
+    },
+    page: {
+      handler(newPage) {
+        this.retrieveEvents()
+      },
+      immediate: true,
+    },
+  },
+  created() {
+    this.retrieveEvents()
+  },
   methods: {
+    reformatTime(timeString) {
+      const [
+        hours,
+        minutes
+      ] = timeString.split(':');
+      const formattedTime = `${hours}:${minutes}`;
+      return formattedTime;
+    },
+    formattedDate(dateString) {
+      return new Date(dateString);
+    },
+    calendarDate(date) {
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const year = date.getFullYear();
+      return `${month}/${day}/${year.toString().slice(-2)}`;
+    },
     openEditFixingDialog(data) {
       this.selectedFixing = data
       this.showEditFixingModal = true
@@ -264,6 +265,50 @@ export default {
         queue: true
       })
       this.showDeleteFixingModal = false;
+    },
+    retrieveEvents() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        maxEventsPerPage: 10,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/events?${queryString}`)
+        .then((response) => {
+          this.EventList = response.data.events.map(event => {
+            return {
+              ...event,
+              // eslint-disable-next-line camelcase
+              manager_name: `${event.manager.user.first_name}
+               ${event.manager.user.last_name}`,
+              date: this.formattedDate(event.event_date),
+              eventmatch: event.eventmatch.map(match => {
+                return {
+                  ...match,
+                  time: this.reformatTime(match.match_time)
+                };
+              })
+            };
+          });
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
+        })
+        .finally(() => {
+          console.log('Events: ', this.EventList)
+          console.log('Date: ', this.EventList.event_date)
+        })
     },
   }
 };

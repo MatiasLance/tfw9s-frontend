@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+  background: #1A1A1B;
+}
+
 .transform-fade-down-enter-active,
 .transform-fade-down-leave-active {
   @apply transition-all translate-y-0 duration-300;
