@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+  <div class="w-screen min-h-screen bg-[#1A1A1B] mb-12">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -31,7 +31,7 @@
           </span>
         </span>
         <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Admin
+          Manager
         </h1>
       </div>
     </BaseHeader>

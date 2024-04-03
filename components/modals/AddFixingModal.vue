@@ -3,7 +3,7 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
       <VForm ref="form" v-model="valid" lazy-validation>
           <h3 class="mb-3 font-bold text-brand-black">
-              Edit Fixing
+              Add Fixing
           </h3>
           <hr class="my-3"/>
           <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
@@ -75,10 +75,7 @@
                 Add Match
               </button>
             </div>
-            <div
-            class="
-            mt-2 grid grid-cols-1 gap-2 md:grid-cols-2"
-            >
+            <div class="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
               <div
               v-for="(matchBuffer, matchIndex) in multipleMatch"
               :key="matchIndex"
@@ -150,16 +147,12 @@ import 'vue-croppa/dist/vue-croppa.css';
 import Match from '~/components/Match.vue';
 
 export default {
-  name: 'EditFixingModal',
+  name: 'AddFixingModal',
   components: { Match },
   props: {
     active: {
       type: Boolean,
       required: true
-    },
-    event: {
-      type: Object,
-      default: () => ({}),
     },
     managers: {
       type: Array,
@@ -218,24 +211,6 @@ export default {
       );
     },
   },
-  watch: {
-    active: {
-      handler(newActive) {
-        if (newActive) {
-          this.Event = this.event;
-          this.Event.managerId = this.Event.manager.id
-          this.Event.fieldId = this.Event.field.id
-          this.multipleMatch = this.Event.eventmatch.map(event => ({
-            id: event.id,
-            time: this.reformatTime(event.match_time),
-            team1: event.team1,
-            team2: event.team2
-          }));
-        }
-      },
-      immediate: true,
-    },
-  },
   methods: {
     reformatTime(timeString) {
       const [
@@ -287,13 +262,12 @@ export default {
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
-        formData.append(`matches[${i}][id]`, match.id);
         formData.append(`matches[${i}][time]`, match.time?match.time:'00:00');
         formData.append(`matches[${i}][team1]`, match.team1.id);
         formData.append(`matches[${i}][team2]`, match.team2.id);
       }
       this.$axios
-        .$post(`v1/events/${this.Event.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .$post('v1/events', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset()
           this.$emit('confirm')

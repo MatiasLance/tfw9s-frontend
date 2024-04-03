@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-full bg-[#1A1A1B] pb-12">
+  <div class="w-screen min-h-screen bg-[#1A1A1B]">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"

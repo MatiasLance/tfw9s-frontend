@@ -28,11 +28,13 @@
             <td
              v-for="column in columns"
              :key="column.name"
-             class="whitespace-normal border-slate-500
+             class="whitespace-nowrap border-slate-500
              text-center align-middle
              text-[16px] text-black"
              :class="column.name === 'action'?
              'bg-transparent':'bg-white  border p-2 px-4 '"
+             @click="column.name !== 'action'?
+             ManageResult(row):null"
             >
                 <slot :name="column.name" :data="row">
                   <template v-if="column.name === 'time'">
@@ -55,6 +57,7 @@
                     text-xs
                     font-medium
                     text-white"
+                    @click="SubmitResult(row)"
                     dark
                     >
                     Submit
@@ -90,6 +93,14 @@ export default {
       required: true
     },
   },
+  methods: {
+    ManageResult(data) {
+      this.$emit('match-data', data);
+    },
+    SubmitResult(data) {
+      this.$emit('submit-data', data);
+    },
+  }
 }
 </script>
 

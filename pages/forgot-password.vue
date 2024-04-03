@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="relative min-h-[97vh] w-full bg-brand-slate bg-cover py-10">
+    <section class="relative min-h-[97vh] w-full bg-[#1A1A1B] bg-cover py-10">
       <div class="container mx-auto max-w-screen-md px-4">
 
         <div class="mx-auto mt-10 mb-20 rounded bg-white p-4 shadow-lg md:p-7">

@@ -144,7 +144,7 @@
                 </span>
             </span>
 
-            <NuxtLink to="/shop">
+            <NuxtLink to="/shop2">
               <span
                 class="
                   inline-block

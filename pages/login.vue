@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div class="bg-[#1A1A1B]">
         <section
             class="relative min-h-[97vh] w-full
             bg-[#1A1A1B]
             bg-cover bg-fixed
-            py-10"
+            py-10 sm:min-h-full"
         >
             <div class="container mx-auto max-w-screen-md px-4">
                 <LoginSection />

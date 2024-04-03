@@ -2,8 +2,8 @@
   <div>
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-4">
-        <div class="grid grid-cols-1 sm:grid-cols-6 gap-4">
-          <div class="col-span-1 sm:col-span-2 flex items-center">
+        <div class="grid grid-cols-1 gap-4">
+          <div class="col-span-1 flex items-center">
             <button
             type="button"
             class="
@@ -23,28 +23,34 @@
           </div>
           <div
           v-if="totalPages > 0"
-          class="col-span-1 sm:col-span-4 sm:flex justify-end"
+          class="col-span-1 flex flex-wrap items-center
+          justify-around gap-x-2 md:justify-between"
           data-aos="flip-up"
           >
+            <span
+            class="font-medium text-white"
+            >
+            Showing {{ from }}-{{ to }} of {{ totalItems }} items
+            </span>
             <VPagination
               v-model="page"
               :length="totalPages"
-              @change="setPage"
-              dark
-              color="success"
               :total-visible="7"
-              class="my-4 text-white"
+              class="text-white"
+              color="success"
+              dark
+              @change="setPage"
               />
           </div>
-          <section class="col-span-1 sm:col-span-6">
+          <section class="col-span-1">
             <div class="grid grid-cols-1 overflow-x-auto">
               <div
               v-for="(region) in RegionList"
               :key="region.id" class="col-span-1 mb-0.5 gap-0"
               data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="30"
+              data-aos-offset="0"
               >
-              <div class="w-[640px] flex items-center justify-center md:w-auto">
+              <div class="flex w-[640px] items-center justify-center md:w-auto">
                 <input
                 v-model="region.name"
                 :rules="Rules"
@@ -52,14 +58,14 @@
                 hide-details
                 required
                 :disabled="true"
-                class="border-black bg-white text-lg flex-1 p-1"
+                class="flex-1 border-black bg-white p-1 text-lg"
                 />
                 <i
-                class="ri-pencil-fill text-white text-xl px-4"
+                class="ri-pencil-fill px-4 text-xl text-white"
                 @click="openEditRegionDialog(region)"
                 />
                 <i
-                class="ri-delete-bin-fill text-red-400 text-xl px-4"
+                class="ri-delete-bin-fill px-4 text-xl text-red-400"
                 @click="openDeleteRegionDialog(region)"
                 />
               </div>
@@ -104,7 +110,7 @@ export default {
       showAddRegionModal: false,
       showEditRegionModal: false,
       showDeleteRegionModal: false,
-      selectedRegion: [],
+      selectedRegion: ({}),
       RegionList: [],
       query: '',
       from: 0,
@@ -144,9 +150,6 @@ export default {
       immediate: true,
     },
   },
-  created() {
-    this.retrieveRegions();
-  },
   methods: {
     setPage() {
       this.retrieveRegions();
@@ -166,11 +169,11 @@ export default {
       this.showAddRegionModal = false
     },
     closeEditRegionDialog(data) {
-      this.selectedRegion = []
+      this.selectedRegion = ({})
       this.showEditRegionModal = false
     },
     closeDeleteRegionDialog(data) {
-      this.selectedRegion = []
+      this.selectedRegion = ({})
       this.showDeleteRegionModal = false
     },
     AddRegion() {

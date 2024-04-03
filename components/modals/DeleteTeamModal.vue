@@ -10,7 +10,7 @@
                     Are you sure you want to remove {{teamData.name}}?
                   </p>
                 <hr class="my-3"/>
-                <div class="flex flex-col justify-end md:flex-row gap-2">
+                <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
                   depressed
                   color="success"
@@ -44,10 +44,9 @@ export default {
       type: Boolean,
       required: true
     },
-    // eslint-disable-next-line vue/prop-name-casing
-    team_data: {
-      type: Array,
-      required: true
+    team: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -60,7 +59,7 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.teamData = this.team_data;
+          this.teamData = this.team;
         }
       },
       immediate: true,
@@ -69,18 +68,8 @@ export default {
 
   methods: {
     deleteTeam() {
-      console.log(this.teamData)
       this.$axios
         .$delete(`/v1/teams/${this.teamData.id}`)
-        .catch(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to remove gym',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true,
-          });
-        });
       this.$emit('confirm')
     },
     closeDialog() {

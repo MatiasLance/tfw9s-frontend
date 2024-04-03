@@ -53,7 +53,7 @@
                   </div>
                 </div>
                 <hr class="my-3"/>
-                <div class="flex flex-col justify-end md:flex-row gap-2">
+                <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
                   depressed
                   color="success"
@@ -90,7 +90,7 @@ export default {
     },
     team: {
       type: Object,
-      required: true
+      default: () => ({}),
     },
     // eslint-disable-next-line vue/prop-name-casing
     field: {
@@ -158,11 +158,11 @@ export default {
       }
     },
     confirmField() {
-      this.addField()
+      this.editTeam()
       this.$emit('confirm')
       this.closeDialog()
     },
-    addField() {
+    editTeam() {
       const formData = new FormData();
       formData.append('name', this.TeamData.name);
       formData.append('description', this.TeamData.description);

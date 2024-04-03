@@ -31,43 +31,16 @@
                 :
                 'bg-[#212121] text-[#555555]'"
                 data-aos="flip-right"
-                data-aos-offset="0"
                 @click="setActiveTab(tab.value)"
               >
                 {{ tab.label }}
               </button>
             </div>
           </VueSlickCarousel>
-          <div v-if="activeTab === 'regions'">
-            <Regions />
-          </div>
-          <div v-if="activeTab === 'fields'">
-            <Fields
-            :RegionList="RegionList"
-            />
-          </div>
-          <div v-if="activeTab === 'ages'">
-            <AgeGroup />
-          </div>
-          <div v-if="activeTab === 'teams'">
-            <Teams
-            :FieldList="FieldList"
-            />
-          </div>
-          <div v-if="activeTab === 'fixings'">
-            <Fixings
-            :ManagerList="ManagerList"
-            :FieldList="FieldList"
-            :TeamList="TeamList"
-            />
-          </div>
           <div v-if="activeTab === 'results'">
             <Results
             :FieldList="FieldList"
             />
-          </div>
-          <div v-if="activeTab === 'ladders'">
-            <Ladders />
           </div>
         </main>
       </div>
@@ -85,31 +58,16 @@ import 'vue-slick-carousel/dist/vue-slick-carousel.css'
 import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css'
 
 import VueSlickCarousel from 'vue-slick-carousel'
-import Regions from '~/components/admin/Regions.vue';
-import Fields from '~/components/admin/Fields.vue';
-import AgeGroup from '~/components/admin/AgeGroup.vue';
-import Teams from '~/components/admin/Teams.vue';
-import Fixings from '~/components/admin/Fixings.vue';
 import Results from '~/components/admin/Results.vue';
-import Ladders from '~/components/admin/Ladders.vue';
 export default {
   name: 'parts-list',
   components: {
     VueSlickCarousel,
-    Regions,
-    Fields,
-    AgeGroup,
-    Teams,
-    Fixings,
     Results,
-    Ladders,
   },
   data() {
     return {
-      RegionList: [],
       FieldList: [],
-      ManagerList: [],
-      TeamList: [],
       totalEvents: [],
       totalPages: 0,
       from: 0,
@@ -161,49 +119,16 @@ export default {
           }
         ],
       },
-      activeTab: 'regions',
-      tabs: [
-        { value: 'regions', label: 'Regions' },
-        { value: 'fields', label: 'Fields' },
-        { value: 'ages', label: 'Ages' },
-        { value: 'teams', label: 'Teams' },
-        { value: 'fixings', label: 'Fixings' },
-        { value: 'results', label: 'Results' },
-        { value: 'ladders', label: 'Ladders' }
-      ],
+      activeTab: 'results',
+      tabs: [ { value: 'results', label: 'Results' } ],
     };
   },
   created() {
-    this.retrieveRegions()
     this.retrieveFields()
-    this.retrieveManagers()
-    this.retrieveFields()
-    this.retrieveTeams()
   },
   methods: {
     setActiveTab(tab) {
       this.activeTab = tab;
-    },
-    retrieveRegions() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/regions?${queryString}`)
-        .then((response) => {
-          this.RegionList = response.data.regions;
-        })
     },
     retrieveFields() {
       const query = {
@@ -224,47 +149,6 @@ export default {
         .$get(`v1/fields?${queryString}`)
         .then((response) => {
           this.FieldList= response.data.fields;
-        })
-    },
-    retrieveManagers() {
-      const query = {
-        q: this.query,
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/managers?${queryString}`)
-        .then((response) => {
-          this.ManagerList = response.data.managers;
-        })
-    },
-    retrieveTeams() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/teams?${queryString}`)
-        .then((response) => {
-          this.TeamList = response.data.teams;
         })
     },
   },

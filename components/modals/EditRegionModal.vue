@@ -35,7 +35,7 @@
                   </div>
                 </div>
                 <hr class="my-3"/>
-                <div class="flex flex-col justify-end md:flex-row gap-2">
+                <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
                   depressed
                   color="success"
@@ -72,8 +72,8 @@ export default {
     },
     // eslint-disable-next-line vue/prop-name-casing
     region_data: {
-      type: Array,
-      required: true
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {

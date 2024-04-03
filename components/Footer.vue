@@ -1,6 +1,6 @@
 <template >
-  <!-- Footer -->
-  <footer class="fixed bottom-0 w-screen bg-brand-black text-white">
+  <!-- Footer fixed bottom-0 was removed so it won't stick in the page -->
+  <footer class="w-screen bg-brand-black text-white">
     <section class="mx-auto max-w-screen-xl">
       <div class="grid grid-cols-1 p-4 md:grid-cols-4">
         <div
@@ -27,8 +27,10 @@
             </span>
           </NuxtLink>
           <NuxtLink
-          v-if="$store.state.auth.user !== null &&
-          $route.path !== '/admin'" to="/admin"
+          v-if="
+          ($store.state.auth.roles.includes('admin') ||
+          $store.state.auth.roles.includes('superadmin'))
+          && $route.path !== '/admin'" to="/admin"
           >
             <span
             class="px-5 text-white transition
@@ -37,9 +39,21 @@
               Admin
             </span>
           </NuxtLink>
+          <NuxtLink
+          v-if="
+          $store.state.auth.roles.includes('manager')
+          && $route.path !== '/manage'" to="/manage"
+          >
+            <span
+            class="px-5 text-white transition
+            duration-300 ease-in-out hover:text-[#5EE738]"
+            >
+              Manage
+            </span>
+          </NuxtLink>
           <span
           v-if="$store.state.auth.user !== null &&
-          $route.path === '/admin'"
+          ($route.path === '/admin' || $route.path === '/manage')"
           class="z-10 px-5 text-white transition
           duration-300 ease-in-out hover:text-[#5EE738]"
           @click="logout"

@@ -2,8 +2,8 @@
 <div>
   <div class="bg-[#1A1A1B]" data-aos="fade-up">
     <section class="mx-auto max-w-screen-xl gap-4 p-4">
-      <div class="grid grid-cols-1 sm:grid-cols-6 gap-4">
-        <div class="col-span-1 sm:col-span-2 flex items-center">
+      <div class="grid grid-cols-1 gap-4">
+        <div class="col-span-1 flex items-center">
           <button
           type="button"
           class="
@@ -16,37 +16,43 @@
           font-semibold
           text-white
           sm:w-36"
+          @click="openAddFixingDialog"
         >
           +
         </button>
         </div>
         <div
         v-if="totalPages > 0"
-        class="col-span-1 sm:col-span-4 sm:flex justify-end"
+        class="col-span-1 flex flex-wrap items-center
+        justify-around gap-x-2 md:justify-between"
         data-aos="flip-up"
         >
+          <span
+          class="font-medium text-white"
+          >
+          Showing {{ from }}-{{ to }} of {{ totalItems }} items
+          </span>
           <VPagination
             v-model="page"
             :length="totalPages"
-            @change="setPage"
             dark
             color="success"
             :total-visible="7"
-            class="my-4 text-white"
+            class="text-white"
             />
         </div>
-        <section class="col-span-6 overflow-x-auto">
-          <div class="min-w-[640px] grid grid-cols-1 gap-2">
+        <section class="col-span-1 overflow-x-auto overflow-y-hidden">
+          <div class="grid min-w-[640px] grid-cols-1 gap-2">
             <div
-            v-for="(event, index) in EventList"
-            :key="index"
+            v-for="(event) in EventList"
+            :key="event.id"
             class="col-span-1 mb-0.5 gap-0 border-2 border-gray-500"
-            data-aos="fade-up" data-aos-offset="30"
+            data-aos="fade-up" data-aos-offset="0"
             >
-              <Item class="grid grid-cols-3 p-2 gap-2">
+              <Form class="grid grid-cols-3 gap-2 p-2">
                 <div
                 class="col-span-1 m-auto flex
-                text-lg font-medium text-white items-center"
+                items-center text-lg font-medium text-white"
                 >
                   <i class="ri-calendar-event-fill mr-2 text-2xl"></i>
                   {{ calendarDate(event.date) }}
@@ -105,13 +111,21 @@
                     Delete
                   </BaseButton>
                 </div>
-              </Item>
+              </Form>
             </div>
           </div>
         </section>
       </div>
     </section>
   </div>
+  <AddFixingModal
+  :active="showAddFixingModal"
+  :managers="ManagerList"
+  :fields="FieldList"
+  :teams="TeamList"
+  @close="closeAddFixingDialog"
+  @confirm="AddFixing"
+  />
   <EditFixingModal
   :active="showEditFixingModal"
   :managers="ManagerList"
@@ -132,28 +146,30 @@
 
 <script>
 import CustomVueTable from '~/components/tables/CustomVueTable.vue';
+import AddFixingModal from '~/components/modals/AddFixingModal.vue';
 import EditFixingModal from '~/components/modals/EditFixingModal.vue';
 import DeleteFixingModal from '~/components/modals/DeleteFixingModal.vue';
 export default {
   components: {
     CustomVueTable,
+    AddFixingModal,
     EditFixingModal,
     DeleteFixingModal,
   },
   props: {
     // eslint-disable-next-line vue/prop-name-casing
     ManagerList: {
-      type: Object,
+      type: Array,
       required: true
     },
     // eslint-disable-next-line vue/prop-name-casing
     FieldList: {
-      type: Object,
+      type: Array,
       required: true
     },
     // eslint-disable-next-line vue/prop-name-casing
     TeamList: {
-      type: Object,
+      type: Array,
       required: true
     },
   },
@@ -190,8 +206,9 @@ export default {
           return 'Name must be less than 10 characters.'
         },
       ],
-      selectedFixing: [],
+      selectedFixing: ({}),
       showCustomVueTable: true,
+      showAddFixingModal: false,
       showEditFixingModal: false,
       showDeleteFixingModal: false,
     };
@@ -208,9 +225,6 @@ export default {
       },
       immediate: true,
     },
-  },
-  created() {
-    this.retrieveEvents()
   },
   methods: {
     reformatTime(timeString) {
@@ -230,6 +244,9 @@ export default {
       const year = date.getFullYear();
       return `${month}/${day}/${year.toString().slice(-2)}`;
     },
+    openAddFixingDialog() {
+      this.showAddFixingModal = true
+    },
     openEditFixingDialog(data) {
       this.selectedFixing = data
       this.showEditFixingModal = true
@@ -238,13 +255,27 @@ export default {
       this.selectedFixing = data
       this.showDeleteFixingModal = true
     },
+    closeAddFixingDialog() {
+      this.showAddFixingModal = false
+    },
     closeEditFixingDialog(data) {
-      this.selectedFixing = []
+      this.selectedFixing = ({})
       this.showEditFixingModal = false
     },
     closeDeleteFixingDialog(data) {
-      this.selectedFixing = []
+      this.selectedFixing = ({})
       this.showDeleteFixingModal = false
+    },
+    AddFixing(data) {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Fixing Added',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      })
+      this.showEditFixingModal = false;
+      this.retrieveEvents();
     },
     UpdateFixing(data) {
       this.$oruga.notification.open({
@@ -255,6 +286,7 @@ export default {
         queue: true
       })
       this.showEditFixingModal = false;
+      this.retrieveEvents();
     },
     DeleteFixing(data) {
       this.$oruga.notification.open({
@@ -265,13 +297,14 @@ export default {
         queue: true
       })
       this.showDeleteFixingModal = false;
+      this.retrieveEvents();
     },
     retrieveEvents() {
       const query = {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
-        maxEventsPerPage: 10,
+        maxEventsPerPage: 5,
       };
 
       Object.keys(query).forEach((key) => {
@@ -304,10 +337,6 @@ export default {
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
-        })
-        .finally(() => {
-          console.log('Events: ', this.EventList)
-          console.log('Date: ', this.EventList.event_date)
         })
     },
   }
