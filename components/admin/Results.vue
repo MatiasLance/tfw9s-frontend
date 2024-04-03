@@ -5,11 +5,12 @@
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div class="col-span-1">
             <ODatepicker
-            v-model="date"
+            v-model="dateFilter"
             placeholder="Click to select..."
             icon="calendar"
             class="bg-black"
-            />
+            >
+          </ODatepicker>
           </div>
           <div class="col-span-1"></div>
           <div
@@ -20,48 +21,62 @@
               <input id="submitted" type="checkbox"/>
             </label>
           </div>
-          <section class="col-span-1 md:col-span-3">
+          <section
+          v-if="showCustomVueTable"
+          data-aos="fade-up"
+          data-aos-offset="0"
+          class="col-span-1 md:col-span-3"
+          >
             <CustomVueTable
-            v-if="showCustomVueTable"
             :columns="dataColumns"
-            :data="Data"
+            :data="MatchList"
+            @match-data="openManageResultDialog"
+            @submit-data="SubmitResult"
             />
           </section>
-          <div
-            class="col-span-1 justify-center md:col-span-3"
-            >
-            <VPagination
-              v-model="page"
-              :length="totalPages"
-              dark
-              color="success"
-              :total-visible="7"
-              class="my-4 text-white"
-              />
-          </div>
         </div>
       </section>
     </div>
+    <ManageResultModal
+    :active="showManageResultModal"
+    :match="selectedMatch"
+    @close="closeManageResultDialog"
+    @confirm="ManageResult"
+    />
   </div>
 </template>
 
 <script>
 import CustomVueTable from '~/components/tables/CustomVueTable.vue';
+import ManageResultModal from '~/components/modals/ManageResultModal.vue';
 export default {
-  components: { CustomVueTable },
+  components: {
+    CustomVueTable,
+    ManageResultModal,
+  },
+  props: {
+    // eslint-disable-next-line vue/prop-name-casing
+    FieldList: {
+      type: Array,
+      required: true
+    },
+  },
   data() {
     return {
-      date: new Date(),
-      showCustomVueTable: true,
+      dateFilter: null,
+      showCustomVueTable: false,
+      showManageResultModal: false,
+      selectedMatch: ({}),
+      MatchList: [],
       Data: [],
       selectedData: [],
       dataColumns: [
-        { name: 'date', label: 'Date' },
+        { name: 'event_date', label: 'Date' },
         { name: 'field', label: 'Field' },
         { name: 'team1', label: 'Team' },
-        { name: 'point1', label: 'Points' },
+        { name: 'team1_score', label: 'Points' },
         { name: 'team2', label: 'Team' },
-        { name: 'point2', label: 'Points' },
+        { name: 'team2_score', label: 'Points' },
         { name: 'action', label: '' },
       ],
       Rules: [
@@ -89,29 +104,128 @@ export default {
     };
   },
   watch: {
-    date: {
+    dateFilter: {
       handler(newDate) {
-        console.log(newDate)
+        this.retrieveEvents()
       },
       immediate: true,
     },
   },
-  created() {
-    this.generateRandomData();
-  },
   methods: {
-    generateRandomData() {
-      for (let i = 0; i < 14; i++) {
-        this.Data.push({
-          id: i,
-          date: '25/03/2024',
-          field: 'Test Field',
-          team1: 'Team 1',
-          point1: 10,
-          team2: 'Team 2',
-          point2: 10,
-        });
+    SubmitResult(data) {
+      console.log('Submited Data: ', data)
+    },
+    openManageResultDialog(data) {
+      this.selectedMatch = data
+      this.showManageResultModal = true
+    },
+    closeManageResultDialog(data) {
+      this.selectedMatch = ({})
+      this.showManageResultModal = false
+    },
+    ManageResult(data) {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Fixing Deleted',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      })
+      this.showManageResultModal = false;
+      this.retrieveEvents();
+    },
+    getCurrentDate() {
+      const currentDate = new Date();
+      return new Date(currentDate.getFullYear(),
+        currentDate.getMonth(), currentDate.getDate());
+    },
+    reformatTime(timeString) {
+      const [
+        hours,
+        minutes
+      ] = timeString.split(':');
+      const formattedTime = `${hours}:${minutes}`;
+      return formattedTime;
+    },
+    formattedDate(dateString) {
+      const date = new Date(dateString);
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const year = date.getFullYear();
+      return `${month}/${day}/${year.toString().slice(-2)}`;
+    },
+    calendarDate(date) {
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const year = date.getFullYear();
+      return `${month}/${day}/${year.toString().slice(-2)}`;
+    },
+    // eslint-disable-next-line camelcase
+    findField(field_id) {
+      // eslint-disable-next-line camelcase
+      const foundField = this.FieldList.find(field => field.id === field_id);
+      if (foundField) {
+        return foundField.name;
+      } else {
+        // If no matching field is found, return "unknown"
+        return 'Unknown';
       }
+    },
+    retrieveEvents() {
+      // eslint-disable-next-line max-len, vue/max-len
+      const eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
+      const eventMonth = this.dateFilter ? (this.dateFilter.getUTCMonth() + 1).toString().padStart(2, '0') : null;
+      const eventDay = this.dateFilter ? (this.dateFilter.getUTCDate() + 1).toString().padStart(2, '0') : null;
+      // eslint-disable-next-line camelcase, max-len, vue/max-len
+      const event_date = this.dateFilter ?`${eventYear}-${eventMonth}-${eventDay}`: null;
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        // eslint-disable-next-line camelcase
+        eventDate: event_date,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+      this.$axios
+        .$get(`v1/events?${queryString}`)
+        .then((response) => {
+          const EventList = response.data.events.map(event => {
+            return {
+              ...event,
+              // eslint-disable-next-line camelcase
+              manager_name: `${event.manager.user.first_name}
+               ${event.manager.user.last_name}`,
+              date: this.formattedDate(event.event_date),
+              eventmatch: event.eventmatch.map(match => {
+                return {
+                  ...match,
+                  time: this.reformatTime(match.match_time),
+                  // eslint-disable-next-line camelcase
+                  event_date: this.formattedDate(event.event_date),
+                  // eslint-disable-next-line camelcase
+                  field: this.findField(event.field_id)
+                };
+              })
+            };
+          });
+          this.MatchList = EventList.flatMap(data => {
+            return data.eventmatch;
+          });
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
+        })
+        .finally(() => {
+          this.showCustomVueTable = true;
+        });
     },
   }
 };

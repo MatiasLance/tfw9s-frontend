@@ -60,7 +60,7 @@
                   </div>
                 </div>
                 <hr class="my-3"/>
-                <div class="flex flex-col justify-end md:flex-row gap-2">
+                <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
                   depressed
                   color="success"

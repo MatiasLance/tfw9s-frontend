@@ -67,7 +67,8 @@ export default {
       team2Query: '',
       rules: [ value => !!value || 'Required' ],
       matchData: {
-        time: this.match.time || new Date().getTime(),
+        id: this.match.id || null,
+        time: this.match.time,
         team1: this.match.team1 || '',
         team2: this.match.team2|| '',
       },
@@ -96,11 +97,16 @@ export default {
   watch: {
     matchData: {
       handler(newMatch) {
-        this.$emit('update-data', newMatch)
-        console.log(newMatch)
+        this.$emit('update-event', newMatch);
       },
-      deep: true,
+      deep: true
     },
+    match: {
+      immediate: true,
+      handler(newMatch) {
+        this.matchData = newMatch
+      }
+    }
   },
 }
 

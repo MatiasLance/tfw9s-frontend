@@ -7,10 +7,10 @@
                 </h3>
                 <hr class="my-3"/>
                   <p>
-                    Are you sure you want to delete {{ Data.manager }}'s Fixing?
+                    Are you sure you want to delete this Fixing?
                   </p>
                 <hr class="my-3"/>
-                <div class="flex flex-col justify-end md:flex-row gap-2">
+                <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
                   depressed
                   color="success"
@@ -44,8 +44,7 @@ export default {
       type: Boolean,
       required: true
     },
-    // eslint-disable-next-line vue/prop-name-casing
-    data: {
+    event: {
       type: Object,
       default: () => ({}),
     },
@@ -60,7 +59,7 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.Data = this.data;
+          this.Data = this.event;
         }
       },
       immediate: true,
@@ -69,10 +68,21 @@ export default {
 
   methods: {
     deleteFixing() {
+      this.$axios
+        .$delete(`/v1/events/${this.event.id}`)
       this.$emit('confirm')
     },
     closeDialog() {
+      this.reset()
       this.$emit('close')
+    },
+    reset() {
+      this.Event = []
+      this.multipleMatch = [
+        {
+          time: null, team1: [], team2: []
+        }
+      ]
     },
   }
 }

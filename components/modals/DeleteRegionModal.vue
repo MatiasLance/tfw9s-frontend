@@ -10,7 +10,7 @@
                     Are you sure you want to remove {{ regionData.name }}?
                   </p>
                 <hr class="my-3"/>
-                <div class="flex flex-col justify-end md:flex-row gap-2">
+                <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
                   depressed
                   color="success"
@@ -46,8 +46,8 @@ export default {
     },
     // eslint-disable-next-line vue/prop-name-casing
     region_data: {
-      type: Array,
-      required: true
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -69,7 +69,6 @@ export default {
 
   methods: {
     deleteRegion() {
-      console.log(this.regionData)
       this.$axios
         .$delete(`/v1/regions/${this.regionData.id}`)
         .catch(() => {

@@ -1,6 +1,8 @@
 <template>
   <!--  COMPONENT: LOGIN -->
-  <div class="mx-auto mt-20 mb-20 rounded bg-transparent p-4 md:p-7">
+  <div class="mx-auto mt-20 mb-20 rounded bg-transparent
+  p-4 md:p-7 sm:w-[400px]"
+  >
     <form action="">
 
       <div class="mb-2">
@@ -104,7 +106,7 @@
           class="text-white hover:underline hover:decoration-white"
           href="/forgot-password"
         >
-          Lost your password ?
+          <span class="text-white">Lost your password ?</span>
         </a>
       </p>
     </form>
@@ -149,7 +151,16 @@ export default {
                     queue: true,
                   });
                   this.$store.dispatch('auth/setUser', response.data);
-                  this.$router.push('/admin');
+                  switch (response.data.roles) {
+                  case 'superadmin':
+                    this.$router.push('/admin');
+                    break;
+                  case 'admin':
+                    this.$router.push('/admin');
+                    break;
+                  default:
+                    this.$router.push('/');
+                  }
                 } else {
                   this.$oruga.notification.open({
                     duration: 5000,

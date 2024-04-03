@@ -9,7 +9,6 @@
         placeholder="Select Event Year"
         solo
         class="col-span-1"
-        data-aos="fade-up"
         />
         <VSelect
         v-model="selectedEvent"
@@ -17,15 +16,34 @@
         placeholder="Select Event"
         solo
         class="col-span-1"
-        data-aos="fade-up"
         />
         <VTextField
         v-model="query"
         placeholder="Search"
         solo
         class="col-span-1"
-        data-aos="fade-up"
         />
+        <div
+        v-if="totalPages > 0"
+        class="col-span-1 flex flex-wrap items-center justify-around
+        gap-x-2 md:col-span-3 md:justify-between"
+        data-aos="flip-up"
+        >
+          <span
+          class="font-medium text-white"
+          >
+          Showing {{ from }}-{{ to }} of {{ totalItems }} items
+          </span>
+          <VPagination
+            v-model="page"
+            :length="totalPages"
+            color="success"
+            :total-visible="7"
+            class="text-white"
+            dark
+            @change="setPage"
+            />
+        </div>
         <section class="col-span-1 md:col-span-3">
           <VueTable
           v-if="showVueTable"
@@ -34,19 +52,6 @@
           class="border"
           />
         </section>
-
-        <div class="col-span-1 md:col-span-3">
-          <VPagination
-            v-model="page"
-            :length="totalPages"
-            @change="setPage"
-            dark
-            color="success"
-            :total-visible="7"
-            class="my-4 text-white"
-            />
-        </div>
-
       </div>
     </section>
   </div>
@@ -103,6 +108,22 @@ export default {
       totalItems: 0,
     }
   },
+  watch: {
+    totalPages() {
+      if (this.page > this.totalPages) {
+        this.setPage(1)
+      }
+    },
+    page: {
+      handler(newPage) {
+        this.generateRandomData();
+        setTimeout(() => {
+          this.showVueTable = true
+        }, 1000);
+      },
+      immediate: true,
+    },
+  },
   created() {
     this.generateRandomData();
     setTimeout(() => {
@@ -110,6 +131,9 @@ export default {
     }, 1000);
   },
   methods: {
+    setPage() {
+      this.retrieveTeams();
+    },
     generateRandomData() {
       for (let i = 0; i < 14; i++) {
         this.data.push({
@@ -134,7 +158,6 @@ export default {
           team2score: Math.floor(Math.random() * 20),
         });
       }
-      console.log(this.matches)
     },
     getRandomTeam() {
       const teams = [

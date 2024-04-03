@@ -1,7 +1,7 @@
 <template>
-    <div class="min-h-full bg-[#1A1A1B] pt-8  pb-20">
+    <div class="w-screen min-h-screen bg-[#1A1A1B]">
       <section class="mx-auto max-w-screen-xl gap-4">
-        <section class="mb-8" data-aos="fade-up">
+        <section class="mb-8 px-4" data-aos="fade-up">
           <div class="my-6 flex flex-wrap items-center justify-end gap-4">
             <div class="w-full sm:w-80">
               <form @submit.prevent="retrieveItems">
@@ -33,16 +33,18 @@
         sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
         <Item
-        v-for="(item, index) in itemList"
-        :key="index"
+        v-for="(item) in itemList"
+        :key="item.id"
         class="overflow-hidden rounded-lg bg-[#212121] shadow-lg"
         data-aos="fade-up"
         >
-        <img
-        :src="getMediaURL(item.media[0])"
-        alt="item Image"
-        class="h-64 w-full object-cover"
-        >
+          <div class="h-64 w-full overflow-hidden">
+            <img
+            :src="getMediaURL(item.media[0])"
+            alt="item Image"
+            class="object-cover transition hover:scale-125"
+            >
+          </div>
         <div class="grid grid-cols-1 gap-2 px-6 py-8">
 
             <span class="col-span-1 text-[16px] text-white">
@@ -96,8 +98,6 @@ export default {
   ],
   data() {
     return {
-      // eslint-disable-next-line camelcase
-      current_user: [],
       itemList: [],
       query: '',
       from: 0,
@@ -145,18 +145,8 @@ export default {
         })
         .finally(() => {
           this.isGymsLoading = false;
-          this.getCurrentUser();
           console.log(this.itemList)
         });
-    },
-    getCurrentUser() {
-      this.$axios
-        .$get('v1/users/me')
-        .then((response) => {
-          // eslint-disable-next-line camelcase
-          this.current_user = response;
-          console.log(response)
-        })
     },
   }
 }

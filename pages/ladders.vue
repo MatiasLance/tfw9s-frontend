@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#1A1A1B] pb-12  min-h-full">
+  <div class="min-h-full bg-[#1A1A1B]  pb-12">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -69,17 +69,6 @@
             class="border"
           />
           </section>
-        </div>
-        <div class="col-span-2 justify-center">
-          <VPagination
-            v-model="page"
-            :length="totalPages"
-            @change="setPage"
-            dark
-            color="success"
-            :total-visible="7"
-            class="my-4 text-white"
-            />
         </div>
       </div>
     </section>
@@ -167,7 +156,6 @@ export default {
           team2score: Math.floor(Math.random() * 20),
         });
       }
-      console.log(this.matches)
     },
     getRandomTeam() {
       const teams = [

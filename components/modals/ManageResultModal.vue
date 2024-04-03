@@ -3,51 +3,33 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Add Team
+                    Manage Result
                 </h3>
                 <hr class="my-3"/>
-                <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <div class="col-span-1">
+                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div class="col-span-1 p-4">
                     <label for="fixingname" class="mb-1 block">
-                      Name:
+                      {{ MatchData.team1_name }}
                     </label>
                     <VTextField
                     id="name"
-                    v-model="TeamData.name"
-                    label="Enter Field Name"
+                    v-model="MatchData.team1_score"
+                    label="Team 1 Score"
                     :rules="rules"
-                    type="text"
+                    type="number"
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1 p-4">
                     <label for="fixingname" class="mb-1 block">
-                      Field:
+                      {{ MatchData.team2_name }}
                     </label>
-                    <VSelect
-                    v-model="TeamData.field_id"
-                    :items="filteredField"
-                    placeholder="Choose a Field"
-                    :rules="rules"
-                    solo
-                    >
-                      <template #prepend-item>
-                        <div class="sticky-search-bar px-3">
-                          <SearchBar v-model="fieldQuery" />
-                        </div>
-                      </template>
-                    </VSelect>
-                  </div>
-                  <div class="col-span-1 md:col-span-2">
-                    <label for="fixingname" class="mb-1 block">
-                      Description:
-                    </label>
-                    <VTextarea
+                    <VTextField
                     id="name"
-                    v-model="TeamData.description"
-                    label="Enter Field Description"
+                    v-model="MatchData.team2_score"
+                    label="Team 2 Score"
                     :rules="rules"
-                    type="text"
+                    type="number"
                     solo
                     />
                   </div>
@@ -82,40 +64,38 @@
 import 'vue-croppa/dist/vue-croppa.css';
 
 export default {
-  name: 'AddTeamModal',
+  name: 'ManageResultModal',
   props: {
     active: {
       type: Boolean,
       required: true
     },
-    // eslint-disable-next-line vue/prop-name-casing
-    field: {
-      type: Array,
-      required: true
+    match: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
     return {
-      fieldQuery: '',
+      regionQuery: '',
       valid: true,
-      TeamData: {
-        name: null,
-        description: null
+      MatchData: {
+        team1: [],
+        team2: [],
       },
       rules: [ value => !!value || 'Required' ],
     }
   },
-  computed: {
-    formattedField() {
-      return this.field.map(field =>
-        ({ text: field.name, value: field.id }));
-    },
-    filteredField() {
-      return this.formattedField.filter(field =>
-        field && field.text && typeof field.text === 'string' ?
-          field.text.toLowerCase().includes(this.fieldQuery.toLowerCase()) :
-          false
-      );
+  watch: {
+    active: {
+      handler(newActive) {
+        if (newActive) {
+          this.MatchData = this.match;
+          this.MatchData.team1_name = this.MatchData.team1.name
+          this.MatchData.team2_name = this.MatchData.team2.name
+        }
+      },
+      immediate: true,
     },
   },
   methods: {
@@ -129,49 +109,24 @@ export default {
           queue: true,
         });
         return false;
-      } else if (this.TeamData.description === '') {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Description should not be empty',
-          position: 'bottom',
-          variant: 'danger',
-          queue: true,
-        });
-        return false;
       } else {
-        this.confirmField();
+        this.confirmResult();
         return true;
       }
     },
-    confirmField() {
-      this.addTeam()
+    confirmResult() {
+      this.SaveResult()
       this.$emit('confirm')
       this.closeDialog()
     },
-    addTeam() {
-      const formData = new FormData();
-      formData.append('name', this.TeamData.name);
-      formData.append('description', this.TeamData.description);
-      formData.append('field_id', this.TeamData.field_id);
-      this.$axios
-        .$post('v1/teams', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then((response) => {
-          this.reset();
-          console.log('Success')
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 403) {
-            this.$router.push('/unauthorized');
-          } else {
-            console.error('Error:', error);
-          }
-        });
+    SaveResult() {
+      this.reset();
     },
     closeDialog() {
       this.$emit('close')
     },
     reset() {
-      this.TeamData = []
+      this.MatchData = []
     },
   }
 }
