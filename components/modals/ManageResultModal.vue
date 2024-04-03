@@ -120,7 +120,22 @@ export default {
       this.closeDialog()
     },
     SaveResult() {
-      this.reset();
+      const formData = new FormData();
+      formData.append('team1_score', this.MatchData.team1_score);
+      formData.append('team2_score', this.MatchData.team2_score);
+      this.$axios
+        .$post(`v1/eventmatches/update/${this.MatchData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then((response) => {
+          this.reset();
+          console.log('Success')
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 403) {
+            this.$router.push('/unauthorized');
+          } else {
+            console.error('Error:', error);
+          }
+        });
     },
     closeDialog() {
       this.$emit('close')

@@ -113,7 +113,21 @@ export default {
   },
   methods: {
     SubmitResult(data) {
-      console.log('Submited Data: ', data)
+      const formData = new FormData();
+      formData.append('team1_score', data.team1_score);
+      formData.append('team2_score', data.team2_score);
+      this.$axios
+        .$post(`v1/eventmatches/${data.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then((response) => {
+          this.SubmitSuccess();
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 403) {
+            this.$router.push('/unauthorized');
+          } else {
+            console.error('Error:', error);
+          }
+        });
     },
     openManageResultDialog(data) {
       this.selectedMatch = data
@@ -126,7 +140,18 @@ export default {
     ManageResult(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Fixing Deleted',
+        message: 'Score Updated',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      })
+      this.showManageResultModal = false;
+      this.retrieveEvents();
+    },
+    SubmitSuccess(data) {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Result Submitted',
         position: 'bottom',
         variant: 'success',
         queue: true
