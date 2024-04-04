@@ -8,7 +8,7 @@
           lg:justify-between
         "
       >
-        <span class="text-base leading-[2.5em]">
+        <span class="text-white text-base leading-[2.5em]">
           Showing {{ from }}-{{ to }} of {{ totalItems }} results
         </span>
         <BasePagination
@@ -27,8 +27,8 @@
         2xxl:gap-x-5
         xxl:gap-y-12
         2xxl:gap-y-12
-        grid grid-cols-2
-        gap-x-0 gap-y-6
+        grid grid-cols-1
+        gap-x-4 gap-y-6
         sm:grid-cols-2
         md:grid-cols-3 md:gap-x-4 md:gap-y-8
         lg:grid-cols-4 lg:gap-x-4 lg:gap-y-10
@@ -36,7 +36,7 @@
       v-bind="$attrs"
     >
       <!-- todo: add saleprice prop after :price -->
-      <ProductThumbnailView
+      <ItemThumbnailView
         v-for="product in products"
         :key="product.id"
         :uid="product.id"
@@ -50,6 +50,8 @@
         :is-rrp="product.show_rrp"
         :is-on-sale="product.is_on_sale"
         :is-hide-out-of-stock="product.isHideOutOfStock"
+        data-aos="fade-up"
+        data-aos-offset="30"
       />
     </section>
   </div>
@@ -58,13 +60,13 @@
 <script>
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
-import ProductThumbnailView from '~/components/ProductThumbnailView';
+import ItemThumbnailView from '~/components/ItemThumbnailView';
 
 export default {
   name: 'ProductSection',
   components: {
     BasePagination,
-    ProductThumbnailView
+    ItemThumbnailView
   },
   mixins: [ handlesMedia ],
   data() {

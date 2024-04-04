@@ -8,7 +8,7 @@
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <div class="col-span-1 p-4">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="team1score" class="mb-1 block">
                       {{ MatchData.team1_name }}
                     </label>
                     <VTextField
@@ -21,7 +21,7 @@
                     />
                   </div>
                   <div class="col-span-1 p-4">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="team2score" class="mb-1 block">
                       {{ MatchData.team2_name }}
                     </label>
                     <VTextField
@@ -43,7 +43,7 @@
                   :disabled="!valid"
                   @click="validate"
                   >
-                    OK
+                    Save
                   </VBtn>
                   <VBtn
                   depressed
@@ -116,7 +116,6 @@ export default {
     },
     confirmResult() {
       this.SaveResult()
-      this.$emit('confirm')
       this.closeDialog()
     },
     SaveResult() {
@@ -128,6 +127,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

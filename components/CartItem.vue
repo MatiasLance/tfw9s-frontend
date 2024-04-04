@@ -1,5 +1,5 @@
 <template>
-  <article class="mb-5 bg-white p-3 shadow-sm lg:p-5">
+  <article class="mb-5 bg-[#212121] p-3 shadow-sm lg:p-5">
     <div class="mb-4 flex flex-wrap gap-5 lg:flex-row">
       <div class="w-full lg:w-2/5 xl:w-2/4">
         <figure class="flex leading-5">

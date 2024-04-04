@@ -14,7 +14,7 @@
                     <VTextField
                     id="name"
                     v-model="TeamData.name"
-                    label="Enter Field Name"
+                    label="Enter Team Name"
                     :rules="rules"
                     type="text"
                     solo
@@ -45,7 +45,7 @@
                     <VTextarea
                     id="name"
                     v-model="TeamData.description"
-                    label="Enter Field Description"
+                    label="Enter Team Description"
                     :rules="rules"
                     type="text"
                     solo
@@ -145,7 +145,6 @@ export default {
     },
     confirmField() {
       this.addTeam()
-      this.$emit('confirm')
       this.closeDialog()
     },
     addTeam() {
@@ -158,6 +157,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

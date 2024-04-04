@@ -52,29 +52,25 @@
               <Form class="grid grid-cols-3 gap-2 p-2">
                 <div
                 class="col-span-1 m-auto flex
-                items-center text-lg font-medium text-white"
+                items-center text-lg font-semibold
+                text-white"
                 >
                   <i class="ri-calendar-event-fill mr-2 text-2xl"></i>
                   {{ calendarDate(event.date) }}
                 </div>
                 <div
                 class="col-span-1 m-auto text-center
-                text-lg font-medium text-white"
+                text-lg font-semibold
+                text-white"
                 >
                   {{ event.manager_name }}
                 </div>
-                <div class="col-span-1">
-                  <select
-                  v-model="event.field.name"
-                  :disabled="true"
-                  class="w-full bg-transparent p-1
-                  text-center text-lg text-white"
-                  >
-                    <option
-                    v-for="(field, index) in FieldList"
-                    :key="index"
-                    >{{field.name}}</option>
-                  </select>
+                <div
+                class="col-span-1 m-auto text-center
+                text-lg font-semibold
+                text-white"
+                >
+                  {{ event.field_name }}
                 </div>
                 <div class="col-span-3">
                   <CustomVueTable
@@ -172,6 +168,10 @@ export default {
       type: Array,
       required: true
     },
+    getEvents: {
+      type: Function,
+      required: true,
+    },
   },
   data() {
     return {
@@ -227,6 +227,9 @@ export default {
     },
   },
   methods: {
+    setPage() {
+      this.retrieveEvents();
+    },
     reformatTime(timeString) {
       const [
         hours,
@@ -276,6 +279,7 @@ export default {
       })
       this.showEditFixingModal = false;
       this.retrieveEvents();
+      this.getEvents();
     },
     UpdateFixing(data) {
       this.$oruga.notification.open({
@@ -287,6 +291,7 @@ export default {
       })
       this.showEditFixingModal = false;
       this.retrieveEvents();
+      this.getEvents();
     },
     DeleteFixing(data) {
       this.$oruga.notification.open({
@@ -298,11 +303,12 @@ export default {
       })
       this.showDeleteFixingModal = false;
       this.retrieveEvents();
+      this.getEvents();
     },
     retrieveEvents() {
       const query = {
         q: this.query,
-        sort: 'a_to_z',
+        sort: 'latest',
         page: this.page,
         maxEventsPerPage: 5,
       };
@@ -324,6 +330,8 @@ export default {
               // eslint-disable-next-line camelcase
               manager_name: `${event.manager.user.first_name}
                ${event.manager.user.last_name}`,
+              // eslint-disable-next-line camelcase
+              field_name: event.field.name,
               date: this.formattedDate(event.event_date),
               eventmatch: event.eventmatch.map(match => {
                 return {

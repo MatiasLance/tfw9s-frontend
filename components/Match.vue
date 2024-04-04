@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="col-span-2">
-      <label for="match_name" class="mb-1 block">
+      <label for="match_time" class="mb-1 block">
           Match Time:
       </label>
       <input
@@ -11,13 +11,13 @@
       />
     </div>
     <div class="col-span-1">
-      <label for="match_name" class="mb-1 block">
+      <label for="match_team1" class="mb-1 block">
           Team 1:
       </label>
       <VSelect
       v-model="matchData.team1.id"
       :items="filteredTeam1"
-      placeholder="Choose a Manager"
+      placeholder="Choose Team 1"
       :rules="rules"
       solo
       >
@@ -29,13 +29,13 @@
       </VSelect>
     </div>
     <div class="col-span-1">
-      <label for="match_name" class="mb-1 block">
+      <label for="match_team2" class="mb-1 block">
           Team 2:
       </label>
       <VSelect
       v-model="matchData.team2.id"
       :items="filteredTeam2"
-      placeholder="Choose a Manager"
+      placeholder="Choose Team 2"
       :rules="rules"
       solo
       >

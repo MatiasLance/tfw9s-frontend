@@ -8,20 +8,20 @@
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="teamname" class="mb-1 block">
                       Name:
                     </label>
                     <VTextField
                     id="name"
                     v-model="TeamData.name"
-                    label="Enter Field Name"
+                    label="Enter Team Name"
                     :rules="rules"
                     type="text"
                     solo
                     />
                   </div>
                   <div class="col-span-1">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="selectfield" class="mb-1 block">
                       Field:
                     </label>
                     <VSelect
@@ -39,13 +39,13 @@
                     </VSelect>
                   </div>
                   <div class="col-span-1 md:col-span-2">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="teamdescription" class="mb-1 block">
                       Description:
                     </label>
                     <VTextarea
                     id="name"
                     v-model="TeamData.description"
-                    label="Enter Field Description"
+                    label="Enter Team Description"
                     :rules="rules"
                     type="text"
                     solo
@@ -159,7 +159,6 @@ export default {
     },
     confirmField() {
       this.editTeam()
-      this.$emit('confirm')
       this.closeDialog()
     },
     editTeam() {
@@ -172,6 +171,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

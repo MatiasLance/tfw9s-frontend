@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-full bg-[#1A1A1B] pt-8  pb-20">
+  <div class="min-h-full bg-[#1A1A1B] pt-8">
     <!-- CONTENT -->
-    <section class="my-16 w-full pb-28">
+    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
       <div class="container max-w-6xl">
         <!-- Categories Slider -->
         <div
           class="mx-7"
         >
           <span
-            class="mb-5 ml-3 block text-sm uppercase tracking-wider"
+            class="mb-5 ml-3 block text-sm uppercase tracking-wider text-white"
           >
             Categories
           </span>

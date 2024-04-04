@@ -8,7 +8,7 @@
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="fieldname" class="mb-1 block">
                       Name:
                     </label>
                     <VTextField
@@ -21,7 +21,7 @@
                     />
                   </div>
                   <div class="col-span-1">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="selectregion" class="mb-1 block">
                       Region:
                     </label>
                     <VSelect
@@ -39,7 +39,7 @@
                     </VSelect>
                   </div>
                   <div class="col-span-1 md:col-span-2">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="fielddescription" class="mb-1 block">
                       Description:
                     </label>
                     <VTextarea
@@ -145,7 +145,6 @@ export default {
     },
     confirmField() {
       this.addField()
-      this.$emit('confirm')
       this.closeDialog()
     },
     addField() {
@@ -158,6 +157,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {
