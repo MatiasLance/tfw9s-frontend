@@ -480,7 +480,7 @@ export default {
           text: 'Ladders',
         },
         {
-          to: '/shop2',
+          to: '/shop',
           text: 'Shop',
         },
         {

@@ -1,6 +1,6 @@
 <template>
     <div class="w-screen min-h-screen bg-[#1A1A1B]">
-      <section class="mx-auto max-w-screen-xl gap-4">
+      <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
         <section class="mb-8 px-4" data-aos="fade-up">
           <div class="my-6 flex flex-wrap items-center justify-end gap-4">
             <div class="w-full sm:w-80">
@@ -57,11 +57,11 @@
               {{ item.name }}
           </span>
 
-          <span class="col-span-1 text-white">
+          <span class="col-span-1 text-white w-8">
           <hr class="my-3"/>
           </span>
 
-            <span class="col-span-1 font-semibold text-white">
+            <span class="col-span-1 font-medium text-white">
               {{ formatCurrency(item.price) }}
             </span>
 
@@ -73,11 +73,13 @@
             via-[#3e872a]
             to-[#050505]
             py-4
-            px-8
-            uppercase
-            text-white"
+            px-8"
             >
-            Add to Cart
+            <NuxtLink :to="'/product/?id=' + item.id">
+            <span class="font-semibold normal-case text-white">
+              Add to Cart
+            </span>
+          </NuxtLink>
             </BaseButton>
 
           </div>

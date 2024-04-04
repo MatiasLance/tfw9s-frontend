@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-[#1A1A1B] text-white">
     <div class="container my-16">
       <div class="block gap-4 md:grid md:grid-cols-12">
         <div class="product-gallery col-span-6">
@@ -55,9 +55,9 @@
                 <span
                   v-for="category in product.categories"
                   :key="category.id"
-                  class="font-medium text-black"
+                  class="font-medium text-white"
                 >
-                  <i class="ri-price-tag-3-line text-[#1a1d18]"></i>
+                  <i class="ri-price-tag-3-line text-white"></i>
                   <span>{{ category.name }}</span>
                 </span>
               </span>
@@ -76,22 +76,12 @@
               font-bold
               leading-[1]
               tracking-tighter
-              text-[#181818]
+              text-white
             "
           >
           <!-- todo: add Sale Price (if there is) and slash the RRP (price) -->
           <span class="amount">
-              <span v-if="product.is_on_sale">
-                <span v-if="product.show_rrp">RRP</span>
-                <span
-                  v-if="product.saleprice
-                  && product.saleprice > 0"
-                  class="text-red-500 line-through"
-                >
-                  {{ formatCurrency(product.price) }}
-                </span>
-              </span>
-              <span v-else>
+              <span>
                 {{ formatCurrency(product.price) }}
               </span>
             </span>
@@ -104,7 +94,7 @@
               font-bold
               leading-[1]
               tracking-tighter
-              text-[#181818]
+              text-white
             "
           >
             <span class="amount text-brand-green">
@@ -171,10 +161,10 @@
                       h-14
                       w-28
                       border-transparent
-                      bg-gray-100
+                      bg-[#333131]
                       py-[13.008px]
                       pl-[15px] text-lg
-                      focus:border-gray-500 focus:bg-white focus:ring-0
+                      focus:border-gray-500 focus:bg-[#535181] focus:ring-0
                     "
                     step="1"
                     min="0"
@@ -210,29 +200,33 @@
                     </BaseButton>
                   </template>
                   <template v-else>
-                    <BaseButton
+                    <span
                       type="button"
                       class="
-                        h-14
-                        w-full
-                        cursor-pointer
-                        rounded-lg border
-                        bg-brand-green
-                        py-4
-                        px-5
-                        font-bold
-                        leading-3
-                        text-white
-                        transition
-                        duration-300
-                        hover:shadow-[#1a1d18]/50
-                        lg:w-auto
+                      flex w-48
+                      items-center justify-center
+                      rounded-lg
+                      from-40% via-95% to-100%
+                      bg-gradient-to-tr
+                      from-[#5EE738]
+                      via-[#3e872a]
+                      to-[#050505]
+                      text-white
+                      py-3
+                      px-4
+                      text-center
+                      text-lg
+                      font-medium
+                      shadow-sm
+                      hover:brightness-125
+                      transition
                       "
                       :disabled="!product.stock > 0"
                       @click="addToCart"
                     >
-                      Add to Cart
-                    </BaseButton>
+                        <i class="ri-shopping-cart-2-line mr-2"></i>
+                        Add to Cart
+                    </span>
                   </template>
 
                   <template v-if="product.parent !== null">
@@ -262,19 +256,22 @@
                   </template>
                 </div>
                 <div class="col-span-6 lg:col-span-3">
-                  <NuxtLink :to="`/shop?scroll=${true}`">
+                  <NuxtLink :to="`/shop`">
                     <span
                       class="
-                        flex w-full
+                        flex w-48
                         items-center justify-center
-                        border
-                        border-gray-200
-                        bg-white py-3
+                        rounded-lg
+                        bg-[#212121] text-[#999999]
+                        py-3
                         px-4
                         text-center
                         text-lg
                         font-medium
-                        text-brand-grey shadow-sm hover:bg-gray-100
+                        shadow-sm
+                        hover:text-white
+                        hover:bg-[#414141]
+                        transition
                       "
                     >
                     <i class="ri-arrow-left-s-line mr-2"></i>

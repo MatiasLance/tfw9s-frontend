@@ -44,7 +44,11 @@
           </div>
           <section class="col-span-1">
             <div class="grid grid-cols-1 overflow-x-auto">
-              <div class="col-span-1 flex w-[640px] pr-24 md:w-auto">
+              <div
+              v-if="totalPages > 0"
+              class="col-span-1 flex w-[640px] pr-24 md:w-auto"
+              data-aos="flip-up"
+              >
                 <span
                 class="flex-1 px-4 py-2 align-middle
                 text-[20px] font-semibold text-[#555555]"
@@ -74,16 +78,15 @@
                 :disabled="true"
                 class="mr-0.5 flex-1 border-black bg-white p-1 text-lg"
                 />
-                <select
+                <input
                 v-model="data.fieldName"
-                class="flex-1 border-black bg-white p-1 text-lg"
+                :rules="Rules"
+                placeholder="Enter Field"
+                hide-details
+                required
                 :disabled="true"
-                >
-                  <option
-                  v-for="(field) in FieldList"
-                  :key="field.id"
-                  >{{field.name}}</option>
-                </select>
+                class="mr-0.5 flex-1 border-black bg-white p-1 text-lg"
+                />
                 <i
                 class="ri-pencil-fill px-4 text-xl text-white"
                 @click="openEditTeamDialog(data)"
@@ -136,6 +139,10 @@ export default {
     FieldList: {
       type: Array,
       required: true
+    },
+    getTeams: {
+      type: Function,
+      required: true,
     },
   },
   data() {
@@ -224,6 +231,7 @@ export default {
       })
       this.showAddTeamModal = false;
       this.retrieveTeams();
+      this.getTeams();
     },
     EditTeam() {
       this.$oruga.notification.open({
@@ -235,6 +243,7 @@ export default {
       })
       this.showEditTeamModal = false;
       this.retrieveTeams();
+      this.getTeams();
     },
     DeleteTeam() {
       this.$oruga.notification.open({
@@ -246,6 +255,7 @@ export default {
       })
       this.showDeleteTeamModal = false;
       this.retrieveTeams();
+      this.getTeams();
     },
     retrieveTeams() {
       const query = {
@@ -277,6 +287,9 @@ export default {
           this.from = response.data.from;
           this.to = response.data.to;
         })
+        .finally(() => {
+          console.log(this.Teams)
+        });
     },
   }
 };

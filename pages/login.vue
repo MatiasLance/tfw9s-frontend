@@ -4,7 +4,7 @@
             class="relative min-h-[97vh] w-full
             bg-[#1A1A1B]
             bg-cover bg-fixed
-            py-10 sm:min-h-full"
+            py-10"
         >
             <div class="container mx-auto max-w-screen-md px-4">
                 <LoginSection />

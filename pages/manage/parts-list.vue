@@ -84,7 +84,7 @@ export default {
               slidesToScroll: 4,
               initialSlide: 0,
               infinite: true,
-              arrows: true
+              arrows: false
             }
           },
           {
@@ -94,7 +94,7 @@ export default {
               slidesToScroll: 3,
               initialSlide: 0,
               infinite: true,
-              arrows: true
+              arrows: false
             }
           },
           {
@@ -104,7 +104,7 @@ export default {
               slidesToScroll: 2,
               initialSlide: 0,
               infinite: true,
-              arrows: true
+              arrows: false
             }
           },
           {
@@ -114,7 +114,7 @@ export default {
               slidesToScroll: 1,
               initialSlide: 0,
               infinite: true,
-              arrows: true
+              arrows: false
             }
           }
         ],

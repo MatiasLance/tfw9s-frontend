@@ -33,7 +33,7 @@
              text-[16px] text-black"
              :class="column.name === 'action'?
              'bg-transparent':'bg-white  border p-2 px-4 '"
-             @click="column.name !== 'action'?
+             @click="column.name !== 'action'&&!row.submit?
              ManageResult(row):null"
             >
                 <slot :name="column.name" :data="row">
@@ -49,18 +49,18 @@
                     ml-2
                     rounded-lg
                     bg-gradient-to-tr
-                    from-[#5EE738]
-                    via-[#3e872a]
-                    to-[#050505]
                     py-2
                     px-4
                     text-xs
                     font-medium
                     text-white"
-                    @click="SubmitResult(row)"
+                    :class="!row.submit?
+                   'from-[#5EE738] via-[#3e872a] to-[#050505]':
+                   'from-[#f37570] via-[#fb0d2b] to-[#050505]'"
+                    @click="Submit(row)"
                     dark
                     >
-                    Submit
+                    {{!row.submit?'Submit':'Edit'}}
                   </VBtn>
                   </template>
                   <template v-else-if="column.name === 'team1'">
@@ -97,8 +97,12 @@ export default {
     ManageResult(data) {
       this.$emit('match-data', data);
     },
-    SubmitResult(data) {
-      this.$emit('submit-data', data);
+    Submit(data) {
+      if (!data.submit) {
+        this.$emit('submit-data', data)
+      } else {
+        this.$emit('edit-data', data)
+      }
     },
   }
 }

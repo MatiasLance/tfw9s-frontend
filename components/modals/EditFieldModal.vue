@@ -160,7 +160,6 @@ export default {
     },
     confirmField() {
       this.editField()
-      this.$emit('confirm')
       this.closeDialog()
     },
     editField() {
@@ -174,6 +173,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

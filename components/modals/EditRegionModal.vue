@@ -124,7 +124,6 @@ export default {
     },
     confirmRegion() {
       this.editRegion()
-      this.$emit('confirm')
       this.closeDialog()
     },
     editRegion() {
@@ -136,6 +135,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

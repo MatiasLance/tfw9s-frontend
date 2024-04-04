@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#1A1A1B] pb-12  min-h-full">
+  <div class="min-h-full bg-[#1A1A1B]  pb-12">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -144,7 +144,7 @@
                 </span>
             </span>
 
-            <NuxtLink to="/shop2">
+            <NuxtLink to="/shop">
               <span
                 class="
                   inline-block

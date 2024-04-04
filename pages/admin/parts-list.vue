@@ -39,19 +39,23 @@
             </div>
           </VueSlickCarousel>
           <div v-if="activeTab === 'regions'">
-            <Regions />
+            <Regions
+            :getRegions="retrieveRegions"
+            />
           </div>
           <div v-if="activeTab === 'fields'">
             <Fields
             :RegionList="RegionList"
+            :getFields="retrieveFields"
             />
           </div>
           <div v-if="activeTab === 'ages'">
-            <AgeGroup />
+            <AgeGroup/>
           </div>
           <div v-if="activeTab === 'teams'">
             <Teams
             :FieldList="FieldList"
+            :getTeams="retrieveTeams"
             />
           </div>
           <div v-if="activeTab === 'fixings'">
@@ -59,6 +63,7 @@
             :ManagerList="ManagerList"
             :FieldList="FieldList"
             :TeamList="TeamList"
+            :getEvents="retrieveEvents"
             />
           </div>
           <div v-if="activeTab === 'results'">
@@ -67,7 +72,10 @@
             />
           </div>
           <div v-if="activeTab === 'ladders'">
-            <Ladders />
+            <Ladders
+            :TeamList="TeamList"
+            :EventList="EventList"
+            />
           </div>
         </main>
       </div>
@@ -110,6 +118,7 @@ export default {
       FieldList: [],
       ManagerList: [],
       TeamList: [],
+      EventList: [],
       totalEvents: [],
       totalPages: 0,
       from: 0,
@@ -126,7 +135,7 @@ export default {
               slidesToScroll: 4,
               initialSlide: 0,
               infinite: true,
-              arrows: true
+              arrows: false
             }
           },
           {
@@ -136,7 +145,7 @@ export default {
               slidesToScroll: 3,
               initialSlide: 0,
               infinite: true,
-              arrows: true
+              arrows: false
             }
           },
           {
@@ -146,7 +155,7 @@ export default {
               slidesToScroll: 2,
               initialSlide: 0,
               infinite: true,
-              arrows: true
+              arrows: false
             }
           },
           {
@@ -156,7 +165,7 @@ export default {
               slidesToScroll: 1,
               initialSlide: 0,
               infinite: true,
-              arrows: true
+              arrows: false
             }
           }
         ],
@@ -177,8 +186,8 @@ export default {
     this.retrieveRegions()
     this.retrieveFields()
     this.retrieveManagers()
-    this.retrieveFields()
     this.retrieveTeams()
+    this.retrieveEvents()
   },
   methods: {
     setActiveTab(tab) {
@@ -265,6 +274,27 @@ export default {
         .$get(`v1/teams?${queryString}`)
         .then((response) => {
           this.TeamList = response.data.teams;
+        })
+    },
+    retrieveEvents() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/events?${queryString}`)
+        .then((response) => {
+          this.EventList = response.data.events;
         })
     },
   },

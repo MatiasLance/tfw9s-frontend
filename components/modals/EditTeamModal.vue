@@ -159,7 +159,6 @@ export default {
     },
     confirmField() {
       this.editTeam()
-      this.$emit('confirm')
       this.closeDialog()
     },
     editTeam() {
@@ -172,6 +171,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

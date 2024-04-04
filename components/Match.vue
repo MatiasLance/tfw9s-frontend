@@ -17,7 +17,7 @@
       <VSelect
       v-model="matchData.team1.id"
       :items="filteredTeam1"
-      placeholder="Choose a Manager"
+      placeholder="Choose Team 1"
       :rules="rules"
       solo
       >
@@ -35,7 +35,7 @@
       <VSelect
       v-model="matchData.team2.id"
       :items="filteredTeam2"
-      placeholder="Choose a Manager"
+      placeholder="Choose Team 2"
       :rules="rules"
       solo
       >

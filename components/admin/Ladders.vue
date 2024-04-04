@@ -12,7 +12,7 @@
         />
         <VSelect
         v-model="selectedEvent"
-        :items="events"
+        :items="formattedEvents"
         placeholder="Select Event"
         solo
         class="col-span-1"
@@ -44,11 +44,15 @@
             @change="setPage"
             />
         </div>
-        <section class="col-span-1 md:col-span-3">
+        <section
+        v-if="showVueTable"
+        data-aos="fade-up"
+        data-aos-offset="0"
+        class="col-span-1 md:col-span-3"
+        >
           <VueTable
-          v-if="showVueTable"
           :columns="dataColumns"
-          :data="data"
+          :data="Teams"
           class="border"
           />
         </section>
@@ -61,12 +65,25 @@
 import VueTable from '~/components/tables/VueTable.vue';
 export default {
   components: { VueTable },
+  props: {
+    // eslint-disable-next-line vue/prop-name-casing
+    TeamList: {
+      type: Array,
+      required: true
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    EventList: {
+      type: Array,
+      required: true
+    },
+  },
   data() {
     return {
+      Teams: [],
       query: '',
-      selectedEvent: '',
-      selectedYear: '',
-      selectedGroup: '',
+      selectedEvent: null,
+      selectedYear: [],
+      selectedGroup: [],
       events: [
         'Event 1',
         'Event 2',
@@ -87,7 +104,7 @@ export default {
         '25 and above'
       ],
       dataColumns: [
-        { name: 'index', label: 'Pos' },
+        { name: 'position', label: 'Pos' },
         { name: 'team', label: 'Team' },
         { name: 'win', label: 'Win' },
         { name: 'loss', label: 'Loss' },
@@ -97,16 +114,22 @@ export default {
         { name: 'difference', label: 'Difference' },
         { name: 'points', label: 'Points' },
       ],
-      showVueTable: true,
+      showVueTable: false,
       matches: [],
       data: [],
       from: 0,
       to: 0,
       page: 1,
       perPage: 10,
-      totalPages: 1,
+      totalPages: 0,
       totalItems: 0,
     }
+  },
+  computed: {
+    formattedEvents() {
+      return this.EventList.map(event =>
+        ({ text: event.name, value: event.id }));
+    },
   },
   watch: {
     totalPages() {
@@ -116,62 +139,72 @@ export default {
     },
     page: {
       handler(newPage) {
-        this.generateRandomData();
+        this.retrieveTeams();
         setTimeout(() => {
           this.showVueTable = true
         }, 1000);
       },
       immediate: true,
     },
-  },
-  created() {
-    this.generateRandomData();
-    setTimeout(() => {
-      this.showVueTable = true
-    }, 1000);
+    selectedEvent: {
+      handler(newEvent) {
+        this.page = 1
+        this.retrieveTeams();
+      },
+      immediate: true,
+    },
   },
   methods: {
+    // eslint-disable-next-line camelcase
+    FindTeam(team_id) {
+      // eslint-disable-next-line camelcase
+      const foundField = this.TeamList.find(team => team.id === team_id);
+      if (foundField) {
+        return foundField.name;
+      } else {
+        // If no matching field is found, return "unknown"
+        return 'Unknown';
+      }
+    },
     setPage() {
       this.retrieveTeams();
     },
-    generateRandomData() {
-      for (let i = 0; i < 14; i++) {
-        this.data.push({
-          index: i+1,
-          team: this.getRandomTeam(),
-          win: Math.floor(Math.random() * 30),
-          loss: Math.floor(Math.random() * 30),
-          draw: Math.floor(Math.random() * 30),
-          points: Math.floor(Math.random() * 30),
-          for: Math.floor(Math.random() * 30),
-          against: Math.floor(Math.random() * 30),
-          difference: Math.floor(Math.random() * 30),
+    retrieveTeams() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        maxTeamPositionsPerPage: 10,
+        event: this.selectedEvent,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/teampositions?${queryString}`)
+        .then((response) => {
+          this.Teams = response.data.teamPositions.map(team => {
+            return {
+              ...team,
+              team: this.FindTeam(team.team_id)
+            };
+          });
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
+        })
+        .finally(() => {
+          console.log(this.Teams)
+          this.showVueTable = true;
         });
-      }
-      for (let i = 0; i < 4; i++) {
-        this.matches.push({
-          date: 'Saturday 10th February',
-          location: 'tuggerah Football Grounds',
-          team1: this.getRandomTeam(),
-          team1score: Math.floor(Math.random() * 20),
-          team2: this.getRandomTeam(),
-          team2score: Math.floor(Math.random() * 20),
-        });
-      }
     },
-    getRandomTeam() {
-      const teams = [
-        'North',
-        'South',
-        'Easts',
-        'Wests',
-        'Brothers',
-        'Saints',
-        'Spartans',
-        'Knights'
-      ];
-      return teams[Math.floor(Math.random() * teams.length)];
-    }
   }
 }
 </script>

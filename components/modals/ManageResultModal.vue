@@ -43,7 +43,7 @@
                   :disabled="!valid"
                   @click="validate"
                   >
-                    OK
+                    Save
                   </VBtn>
                   <VBtn
                   depressed
@@ -116,7 +116,6 @@ export default {
     },
     confirmResult() {
       this.SaveResult()
-      this.$emit('confirm')
       this.closeDialog()
     },
     SaveResult() {
@@ -128,6 +127,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

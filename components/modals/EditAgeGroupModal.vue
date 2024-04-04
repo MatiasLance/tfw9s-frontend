@@ -141,7 +141,6 @@ export default {
     },
     confirmAgeGroup() {
       this.addAgeGroup()
-      this.$emit('confirm')
       this.closeDialog()
     },
     addAgeGroup() {
@@ -154,6 +153,7 @@ export default {
         .then((response) => {
           this.reset();
           console.log('Success')
+          this.$emit('confirm')
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

@@ -18,21 +18,29 @@
           >
             <label class="font-semibold text-[#555555]">
               Show Submitted
-              <input id="submitted" type="checkbox"/>
+              <input id="submitted" type="checkbox"
+              v-model="submit"
+              />
             </label>
           </div>
           <section
-          v-if="showCustomVueTable"
-          data-aos="fade-up"
-          data-aos-offset="0"
+          v-if="MatchList.length > 0"
           class="col-span-1 md:col-span-3"
           >
             <CustomVueTable
             :columns="dataColumns"
-            :data="MatchList"
+            :data="filteredMatches"
             @match-data="openManageResultDialog"
-            @submit-data="SubmitResult"
+            @submit-data="openSubmitResultDialog"
             />
+          </section>
+          <section
+          v-if="MatchList.length === 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          >
+          Nothing Pending Today
           </section>
         </div>
       </section>
@@ -43,16 +51,26 @@
     @close="closeManageResultDialog"
     @confirm="ManageResult"
     />
+    <SubmitResultModal
+    :active="showSubmitResultModal"
+    :match="selectedMatch"
+    @close="closeSubmitResultDialog"
+    @confirm="SubmitSuccess"
+    @error="SubmitError"
+    />
   </div>
 </template>
 
 <script>
 import CustomVueTable from '~/components/tables/CustomVueTable.vue';
 import ManageResultModal from '~/components/modals/ManageResultModal.vue';
+import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
+
 export default {
   components: {
     CustomVueTable,
     ManageResultModal,
+    SubmitResultModal,
   },
   props: {
     // eslint-disable-next-line vue/prop-name-casing
@@ -64,8 +82,10 @@ export default {
   data() {
     return {
       dateFilter: null,
+      submit: false,
       showCustomVueTable: false,
       showManageResultModal: false,
+      showSubmitResultModal: false,
       selectedMatch: ({}),
       MatchList: [],
       Data: [],
@@ -103,6 +123,15 @@ export default {
       totalItems: 0,
     };
   },
+  computed: {
+    filteredMatches() {
+      return this.MatchList.filter(match =>
+        match && typeof match.submit === 'boolean' ?
+          match.submit === this.submit :
+          false
+      );
+    }
+  },
   watch: {
     dateFilter: {
       handler(newDate) {
@@ -112,30 +141,21 @@ export default {
     },
   },
   methods: {
-    SubmitResult(data) {
-      const formData = new FormData();
-      formData.append('team1_score', data.team1_score);
-      formData.append('team2_score', data.team2_score);
-      this.$axios
-        .$post(`v1/eventmatches/${data.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then((response) => {
-          this.SubmitSuccess();
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 403) {
-            this.$router.push('/unauthorized');
-          } else {
-            console.error('Error:', error);
-          }
-        });
-    },
     openManageResultDialog(data) {
       this.selectedMatch = data
       this.showManageResultModal = true
     },
+    openSubmitResultDialog(data) {
+      this.selectedMatch = data
+      this.showSubmitResultModal = true
+    },
     closeManageResultDialog(data) {
       this.selectedMatch = ({})
       this.showManageResultModal = false
+    },
+    closeSubmitResultDialog(data) {
+      this.selectedMatch = ({})
+      this.showSubmitResultModal = false
     },
     ManageResult(data) {
       this.$oruga.notification.open({
@@ -156,7 +176,18 @@ export default {
         variant: 'success',
         queue: true
       })
-      this.showManageResultModal = false;
+      this.showSubmitResultModal = false
+      this.retrieveEvents();
+    },
+    SubmitError(data) {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Submission Fail',
+        position: 'bottom',
+        variant: 'error',
+        queue: true
+      })
+      this.showSubmitResultModal = false
       this.retrieveEvents();
     },
     getCurrentDate() {
@@ -205,10 +236,11 @@ export default {
       const event_date = this.dateFilter ?`${eventYear}-${eventMonth}-${eventDay}`: null;
       const query = {
         q: this.query,
-        sort: 'a_to_z',
+        sort: 'latest',
         page: this.page,
         // eslint-disable-next-line camelcase
         eventDate: event_date,
+        submit: this.submit,
       };
 
       Object.keys(query).forEach((key) => {
@@ -235,7 +267,8 @@ export default {
                   // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
                   // eslint-disable-next-line camelcase
-                  field: this.findField(event.field_id)
+                  field: this.findField(event.field_id),
+                  submit: match.submitted === 1
                 };
               })
             };
@@ -250,6 +283,7 @@ export default {
         })
         .finally(() => {
           this.showCustomVueTable = true;
+          console.log('Matches: ', this.MatchList)
         });
     },
   }

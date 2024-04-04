@@ -6,7 +6,20 @@
               Edit Fixing
           </h3>
           <hr class="my-3"/>
-          <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+          <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <div class="col-span-1 md:col-span-2">
+              <label for="fixingname" class="mb-1 block">
+                Title:
+              </label>
+              <VTextField
+              id="name"
+              v-model="Event.name"
+              label="Enter Event Title"
+              :rules="rules"
+              type="text"
+              solo
+              />
+            </div>
             <div class="col-span-1">
               <label for="fixingname" class="mb-1 block">
                 Manager:
@@ -53,6 +66,19 @@
               icon="calendar"
               :rules="rules"
               />
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <label for="fixingname" class="mb-1 block">
+              Description:
+            </label>
+            <VTextarea
+            id="name"
+            v-model="Event.description"
+            label="Enter Region Description"
+            :rules="rules"
+            type="text"
+            solo
+            />
           </div>
           <div class="col-span-1 mb-4 lg:col-span-2">
             <div class="flex items-center justify-between">
@@ -269,11 +295,10 @@ export default {
       }
     },
     confirmFixing() {
-      this.addFixing()
-      this.$emit('confirm')
+      this.editFixing()
       this.closeDialog()
     },
-    addFixing() {
+    editFixing() {
       const eventYear = this.Event.date.getUTCFullYear();
       const eventMonth = (this.Event.date.getUTCMonth() + 1).toString().padStart(2, '0');
       const eventDay = (this.Event.date.getUTCDate() + 1).toString().
@@ -282,6 +307,8 @@ export default {
 
       const formData = new FormData();
       formData.append('datetime', event_date);
+      formData.append('name', this.Event.name);
+      formData.append('description', this.Event.description);
       formData.append('field_id', this.Event.fieldId);
       formData.append('manager_id', this.Event.managerId);
 
