@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="col-span-2">
-      <label for="match_name" class="mb-1 block">
+      <label for="match_time" class="mb-1 block">
           Match Time:
       </label>
       <input
@@ -11,7 +11,7 @@
       />
     </div>
     <div class="col-span-1">
-      <label for="match_name" class="mb-1 block">
+      <label for="match_team1" class="mb-1 block">
           Team 1:
       </label>
       <VSelect
@@ -29,7 +29,7 @@
       </VSelect>
     </div>
     <div class="col-span-1">
-      <label for="match_name" class="mb-1 block">
+      <label for="match_team2" class="mb-1 block">
           Team 2:
       </label>
       <VSelect

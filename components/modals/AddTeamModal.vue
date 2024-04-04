@@ -14,7 +14,7 @@
                     <VTextField
                     id="name"
                     v-model="TeamData.name"
-                    label="Enter Field Name"
+                    label="Enter Team Name"
                     :rules="rules"
                     type="text"
                     solo
@@ -45,7 +45,7 @@
                     <VTextarea
                     id="name"
                     v-model="TeamData.description"
-                    label="Enter Field Description"
+                    label="Enter Team Description"
                     :rules="rules"
                     type="text"
                     solo

@@ -8,7 +8,7 @@
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="regionname" class="mb-1 block">
                       Name:
                     </label>
                     <VTextField
@@ -21,7 +21,7 @@
                     />
                   </div>
                   <div class="col-span-1 md:col-span-2">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="regiondescription" class="mb-1 block">
                       Description:
                     </label>
                     <VTextarea

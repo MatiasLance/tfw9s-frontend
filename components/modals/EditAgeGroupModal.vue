@@ -8,27 +8,26 @@
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1 md:col-span-2">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="agename" class="mb-1 block">
                       Name:
                     </label>
                     <VTextField
                     id="name"
                     v-model="ageGroupData.name"
-                    label="Enter AgeGroup Name"
+                    label="Enter Age Group Name"
                     :rules="rules"
                     type="text"
                     solo
                     />
                   </div>
                   <div class="col-span-1">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="minage" class="mb-1 block">
                       Min Age:
                     </label>
                     <VTextField
                     id="min"
                     v-model="ageGroupData.min_age"
                     single-line
-                    suffix="in"
                     label="Enter Minimum Age"
                     type="number"
                     :min="1"
@@ -40,14 +39,13 @@
                     />
                   </div>
                   <div class="col-span-1">
-                    <label for="fixingname" class="mb-1 block">
+                    <label for="maxage" class="mb-1 block">
                       Max Age:
                     </label>
                     <VTextField
                     id="max"
                     v-model="ageGroupData.max_age"
                     single-line
-                    suffix="in"
                     label="Enter Maximum Age"
                     type="number"
                     :min="ageGroupData.min_age"

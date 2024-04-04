@@ -8,7 +8,7 @@
           <hr class="my-3"/>
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div class="col-span-1 md:col-span-2">
-              <label for="fixingname" class="mb-1 block">
+              <label for="eventname" class="mb-1 block">
                 Title:
               </label>
               <VTextField
@@ -21,7 +21,7 @@
               />
             </div>
             <div class="col-span-1">
-              <label for="fixingname" class="mb-1 block">
+              <label for="selectmanager" class="mb-1 block">
                 Manager:
               </label>
               <VSelect
@@ -39,7 +39,7 @@
               </VSelect>
             </div>
             <div class="col-span-1">
-              <label for="fixingname" class="mb-1 block">
+              <label for="selectfield" class="mb-1 block">
                 Field:
               </label>
               <VSelect
@@ -57,7 +57,7 @@
           </VSelect>
           </div>
           <div class="col-span-1">
-              <label for="fixingname" class="mb-1 block">
+              <label for="selectdate" class="mb-1 block">
                 Date:
               </label>
               <ODatepicker
@@ -68,13 +68,13 @@
               />
           </div>
           <div class="col-span-1 md:col-span-2">
-            <label for="fixingname" class="mb-1 block">
+            <label for="eventdescription" class="mb-1 block">
               Description:
             </label>
             <VTextarea
             id="name"
             v-model="Event.description"
-            label="Enter Region Description"
+            label="Enter Event Description"
             :rules="rules"
             type="text"
             solo

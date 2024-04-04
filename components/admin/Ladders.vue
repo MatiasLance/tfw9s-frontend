@@ -24,7 +24,7 @@
         class="col-span-1"
         />
         <div
-        v-if="totalPages > 0"
+        v-if="showVueTable"
         class="col-span-1 flex flex-wrap items-center justify-around
         gap-x-2 md:col-span-3 md:justify-between"
         data-aos="flip-up"
@@ -139,7 +139,7 @@ export default {
     },
     page: {
       handler(newPage) {
-        this.retrieveTeams();
+        this.retrieveTeamPosition();
         setTimeout(() => {
           this.showVueTable = true
         }, 1000);
@@ -149,7 +149,14 @@ export default {
     selectedEvent: {
       handler(newEvent) {
         this.page = 1
-        this.retrieveTeams();
+        this.retrieveTeamPosition();
+      },
+      immediate: true,
+    },
+    query: {
+      handler(newEvent) {
+        this.page = 1
+        this.retrieveTeamPosition();
       },
       immediate: true,
     },
@@ -167,9 +174,9 @@ export default {
       }
     },
     setPage() {
-      this.retrieveTeams();
+      this.retrieveTeamPosition();
     },
-    retrieveTeams() {
+    retrieveTeamPosition() {
       const query = {
         q: this.query,
         sort: 'a_to_z',
