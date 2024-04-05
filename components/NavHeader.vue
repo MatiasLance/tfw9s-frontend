@@ -467,10 +467,12 @@ export default {
           to: '/news',
           text: 'News',
         },
-        {
-          to: '/bar-tv',
-          text: 'Bar TV  ',
-        },
+        /*
+         * {
+         *   to: '/bar-tv',
+         *   text: 'Bar TV  ',
+         * },
+         */
         {
           to: '/draws',
           text: 'Draws',
@@ -481,7 +483,7 @@ export default {
         },
         {
           to: '/shop',
-          text: 'Shop',
+          text: 'Merch',
         },
         {
           to: '/info',

@@ -43,7 +43,7 @@
               />
           </div>
           <section class="col-span-1">
-            <div class="grid grid-cols-1 overflow-x-auto">
+            <div class="grid grid-cols-1 overflow-x-auto overflow-y-hidden">
               <div
               v-for="(region) in RegionList"
               :key="region.id" class="col-span-1 mb-0.5 gap-0"
@@ -71,6 +71,14 @@
               </div>
               </div>
             </div>
+          </section>
+          <section
+          v-if="totalPages=== 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          >
+          No region saved yet
           </section>
         </div>
       </section>

@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <!-- min-h-screen added temporarily to avoid glitching when changing tabs -->
+  <div class="min-h-screen">
     <div class="mx-auto max-w-screen-xl">
       <div class="flex flex-wrap">
         <main class="w-full">

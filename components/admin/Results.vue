@@ -24,7 +24,9 @@
             </label>
           </div>
           <section
-          v-if="MatchList.length > 0"
+          v-if="showCustomVueTable"
+          data-aos="fade-up"
+          data-aos-offset="0"
           class="col-span-1 md:col-span-3"
           >
             <CustomVueTable
@@ -32,6 +34,7 @@
             :data="filteredMatches"
             @match-data="openManageResultDialog"
             @submit-data="openSubmitResultDialog"
+            @edit-data="openModifyResultDialog"
             />
           </section>
           <section
@@ -58,6 +61,12 @@
     @confirm="SubmitSuccess"
     @error="SubmitError"
     />
+    <ModifyResultModal
+    :active="showModifyResultModal"
+    :match="selectedMatch"
+    @close="closeModifyResultDialog"
+    @confirm="ModifyResult"
+    />
   </div>
 </template>
 
@@ -65,12 +74,14 @@
 import CustomVueTable from '~/components/tables/CustomVueTable.vue';
 import ManageResultModal from '~/components/modals/ManageResultModal.vue';
 import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
+import ModifyResultModal from '~/components/modals/ModifyResultModal.vue';
 
 export default {
   components: {
     CustomVueTable,
     ManageResultModal,
     SubmitResultModal,
+    ModifyResultModal,
   },
   props: {
     // eslint-disable-next-line vue/prop-name-casing
@@ -86,6 +97,7 @@ export default {
       showCustomVueTable: false,
       showManageResultModal: false,
       showSubmitResultModal: false,
+      showModifyResultModal: false,
       selectedMatch: ({}),
       MatchList: [],
       Data: [],
@@ -146,8 +158,22 @@ export default {
       this.showManageResultModal = true
     },
     openSubmitResultDialog(data) {
+      if (data.team1_score === 0 && data.team2_score ===0) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Please add a score before proceeding.',
+          position: 'bottom',
+          variant: 'info',
+          queue: true
+        })
+      } else {
+        this.selectedMatch = data
+        this.showSubmitResultModal = true
+      }
+    },
+    openModifyResultDialog(data) {
       this.selectedMatch = data
-      this.showSubmitResultModal = true
+      this.showModifyResultModal = true
     },
     closeManageResultDialog(data) {
       this.selectedMatch = ({})
@@ -156,6 +182,10 @@ export default {
     closeSubmitResultDialog(data) {
       this.selectedMatch = ({})
       this.showSubmitResultModal = false
+    },
+    closeModifyResultDialog(data) {
+      this.selectedMatch = ({})
+      this.showModifyResultModal = false
     },
     ManageResult(data) {
       this.$oruga.notification.open({
@@ -178,6 +208,17 @@ export default {
       })
       this.showSubmitResultModal = false
       this.retrieveEvents();
+    },
+    ModifyResult(data) {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in Progress...',
+        position: 'bottom',
+        variant: 'info',
+        queue: true
+      })
+      this.showModifyResultModal = false;
+      // this.retrieveEvents();
     },
     SubmitError(data) {
       this.$oruga.notification.open({

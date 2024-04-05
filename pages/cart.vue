@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-full bg-[#1A1A1B]  pb-12">
+  <div class="min-h-full bg-[#1A1A1B]">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -13,6 +13,7 @@
           lg:col-span-6
           xl:mt-10
         "
+        data-aos="fade-right"
       >
         <span
           class="
@@ -35,12 +36,13 @@
         </h1>
       </div>
     </BaseHeader>
-    <div class="container mt-32 py-[30px]">
+    <div class="container py-[30px]">
       <div class="flex flex-col gap-4 md:flex-row">
         <main class="md:w-3/4">
           <template v-if="!items.length > 0">
             <article
-              class="mb-5 rounded border border-gray-200 bg-white shadow-sm"
+              class="mb-5 rounded text-white bg-[#333131] shadow-sm"
+              data-aos="fade-right"
             >
               <div class="p-5">
                 No items from cart.
@@ -63,11 +65,13 @@
               :thumbnail="getMediaURL(item.media[0])"
               @change="quantityChanged"
               @remove="removeCartItem(item.id)"
+              data-aos="fade-up"
+              data-aos-offset="0"
             />
           </template>
         </main>
-        <aside class="md:w-1/4">
-          <article class="mb-5 bg-white p-3 shadow-sm lg:p-5">
+        <aside class="md:w-1/4" data-aos="fade-left">
+          <article class="mb-5 bg-[#212121] p-3 shadow-sm lg:p-5">
             <ul class="mb-5">
               <li class="mb-1 flex justify-between text-white">
                 <span>Subtotal:</span>
@@ -95,6 +99,7 @@
                   pt-3
                   text-lg
                   font-bold
+                  text-white
                 "
               >
                 <span>Total price:</span>
@@ -105,20 +110,26 @@
             <span v-if="cartItems.length > 0">
               <NuxtLink to="/checkout">
                 <span
-                  class="
-                    mb-2
-                    inline-block
-                    w-full
-                    select-none
-                    border border-transparent
-                    bg-brand-green
-                    py-3
-                    px-4
-                    text-center text-lg
-                    font-medium
-                    text-white
-                    hover:bg-green-700
-                  "
+                class="
+                mb-2
+                inline-block
+                w-full
+                select-none
+                border border-transparent
+                from-40% via-95% to-100%
+                bg-gradient-to-tr
+                from-[#5EE738]
+                via-[#3e872a]
+                to-[#050505]
+                rounded-lg
+                py-3
+                px-4
+                text-center text-lg
+                font-medium
+                text-white
+                hover:brightness-125
+                transition
+              "
                 >
                   Proceed to checkout
                 </span>
@@ -132,12 +143,20 @@
                     w-full
                     select-none
                     border border-transparent
-                    bg-green-200
+                    from-40% via-95% to-100%
+                    bg-gradient-to-tr
+                    from-[#5EE738]
+                    via-[#3e872a]
+                    to-[#050505]
+                    rounded-lg
                     py-3
                     px-4
                     text-center text-lg
                     font-medium
                     text-white
+                    brightness-50
+                    hover:brightness-75
+                    transition
                   "
                 >
                   Proceed to checkout
@@ -149,15 +168,16 @@
                 class="
                   inline-block
                   w-full
-                  border border-gray-200
-                  bg-white
+                  rounded-lg
+                  bg-[#212121] text-[#999999]
                   py-3
                   px-4
                   text-center text-lg
                   font-medium
-                  text-brand-green
                   shadow-sm
-                  hover:bg-gray-100
+                  hover:text-white
+                  hover:bg-[#414141]
+                  transition
                 "
               >
                 Back to shop
@@ -337,7 +357,7 @@ export default {
     calculatePriceAggregates() {
       const itemCostData = this.items.map((item) => {
         const quantity = this.getQuantity(item.id)
-        const price = item.is_on_sale ? item.saleprice : item.price;
+        const price = item.price;
         return {
           id: item.id, quantity, price
         };

@@ -43,7 +43,7 @@
               />
           </div>
           <section class="col-span-1">
-            <div class="grid grid-cols-1 overflow-x-auto">
+            <div class="grid grid-cols-1 overflow-x-auto overflow-y-hidden">
               <div
               v-if="totalPages > 0"
               class="col-span-1 flex w-[640px] pr-24 md:w-auto"
@@ -98,6 +98,14 @@
               </div>
               </div>
             </div>
+          </section>
+          <section
+          v-if="totalPages=== 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          >
+          No team saved yet
           </section>
         </div>
       </section>
