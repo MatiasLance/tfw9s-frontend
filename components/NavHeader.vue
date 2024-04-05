@@ -7,9 +7,9 @@
     w-full items-center
     bg-brand-black text-white"
   >
-    <div class="container max-w-6xl " >
+    <div class="container max-w-6xl">
       <div class="relative flex justify-between">
-        <div class="hidden self-center px-4 lg:block lg:w-28">
+        <div class="hidden self-center px-4 lg:block lg:w-20">
           <NuxtLink to="/">
             <span class="navbar-logo block w-full py-2">
               <img

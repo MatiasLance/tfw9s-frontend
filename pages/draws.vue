@@ -44,28 +44,27 @@
             :items="events"
             placeholder="Select Event"
             solo
-            class="md:w-80 lg:w-80"
             />
             <VSelect
             v-model="selectedYear"
             :items="eventYears"
             placeholder="Select Event Year"
             solo
-            class="md:w-80 lg:w-80"
             />
             <VSelect
             v-model="selectedGroup"
             :items="ageGroup"
             placeholder="Select Age Group"
             solo
-            class="md:w-80 lg:w-80"
             />
           </Filters>
+        </div>
+        <div>
           <section class="w-full md:pr-8 lg:pr-16">
             <div
-            v-for="(match, index) in matches"
-            :key="index" class="grid grid-cols-6 p-4"
-            data-aos="fade-up"
+              v-for="(match, index) in matches"
+              :key="index" class="grid grid-cols-6 p-4"
+              data-aos="fade-up"
             >
               <div class="col-span-6 text-xl font-medium text-white">
                 {{ match.date }}
@@ -104,23 +103,13 @@
             </div>
           </section>
         </div>
-        <div class="col-span-1 w-full"  data-aos="fade-left">
-          <VueTable
-          v-if="showVueTable"
-          :columns="dataColumns"
-          :data="data"
-          class="border"
-        />
-        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script>
-import VueTable from '~/components/tables/VueTable.vue';
 export default {
-  components: { VueTable },
   data() {
     return {
       selectedEvent: '',
@@ -162,6 +151,7 @@ export default {
     }
   },
   created() {
+    this.retrieveEventMatch();
     this.generateRandomData();
     setTimeout(() => {
       this.showVueTable = true
@@ -205,7 +195,43 @@ export default {
         'Knights'
       ];
       return teams[Math.floor(Math.random() * teams.length)];
-    }
+    },
+    retrieveEventMatch() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        maxEventMatchesPerPage: 10,
+        event: this.selectedEvent,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/eventmatches?${queryString}`)
+        .then((response) => {
+          this.Teams = response.data.eventMatches.map(team => {
+            return {
+              ...team,
+              team: this.FindTeam(team.team_id)
+            };
+          });
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
+        })
+        .finally(() => {
+          console.log(this.Teams)
+          this.showVueTable = true;
+        });
+    },
   }
 }
 </script>
