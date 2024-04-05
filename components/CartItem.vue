@@ -1,5 +1,5 @@
 <template>
-  <article class="mb-5 bg-[#212121] p-3 shadow-sm lg:p-5">
+  <article class="mb-5 bg-[#212121] p-3 shadow-sm lg:p-5 relative">
     <div class="mb-4 flex flex-wrap gap-5 lg:flex-row">
       <div class="w-full lg:w-2/5 xl:w-2/4">
         <figure class="flex leading-5">
@@ -7,11 +7,10 @@
             <div
               class="
                 flex
-                h-[105px]
-                w-[105px]
+                h-[100px]
+                w-[100px]
                 shrink-0
                 overflow-hidden
-                border border-gray-200
               "
             >
               <img
@@ -22,11 +21,13 @@
           </div>
           <figcaption class="ml-3">
             <p>
-              <NuxtLink
-                :to="'/product/?id=' + uid"
-                class="hover:text-[#1a1d18]"
-              >
-                {{ name }}
+              <NuxtLink :to="'/product/?id=' + uid">
+
+                <span
+                class="text-white transition
+                duration-300 ease-in-out hover:text-[#5EE738]"
+                >{{ name }}</span>
+
               </NuxtLink>
             </p>
             <div class="grid grid-cols-3 gap-4">
@@ -55,11 +56,11 @@
               block
               w-24
               appearance-none
-              border border-gray-100
-              bg-gray-200
+              border-transparent
+              bg-[#333131]
               py-2
               px-3
-              font-semibold
+              text-lg text-white
               hover:border-gray-400
               focus:border-gray-400 focus:outline-none
             "
@@ -67,50 +68,31 @@
             @keyup="handleHighStockValue"
           />
           <div class="ml-2 leading-5">
-            <p class="font-semibold not-italic">
+            <p class="text-white font-semibold not-italic">
               {{ formatCurrency(totalItemCost) }}
             </p>
-            <span v-if="isOnSale" class="text-sm">
-              <span class="block">
-                <span v-if="showRrp">RRP</span>
-                <span class="text-red-400 line-through">
-                  {{ formatCurrency(price) }} / item
-                </span>
-              </span>
-              <span class="block">
-                <span class="text-brand-green">
-                  SALE {{ formatCurrency(finalPrice) }} / item
-                </span>
-              </span>
-            </span>
-            <span v-else class="text-gray-400 text-sm">
-              {{ formatCurrency(finalPrice) }} / item
+            <span class="text-gray-400 text-sm">
+              {{ formatCurrency(price) }} / item
             </span>
           </div>
         </div>
       </div>
-      <div class="flex-auto">
-        <div class="float-right">
-          <button
-            type="button"
-            class="
-              flex
-              items-center
-              justify-center
-              rounded-md
-              border border-gray-200
-              bg-brand-mred
-              py-2
-              px-4
-              text-white
-              shadow-sm
-              hover:bg-slate-700
-            "
-            @click="removeItem"
-          >
-            <i class="ri-close-fill"></i>
-          </button>
-        </div>
+      <div class="absolute top-0 right-0">
+        <button
+          type="button"
+          class="
+            rounded-md
+            px-4
+            pt-1
+            text-[#999999]
+            bg-[#212121]
+            hover:text-white
+            hover:bg-[#414141]
+          "
+          @click="removeItem"
+        >
+          <i class="ri-close-fill text-2xl"></i>
+        </button>
       </div>
     </div>
     <!-- item-cart end// -->
@@ -144,10 +126,6 @@ export default {
       type: Boolean,
       required: true
     },
-    showRrp: {
-      type: Boolean,
-      required: true
-    },
     stock: {
       type: Number,
       required: true,
@@ -176,7 +154,7 @@ export default {
     totalItemCost: {
       get() {
         return currency(this.editableQuantity, { fromCents: false })
-          .multiply(this.finalPrice)
+          .multiply(this.price)
       },
     },
   },

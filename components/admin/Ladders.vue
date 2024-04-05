@@ -5,14 +5,14 @@
 
         <VSelect
         v-model="selectedYear"
-        :items="eventYears"
+        :items="formattedYears"
         placeholder="Select Event Year"
         solo
         class="col-span-1"
         />
         <VSelect
         v-model="selectedEvent"
-        :items="formattedEvents"
+        :items="filteredEvents"
         placeholder="Select Event"
         solo
         class="col-span-1"
@@ -56,6 +56,14 @@
           class="border"
           />
         </section>
+        <section
+        v-if="totalPages=== 0"
+        class="col-span-1 flex h-60 items-center
+        justify-center font-semibold
+        text-[#555555] md:col-span-3"
+        >
+        No data available
+        </section>
       </div>
     </section>
   </div>
@@ -80,9 +88,9 @@ export default {
   data() {
     return {
       Teams: [],
-      query: '',
+      query: null,
       selectedEvent: null,
-      selectedYear: [],
+      selectedYear: null,
       selectedGroup: [],
       events: [
         'Event 1',
@@ -127,8 +135,41 @@ export default {
   },
   computed: {
     formattedEvents() {
-      return this.EventList.map(event =>
-        ({ text: event.name, value: event.id }));
+      return this.EventList.map(event => ({
+        text: event.name,
+        value: event.id,
+        date: new Date(event.event_date),
+      }));
+    },
+    filteredEvents() {
+      if (this.selectedYear) {
+        return this.formattedEvents.filter(event => {
+          if (event && event.date) {
+            return event.date.getFullYear() === this.selectedYear;
+          } else {
+            return false;
+          }
+        });
+      } else {
+        return this.formattedEvents;
+      }
+    },
+    formattedYears() {
+      const years = this.EventList.map(event => {
+        const eventDate = new Date(event.event_date);
+        return eventDate.getFullYear();
+      });
+
+      const uniqueYears = [ ...new Set(years) ];
+
+      uniqueYears.sort();
+
+      const formattedYears = uniqueYears.map(year => ({
+        text: `Year ${year.toString()}`,
+        value: year
+      }));
+
+      return formattedYears;
     },
   },
   watch: {
@@ -146,17 +187,31 @@ export default {
       },
       immediate: true,
     },
+    selectedYear: {
+      handler(newYear) {
+        if (newYear) {
+          this.page = 1
+          this.selectedEvent = null
+          this.retrieveTeamPosition();
+        }
+      },
+      immediate: true,
+    },
     selectedEvent: {
       handler(newEvent) {
-        this.page = 1
-        this.retrieveTeamPosition();
+        if (newEvent) {
+          this.page = 1
+          this.retrieveTeamPosition();
+        }
       },
       immediate: true,
     },
     query: {
-      handler(newEvent) {
-        this.page = 1
-        this.retrieveTeamPosition();
+      handler(newQuery) {
+        if (newQuery) {
+          this.page = 1
+          this.retrieveTeamPosition();
+        }
       },
       immediate: true,
     },
@@ -183,6 +238,7 @@ export default {
         page: this.page,
         maxTeamPositionsPerPage: 10,
         event: this.selectedEvent,
+        year: this.selectedYear,
       };
 
       Object.keys(query).forEach((key) => {

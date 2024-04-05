@@ -31,6 +31,7 @@
                 :
                 'bg-[#212121] text-[#555555]'"
                 data-aos="flip-right"
+                data-aos-offset="0"
                 @click="setActiveTab(tab.value)"
               >
                 {{ tab.label }}
@@ -68,7 +69,6 @@ export default {
   data() {
     return {
       FieldList: [],
-      totalEvents: [],
       totalPages: 0,
       from: 0,
       to: 0,

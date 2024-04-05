@@ -2,11 +2,14 @@
   <div>
     <section class="mb-8">
       <div
+      v-if="!isProductsLoading"
         class="
           flex flex-wrap items-center justify-around
           gap-x-2
           lg:justify-between
         "
+        data-aos="flip-up"
+        data-aos-offset="0"
       >
         <span class="text-white text-base leading-[2.5em]">
           Showing {{ from }}-{{ to }} of {{ totalItems }} results
@@ -75,7 +78,7 @@ export default {
       to: 0,
       totalItems: 0,
       totalPages: 0,
-      isProductsLoading: false,
+      isProductsLoading: true,
       products: [],
       isScroll: false,
       scrollValue: 0,
@@ -174,8 +177,6 @@ export default {
   },
   methods: {
     retrieveProducts() {
-      this.isProductsLoading = true
-
       const query = {
         q: this.$store.state.shop.q,
         sort: this.$store.state.shop.sortBy,

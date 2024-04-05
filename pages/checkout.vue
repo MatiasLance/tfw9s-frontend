@@ -1,35 +1,37 @@
 <template>
-  <div>
-    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
+  <div class="min-h-full bg-[#1A1A1B]">
+    <BaseHeader
+    class="mx-auto max-w-screen-xl gap-4
+    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    >
       <div
         class="
           col-span-12
-          mt-12
-          space-y-3
-          px-6
           text-center
-          sm:space-y-3 sm:text-left
+          sm:space-y-3
+          sm:text-left
           lg:col-span-6
           xl:mt-10
         "
+        data-aos="fade-right"
       >
         <span
           class="
             superheadline
             flex flex-row
             items-center
-            pb-3
             text-[1rem]
             font-normal
+            text-white
           "
         >
-          <span class="font-medium text-white">
+          <span class="font-medium">
             <NuxtLink to="/">
               <VBtn text color="white">Home</VBtn>
             </NuxtLink>
           </span>
         </span>
-        <h1 class="flex flex-row text-3xl font-bold text-white lg:text-6xl">
+        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
           Checkout
         </h1>
       </div>
