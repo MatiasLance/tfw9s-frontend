@@ -107,6 +107,9 @@ export default {
         return true;
       }
     },
+    resetValidation() {
+      this.$refs.form.resetValidation()
+    },
     confirmRegion() {
       this.addRegion()
       this.closeDialog()

@@ -8,7 +8,7 @@
             v-model="dateFilter"
             placeholder="Click to select..."
             icon="calendar"
-            class="bg-black"
+            class="bg-white rounded"
             >
           </ODatepicker>
           </div>
@@ -212,9 +212,9 @@ export default {
     ModifyResult(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Work in Progress...',
+        message: 'Result Updated',
         position: 'bottom',
-        variant: 'info',
+        variant: 'success',
         queue: true
       })
       this.showModifyResultModal = false;

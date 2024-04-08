@@ -121,6 +121,9 @@ export default {
         return true;
       }
     },
+    resetValidation() {
+      this.$refs.form.resetValidation()
+    },
     confirmAgeGroup() {
       this.addAgeGroup()
       this.closeDialog()

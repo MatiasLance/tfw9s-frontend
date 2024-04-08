@@ -294,6 +294,9 @@ export default {
         return true;
       }
     },
+    resetValidation() {
+      this.$refs.form.resetValidation()
+    },
     confirmFixing() {
       this.editFixing()
       this.closeDialog()
@@ -385,10 +388,6 @@ input{
   .v-list{
   padding: 0px;
   }
-
-.v-select__selection.v-select__selection--comma {
-  background-color: #f3f4f6;
-}
 
   ::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
   > .v-input__control > .v-input__slot {

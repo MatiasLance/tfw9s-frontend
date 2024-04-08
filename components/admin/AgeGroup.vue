@@ -220,7 +220,6 @@ export default {
     retrieveAgeGroups() {
       const query = {
         q: this.query,
-        sort: 'a_to_z',
         page: this.page,
         maxAgeGroupsPerPage: 10,
       };

@@ -157,6 +157,9 @@ export default {
         return true;
       }
     },
+    resetValidation() {
+      this.$refs.form.resetValidation()
+    },
     confirmField() {
       this.editTeam()
       this.closeDialog()

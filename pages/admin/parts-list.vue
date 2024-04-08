@@ -56,6 +56,7 @@
           <div v-if="activeTab === 'teams'">
             <Teams
             :FieldList="FieldList"
+            :AgeGroupList="AgeGroupList"
             :getTeams="retrieveTeams"
             />
           </div>
@@ -117,6 +118,7 @@ export default {
     return {
       RegionList: [],
       FieldList: [],
+      AgeGroupList: [],
       ManagerList: [],
       TeamList: [],
       EventList: [],
@@ -186,6 +188,7 @@ export default {
   created() {
     this.retrieveRegions()
     this.retrieveFields()
+    this.retrieveAgeGroups()
     this.retrieveManagers()
     this.retrieveTeams()
     this.retrieveEvents()
@@ -234,6 +237,26 @@ export default {
         .$get(`v1/fields?${queryString}`)
         .then((response) => {
           this.FieldList= response.data.fields;
+        })
+    },
+    retrieveAgeGroups() {
+      const query = {
+        q: this.query,
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/agegroups?${queryString}`)
+        .then((response) => {
+          this.AgeGroupList= response.data.ageGroups;
         })
     },
     retrieveManagers() {

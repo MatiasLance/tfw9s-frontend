@@ -90,3 +90,41 @@ body{
     transform: translateY(0); /* Final position, no translation */
   }
 }
+
+input:focus {
+  /* Add your custom focus styles here */
+  outline: none !important; /* Remove the default focus outline */
+  border-color: transparent !important; /* Change border color when focused */
+  box-shadow: 0 0 0px rgba(0, 0, 0, 0.5) !important; /* Add a box shadow when focused */
+}
+
+textarea:focus {
+  /* Add your custom focus styles here */
+  outline: none !important; /* Remove the default focus outline */
+  border-color: transparent !important; /* Change border color when focused */
+  box-shadow: 0 0 0px rgba(0, 0, 0, 0.5) !important; /* Add a box shadow when focused */
+}
+
+input[type="text"]{
+  background: transparent !important;
+}
+
+input[type="number"]{
+  background: transparent !important;
+}
+
+input[type="tel"]{
+  background: transparent !important;
+}
+
+input[type="email"]{
+  background: transparent !important;
+}
+
+input[type="name"]{
+  background: transparent !important;
+}
+
+textarea{
+  background: transparent !important;
+}

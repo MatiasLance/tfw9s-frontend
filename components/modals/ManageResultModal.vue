@@ -114,6 +114,9 @@ export default {
         return true;
       }
     },
+    resetValidation() {
+      this.$refs.form.resetValidation()
+    },
     confirmResult() {
       this.SaveResult()
       this.closeDialog()
