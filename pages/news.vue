@@ -94,6 +94,10 @@
 export default {
   data() {
     return {
+      pageSEO: {
+        title: 'News - TFW Rugby League',
+        description: ''
+      },
       items: [
         {
           title: 'Weekly Wrap up',
@@ -128,7 +132,19 @@ export default {
 
       ]
     };
-  }
+  },
+  head() {
+    return {
+      title: this.pageSEO.title,
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.pageSEO.description,
+        },
+      ],
+    };
+  },
 };
 </script>
 

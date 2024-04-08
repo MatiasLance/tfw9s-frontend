@@ -220,6 +220,12 @@ export default {
       immediate: true,
     },
   },
+  created() {
+    if (this.filteredEvents.length > 0) {
+      this.selectedEvent = this.filteredEvents[0].value;
+      this.retrieveTeamPosition();
+    }
+  },
   methods: {
     // eslint-disable-next-line camelcase
     FindTeam(team_id) {

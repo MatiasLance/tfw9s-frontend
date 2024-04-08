@@ -34,7 +34,7 @@
             :data="filteredMatches"
             @match-data="openManageResultDialog"
             @submit-data="openSubmitResultDialog"
-            @edit-data="openModifyResultDialog"
+            @edit-data="openManageResultDialog"
             />
           </section>
           <section
@@ -61,12 +61,6 @@
     @confirm="SubmitSuccess"
     @error="SubmitError"
     />
-    <ModifyResultModal
-    :active="showModifyResultModal"
-    :match="selectedMatch"
-    @close="closeModifyResultDialog"
-    @confirm="ModifyResult"
-    />
   </div>
 </template>
 
@@ -74,14 +68,12 @@
 import CustomVueTable from '~/components/tables/CustomVueTable.vue';
 import ManageResultModal from '~/components/modals/ManageResultModal.vue';
 import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
-import ModifyResultModal from '~/components/modals/ModifyResultModal.vue';
 
 export default {
   components: {
     CustomVueTable,
     ManageResultModal,
     SubmitResultModal,
-    ModifyResultModal,
   },
   props: {
     // eslint-disable-next-line vue/prop-name-casing

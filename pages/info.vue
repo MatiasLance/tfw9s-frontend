@@ -16,8 +16,7 @@
       >
         <span
           class="
-            superheadline
-            flex flex-row
+            superheadline flex flex-row
             items-center
             text-[1rem]
             font-normal
@@ -110,6 +109,10 @@ export default {
   components: { VueSlickCarousel },
   data() {
     return {
+      pageSEO: {
+        title: 'Info - TFW Rugby League',
+        description: ''
+      },
       activeTab: 'code',
       tabs: [
         { name: 'code', Label: 'Code of Conduct' },
@@ -162,6 +165,18 @@ export default {
           }
         ],
       },
+    };
+  },
+  head() {
+    return {
+      title: this.pageSEO.title,
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.pageSEO.description,
+        },
+      ],
     };
   },
   methods: {

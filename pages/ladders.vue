@@ -38,7 +38,7 @@
     <section class="mx-auto max-w-screen-xl gap-4 p-7">
       <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
         <div class="col-span-2 p-4"  data-aos="fade-up">
-          <Filters class="w-full">
+          <Filters class="flex flex-wrap gap-2">
             <VSelect
             v-model="selectedEvent"
             :items="events"
@@ -61,11 +61,11 @@
             class="md:w-80 lg:w-80"
             />
           </Filters>
-          <section class="w-full md:pr-8 lg:pr-16">
+          <section class="w-full">
             <VueTable
             v-if="showVueTable"
             :columns="dataColumns"
-            :data="data"
+            :data="team"
             class="border"
           />
           </section>
@@ -81,6 +81,11 @@ export default {
   components: { VueTable },
   data() {
     return {
+      team: [],
+      pageSEO: {
+        title: 'Ladders - TFW Rugby League',
+        description: ''
+      },
       selectedEvent: '',
       selectedYear: '',
       selectedGroup: '',
@@ -104,7 +109,7 @@ export default {
         '25 and above'
       ],
       dataColumns: [
-        { name: 'index', label: 'Pos' },
+        { name: 'position', label: 'Pos' },
         { name: 'team', label: 'Team' },
         { name: 'win', label: 'Win' },
         { name: 'loss', label: 'Loss' },
@@ -125,13 +130,62 @@ export default {
       totalItems: 0,
     }
   },
+  head() {
+    return {
+      title: this.pageSEO.title,
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.pageSEO.description,
+        },
+      ],
+    };
+  },
   created() {
+    this.retrieveTeamPosition();
     this.generateRandomData();
     setTimeout(() => {
       this.showVueTable = true
     }, 1000);
   },
   methods: {
+    retrieveTeamPosition() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        maxTeamPositionsPerPage: 10,
+        event: this.selectedEvent,
+        year: this.selectedYear,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/teampositions?${queryString}`)
+        .then((response) => {
+          this.team = response.data.teamPositions.map(team => {
+            return {
+              ...team,
+              team: team.team.name
+            };
+          });
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
+        })
+        .finally(() => {
+          this.showVueTable = true;
+        });
+    },
     generateRandomData() {
       for (let i = 0; i < 14; i++) {
         this.data.push({
