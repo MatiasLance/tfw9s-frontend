@@ -32,9 +32,8 @@
              text-center align-middle
              text-[16px] text-black"
              :class="column.name === 'action'?
-             'bg-transparent':'bg-white  border p-2 px-4 '"
-             @click="column.name !== 'action'&&!row.submit?
-             ManageResult(row):null"
+             'bg-transparent':'bg-white  border p-2 px-4'"
+             @click="ManageResult(row)"
             >
                 <slot :name="column.name" :data="row">
                   <template v-if="column.name === 'time'">
@@ -98,11 +97,7 @@ export default {
       this.$emit('match-data', data);
     },
     Submit(data) {
-      if (!data.submit) {
-        this.$emit('submit-data', data)
-      } else {
-        this.$emit('edit-data', data)
-      }
+      this.$emit('submit-data', data)
     },
   }
 }

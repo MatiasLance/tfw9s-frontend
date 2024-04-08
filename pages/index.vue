@@ -29,7 +29,7 @@ export default {
   },
   head() {
     return {
-      title: 'Home - Drum HQ',
+      title: 'Home - TFW Rugby League',
       meta: [
         {
           hid: 'description',

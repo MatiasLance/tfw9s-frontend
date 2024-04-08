@@ -60,7 +60,7 @@ export default {
   data() {
     return {
       pageSEO: {
-        title: 'Shop - Drum HQ',
+        title: 'Merch - TFW Rugby League',
         description: ''
       },
       showComponent: false,

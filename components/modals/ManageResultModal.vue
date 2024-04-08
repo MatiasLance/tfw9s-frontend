@@ -51,7 +51,7 @@
                   class="custom-btn w-full md:w-[185px] lg:w-[185px]"
                   @click="closeDialog"
                   >
-                    Cancel
+                    Close
                   </VBtn>
                 </div>
             </VForm>

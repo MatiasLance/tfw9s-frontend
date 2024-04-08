@@ -162,6 +162,10 @@
 export default {
   data() {
     return {
+      pageSEO: {
+        title: 'Draws - TFW Rugby League',
+        description: ''
+      },
       selectedEvent: null,
       selectedYear: null,
       selectedGroup: '',
@@ -202,76 +206,6 @@ export default {
       matches: [],
       data: [],
     }
-  },
-  computed: {
-    formattedEvents() {
-      return this.EventList.map(event => ({
-        text: event.name,
-        value: event.id,
-        date: new Date(event.event_date),
-      }));
-    },
-    filteredEvents() {
-      if (this.selectedYear) {
-        return this.formattedEvents.filter(event => {
-          if (event && event.date) {
-            return event.date.getFullYear() === this.selectedYear;
-          } else {
-            return false;
-          }
-        });
-      } else {
-        return this.formattedEvents;
-      }
-    },
-    formattedYears() {
-      const years = this.EventList.map(event => {
-        const eventDate = new Date(event.event_date);
-        return eventDate.getFullYear();
-      });
-
-      const uniqueYears = [ ...new Set(years) ];
-
-      uniqueYears.sort();
-
-      const formattedYears = uniqueYears.map(year => ({
-        text: `Year ${year.toString()}`,
-        value: year
-      }));
-
-      return formattedYears;
-    },
-  },
-  watch: {
-    selectedYear: {
-      handler(newYear) {
-        if (newYear) {
-          this.selectedEvent = null
-          this.query = null
-          this.retrieveEventMatch();
-        }
-      },
-      immediate: true,
-    },
-    selectedEvent: {
-      handler(newEvent) {
-        if (newEvent) {
-          this.query = null
-          this.retrieveEventMatch();
-        }
-      },
-      immediate: true,
-    },
-    query: {
-      handler(newQuery) {
-        if (newQuery) {
-          this.retrieveEventMatch();
-        } else if (newQuery === '') {
-          this.retrieveEventMatch();
-        }
-      },
-      immediate: true,
-    },
   },
   created() {
     this.retrieveEvents();
