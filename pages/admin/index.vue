@@ -77,8 +77,21 @@ export default {
 };
 </script>
 
-<style scoped>
-.superheadline {
-  color: aliceblue;
-}
+<style>
+  .toast-notification {
+    margin: 0.5em 0;
+    text-align: center;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 12%), 0 0 6px rgb(0 0 0 / 4%);
+    border-radius: 2em;
+    padding: 0.75em 1.5em;
+    pointer-events: auto;
+    color: rgba(0, 0, 0, 0.7);
+    background: #ffdd57;
+  }
+  .o-notification--success {
+    background-color: #4cbe5c !important;
+  }
+  .o-notification--danger {
+    background-color: #1a1d18 !important;
+  }
 </style>

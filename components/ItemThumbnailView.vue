@@ -56,8 +56,8 @@
             class="
               font-montserrat
               whitespace-normal
-              font-semibold transition duration-200
-              text-white
+              font-semibold transition duration-300
+              text-white ease-in-out hover:text-[#5EE738]
             "
           >
             {{ name }}

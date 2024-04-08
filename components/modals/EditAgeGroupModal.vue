@@ -3,7 +3,7 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Add Age Group
+                    Edit Age Group
                 </h3>
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -136,6 +136,9 @@ export default {
         this.confirmAgeGroup();
         return true;
       }
+    },
+    resetValidation() {
+      this.$refs.form.resetValidation()
     },
     confirmAgeGroup() {
       this.addAgeGroup()

@@ -97,14 +97,15 @@
               text-white
             "
           >
-            <span class="amount text-brand-green">
+            <!--
+              <span class="amount text-brand-green">
               <span
-                v-if="
-                  product.is_on_sale && product.saleprice
-                  && product.saleprice > 0
-                  && product.saleprice < product.price"
+              v-if="
+              product.is_on_sale && product.saleprice
+              && product.saleprice > 0
+              && product.saleprice < product.price"
               >SALE {{ formatCurrency(product.saleprice) }}</span>
-            </span>
+            -->
           </p>
           <div class="w-full">
             <p

@@ -113,6 +113,7 @@
     <AddTeamModal
     :active="showAddTeamModal"
     :field="FieldList"
+    :agegroup="AgeGroupList"
     @close="closeAddTeamDialog"
     @confirm="AddTeam"
     />
@@ -145,6 +146,10 @@ export default {
   props: {
     // eslint-disable-next-line vue/prop-name-casing
     FieldList: {
+      type: Array,
+      required: true
+    },
+    AgeGroupList: {
       type: Array,
       required: true
     },

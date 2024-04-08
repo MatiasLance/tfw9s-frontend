@@ -7,6 +7,7 @@
       <input
       v-model="matchData.time" type="time"
       placeholder="Click to select..."
+      :step="900"
       :rules="rules"
       />
     </div>
@@ -82,14 +83,16 @@ export default {
     filteredTeam1() {
       return this.formattedTeam.filter(team =>
         team && team.text && typeof team.text === 'string' ?
-          team.text.toLowerCase().includes(this.team1Query.toLowerCase()) :
+          team.text.toLowerCase().includes(this.team1Query.toLowerCase()) &&
+          this.matchData.team2.id !== team.value :
           false
       );
     },
     filteredTeam2() {
       return this.formattedTeam.filter(team =>
         team && team.text && typeof team.text === 'string' ?
-          team.text.toLowerCase().includes(this.team2Query.toLowerCase()) :
+          team.text.toLowerCase().includes(this.team2Query.toLowerCase()) &&
+          this.matchData.team1.id !== team.value :
           false
       );
     },

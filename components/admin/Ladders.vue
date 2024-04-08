@@ -192,6 +192,7 @@ export default {
         if (newYear) {
           this.page = 1
           this.selectedEvent = null
+          this.query = null
           this.retrieveTeamPosition();
         }
       },
@@ -201,6 +202,7 @@ export default {
       handler(newEvent) {
         if (newEvent) {
           this.page = 1
+          this.query = null
           this.retrieveTeamPosition();
         }
       },
@@ -210,6 +212,8 @@ export default {
       handler(newQuery) {
         if (newQuery) {
           this.page = 1
+          this.retrieveTeamPosition();
+        } else if (newQuery === '') {
           this.retrieveTeamPosition();
         }
       },

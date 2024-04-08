@@ -269,6 +269,9 @@ export default {
         return true;
       }
     },
+    resetValidation() {
+      this.$refs.form.resetValidation()
+    },
     confirmFixing() {
       this.addFixing()
       this.closeDialog()
