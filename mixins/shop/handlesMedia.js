@@ -1,10 +1,13 @@
 export default {
   methods: {
-    getMediaURL(media) {
+    getMediaURL(media, tab) {
       if (media && media.path) {
         return `${this.$config.baseURL}/storage/${media.path}`
       } else {
-        return require('~/assets/images/the-final-whistle-logo.png')
+        switch (tab) {
+        case 'news': return require('~/assets/images/kidsplaying.jpg')
+        default: return require('~/assets/images/the-final-whistle-logo.png')
+        }
       }
     },
   },

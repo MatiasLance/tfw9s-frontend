@@ -41,14 +41,14 @@
           <Filters class="flex flex-wrap gap-2">
             <VSelect
             v-model="selectedEvent"
-            :items="events"
+            :items="filteredEvents"
             placeholder="Select Event"
             solo
             class="md:w-80 lg:w-80"
             />
             <VSelect
             v-model="selectedYear"
-            :items="eventYears"
+            :items="formattedYears"
             placeholder="Select Event Year"
             solo
             class="md:w-80 lg:w-80"
@@ -82,18 +82,14 @@ export default {
   data() {
     return {
       team: [],
+      events: [],
+      selectedEvent: null,
+      selectedYear: null,
       pageSEO: {
         title: 'Ladders - TFW Rugby League',
         description: ''
       },
-      selectedEvent: '',
-      selectedYear: '',
       selectedGroup: '',
-      events: [
-        'Event 1',
-        'Event 2',
-        'Event 3'
-      ],
       eventYears: [
         '2020',
         '2021',
@@ -142,7 +138,70 @@ export default {
       ],
     };
   },
+  computed: {
+    formattedEvents() {
+      return this.events.map(event => ({
+        text: event.name,
+        value: event.id,
+        date: new Date(event.event_date),
+      }));
+    },
+    filteredEvents() {
+      if (this.selectedYear) {
+        return this.formattedEvents.filter(event => {
+          if (event && event.date) {
+            return event.date.getFullYear() === this.selectedYear;
+          } else {
+            return false;
+          }
+        });
+      } else {
+        return this.formattedEvents;
+      }
+    },
+    formattedYears() {
+      const years = this.events.map(event => {
+        const eventDate = new Date(event.event_date);
+        return eventDate.getFullYear();
+      });
+
+      const uniqueYears = [ ...new Set(years) ];
+
+      uniqueYears.sort();
+
+      const formattedYears = uniqueYears.map(year => ({
+        text: `Year ${year.toString()}`,
+        value: year
+      }));
+
+      return formattedYears;
+    },
+  },
+  watch: {
+    selectedYear: {
+      handler(newYear) {
+        if (newYear) {
+          this.page = 1
+          this.selectedEvent = null
+          this.query = null
+          this.retrieveTeamPosition();
+        }
+      },
+      immediate: true,
+    },
+    selectedEvent: {
+      handler(newEvent) {
+        if (newEvent) {
+          this.page = 1
+          this.query = null
+          this.retrieveTeamPosition();
+        }
+      },
+      immediate: true,
+    },
+  },
   created() {
+    this.retrieveEvents();
     this.retrieveTeamPosition();
     this.generateRandomData();
     setTimeout(() => {
@@ -185,6 +244,28 @@ export default {
         .finally(() => {
           this.showVueTable = true;
         });
+    },
+    retrieveEvents() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/events?${queryString}`)
+        .then((response) => {
+          this.events = response.data.events;
+
+        })
     },
     generateRandomData() {
       for (let i = 0; i < 14; i++) {
