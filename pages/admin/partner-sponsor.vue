@@ -29,7 +29,7 @@
             </span>
           </span>
           <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-            {{ adminpage.title }}
+            Partner Sponsor
           </h1>
         </div>
       </BaseHeader>
@@ -53,7 +53,7 @@
                   font-semibold
                   text-white
                   sm:w-60"
-                @click="addDiscountCode"
+                @click="addPartnerSponsor"
               >
                 <span
                 class="
@@ -62,7 +62,7 @@
                 aria-hidden="true"
                 >
                   <i class="ri-add-line"></i>
-                  <span class="pr-1">Add Discount Code</span>
+                  <span class="pr-1">Add Partner Sponsor</span>
                 </span>
               </button>
               </div>
@@ -634,7 +634,7 @@ export default {
       const truncate = (str, max, suffix) => (str.length < max ? str : `${str.substr(0, str.substr(0, max - suffix.length).lastIndexOf(' '))}${suffix}`);
       return truncate(content, 190, '...')
     },
-    addDiscountCode() {
+    addPartnerSponsor() {
       this.showAddNewsModal = true;
       this.reset()
     },
@@ -1054,3 +1054,4 @@ export default {
     background-color: #e73538 !important;
     }
 </style>
+
