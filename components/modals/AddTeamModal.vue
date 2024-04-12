@@ -12,7 +12,7 @@
                       Name:
                     </label>
                     <VTextField
-                    id="name"
+                    id="title"
                     v-model="TeamData.name"
                     label="Enter Team Name"
                     :rules="rules"
@@ -69,7 +69,7 @@
                       Coach Mobile Number:
                     </label>
                     <VTextField
-                    id="name"
+                    id="number"
                     v-model="TeamData.coach_mobile"
                     label="Enter Mobile Number"
                     :rules="rules"
@@ -82,8 +82,47 @@
                       Coach Email:
                     </label>
                     <VTextField
-                    id="name"
+                    id="email"
                     v-model="TeamData.coach_email"
+                    label="Enter Coach Email"
+                    :rules="rules"
+                    type="email"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1 md:col-span-2">
+                    <label for="teamname" class="mb-1 block">
+                      Manager Name:
+                    </label>
+                    <VTextField
+                    id="name"
+                    v-model="TeamData.manager_name"
+                    label="Enter Coach Name"
+                    :rules="rules"
+                    type="text"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="teamname" class="mb-1 block">
+                      Manager Mobile Number:
+                    </label>
+                    <VTextField
+                    id="number"
+                    v-model="TeamData.manager_mobile"
+                    label="Enter Mobile Number"
+                    :rules="rules"
+                    type="tel"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="teamname" class="mb-1 block">
+                      Manager Email:
+                    </label>
+                    <VTextField
+                    id="email"
+                    v-model="TeamData.manager_email"
                     label="Enter Coach Email"
                     :rules="rules"
                     type="email"
@@ -95,7 +134,7 @@
                       Description:
                     </label>
                     <VTextarea
-                    id="name"
+                    id="description"
                     v-model="TeamData.description"
                     label="Enter Team Description"
                     :rules="rules"
@@ -108,70 +147,69 @@
                         Image upload:
                     </label>
                     <!-- Insert myCroppa here -->
-                    <Croppa
-                        v-model="TeamData.myImage"
-                        :width="320"
-                        :height="320"
-                        :quality="5"
-                        placeholder="Place image here"
-                        :placeholder-font-size="15"
-                        accept=".png, .webp, .jpeg, .jpg"
-                        :file-size-limit="31457280"
-                        :zoom-speed="5"
-                        :prevent-white-space="false"
-                        :show-loading="true"
-                        initial-size="contain"
-                        @file-size-exceed="handleCroppaFileSizeExceed"
-                        @file-type-mismatch="handleCroppaFileTypeMismatch"
-                        @new-image-drawn="handleNewImageCreate"
-                        @image-remove="handleImageRemoveCreate"
-                        @loading-end="applyMetadata"
-                    >
-                    </Croppa>
-                    <br />
-                    <div class="flex justify-start">
-                        <VBtn @click="rotateAnti">
-                            <i class="ri-anticlockwise-line"></i>
+                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <div class="col-span-1">
+                        <Croppa
+                          v-model="TeamData.myImage"
+                          :width="320"
+                          :height="320"
+                          :quality="5"
+                          placeholder="Place image here"
+                          :placeholder-font-size="15"
+                          accept=".png, .webp, .jpeg, .jpg"
+                          :file-size-limit="31457280"
+                          :zoom-speed="5"
+                          :prevent-white-space="false"
+                          :show-loading="true"
+                          initial-size="contain"
+                          @file-size-exceed="handleCroppaFileSizeExceed"
+                          @file-type-mismatch="handleCroppaFileTypeMismatch"
+                          @new-image-drawn="handleNewImageCreate"
+                          @image-remove="handleImageRemoveCreate"
+                          @loading-end="applyMetadata"
+                        >
+                        </Croppa>
+                        <br />
+                        <div class="flex justify-start">
+                            <VBtn @click="rotateAnti">
+                                <i class="ri-anticlockwise-line"></i>
+                            </VBtn>
+                            <VBtn @click="rotate">
+                                <i class="ri-clockwise-line"></i>
+                            </VBtn>
+                            <VBtn @click="flipx">
+                                <i class="ri-arrow-left-right-line"></i>
+                            </VBtn>
+                            <VBtn @click="flipy">
+                                <i class="ri-arrow-up-down-line"></i>
+                            </VBtn>
+                        </div>
+                        <div class="flex justify-start">
+                            <VBtn @click="zoomIn">
+                                <i class="ri-zoom-in-line"></i>
+                            </VBtn>
+                            <VBtn @click="zoomOut">
+                                <i class="ri-zoom-out-line"></i>
+                            </VBtn>
+                            <VBtn plain @click="setImagePreset">
+                                set
+                            </VBtn>
+                            <VBtn plain @click="clearImagePreset">
+                                clr
+                            </VBtn>
+                        </div>
+                        <br />
+                        <VBtn
+                        v-if="showGenerateCreatedImageBtn"
+                        dark
+                        large
+                        class="bg-gradient-to-r from-brand-black to-brand-black"
+                        @click="generateImage"
+                        >
+                          GENERATE
                         </VBtn>
-                        <VBtn @click="rotate">
-                            <i class="ri-clockwise-line"></i>
-                        </VBtn>
-                        <VBtn @click="flipx">
-                            <i class="ri-arrow-left-right-line"></i>
-                        </VBtn>
-                        <VBtn @click="flipy">
-                            <i class="ri-arrow-up-down-line"></i>
-                        </VBtn>
-                    </div>
-                    <div class="flex justify-start">
-                        <VBtn @click="zoomIn">
-                            <i class="ri-zoom-in-line"></i>
-                        </VBtn>
-                        <VBtn @click="zoomOut">
-                            <i class="ri-zoom-out-line"></i>
-                        </VBtn>
-                        <VBtn plain @click="setImagePreset">
-                            set
-                        </VBtn>
-                        <VBtn plain @click="clearImagePreset">
-                            clr
-                        </VBtn>
-                    </div>
-                    <br />
-                    <VBtn
-                    v-if="showGenerateCreatedImageBtn"
-                    dark
-                    large
-                    class="bg-gradient-to-r from-brand-black to-brand-black"
-                    @click="generateImage"
-                    >
-                      GENERATE
-                    </VBtn>
-                </div>
-                <div class="col-span-1 md:col-span-2">
-                    <div
-                        class="grid grid-cols-1 gap-3 lg:grid-cols-3"
-                    >
+                      </div>
+                      <div class="col-span-1 max-h-[320px] max-w-[320px]">
                         <div
                             v-for="(photo, photoIndex) in imgUrl"
                             :key="photo"
@@ -194,7 +232,9 @@
                             <div class="ri-close-fill ri-lg"></div>
                         </button>
                         </div>
+                      </div>
                     </div>
+
                 </div>
                 </div>
                 <hr class="my-3"/>
@@ -312,6 +352,12 @@ export default {
       formData.append('description', this.TeamData.description);
       formData.append('field_id', this.TeamData.field_id);
       formData.append('agegroup_id', this.TeamData.agegroup_id);
+      formData.append('coach_name', this.TeamData.coach_name);
+      formData.append('coach_mobile', this.TeamData.coach_mobile);
+      formData.append('coach_email', this.TeamData.coach_email);
+      formData.append('manager_name', this.TeamData.manager_name);
+      formData.append('manager_mobile', this.TeamData.manager_mobile);
+      formData.append('manager_email', this.TeamData.manager_email);
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'gymThumbnail.png');
@@ -337,6 +383,8 @@ export default {
     },
     reset() {
       this.TeamData = []
+      this.imgList = []
+      this.imgUrl = []
     },
     handleCroppaFileSizeExceed(file) {
       this.$oruga.notification.open({

@@ -77,14 +77,14 @@
           <div class="col-span-5 flex text-lg font-medium text-slate-600">
             <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
               <img
-              src="https://www.sharks.com.au/.theme/sharks/badge-light.svg?bust=202404030404"
+              :src="getMediaURL(match.team1.media[0])"
               alt="Team 1 logo"
               class="h-full w-full object-contain xl:object-cover"
               />
             </span>
             <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
               <img
-              src="https://www.seaeagles.com.au/.theme/sea-eagles/badge-light.svg?bust=202404030404"
+              :src="getMediaURL(match.team2.media[0])"
               alt="Team 2 logo"
               class="h-full w-full object-contain xl:object-cover"
               />
@@ -159,7 +159,9 @@
 </template>
 
 <script>
+import handlesMedia from '~/mixins/shop/handlesMedia';
 export default {
+  mixins: [ handlesMedia ],
   data() {
     return {
       pageSEO: {
@@ -206,6 +208,72 @@ export default {
       matches: [],
       data: [],
     }
+  },
+  computed: {
+    formattedEvents() {
+      return this.EventList.map(event => ({
+        text: event.name,
+        value: event.id,
+        date: new Date(event.event_date),
+      }));
+    },
+    filteredEvents() {
+      if (this.selectedYear) {
+        return this.formattedEvents.filter(event => {
+          if (event && event.date) {
+            return event.date.getFullYear() === this.selectedYear;
+          } else {
+            return false;
+          }
+        });
+      } else {
+        return this.formattedEvents;
+      }
+    },
+    formattedYears() {
+      const years = this.EventList.map(event => {
+        const eventDate = new Date(event.event_date);
+        return eventDate.getFullYear();
+      });
+      const uniqueYears = [ ...new Set(years) ];
+      uniqueYears.sort();
+      const formattedYears = uniqueYears.map(year => ({
+        text: `Year ${year.toString()}`,
+        value: year
+      }));
+      return formattedYears;
+    },
+  },
+  watch: {
+    selectedYear: {
+      handler(newYear) {
+        if (newYear) {
+          this.selectedEvent = null
+          this.query = null
+          this.retrieveEventMatch();
+        }
+      },
+      immediate: true,
+    },
+    selectedEvent: {
+      handler(newEvent) {
+        if (newEvent) {
+          this.query = null
+          this.retrieveEventMatch();
+        }
+      },
+      immediate: true,
+    },
+    query: {
+      handler(newQuery) {
+        if (newQuery) {
+          this.retrieveEventMatch();
+        } else if (newQuery === '') {
+          this.retrieveEventMatch();
+        }
+      },
+      immediate: true,
+    },
   },
   created() {
     this.retrieveEvents();
@@ -273,13 +341,11 @@ export default {
       const year = date.getFullYear();
 
       const suffixes = [
-        'th',
-        'st',
-        'nd',
-        'rd'
+        'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'
       ];
-      const suffix = suffixes[(dayOfMonth - 1) % 10 < 4 ?
-        (dayOfMonth - 1) % 10 : 0];
+      const suffixIndex = dayOfMonth % 100;
+      const suffix = suffixes[suffixIndex >= 11 &&
+      suffixIndex <= 13 ? 0 : dayOfMonth % 10];
 
       return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`;
     },

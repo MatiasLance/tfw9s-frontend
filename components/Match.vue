@@ -60,6 +60,10 @@ export default {
     teamList: {
       type: Array,
       required: true,
+    },
+    agegroup: {
+      type: Number,
+      required: true,
     }
   },
   data() {
@@ -78,13 +82,18 @@ export default {
   computed: {
     formattedTeam() {
       return this.teamList.map(team =>
-        ({ text: team.name, value: team.id }));
+        ({
+          text: team.name,
+          value: team.id,
+          age: team.agegroup_id
+        }));
     },
     filteredTeam1() {
       return this.formattedTeam.filter(team =>
         team && team.text && typeof team.text === 'string' ?
           team.text.toLowerCase().includes(this.team1Query.toLowerCase()) &&
-          this.matchData.team2.id !== team.value :
+          this.matchData.team2.id !== team.value &&
+          (this.agegroup?this.agegroup === team.age:true):
           false
       );
     },
@@ -92,7 +101,8 @@ export default {
       return this.formattedTeam.filter(team =>
         team && team.text && typeof team.text === 'string' ?
           team.text.toLowerCase().includes(this.team2Query.toLowerCase()) &&
-          this.matchData.team1.id !== team.value :
+          this.matchData.team1.id !== team.value &&
+          (this.agegroup?this.agegroup === team.age:true):
           false
       );
     },

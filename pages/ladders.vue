@@ -37,15 +37,8 @@
     </BaseHeader>
     <section class="mx-auto max-w-screen-xl gap-4 p-7">
       <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-        <div class="col-span-2 p-4"  data-aos="fade-up">
+        <div class="col-span-2 p-2"  data-aos="fade-up">
           <Filters class="flex flex-wrap gap-2">
-            <VSelect
-            v-model="selectedEvent"
-            :items="filteredEvents"
-            placeholder="Select Event"
-            solo
-            class="md:w-80 lg:w-80"
-            />
             <VSelect
             v-model="selectedYear"
             :items="formattedYears"
@@ -54,20 +47,58 @@
             class="md:w-80 lg:w-80"
             />
             <VSelect
-            v-model="selectedGroup"
-            :items="ageGroup"
+            v-model="selectedAgeGroup"
+            :items="formattedAgeGroup"
             placeholder="Select Age Group"
             solo
             class="md:w-80 lg:w-80"
             />
+            <VSelect
+            v-model="selectedEvent"
+            :items="filteredEvents"
+            placeholder="Select Event"
+            solo
+            class="md:w-80 lg:w-80"
+            />
           </Filters>
-          <section class="w-full">
+          <div
+          v-if="showVueTable"
+          class="col-span-1 mb-2 flex flex-wrap items-center
+          justify-around gap-x-2 md:col-span-3 md:justify-between"
+          data-aos="flip-up"
+          >
+            <span
+            class="font-medium text-white"
+            >
+            Showing {{ from }}-{{ to }} of {{ totalItems }} items
+            </span>
+            <VPagination
+              v-model="page"
+              :length="totalPages"
+              color="success"
+              :total-visible="7"
+              class="text-white"
+              dark
+              @change="setPage"
+              />
+          </div>
+          <section
+          v-if="showVueTable" class="w-full"
+          data-aos="fade-up" data-aos-offset="0"
+          >
             <VueTable
-            v-if="showVueTable"
             :columns="dataColumns"
             :data="team"
             class="border"
           />
+          </section>
+          <section
+          v-if="totalPages=== 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          >
+          No data available
           </section>
         </div>
       </div>
@@ -83,13 +114,14 @@ export default {
     return {
       team: [],
       events: [],
+      AgeGroupList: [],
       selectedEvent: null,
+      selectedAgeGroup: null,
       selectedYear: null,
       pageSEO: {
         title: 'Ladders - TFW Rugby League',
         description: ''
       },
-      selectedGroup: '',
       eventYears: [
         '2020',
         '2021',
@@ -115,14 +147,14 @@ export default {
         { name: 'difference', label: 'Difference' },
         { name: 'points', label: 'Points' },
       ],
-      showVueTable: true,
+      showVueTable: false,
       matches: [],
       data: [],
       from: 0,
       to: 0,
       page: 1,
       perPage: 10,
-      totalPages: 1,
+      totalPages: 0,
       totalItems: 0,
     }
   },
@@ -143,17 +175,20 @@ export default {
       return this.events.map(event => ({
         text: event.name,
         value: event.id,
+        agegroup: event.agegroup_id,
         date: new Date(event.event_date),
       }));
     },
+    formattedAgeGroup() {
+      return this.AgeGroupList.map(agegroup =>
+        ({ text: agegroup.name, value: agegroup.id }));
+    },
     filteredEvents() {
-      if (this.selectedYear) {
+      if (this.selectedYear && this.selectedAgeGroup) {
         return this.formattedEvents.filter(event => {
-          if (event && event.date) {
-            return event.date.getFullYear() === this.selectedYear;
-          } else {
-            return false;
-          }
+          return event && event.date &&
+                event.date.getFullYear() === this.selectedYear &&
+                event.agegroup === this.selectedAgeGroup;
         });
       } else {
         return this.formattedEvents;
@@ -178,20 +213,51 @@ export default {
     },
   },
   watch: {
+    events: {
+      handler(newEvents) {
+        if (Array.isArray(newEvents) && newEvents.length > 0) {
+          const firstEvent = newEvents[0];
+          if (firstEvent && firstEvent.event_date) {
+            const eventDate = new Date(firstEvent.event_date);
+            if (!isNaN(eventDate)) {
+              this.selectedYear = eventDate.getFullYear();
+              this.selectedEvent = firstEvent.id;
+              this.selectedAgeGroup = firstEvent.agegroup_id;
+              this.retrieveTeamPosition()
+            } else {
+              console.error('Invalid event date format');
+            }
+          } else {
+            console.error('Missing or invalid event data');
+          }
+        } else {
+          console.warn('No events or invalid events array');
+        }
+      },
+      immediate: true,
+    },
     selectedYear: {
       handler(newYear) {
-        if (newYear) {
+        if (newYear && this.showVueTable) {
           this.page = 1
           this.selectedEvent = null
-          this.query = null
-          this.retrieveTeamPosition();
+          this.selectedAgeGroup = null
+        }
+      },
+      immediate: true,
+    },
+    selectedAgeGroup: {
+      handler(newYear) {
+        if (newYear && this.showVueTable) {
+          this.page = 1
+          this.selectedEvent = null
         }
       },
       immediate: true,
     },
     selectedEvent: {
       handler(newEvent) {
-        if (newEvent) {
+        if (newEvent && this.showVueTable) {
           this.page = 1
           this.query = null
           this.retrieveTeamPosition();
@@ -202,11 +268,8 @@ export default {
   },
   created() {
     this.retrieveEvents();
-    this.retrieveTeamPosition();
+    this.retrieveAgeGroups()
     this.generateRandomData();
-    setTimeout(() => {
-      this.showVueTable = true
-    }, 1000);
   },
   methods: {
     retrieveTeamPosition() {
@@ -216,7 +279,6 @@ export default {
         page: this.page,
         maxTeamPositionsPerPage: 10,
         event: this.selectedEvent,
-        year: this.selectedYear,
       };
 
       Object.keys(query).forEach((key) => {
@@ -264,7 +326,26 @@ export default {
         .$get(`v1/events?${queryString}`)
         .then((response) => {
           this.events = response.data.events;
+        })
+    },
+    retrieveAgeGroups() {
+      const query = {
+        q: this.query,
+        page: this.page,
+      };
 
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/agegroups?${queryString}`)
+        .then((response) => {
+          this.AgeGroupList= response.data.ageGroups;
         })
     },
     generateRandomData() {

@@ -167,6 +167,7 @@ export default {
         gzip: true,
         exclude: [
           '/admin',
+          '/manage',
           '/admin/**',
           '/login',
           '/forgot-password',

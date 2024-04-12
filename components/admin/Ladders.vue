@@ -136,7 +136,7 @@ export default {
   computed: {
     formattedEvents() {
       return this.EventList.map(event => ({
-        text: event.name,
+        text: `${event.name} ${this.replaceUnderWithU(event.agegroup.name)}`,
         value: event.id,
         date: new Date(event.event_date),
       }));
@@ -173,6 +173,20 @@ export default {
     },
   },
   watch: {
+    EventList: {
+      handler(newPage) {
+        if (this.EventList.length > 0) {
+          if (this.filteredEvents.length > 0) {
+            this.selectedYear = this.formattedYears[0].value;
+            this.selectedEvent = this.filteredEvents[0].value;
+            setTimeout(() => {
+              this.retrieveTeamPosition();
+            }, 500);
+          }
+        }
+      },
+      immediate: true,
+    },
     totalPages() {
       if (this.page > this.totalPages) {
         this.setPage(1)
@@ -180,16 +194,15 @@ export default {
     },
     page: {
       handler(newPage) {
-        this.retrieveTeamPosition();
-        setTimeout(() => {
-          this.showVueTable = true
-        }, 1000);
+        if (this.page !== 1) {
+          this.retrieveTeamPosition();
+        }
       },
       immediate: true,
     },
     selectedYear: {
       handler(newYear) {
-        if (newYear) {
+        if (newYear && this.showVueTable) {
           this.page = 1
           this.selectedEvent = null
           this.query = null
@@ -200,7 +213,7 @@ export default {
     },
     selectedEvent: {
       handler(newEvent) {
-        if (newEvent) {
+        if (newEvent && this.showVueTable) {
           this.page = 1
           this.query = null
           this.retrieveTeamPosition();
@@ -210,7 +223,7 @@ export default {
     },
     query: {
       handler(newQuery) {
-        if (newQuery) {
+        if (newQuery && this.showVueTable) {
           this.page = 1
           this.retrieveTeamPosition();
         } else if (newQuery === '') {
@@ -220,13 +233,10 @@ export default {
       immediate: true,
     },
   },
-  created() {
-    if (this.filteredEvents.length > 0) {
-      this.selectedEvent = this.filteredEvents[0].value;
-      this.retrieveTeamPosition();
-    }
-  },
   methods: {
+    replaceUnderWithU(str) {
+      return str.replace(/^Under \b/, 'U');
+    },
     // eslint-disable-next-line camelcase
     FindTeam(team_id) {
       // eslint-disable-next-line camelcase
@@ -274,7 +284,6 @@ export default {
           this.to = response.data.to;
         })
         .finally(() => {
-          console.log(this.Teams)
           this.showVueTable = true;
         });
     },

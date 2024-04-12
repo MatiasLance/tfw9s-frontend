@@ -105,7 +105,19 @@ textarea:focus {
   box-shadow: 0 0 0px rgba(0, 0, 0, 0.5) !important; /* Add a box shadow when focused */
 }
 
-input[type="text"]{
+.v-input__slot input {
+  background-color: transparent !important;
+}
+
+.v-input__slot textarea {
+  background-color: transparent !important;
+}
+
+/* textarea{
+  background: transparent !important;
+} */
+
+/* input[type="text"]{
   background: transparent !important;
 }
 
@@ -123,8 +135,14 @@ input[type="email"]{
 
 input[type="name"]{
   background: transparent !important;
+} */
+
+.o-dpck__table__event.o-dpck__table__event--danger.o-dpck__table__event--dots {
+  /* Override Oruga's danger color for elements with this specific class */
+  background-color: #ea2424 !important; /* Set your desired color here */
 }
 
-textarea{
-  background: transparent !important;
+.o-dpck__table__event.o-dpck__table__event--success.o-dpck__table__event--dots {
+  /* Override Oruga's danger color for elements with this specific class */
+  background-color: #1fe730 !important; /* Set your desired color here */
 }

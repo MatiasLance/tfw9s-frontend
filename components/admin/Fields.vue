@@ -43,7 +43,10 @@
               />
           </div>
           <section class="col-span-1">
-            <div class="grid grid-cols-1 overflow-x-auto overflow-y-hidden">
+            <div
+            class="grid grid-cols-1 overflow-x-auto
+            overflow-y-hidden md:overflow-x-hidden"
+            >
               <div
               v-if="totalPages > 0"
               class="col-span-1 flex w-[640px] pr-24 md:w-auto"
