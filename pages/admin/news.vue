@@ -125,11 +125,14 @@
                     {{ new Date(news.updated_at) }}
                     </p>
 
-                    <p class="my-4 text-white line-clamp-3">
-                    {{ news.content }}
-                    </p>
+                    <p
+                      class="my-4 text-white line-clamp-3"
+                      v-html="news.content"
+                    ></p>
 
-                    <div class="mt-4 flex flex-wrap justify-start gap-2">
+                    <div
+                      class="mt-8 flex flex-wrap justify-start gap-2"
+                      >
                       <button
                         type="button"
                         class="
@@ -169,9 +172,9 @@
                     md:col-span-3 lg:col-span-2"
                   >
                     <img
-                      :src="getMediaURL(news.media, 'news')"
+                      :src="getMediaURL(news.media[0], 'news')"
                       alt="Product Image"
-                      class="h-full w-full object-cover transition-all
+                      class="h-64 w-full object-cover transition-all
                         group-hover:scale-110"
                       >
                   </div>
@@ -306,8 +309,10 @@
           </div>
 
           <div class="col-span-3">
-            <ImageUpload
-              @update-image="updateImage"
+            <ImageUploadEdit
+              :imglistedit="imgListEdit"
+              :imgurledit="imgUrlEdit"
+              @update-image-edit="updateImageEdit"
               />
           </div>
         </div>
@@ -428,6 +433,7 @@ import SearchBar from '~/components/SearchBar'
 import aosMixin from '@/mixins/aos';
 import Tiptap from '~/components/Wysiwyg/Tiptap'
 import ImageUpload from '~/components/ImageUpload'
+import ImageUploadEdit from '~/components/ImageUploadEdit'
 
 const toNumber = (str) => +str;
 export default {
@@ -436,7 +442,8 @@ export default {
     BasePagination,
     SearchBar,
     Tiptap,
-    ImageUpload
+    ImageUpload,
+    ImageUploadEdit
   },
   mixins: [
     aosMixin,
@@ -456,8 +463,8 @@ export default {
       myEditCroppa: {},
       showGenerateCreatedImageBtn: false,
       showGenerateEditedImageBtn: false,
-      imgUrlEdit: [],
       imgList: [],
+      imgUrlEdit: [],
       imgListEdit: [],
       from: 0,
       to: 0,
@@ -509,7 +516,7 @@ export default {
     isDisable() {
       return (
         this.headline === '' ||
-        this.body === '' ||
+        this.content === '' ||
         this.imgUrl === ''
       );
     },
@@ -619,6 +626,9 @@ export default {
     updateImage(image) {
       this.imgList = image
     },
+    updateImageEdit(image) {
+      this.imgListEdit = image
+    },
     create() {
       const news = {
         headline: this.news.headline,
@@ -639,7 +649,7 @@ export default {
           this.showAddNewsModal = false;
           this.isNewsAdded = true;
           this.$oruga.notification.open({
-            message: response.message,
+            message: response.title,
             variant: 'success',
             duration: 5000,
             position: 'bottom',
@@ -660,26 +670,16 @@ export default {
         });
     },
     editNews(index) {
-      this.$oruga.notification.open({
-        message: 'Retrieving...',
-        variant: 'info',
-        duration: 2000,
-        position: 'bottom',
-        queue: true,
-      });
       this.editingNo = toNumber(index);
       this.$axios
         .$get(`v1/news/${this.editingNo}`)
         .then((response) => {
-          this.$oruga.notification.open({
-            message: response.title,
-            variant: 'success',
-            duration: 2000,
-            position: 'bottom',
-            queue: true,
-          });
           this.news.headline = response.data.news.headline;
           this.news.content = response.data.news.content;
+          this.imgUrlEdit = response.data.news.media.map((x) =>
+            `${this.$config.baseURL}/storage/${x.path}`);
+          this.imgListEdit = response.data.news.media.map((x) => x.hash);
+
           this.showEditNewsModal = true;
         })
         .catch((err) => {
@@ -694,29 +694,28 @@ export default {
         });
     },
     edit(index) {
-      const editObject = this.discountCodeList.find(
+      const editObject = this.newsList.find(
         (itemNews) => itemNews.id === this.editingNo
       );
-      const decimalRate = this.toDecimal(this.discount.rate)
       const editedNews = {
-        code: this.discount.codename,
-        rate: decimalRate,
-        description: this.discount.description,
-        amountapplied: this.discount.amountapplied
+        headline: this.news.headline,
+        content: this.news.content
       };
       const form = new FormData();
-      form.append('_method', 'PATCH');
-      form.append('code', editedNews.code);
-      form.append('rate', editedNews.rate);
-      form.append('description', editedNews.description);
-      form.append('amountapplied', editedNews.amountapplied);
+      form.append('headline', editedNews.headline);
+      form.append('content', editedNews.content);
+
+      for (let i = 0; i < this.imgListEdit.length; i++) {
+        form.append('photo[]', this.imgListEdit[i]);
+      }
+
       form.append('id', index);
       this.$axios
-        .$post(`v1/discountcode/${editObject.id}`, form)
+        .$post(`v1/news/${editObject.id}`, form)
         .then((response) => {
           this.showEditNewsModal = false;
           this.$oruga.notification.open({
-            message: response.Message,
+            message: response.title,
             variant: 'success',
             duration: 5000,
             position: 'bottom',
@@ -756,7 +755,7 @@ export default {
         .then((response) => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: response.Message,
+            message: response.title,
             position: 'bottom',
             variant: 'success',
             queue: true,
@@ -772,15 +771,14 @@ export default {
             queue: true,
           });
         });
-      this.news.splice(index, 1);
       this.reset();
       this.showRemoveNewsModal = false;
     },
     reset() {
-      this.headline = '';
-      this.content = ''
+      this.news.headline = '';
+      this.news.content = ''
       this.imgList = []
-      this.imgUrl = []
+      this.imgListEdit = []
     },
     isCreateNewsFormEmpty() {
       return (
