@@ -7,7 +7,7 @@
           </h3>
           <hr class="my-3"/>
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <div class="col-span-1 md:col-span-2">
+            <div class="col-span-1">
               <label for="eventname" class="mb-1 block">
                 Title:
               </label>
@@ -36,6 +36,19 @@
                     <SearchBar v-model="managerQuery" />
                   </div>
                 </template>
+              </VSelect>
+            </div>
+            <div class="col-span-1">
+              <label for="selectagegroup" class="mb-1 block">
+                Age Group:
+              </label>
+              <VSelect
+              v-model="Event.agegroup_id"
+              :items="formattedAgeGroup"
+              placeholder="Choose Age Group"
+              :rules="rules"
+              solo
+              >
               </VSelect>
             </div>
             <div class="col-span-1">
@@ -134,6 +147,7 @@
                   </button>
                   <Match
                     :match="matchBuffer"
+                    :agegroup="Event.agegroup_id"
                     :teamList="teams"
                     @update-event="updateMatch(matchIndex, $event)"
                   />
@@ -188,6 +202,10 @@ export default {
       type: Array,
       required: true
     },
+    agegroup: {
+      type: Array,
+      required: true
+    },
     teams: {
       type: Array,
       required: true
@@ -213,6 +231,10 @@ export default {
     formattedField() {
       return this.fields.map(field =>
         ({ text: field.name, value: field.id }));
+    },
+    formattedAgeGroup() {
+      return this.agegroup.map(agegroup =>
+        ({ text: agegroup.name, value: agegroup.id }));
     },
     formattedManager() {
       return this.managers.map(manager =>
@@ -277,11 +299,30 @@ export default {
       this.closeDialog()
     },
     addFixing() {
-      const eventYear = this.Event.date.getUTCFullYear();
-      const eventMonth = (this.Event.date.getUTCMonth() + 1).toString().padStart(2, '0');
-      const eventDay = (this.Event.date.getUTCDate() + 1).toString().
-        padStart(2, '0');
-      const event_date = `${eventYear}-${eventMonth}-${eventDay}`;
+      let eventYear = this.Event.date.getUTCFullYear();
+      let eventMonth = this.Event.date.getUTCMonth() + 1;
+      let eventDay = this.Event.date.getUTCDate(); // Get day
+
+      // Increment the day by 1
+      eventDay++;
+
+      // Get the last day of the current month
+      const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
+
+      if (eventDay > lastDayOfMonth) {
+        eventDay = 1;
+        eventMonth++;
+
+        if (eventMonth === 13) {
+          eventMonth = 1;
+          eventYear++;
+        }
+      }
+
+      const eventMonthStr = eventMonth.toString().padStart(2, '0');
+      const eventDayStr = eventDay.toString().padStart(2, '0');
+
+      const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
       const formData = new FormData();
       formData.append('datetime', event_date);
@@ -289,6 +330,7 @@ export default {
       formData.append('description', this.Event.description);
       formData.append('field_id', this.Event.fieldId);
       formData.append('manager_id', this.Event.managerId);
+      formData.append('agegroup_id', this.Event.agegroup_id);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];

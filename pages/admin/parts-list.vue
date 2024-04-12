@@ -64,6 +64,7 @@
             <Fixings
             :ManagerList="ManagerList"
             :FieldList="FieldList"
+            :AgeGroupList="AgeGroupList"
             :TeamList="TeamList"
             :getEvents="retrieveEvents"
             />
@@ -71,6 +72,7 @@
           <div v-if="activeTab === 'results'">
             <Results
             :FieldList="FieldList"
+            :Matches="MatchList"
             />
           </div>
           <div v-if="activeTab === 'ladders'">
@@ -122,6 +124,7 @@ export default {
       ManagerList: [],
       TeamList: [],
       EventList: [],
+      MatchList: [],
       totalEvents: [],
       totalPages: 0,
       from: 0,
@@ -318,7 +321,21 @@ export default {
       this.$axios
         .$get(`v1/events?${queryString}`)
         .then((response) => {
-          this.EventList = response.data.events;
+          this.EventList = response.data.events.map(event => {
+            return {
+              ...event,
+              eventmatch: event.eventmatch.map(match => {
+                return {
+                  ...match,
+                  date: event.event_date,
+                  submit: match.submitted === 1
+                };
+              })
+            };
+          });
+          this.MatchList = this.EventList.flatMap(data => {
+            return data.eventmatch;
+          });
         })
     },
   },

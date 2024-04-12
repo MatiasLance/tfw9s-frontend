@@ -41,7 +41,10 @@
             class="text-white"
             />
         </div>
-        <section class="col-span-1 overflow-x-auto overflow-y-hidden">
+        <section
+        class="col-span-1 overflow-x-auto
+        overflow-y-hidden md:overflow-x-hidden"
+        >
           <div class="grid min-w-[640px] grid-cols-1 gap-2">
             <div
             v-for="(event) in EventList"
@@ -126,6 +129,7 @@
   :active="showAddFixingModal"
   :managers="ManagerList"
   :fields="FieldList"
+  :agegroup="AgeGroupList"
   :teams="TeamList"
   @close="closeAddFixingDialog"
   @confirm="AddFixing"
@@ -134,6 +138,7 @@
   :active="showEditFixingModal"
   :managers="ManagerList"
   :fields="FieldList"
+  :agegroup="AgeGroupList"
   :teams="TeamList"
   :event="selectedFixing"
   @close="closeEditFixingDialog"
@@ -168,6 +173,11 @@ export default {
     },
     // eslint-disable-next-line vue/prop-name-casing
     FieldList: {
+      type: Array,
+      required: true
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    AgeGroupList: {
       type: Array,
       required: true
     },

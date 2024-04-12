@@ -43,7 +43,10 @@
               />
           </div>
           <section class="col-span-1">
-            <div class="grid grid-cols-1 overflow-x-auto overflow-y-hidden">
+            <div
+            class="grid grid-cols-1 overflow-x-auto
+            overflow-y-hidden md:overflow-x-hidden"
+            >
               <div
               v-for="(ageGroup) in ageGroupList"
               :key="ageGroup.id" class="col-span-1 mb-0.5 gap-0"

@@ -33,7 +33,8 @@
              text-[16px] text-black"
              :class="column.name === 'action'?
              'bg-transparent':'bg-white  border p-2 px-4'"
-             @click="ManageResult(row)"
+             @click="column.name !== 'action'&&!row.submit?
+             ManageResult(row):null"
             >
                 <slot :name="column.name" :data="row">
                   <template v-if="column.name === 'time'">
@@ -56,7 +57,7 @@
                     :class="!row.submit?
                    'from-[#5EE738] via-[#3e872a] to-[#050505]':
                    'from-[#f37570] via-[#fb0d2b] to-[#050505]'"
-                    @click="Submit(row)"
+                    @click="row.submit?ManageResult(row):Submit(row)"
                     dark
                     >
                     {{!row.submit?'Submit':'Edit'}}

@@ -158,6 +158,9 @@ export default {
                   case 'admin':
                     this.$router.push('/admin');
                     break;
+                  case 'manager':
+                    this.$router.push('/manage');
+                    break;
                   default:
                     this.$router.push('/');
                   }

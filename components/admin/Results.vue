@@ -8,7 +8,8 @@
             v-model="dateFilter"
             placeholder="Click to select..."
             icon="calendar"
-            class="bg-white rounded"
+            class="rounded bg-white"
+            :events="EventDates"
             >
           </ODatepicker>
           </div>
@@ -18,8 +19,9 @@
           >
             <label class="font-semibold text-[#555555]">
               Show Submitted
-              <input id="submitted" type="checkbox"
-              v-model="submit"
+              <input
+              id="submitted" v-model="submit"
+              type="checkbox"
               />
             </label>
           </div>
@@ -81,6 +83,10 @@ export default {
       type: Array,
       required: true
     },
+    Matches: {
+      type: Array,
+      required: true
+    },
   },
   data() {
     return {
@@ -128,6 +134,10 @@ export default {
     };
   },
   computed: {
+    EventDates() {
+      return this.Matches.map(event =>
+        ({ date: new Date(event.date), type: event.submit?'danger':'success' }));
+    },
     filteredMatches() {
       return this.MatchList.filter(match =>
         match && typeof match.submit === 'boolean' ?
@@ -158,6 +168,8 @@ export default {
           variant: 'info',
           queue: true
         })
+        this.selectedMatch = data
+        this.showManageResultModal = true
       } else {
         this.selectedMatch = data
         this.showSubmitResultModal = true
@@ -243,12 +255,6 @@ export default {
       const year = date.getFullYear();
       return `${month}/${day}/${year.toString().slice(-2)}`;
     },
-    calendarDate(date) {
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const year = date.getFullYear();
-      return `${month}/${day}/${year.toString().slice(-2)}`;
-    },
     // eslint-disable-next-line camelcase
     findField(field_id) {
       // eslint-disable-next-line camelcase
@@ -299,6 +305,7 @@ export default {
                   time: this.reformatTime(match.match_time),
                   // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
+                  date: event.event_date,
                   // eslint-disable-next-line camelcase
                   field: this.findField(event.field_id),
                   submit: match.submitted === 1
@@ -316,7 +323,6 @@ export default {
         })
         .finally(() => {
           this.showCustomVueTable = true;
-          console.log('Matches: ', this.MatchList)
         });
     },
   }

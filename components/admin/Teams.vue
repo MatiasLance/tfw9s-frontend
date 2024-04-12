@@ -43,7 +43,10 @@
               />
           </div>
           <section class="col-span-1">
-            <div class="grid grid-cols-1 overflow-x-auto overflow-y-hidden">
+            <div
+            class="grid grid-cols-1 overflow-x-auto
+            overflow-y-hidden md:overflow-x-hidden"
+            >
               <div
               v-if="totalPages > 0"
               class="col-span-1 flex w-[640px] pr-24 md:w-auto"
@@ -59,7 +62,7 @@
                 class="flex-1 px-4 py-2 align-middle
                 text-[20px] font-semibold text-[#555555]"
                 >
-                Field
+                Age Group
                 </span>
               </div>
               <div
@@ -79,7 +82,7 @@
                 class="mr-0.5 flex-1 border-black bg-white p-1 text-lg"
                 />
                 <input
-                v-model="data.fieldName"
+                v-model="data.agegroupName"
                 :rules="Rules"
                 placeholder="Enter Field"
                 hide-details
@@ -120,6 +123,7 @@
     <EditTeamModal
     :active="showEditTeamModal"
     :field="FieldList"
+    :agegroup="AgeGroupList"
     :team="selectedData"
     @close="closeEditTeamDialog"
     @confirm="EditTeam"
@@ -149,6 +153,7 @@ export default {
       type: Array,
       required: true
     },
+    // eslint-disable-next-line vue/prop-name-casing
     AgeGroupList: {
       type: Array,
       required: true
@@ -293,6 +298,7 @@ export default {
             return {
               ...team,
               fieldName: team.field && team.field.name ? team.field.name : '',
+              agegroupName: team.agegroup && team.agegroup.name ? team.agegroup.name : '',
             };
           });
           this.totalItems = response.data.total_items;
@@ -300,9 +306,6 @@ export default {
           this.from = response.data.from;
           this.to = response.data.to;
         })
-        .finally(() => {
-          console.log(this.Teams)
-        });
     },
   }
 };

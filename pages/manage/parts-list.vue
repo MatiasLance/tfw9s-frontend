@@ -41,6 +41,7 @@
           <div v-if="activeTab === 'results'">
             <Results
             :FieldList="FieldList"
+            :Matches="MatchList"
             />
           </div>
         </main>
@@ -69,6 +70,8 @@ export default {
   data() {
     return {
       FieldList: [],
+      EventList: [],
+      MatchList: [],
       totalPages: 0,
       from: 0,
       to: 0,
@@ -125,6 +128,7 @@ export default {
   },
   created() {
     this.retrieveFields()
+    this.retrieveEvents()
   },
   methods: {
     setActiveTab(tab) {
@@ -149,6 +153,41 @@ export default {
         .$get(`v1/fields?${queryString}`)
         .then((response) => {
           this.FieldList= response.data.fields;
+        })
+    },
+    retrieveEvents() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/events?${queryString}`)
+        .then((response) => {
+          this.EventList = response.data.events.map(event => {
+            return {
+              ...event,
+              eventmatch: event.eventmatch.map(match => {
+                return {
+                  ...match,
+                  date: event.event_date,
+                  submit: match.submitted === 1
+                };
+              })
+            };
+          });
+          this.MatchList = this.EventList.flatMap(data => {
+            return data.eventmatch;
+          });
         })
     },
   },
