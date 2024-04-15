@@ -126,9 +126,9 @@
                   md:col-span-3 lg:col-span-2"
                 >
                   <img
-                    :src="getMediaURL(news.media, 'news')"
+                    :src="getMediaURL(news.media[0], 'news')"
                     alt="Product Image"
-                    class="h-full w-full object-cover transition-all
+                    class="h-64 w-full object-cover transition-all
                       group-hover:scale-110"
                     >
                 </div>
@@ -148,6 +148,7 @@ import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
 import SearchBar from '~/components/SearchBar'
 import aosMixin from '@/mixins/aos';
+import formattedDate from '~/mixins/utilities/formattedDate'
 
 export default {
   buildModules: [ '@nuxtjs/moment' ],
@@ -158,6 +159,7 @@ export default {
   mixins: [
     aosMixin,
     logout,
+    formattedDate,
     handlesMedia
   ],
   data() {
@@ -193,45 +195,6 @@ export default {
     this.page = 1 // Reset pagination
   },
   methods: {
-    formattedDate(dateString) {
-      const date = new Date(dateString);
-      const daysOfWeek = [
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday'
-      ];
-      const months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ];
-      const dayOfWeek = daysOfWeek[date.getDay()];
-      const dayOfMonth = date.getDate();
-      const monthName = months[date.getMonth()];
-      const year = date.getFullYear();
-
-      const suffixes = [
-        'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'
-      ];
-      const suffixIndex = dayOfMonth % 100;
-      const suffix = suffixes[suffixIndex >= 11 &&
-      suffixIndex <= 13 ? 0 : dayOfMonth % 10];
-
-      return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`;
-    },
     retrieveNews() {
       this.isNewsLoading = true;
 
