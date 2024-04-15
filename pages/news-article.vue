@@ -4,19 +4,23 @@
       <div class="block gap-4 md:grid md:grid-cols-12">
         <div class="article-gallery col-span-12">
           <VCarousel
-          height="450"
-          :show-arrows="false"
-          cycle
-          hide-delimiters
-        >
-        <VCarouselItem
-        v-for="(item, i) in items"
-        :key="i"
-        :src="item.src"
-        :lazy-src="'~/assets/images/kidsplaying.jpg'"
-        cover
-        />
-        </VCarousel>
+              height="450"
+              :show-arrows="false"
+              cycle
+              hide-delimiters
+              >
+          <VCarouselItem
+              v-for="(photo, i) in photos"
+              :key="i"
+              :src="photo"
+              cover
+              />
+          <VCarouselItem
+              v-if="photos.length === 0"
+              src='http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg'
+              cover
+              />
+          </VCarousel>
         </div>
         <div
         class="article-context font-semibold col-span-12 p-[1rem]
@@ -29,12 +33,15 @@
             {{ formattedDate(article.updated_at) }}
           </p>
         </div>
-        <div
+        <article
         class="article-description col-span-12 p-[1rem]
-        mx-auto max-w-screen-xl"
-        v-html="article.content"
+        mx-auto max-w-screen-xl w-full text-wrap"
         >
-        </div>
+          <p
+            class="my-4 text-white"
+            v-html="article.content"
+          />
+        </article>
       </div>
     </div>
   </div>
@@ -46,6 +53,7 @@ import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
 import currencyMixin from '~/mixins/currency'
+import formattedDate from '~/mixins/utilities/formattedDate'
 
 const slickSettings = {
   arrows: true,
@@ -90,6 +98,7 @@ export default {
     currencyMixin,
     handlesMedia,
     handlesCoordinates,
+    formattedDate,
   ],
   data() {
     return {
@@ -122,12 +131,6 @@ export default {
         'Third',
         'Fourth',
         'Fifth',
-      ],
-      items: [
-        { src: 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDI0LTAxL2Rlc2lnbndpdGhtZTA5X2JsYWNrX21hbl9ydWdieV9zcG9ydHNtYW5fcGxheWVyc193aXRoX2JhbGxfaW5fYV9kZDBiMTI2OS05ZDYwLTQ3M2ItYWRkOC1jYjdjMDcxN2U2MmVfMS5qcGc.jpg' },
-        { src: 'https://wallpapers.com/images/hd/rugby-1920-x-1080-background-0vg09r15g7wpqe45.jpg' },
-        { src: 'https://images5.alphacoders.com/545/545896.jpg' },
-        { src: 'https://png.pngtree.com/background/20230617/original/pngtree-3d-rugby-ball-and-posts-rendered-on-the-field-picture-image_3668304.jpg' },
       ],
     };
   },
@@ -174,47 +177,9 @@ export default {
         .then((response) => {
           this.article = response.data.news
           this.activeImageURL = this.getMediaURL(this.article.media[0])
-          this.photos = this.article.media
+          this.photos = this.article.media.map((x) =>
+            `${this.$config.baseURL}/storage/${x.path}`);
         })
-    },
-    formattedDate(dateString) {
-      const date = new Date(dateString);
-      const daysOfWeek = [
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday'
-      ];
-      const months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ];
-      const dayOfWeek = daysOfWeek[date.getDay()];
-      const dayOfMonth = date.getDate();
-      const monthName = months[date.getMonth()];
-      const year = date.getFullYear();
-
-      const suffixes = [
-        'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'
-      ];
-      const suffixIndex = dayOfMonth % 100;
-      const suffix = suffixes[suffixIndex >= 11 &&
-      suffixIndex <= 13 ? 0 : dayOfMonth % 10];
-
-      return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`;
     },
   },
 };

@@ -122,7 +122,7 @@
                     </h3>
 
                     <p class="text-sm text-brand-slate">
-                    {{ new Date(news.updated_at) }}
+                    {{ formattedDate(news.updated_at) }}
                     </p>
 
                     <p
@@ -434,6 +434,7 @@ import aosMixin from '@/mixins/aos';
 import Tiptap from '~/components/Wysiwyg/Tiptap'
 import ImageUpload from '~/components/ImageUpload'
 import ImageUploadEdit from '~/components/ImageUploadEdit'
+import formattedDate from '~/mixins/utilities/formattedDate'
 
 const toNumber = (str) => +str;
 export default {
@@ -448,6 +449,7 @@ export default {
   mixins: [
     aosMixin,
     logout,
+    formattedDate,
     handlesMedia
   ],
   data() {
