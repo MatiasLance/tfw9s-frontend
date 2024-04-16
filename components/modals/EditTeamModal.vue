@@ -323,6 +323,9 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.TeamData = this.team;
+          this.imgUrl = this.TeamData.media.map((x) =>
+            `${this.$config.baseURL}/storage/${x.path}`);
+          this.imgList = this.TeamData.media.map((x) => x.hash);
         }
       },
       immediate: true,
@@ -374,7 +377,8 @@ export default {
       formData.append('manager_email', this.TeamData.manager_email);
 
       for (let i = 0; i < this.imgList.length; i++) {
-        formData.append('photo[]', this.imgList[i], 'gymThumbnail.png');
+        formData.append('photo[]', this.imgList[i]);
+        console.log('Team image data: ', this.imgList[i])
       }
 
       this.$axios
@@ -394,11 +398,13 @@ export default {
     },
     closeDialog() {
       this.$emit('close')
+      this.reset()
     },
     reset() {
       this.TeamData = []
       this.imgList = []
       this.imgUrl = []
+      this.showGenerateCreatedImageBtn = false
     },
     handleCroppaFileSizeExceed(file) {
       this.$oruga.notification.open({

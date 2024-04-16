@@ -73,6 +73,7 @@
             <Results
             :FieldList="FieldList"
             :Matches="MatchList"
+            :getEvents="retrieveEvents"
             />
           </div>
           <div v-if="activeTab === 'ladders'">

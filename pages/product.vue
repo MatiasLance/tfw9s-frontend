@@ -459,7 +459,6 @@ export default {
             message: 'Item added to cart',
             position: 'bottom',
             variant: 'success',
-            closable: true,
             queue: true,
           });
           this.$router.push('/cart');
@@ -470,7 +469,6 @@ export default {
             message: 'Item quantity in cart cannot exceed item stock',
             position: 'bottom',
             variant: 'danger',
-            closable: true,
             queue: true,
           });
         })

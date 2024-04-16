@@ -280,7 +280,7 @@ export default {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
-        maxTeamsPerPage: 10,
+        maxTeamsPerPage: 12,
       };
 
       Object.keys(query).forEach((key) => {

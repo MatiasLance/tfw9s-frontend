@@ -349,6 +349,8 @@ export default {
 
       const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
+      console.log(this.Event.date)
+
       const formData = new FormData();
       formData.append('datetime', event_date);
       formData.append('name', this.Event.name);

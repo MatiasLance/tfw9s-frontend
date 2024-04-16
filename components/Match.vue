@@ -5,9 +5,10 @@
           Match Time:
       </label>
       <input
+      id="time"
       v-model="matchData.time" type="time"
       placeholder="Click to select..."
-      :step="900"
+      step="900"
       :rules="rules"
       />
     </div>

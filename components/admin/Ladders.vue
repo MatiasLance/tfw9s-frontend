@@ -162,7 +162,7 @@ export default {
 
       const uniqueYears = [ ...new Set(years) ];
 
-      uniqueYears.sort();
+      // uniqueYears.sort();
 
       const formattedYears = uniqueYears.map(year => ({
         text: `Year ${year.toString()}`,
@@ -174,7 +174,7 @@ export default {
   },
   watch: {
     EventList: {
-      handler(newPage) {
+      handler(events) {
         if (this.EventList.length > 0) {
           if (this.filteredEvents.length > 0) {
             this.selectedYear = this.formattedYears[0].value;
@@ -203,10 +203,7 @@ export default {
     selectedYear: {
       handler(newYear) {
         if (newYear && this.showVueTable) {
-          this.page = 1
-          this.selectedEvent = null
-          this.query = null
-          this.retrieveTeamPosition();
+          this.selectedEvent = this.filteredEvents[0].value
         }
       },
       immediate: true,

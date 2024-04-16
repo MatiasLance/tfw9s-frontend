@@ -40,8 +40,10 @@
           </VueSlickCarousel>
           <div v-if="activeTab === 'results'">
             <Results
+            :manager="current_manager"
             :FieldList="FieldList"
             :Matches="MatchList"
+            :getEvents="retrieveEvents"
             />
           </div>
         </main>
@@ -60,7 +62,7 @@ import 'vue-slick-carousel/dist/vue-slick-carousel.css'
 import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css'
 
 import VueSlickCarousel from 'vue-slick-carousel'
-import Results from '~/components/admin/Results.vue';
+import Results from '~/components/manage/Results.vue';
 export default {
   name: 'parts-list',
   components: {
@@ -69,6 +71,8 @@ export default {
   },
   data() {
     return {
+      // eslint-disable-next-line camelcase
+      current_manager: [],
       FieldList: [],
       EventList: [],
       MatchList: [],
@@ -127,12 +131,27 @@ export default {
     };
   },
   created() {
-    this.retrieveFields()
-    this.retrieveEvents()
+    this.getCurrentManager()
   },
   methods: {
     setActiveTab(tab) {
       this.activeTab = tab;
+    },
+    getCurrentManager() {
+      const query = { user: this.$store.state.auth.user.id };
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/managers?${queryString}`)
+        .then((response) => {
+          // eslint-disable-next-line camelcase
+          this.current_manager = response.data.managers;
+        })
+        .finally(() => {
+          this.retrieveFields()
+          this.retrieveEvents()
+        });
     },
     retrieveFields() {
       const query = {
@@ -160,6 +179,7 @@ export default {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
+        manager: this.current_manager[0]?.id ?? null
       };
 
       Object.keys(query).forEach((key) => {

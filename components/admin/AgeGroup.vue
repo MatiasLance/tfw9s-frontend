@@ -224,7 +224,7 @@ export default {
       const query = {
         q: this.query,
         page: this.page,
-        maxAgeGroupsPerPage: 10,
+        maxAgeGroupsPerPage: 12,
       };
 
       Object.keys(query).forEach((key) => {

@@ -234,7 +234,7 @@ export default {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
-        maxRegionsPerPage: 10,
+        maxRegionsPerPage: 12,
       };
 
       Object.keys(query).forEach((key) => {

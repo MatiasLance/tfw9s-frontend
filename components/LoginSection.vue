@@ -170,7 +170,6 @@ export default {
                     message: response.title,
                     position: 'bottom',
                     variant: 'danger',
-                    closable: true,
                     queue: true,
                   });
                 }
@@ -182,7 +181,6 @@ export default {
                   message: `${errorDetail.title} - ${errorDetail.data}`,
                   position: 'bottom',
                   variant: 'danger',
-                  closable: true,
                   queue: true,
                 });
               });
@@ -194,7 +192,6 @@ export default {
               message: errorDetail,
               position: 'bottom',
               variant: 'danger',
-              closable: true,
               queue: true,
             });
           });

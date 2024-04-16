@@ -135,6 +135,7 @@ export default {
     },
     closeDialog() {
       this.$emit('close')
+      this.reset()
     },
     reset() {
       this.regionData = []

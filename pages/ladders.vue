@@ -36,9 +36,9 @@
       </div>
     </BaseHeader>
     <section class="mx-auto max-w-screen-xl gap-4 p-7">
-      <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-        <div class="col-span-2 p-2"  data-aos="fade-up">
-          <Filters class="flex flex-wrap gap-2">
+      <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
+        <div class="col-span-3 p-2"  data-aos="fade-up">
+          <span class="flex flex-wrap gap-2">
             <VSelect
             v-model="selectedYear"
             :items="formattedYears"
@@ -60,9 +60,9 @@
             solo
             class="md:w-80 lg:w-80"
             />
-          </Filters>
+          </span>
           <div
-          v-if="showVueTable"
+          v-if="totalPages > 0"
           class="col-span-1 mb-2 flex flex-wrap items-center
           justify-around gap-x-2 md:col-span-3 md:justify-between"
           data-aos="flip-up"
@@ -79,11 +79,10 @@
               :total-visible="7"
               class="text-white"
               dark
-              @change="setPage"
               />
           </div>
           <section
-          v-if="showVueTable" class="w-full"
+          v-if="totalPages > 0" class="w-full"
           data-aos="fade-up" data-aos-offset="0"
           >
             <VueTable
@@ -147,7 +146,7 @@ export default {
         { name: 'difference', label: 'Difference' },
         { name: 'points', label: 'Points' },
       ],
-      showVueTable: false,
+      isLoaded: false,
       matches: [],
       data: [],
       from: 0,
@@ -173,7 +172,7 @@ export default {
   computed: {
     formattedEvents() {
       return this.events.map(event => ({
-        text: event.name,
+        text: `${event.name} ${this.replaceUnderWithU(event.agegroup.name)}`,
         value: event.id,
         agegroup: event.agegroup_id,
         date: new Date(event.event_date),
@@ -238,40 +237,49 @@ export default {
     },
     selectedYear: {
       handler(newYear) {
-        if (newYear && this.showVueTable) {
+        if (newYear && this.isLoaded) {
           this.page = 1
-          this.selectedEvent = null
-          this.selectedAgeGroup = null
+          /*
+           * this.selectedEvent = null
+           * this.selectedAgeGroup = null
+           */
+          this.selectedAgeGroup = this.formattedAgeGroup[0]?.value ?? null;
+          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
         }
       },
       immediate: true,
     },
     selectedAgeGroup: {
       handler(newYear) {
-        if (newYear && this.showVueTable) {
+        if (newYear && this.isLoaded) {
           this.page = 1
-          this.selectedEvent = null
+          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
         }
       },
       immediate: true,
     },
     selectedEvent: {
       handler(newEvent) {
-        if (newEvent && this.showVueTable) {
+        if (newEvent && this.isLoaded) {
           this.page = 1
-          this.query = null
+          // this.query = null
           this.retrieveTeamPosition();
+        } else if (this.isLoaded) {
+          this.team = []
+          this.totalPages = 0
         }
       },
       immediate: true,
     },
   },
   created() {
+    this.retrieveAgeGroups();
     this.retrieveEvents();
-    this.retrieveAgeGroups()
-    this.generateRandomData();
   },
   methods: {
+    replaceUnderWithU(str) {
+      return str.replace(/^Under \b/, 'U');
+    },
     retrieveTeamPosition() {
       const query = {
         q: this.query,
@@ -304,7 +312,7 @@ export default {
           this.to = response.data.to;
         })
         .finally(() => {
-          this.showVueTable = true;
+          this.isLoaded = true;
         });
     },
     retrieveEvents() {
@@ -348,44 +356,6 @@ export default {
           this.AgeGroupList= response.data.ageGroups;
         })
     },
-    generateRandomData() {
-      for (let i = 0; i < 14; i++) {
-        this.data.push({
-          index: i+1,
-          team: this.getRandomTeam(),
-          win: Math.floor(Math.random() * 30),
-          loss: Math.floor(Math.random() * 30),
-          draw: Math.floor(Math.random() * 30),
-          points: Math.floor(Math.random() * 30),
-          for: Math.floor(Math.random() * 30),
-          against: Math.floor(Math.random() * 30),
-          difference: Math.floor(Math.random() * 30),
-        });
-      }
-      for (let i = 0; i < 4; i++) {
-        this.matches.push({
-          date: 'Saturday 10th February',
-          location: 'tuggerah Football Grounds',
-          team1: this.getRandomTeam(),
-          team1score: Math.floor(Math.random() * 20),
-          team2: this.getRandomTeam(),
-          team2score: Math.floor(Math.random() * 20),
-        });
-      }
-    },
-    getRandomTeam() {
-      const teams = [
-        'North',
-        'South',
-        'Easts',
-        'Wests',
-        'Brothers',
-        'Saints',
-        'Spartans',
-        'Knights'
-      ];
-      return teams[Math.floor(Math.random() * teams.length)];
-    }
   }
 }
 </script>
