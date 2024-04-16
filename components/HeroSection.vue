@@ -21,27 +21,26 @@
         <p class="mb-4 text-justify indent-10 text-lg text-white">
             {{ contentblurb }}
         </p>
-        <NuxtLink to="/shop">
-            <BaseButton
+          <BaseButton
 
-              class="
-                from-40% via-95% to-100%
-                max-w-full rounded-lg
-                border border-gray-200
-                bg-gradient-to-tr
-                from-[#5EE738]
-                via-[#3e872a]
-                to-[#050505]
-                py-4
-                px-8
-                font-bold
-                uppercase
-                text-white
-              "
-            >
-              {{ cta }}
-            </BaseButton>
-          </NuxtLink>
+            class="
+              from-40% via-95% to-100%
+              max-w-full rounded-lg
+              border border-gray-200
+              bg-gradient-to-tr
+              from-[#5EE738]
+              via-[#3e872a]
+              to-[#050505]
+              py-4
+              px-8
+              font-bold
+              uppercase
+              text-white
+            "
+            @click="test"
+          >
+            {{ cta }}
+          </BaseButton>
       </div>
       <div
         class="relative col-span-1 mb-4 w-full p-4 py-8"
@@ -75,9 +74,20 @@ export default {
       },
       headline: 'TFW RL 9’S',
       cta: 'REGISTER NOW',
-      contentblurb: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas aliquam dictum risus sed rutrum. Sed bibendum lectus ac imperdiet elementum. Ut luctus erat a magna vehicula, in posuere urna sagittis. Quisque elementum sem mi, sit amet vehicula nisi posuere sit amet. Praesent iaculis sapien ac nunc auctor, nec sagittis orci egestas. Vivamus scelerisque vitae lorem eu tincidunt. Duis ac orci id urna dictum sodales. Suspendisse euismod lectus ac risus pellentesque facilisis. Sed est nulla, posuere vel pharetra in, viverra eu sem. Fusce gravida luctus nisl gravida convallis.',
+      contentblurb: 'The Final Whistle is a dynamic platform dedicated to sharing uplifting stories from Junior Rugby League. Through engaging content and vibrant storytelling, it celebrates the achievements, resilience, and sportsmanship of young athletes. By amplifying these positive narratives, it aims to inspire and empower the rugby league community, fostering a culture of inclusivity and encouragement. With a focus on teamwork, perseverance, and community spirit, The Final Whistle showcases the transformative power of sport in shaping young lives.\n(Temporary Statement)',
     };
   },
+  methods: {
+    test() {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in progress...',
+        position: 'bottom',
+        variant: 'info',
+        queue: true
+      })
+    },
+  }
 };
 </script>
 

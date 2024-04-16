@@ -269,7 +269,7 @@ export default {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
-        maxFieldsPerPage: 10,
+        maxFieldsPerPage: 12,
       };
 
       Object.keys(query).forEach((key) => {

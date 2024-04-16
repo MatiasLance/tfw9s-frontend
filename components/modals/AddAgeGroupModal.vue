@@ -34,6 +34,7 @@
                     :step="1"
                     :max="100"
                     :rules="rules"
+                    @keyup="handleMinAge"
                     solo
                     inputmode="numeric"
                     />
@@ -48,10 +49,11 @@
                     single-line
                     label="Enter Maximum Age"
                     type="number"
-                    :min="ageGroupData.max_age"
+                    :min="1"
                     :step="1"
                     :max="100"
                     :rules="rules"
+                    @keyup="handleMaxAge"
                     solo
                     inputmode="numeric"
                     />
@@ -106,11 +108,43 @@ export default {
   },
 
   methods: {
+    handleMinAge() {
+      if (this.ageGroupData.min_age < 1) {
+        this.ageGroupData.min_age = 0
+      } else if (this.ageGroupData.min_age > 100) {
+        this.ageGroupData.min_age = 100
+      }
+    },
+    handleMaxAge() {
+      if (this.ageGroupData.max_age > 100) {
+        this.ageGroupData.max_age = 100
+      } else if (this.ageGroupData.max_age < 1) {
+        this.ageGroupData.max_age = 0
+      }
+    },
     validate() {
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
           duration: 5000,
           message: 'Fill out all required fields',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else if (this.ageGroupData.min_age > this.ageGroupData.max_age) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Minimum Age should be lower than Maximum Age',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else if (this.ageGroupData.min_age === this.ageGroupData.max_age) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Minimum and Maximum Age should not have the same value',
           position: 'bottom',
           variant: 'danger',
           queue: true,
@@ -150,6 +184,7 @@ export default {
     },
     closeDialog() {
       this.$emit('close')
+      this.reset()
     },
     reset() {
       this.ageGroupData = []

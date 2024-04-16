@@ -1,38 +1,35 @@
 <template>
-  <div>
-    <BaseHeader class="bg-gradient-to-r from-brand-dgrey to-brand-black">
+  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+    <BaseHeader
+    class="mx-auto max-w-screen-xl gap-4
+    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    >
       <div
         class="
           col-span-12
-          mt-12
-          space-y-3
-          px-6
           text-center
-          sm:space-y-3 sm:text-left
+          sm:space-y-3
+          sm:text-left
           lg:col-span-6
-          xl:mt-10
-        "
+          xl:mt-10"
+        data-aos="fade-right"
       >
         <span
           class="
-            superheadline
-            flex flex-row
+            superheadline flex flex-row
             items-center
-            pb-3
             text-[1rem]
             font-normal
+            text-white
           "
         >
           <span class="font-medium">
-            <NuxtLink to="/">
-              <VBtn text color="white">Home</VBtn>
-            </NuxtLink>
             <NuxtLink to="/admin">
               <VBtn text color="white">Admin</VBtn>
             </NuxtLink>
           </span>
         </span>
-        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-6xl">
+        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
           Categories
         </h1>
       </div>
@@ -49,14 +46,18 @@
             <button
               type="button"
               class="
+                bg-gradient-to-br
+                from-[#5EE738]
+                to-[#050505]
                 text-bold
+                text-white
                 mr-2
                 flex
                 items-center
                 rounded
-                border border-solid border-gray-500
                 py-1 pl-2 pr-3
-                hover:border-brand-black hover:bg-brand-black hover:text-white
+                hover:brightness-125
+                transition
               "
             >
               <i class="ri-add-fill"></i>
@@ -110,7 +111,7 @@
             <span class="ml-1">Products</span>
           </button>
         </div>
-        <ul class="text-sm sm:text-base">
+        <ul class="text-sm sm:text-base gap-2">
           <TreeItem
             v-for="category in categories"
             :key="category.id"

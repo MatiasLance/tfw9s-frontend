@@ -87,6 +87,10 @@ export default {
       type: Array,
       required: true
     },
+    manager: {
+      type: Array,
+      required: true
+    },
     getEvents: {
       type: Function,
       required: true,
@@ -151,9 +155,19 @@ export default {
     }
   },
   watch: {
+    manager: {
+      handler(newManager) {
+        if (newManager.length > 0) {
+          this.retrieveEvents()
+        }
+      },
+      immediate: true,
+    },
     dateFilter: {
       handler(newDate) {
-        this.retrieveEvents();
+        if (newDate) {
+          this.retrieveEvents()
+        }
       },
       immediate: true,
     },
@@ -241,11 +255,6 @@ export default {
       this.showSubmitResultModal = false
       this.retrieveEvents();
     },
-    getCurrentDate() {
-      const currentDate = new Date();
-      return new Date(currentDate.getFullYear(),
-        currentDate.getMonth(), currentDate.getDate());
-    },
     reformatTime(timeString) {
       const [
         hours,
@@ -304,8 +313,8 @@ export default {
         // eslint-disable-next-line camelcase, no-const-assign
         event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
       }
-
       const query = {
+        manager: this.manager[0]?.id ?? null,
         q: this.query,
         sort: 'latest',
         page: this.page,

@@ -36,36 +36,42 @@
       </div>
     </BaseHeader>
     <section class="mx-auto max-w-screen-xl gap-4 p-7">
-      <div class="grid grid-cols-2 gap-2 sm:grid-cols-6">
-        <div class="col-span-2">
-          <VSelect
-          v-model="selectedYear"
-          :items="formattedYears"
-          placeholder="Select Event Year"
-          :clearable="false"
-          solo
-          />
+      <div class="grid grid-cols-3 gap-2">
+        <div class="col-span-3 p-2"  data-aos="fade-up">
+          <span class="flex flex-wrap gap-2">
+            <VSelect
+            v-model="selectedYear"
+            :items="formattedYears"
+            placeholder="Select Event Year"
+            solo
+            class="md:w-80 lg:w-80"
+            />
+            <VSelect
+            v-model="selectedAgeGroup"
+            :items="formattedAgeGroup"
+            placeholder="Select Age Group"
+            solo
+            class="md:w-80 lg:w-80"
+            />
+            <VSelect
+            v-model="selectedEvent"
+            :items="filteredEvents"
+            placeholder="Select Event"
+            solo
+            class="md:w-80 lg:w-80"
+            />
+          </span>
         </div>
-        <div class="col-span-2">
-          <VSelect
-          v-model="selectedEvent"
-          :items="filteredEvents"
-          placeholder="Select Event"
-          solo
-          />
-        </div>
-        <div class="col-span-2">
-          <VSelect
-          v-model="selectedGroup"
-          :items="ageGroup"
-          placeholder="Select Age Group"
-          solo
-          />
-        </div>
-        <div
+        <div class="col-span-3">
+          <section
+          v-if="totalPages > 0"
+          class="grid w-full grid-cols-1 md:grid-cols-2 gap-2"
+          >
+          <div
           v-for="(match) in MatchList"
           :key="match.id" data-aos="fade-up"
-          class="col-span-2 sm:col-span-6 lg:col-span-3"
+          data-aos-offset="0"
+          class="col-span-1"
         >
         <div class="grid grid-cols-5 rounded-lg bg-[#212121] p-4">
           <div class="col-span-5 text-xl font-medium text-white">
@@ -79,14 +85,14 @@
               <img
               :src="getMediaURL(match.team1.media[0])"
               alt="Team 1 logo"
-              class="h-full w-full object-contain xl:object-cover"
+              class="h-full w-full object-contain"
               />
             </span>
             <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
               <img
               :src="getMediaURL(match.team2.media[0])"
               alt="Team 2 logo"
-              class="h-full w-full object-contain xl:object-cover"
+              class="h-full w-full object-contain"
               />
             </span>
           </div>
@@ -108,13 +114,6 @@
             >
             {{ match.team2.name }}
           </div>
-          <!--
-            <div v-if="match.submit"
-            class="col-span-5 text-2xl font-bold text-white text-center"
-            >
-            {{ match.team1_score+':'+ match.team2_score}}
-            </div>
-          -->
           <div v-if="match.submit"
           class="col-span-5 text-2xl text-white font-semibold
           flex justify-center pt-2 relative"
@@ -153,6 +152,17 @@
           </div>
         </div>
         </div>
+          </section>
+          <section
+          v-if="totalPages=== 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          data-aos="fade-up"
+          >
+          No data available
+          </section>
+        </div>
       </div>
     </section>
   </div>
@@ -169,62 +179,40 @@ export default {
         description: ''
       },
       selectedEvent: null,
+      selectedAgeGroup: null,
       selectedYear: null,
-      selectedGroup: '',
+      AgeGroupList: [],
       FieldList: [],
       EventList: [],
       MatchList: [],
-      events: [
-        'Event 1',
-        'Event 2',
-        'Event 3'
-      ],
-      eventYears: [
-        '2020',
-        '2021',
-        '2022',
-        '2023',
-        '2024',
-      ],
-      ageGroup: [
-        '12 Years Below',
-        '13 to 15',
-        '16 to 18',
-        '19 to 24',
-        '25 and above'
-      ],
-      dataColumns: [
-        { name: 'index', label: '' },
-        { name: 'team', label: 'Team' },
-        { name: 'win', label: 'Win' },
-        { name: 'loss', label: 'Loss' },
-        { name: 'draw', label: 'Draw' },
-        { name: 'points', label: 'Points' },
-        { name: 'for', label: 'For' },
-        { name: 'against', label: 'Against' },
-        { name: 'difference', label: 'Difference' },
-      ],
-      showVueTable: true,
-      matches: [],
-      data: [],
+      isLoaded: false,
+      from: 0,
+      to: 0,
+      page: 1,
+      perPage: 10,
+      totalPages: 0,
+      totalItems: 0,
     }
   },
   computed: {
     formattedEvents() {
       return this.EventList.map(event => ({
-        text: event.name,
+        text: `${event.name} ${this.replaceUnderWithU(event.agegroup.name)}`,
         value: event.id,
+        agegroup: event.agegroup_id,
         date: new Date(event.event_date),
       }));
     },
+    formattedAgeGroup() {
+      return this.AgeGroupList.map(agegroup =>
+        ({ text: agegroup.name, value: agegroup.id }));
+    },
     filteredEvents() {
-      if (this.selectedYear) {
+      if (this.selectedYear && this.selectedAgeGroup) {
         return this.formattedEvents.filter(event => {
-          if (event && event.date) {
-            return event.date.getFullYear() === this.selectedYear;
-          } else {
-            return false;
-          }
+          return event && event.date &&
+                event.date.getFullYear() === this.selectedYear &&
+                event.agegroup === this.selectedAgeGroup;
         });
       } else {
         return this.formattedEvents;
@@ -245,43 +233,74 @@ export default {
     },
   },
   watch: {
+    EventList: {
+      handler(newEvents) {
+        if (Array.isArray(newEvents) && newEvents.length > 0) {
+          const firstEvent = newEvents[0];
+          if (firstEvent && firstEvent.event_date) {
+            const eventDate = new Date(firstEvent.event_date);
+            if (!isNaN(eventDate)) {
+              this.selectedYear = eventDate.getFullYear();
+              this.selectedEvent = firstEvent.id;
+              this.selectedAgeGroup = firstEvent.agegroup_id;
+              this.retrieveEventMatch()
+            } else {
+              console.error('Invalid event date format');
+            }
+          } else {
+            console.error('Missing or invalid event data');
+          }
+        } else {
+          console.warn('No events or invalid events array');
+        }
+      },
+      immediate: true,
+    },
     selectedYear: {
       handler(newYear) {
-        if (newYear) {
-          this.selectedEvent = null
-          this.query = null
-          this.retrieveEventMatch();
+        if (newYear && this.isLoaded) {
+          this.page = 1
+          /*
+           * this.selectedEvent = null
+           * this.selectedAgeGroup = null
+           */
+          this.selectedAgeGroup = this.formattedAgeGroup[0]?.value ?? null;
+          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
+        }
+      },
+      immediate: true,
+    },
+    selectedAgeGroup: {
+      handler(newYear) {
+        if (newYear && this.isLoaded) {
+          this.page = 1
+          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
         }
       },
       immediate: true,
     },
     selectedEvent: {
       handler(newEvent) {
-        if (newEvent) {
-          this.query = null
+        if (newEvent && this.isLoaded) {
+          this.page = 1
+          // this.query = null
           this.retrieveEventMatch();
-        }
-      },
-      immediate: true,
-    },
-    query: {
-      handler(newQuery) {
-        if (newQuery) {
-          this.retrieveEventMatch();
-        } else if (newQuery === '') {
-          this.retrieveEventMatch();
+        } else if (this.isLoaded) {
+          this.team = []
+          this.totalPages = 0
         }
       },
       immediate: true,
     },
   },
   created() {
+    this.retrieveAgeGroups();
     this.retrieveEvents();
-    setTimeout(() => {
-      this.showVueTable = true
-    }, 1000);
   },
   methods: {
+    replaceUnderWithU(str) {
+      return str.replace(/^Under \b/, 'U');
+    },
     doubleDigitFormat(num) {
       if (num < 10) {
         return `0${num}`;
@@ -384,6 +403,26 @@ export default {
           this.retrieveFields();
         });
     },
+    retrieveAgeGroups() {
+      const query = {
+        q: this.query,
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/agegroups?${queryString}`)
+        .then((response) => {
+          this.AgeGroupList= response.data.ageGroups;
+        })
+    },
     retrieveFields() {
       const query = {
         q: this.query,
@@ -444,7 +483,6 @@ export default {
               })
             };
           });
-          console.log(EventList)
           this.MatchList = EventList.flatMap(data => {
             return data.eventmatch;
           });
@@ -454,8 +492,7 @@ export default {
           this.to = response.data.to;
         })
         .finally(() => {
-          this.showCustomVueTable = true;
-          console.log('Matches: ', this.MatchList)
+          this.isLoaded = true;
         });
     },
   }

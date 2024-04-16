@@ -4,6 +4,7 @@
 
 body{
   background: #1A1A1B;
+  /* filter: invert(100%); */
 }
 .transform-fade-down-enter-active,
 .transform-fade-down-leave-active {
@@ -22,6 +23,7 @@ body{
     @apply text-white tracking-wide leading-relaxed;
 }
 
+/* Scrollbar Config */
 ::-webkit-scrollbar {
   width: 0px;
   height: 0px;
@@ -35,6 +37,15 @@ body{
 ::-webkit-scrollbar-thumb {
   background-color: #3e872a;
   border-radius: 5px;
+}
+
+/* For Transparent input box on auto fill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-transition: "color 9999s ease-out, background-color 9999s ease-out";
+    -webkit-transition-delay: 9999s;
 }
 
 .fade-left {
@@ -105,6 +116,7 @@ textarea:focus {
   box-shadow: 0 0 0px rgba(0, 0, 0, 0.5) !important; /* Add a box shadow when focused */
 }
 
+/* For Transparent input box vue components*/
 .v-input__slot input {
   background-color: transparent !important;
 }

@@ -1,34 +1,37 @@
 <!-- eslint-disable max-len -->
 <template>
   <div class="h-full  bg-[#1A1A1B]">
-    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
+    <BaseHeader
+    class="mx-auto max-w-screen-xl gap-4
+    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    >
       <div
         class="
-          space-y-3
-          px-6
-          text-left
-          sm:text-left
-          lg:col-span-6 lg:mt-10
-          xl:mt-10
-        "
+          col-span-12
+          text-center
+          lg:space-y-3
+          lg:text-left
+          lg:col-span-6
+          xl:mt-10"
+          data-aos="fade-right"
       >
         <span
           class="
             superheadline
             flex flex-row
             items-center
-            pb-3
             text-[1rem]
             font-normal
+            text-white
           "
         >
           <span class="font-medium">
-            <NuxtLink to="/admin">
-              <VBtn text color="white">Admin</VBtn>
+            <NuxtLink to="/">
+              <VBtn text color="white">Home</VBtn>
             </NuxtLink>
           </span>
         </span>
-        <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
+        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
           News
         </h1>
       </div>
@@ -70,70 +73,72 @@
       <article class="mx-auto max-w-screen-xl gap-4">
           <div class="grid grid-cols-1 gap-4">
             <div
-              v-for="(news, index) in newsList"
-              :key="index" class="group col-span-1 bg-[#212121]"
-              data-aos="fade-up"
+            v-for="(news, index) in newsList"
+            :key="index" class="group col-span-1 bg-[#212121]"
+            data-aos="fade-up"
+          >
+            <div
+              class="
+              grid grid-cols-1
+              gap-4 md:grid-cols-6
+              lg:grid-cols-6"
             >
               <div
                 class="
-                grid grid-cols-1
-                gap-4 md:grid-cols-6
-                lg:grid-cols-6"
+                col-span-1 p-4 md:col-span-3
+                lg:col-span-4 lg:p-8"
               >
-                <div
+                <h3
                   class="
-                  col-span-1 p-4 md:col-span-3
-                  lg:col-span-4 lg:p-8"
+                  grid text-2xl font-semibold
+                  text-white sm:grid-cols-1"
                 >
-                  <h3
-                    class="
-                    grid text-2xl font-semibold
-                    text-white sm:grid-cols-1"
-                  >
-                    {{ news.headline }}
-                  </h3>
+                  {{ news.headline }}
+                </h3>
 
-                  <p class="text-sm text-brand-slate">
+                <p class="text-sm text-brand-slate">
                   {{ formattedDate(news.updated_at) }}
-                  </p>
+                </p>
 
-                  <p
+                <p
                   class="my-4 text-white line-clamp-3"
                   v-html="news.content"
-                  />
+                ></p>
 
-                  <div class="mt-4 flex flex-wrap justify-start gap-2">
-                    <NuxtLink :to="'/news-article/?id='+ news.id">
-                      <BaseButton
-                      class="from-40% via-95% to-100%
-                      max-w-full rounded-lg
-                      bg-gradient-to-tr
-                      from-[#5EE738]
-                      via-[#3e872a]
-                      to-[#050505]
-                      py-4
-                      px-8
-                      uppercase
-                      text-white"
-                      >
-                      READ MORE
-                      </BaseButton>
-                    </NuxtLink>
-                  </div>
-                </div>
                 <div
-                  class="col-span-1 overflow-hidden
-                  md:col-span-3 lg:col-span-2"
-                >
-                  <img
-                    :src="getMediaURL(news.media[0], 'news')"
-                    alt="Product Image"
-                    class="h-64 w-full object-cover transition-all
-                      group-hover:scale-110"
+                  class="mt-8 flex flex-wrap justify-start gap-2"
+                  >
+                  <NuxtLink :to="'/news-article/?id='+ news.id">
+                    <BaseButton
+                    class="from-40% via-95% to-100%
+                    max-w-full rounded-lg
+                    bg-gradient-to-tr
+                    from-[#5EE738]
+                    via-[#3e872a]
+                    to-[#050505]
+                    py-4
+                    px-8
+                    uppercase
+                    text-white"
                     >
+                    READ MORE
+                    </BaseButton>
+                  </NuxtLink>
                 </div>
               </div>
+              <div
+                class="col-span-1 overflow-hidden
+                md:col-span-3 lg:col-span-2"
+              >
+                <img
+                  :src="getMediaURL(news.media[0], 'news')"
+                  alt="Product Image"
+                  class="h-64 w-full object-cover transition-all
+                    group-hover:scale-110"
+                  >
+              </div>
             </div>
+          </div>y
           </div>
       </article>
     </div>
@@ -148,7 +153,6 @@ import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
 import SearchBar from '~/components/SearchBar'
 import aosMixin from '@/mixins/aos';
-import formattedDate from '~/mixins/utilities/formattedDate'
 
 export default {
   buildModules: [ '@nuxtjs/moment' ],
@@ -159,7 +163,6 @@ export default {
   mixins: [
     aosMixin,
     logout,
-    formattedDate,
     handlesMedia
   ],
   data() {
@@ -195,6 +198,45 @@ export default {
     this.page = 1 // Reset pagination
   },
   methods: {
+    formattedDate(dateString) {
+      const date = new Date(dateString);
+      const daysOfWeek = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+      ];
+      const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
+      const dayOfWeek = daysOfWeek[date.getDay()];
+      const dayOfMonth = date.getDate();
+      const monthName = months[date.getMonth()];
+      const year = date.getFullYear();
+
+      const suffixes = [
+        'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'
+      ];
+      const suffixIndex = dayOfMonth % 100;
+      const suffix = suffixes[suffixIndex >= 11 &&
+      suffixIndex <= 13 ? 0 : dayOfMonth % 10];
+
+      return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`;
+    },
     retrieveNews() {
       this.isNewsLoading = true;
 

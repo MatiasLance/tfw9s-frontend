@@ -9,8 +9,8 @@
             text-left
             sm:text-left
             lg:col-span-6 lg:mt-10
-            xl:mt-10
-          "
+            xl:mt-10"
+          data-aos="fade-right"
         >
           <span
             class="
@@ -666,7 +666,6 @@ export default {
             message: err.message,
             position: 'bottom',
             variant: 'danger',
-            closable: true,
             queue: true,
           });
         });
@@ -690,7 +689,6 @@ export default {
             message: err.message,
             position: 'bottom',
             variant: 'danger',
-            closable: true,
             queue: true,
           });
         });
@@ -733,7 +731,6 @@ export default {
             message: err.message,
             position: 'bottom',
             variant: 'danger',
-            closable: true,
             queue: true,
           });
         });

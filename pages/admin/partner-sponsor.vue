@@ -67,7 +67,7 @@
               </button>
               </div>
               <div class="w-full sm:w-80">
-              <form @submit.prevent="retrieveNews">
+              <form @submit.prevent="retrieveSponsors">
                 <SearchBar v-model="query" />
               </form>
             </div>
@@ -94,108 +94,100 @@
             class="grid grid-cols-1 gap-x-0 gap-y-6
             sm:grid-cols-2 sm:gap-x-4
             md:grid-cols-3 md:gap-x-4 md:gap-y-8
-            xl:grid-cols-3 xl:gap-x-4 xl:gap-y-12
+            xl:grid-cols-4 xl:gap-x-4 xl:gap-y-12
             "
         >
         <article
-            v-for="code in discountCodeList"
-            :key="code.id"
+            v-for="sponsor in partnerSponsors"
+            :key="sponsor.id"
             class="
             group
             mb-5 flex
             rounded
-            border border-gray-200
-            bg-white
+            text-white
+            bg-[#212121]
             shadow-sm
             transition
             duration-200
             hover:cursor-pointer hover:shadow-xl
+            flex
+            flex-col
             "
             data-aos="fade-up"
         >
-            <div class="w-full">
-            <div class="p-5">
-                <div class="mb-9 space-y-2">
-                <span
-                class="text-2xl selection:bg-yellow-600 selection:text-white"
-                >
-                    <span
-                    class="
-                        font-michroma font-bold
-                        transition
-                        duration-200
-                    "
-                    >
-                        {{ code.code }}
-                    </span>
-                </span>
-                </div>
-                <div class="mb-6 w-full">
-                <p
-                    class="paragraph text-left"
-                    v-html="code.description"
-                >
-                </p>
-                </div>
-                <div class="mt-4 flex flex-wrap justify-start gap-2">
-                <button
-                    type="button"
-                    class="
-                    hover:text-swd-red
-                    hover:decoration-swd-red
-                    mr-2
-                    flex
-                    cursor-pointer
-                    items-center
-                    text-sm hover:underline
-                    "
-                    @click="editNews(code.id)"
-                >
-                    <i class="ri-edit-line"></i> Edit
-                </button>
-                <button
-                    type="button"
-                    class="
-                    text-swd-red
-                    hover:text-swd-red
-                    hover:decoration-swd-red
-                    mr-2
-                    flex
-                    cursor-pointer
-                    items-center
-                    text-sm hover:underline
-                    "
-                    @click="removeNews(code.id)"
-                >
-                    <i class="ri-delete-bin-5-line"></i> Remove
-                </button>
-                </div>
-            </div>
-            </div>
-            <div
-            v-if="showThumbnail"
-            class="w-full overflow-hidden border-l border-gray-200 md:w-1/4"
-        >
+          <div class="w-full h-64 overflow-hidden">
             <img
+            :src="getMediaURL(sponsor.media[0])"
+            alt="Sponsor Image"
+            class="w-full h-full object-contain transition-all
+              group-hover:scale-110"
+            >
+          </div>
+          <div class="w-full">
+          <div class="p-5">
+              <div class="mb-4 space-y-2">
+              <span
+              class="text-2xl selection:bg-yellow-600 selection:text-white"
+              >
+                <span
                 class="
-                mx-auto
-                cursor-pointer
-                object-cover
+                font-michroma font-bold
                 transition
                 duration-200
-                group-hover:scale-125
                 "
-                :src="getMediaURL([])"
-                :alt="code.name"
-            />
-            </div>
+                >
+                    {{ sponsor.company_name }}
+                </span>
+              </span>
+              </div>
+              <div class="mb-6 w-full">
+              <span class="text-left text-slate-400 line-clamp-1">
+                {{sponsor.description}}
+              </span>
+              </div>
+              <div class="mt-4 flex flex-wrap justify-start gap-2">
+              <button
+                  type="button"
+                  class="
+                  text-brand-green
+                  hover:text-brand-green
+                  hover:decoration-brand-green
+                  mr-2
+                  flex
+                  cursor-pointer
+                  items-center
+                  text-sm hover:underline
+                  "
+                  @click="editSponsor(sponsor.id)"
+              >
+                  <i class="ri-edit-line"></i> Edit
+              </button>
+              <button
+                  type="button"
+                  class="
+                  text-brand-red
+                  hover:text-brand-red
+                  hover:decoration-brand-red
+                  mr-2
+                  flex
+                  cursor-pointer
+                  items-center
+                  text-sm hover:underline
+                  "
+                  @click="removeNews(sponsor.id)"
+              >
+                  <i class="ri-delete-bin-5-line"></i> Remove
+              </button>
+              </div>
+          </div>
+          </div>
         </article>
         </div>
       </div>
        <!-- showAdd modal component -->
        <OModal
-       :active="showAddNewsModal"
-       @close="showAddNewsModal = false"
+       :active="showAddSponsorsModal"
+       @close="showAddSponsorsModal = false"
        >
         <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
           <h3
@@ -203,89 +195,66 @@
         mb-3
         font-bold"
         >
-            Add Discount Code
+            Add Partner Sponsor
           </h3>
           <hr class="my-3">
-          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <div class="col-span-3 mb-4">
-              <label class="mb-1 block"> Codename: </label>
-              <input
-                v-model="discount.codename"
-                class="
-                  w-full
-                  appearance-none
-                  bg-gray-300
-                  py-2
-                  px-3
-                  hover:border-gray-400
-                  focus:border-gray-400 focus:outline-none
-                "
-                :class="showAddNewsError.codename.status ? 'border border-red-500' : 'border border-gray-100'"
-                @keyup="showAddNewsError.codename.status = false"
+          <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <div class="col-span-1 md:col-span-2">
+              <label for="sponsorname" class="mb-1 block">
+                Company Name:
+              </label>
+              <VTextField
+              id="name"
+              v-model="sponsor.company_name"
+              label="Enter Company Name"
+              :rules="rules"
+              type="text"
+              solo
               />
-              <small
-                v-if="showAddNewsError.codename.status"
-                class="my-1 block text-xs text-red-500"
-              >
-                {{ showAddNewsError.codename.message }}
-              </small>
             </div>
-            <div class="col-span-3 mb-4 lg:col-span-1">
-                <label class="mb-1 block">Discount Rate:</label>
-                <div class="flex flex-wrap">
-                <OInput
-                    v-model="discount.rate"
-                    placeholder="Rate"
-                    type="number"
-                    icon="percent"
-                    min="0"
-                    max="100"
-                    class="w-40"
-                ></OInput>
-                <small
-                v-if="showAddNewsError.rate.status"
-                class="my-1 block text-xs text-red-500"
-              >
-                {{ showAddNewsError.rate.message }}
-              </small>
-                </div>
-            </div>
-            <div class="col-span-3 mb-4 lg:col-span-1">
-              <div class="flex flex-wrap">
-            <label class="mb-1 block">Applied to carts with at least:</label>
-                  <OInput
-                      v-model="discount.amountapplied"
-                      placeholder="Amount"
-                      type="number"
-                      icon="currency-usd"
-                      min="0"
-                      max="100"
-                      class="w-40"
-                  ></OInput>
-              </div>
-            </div>
-            <div class="col-span-3 mb-4">
-              <label class="mb-1 block"> Short Description: </label>
-              <input
-                v-model="discount.description"
-                class="
-                  w-full
-                  appearance-none
-                  bg-gray-300
-                  py-2
-                  px-3
-                  hover:border-gray-400
-                  focus:border-gray-400 focus:outline-none
-                "
-                :class="showAddNewsError.description.status ? 'border border-red-500' : 'border border-gray-100'"
-                @keyup="showAddNewsError.description.status = false"
+            <div class="col-span-1">
+              <label for="sponsorfirst" class="mb-1 block">
+                Firstname:
+              </label>
+              <VTextField
+              id="name"
+              v-model="sponsor.first_name"
+              label="Enter Firstname"
+              :rules="rules"
+              type="text"
+              solo
               />
-              <small
-                v-if="showAddNewsError.description.status"
-                class="my-1 block text-xs text-red-500"
-              >
-                {{ showAddNewsError.description.message }}
-              </small>
+            </div>
+            <div class="col-span-1">
+              <label for="sponsorlast" class="mb-1 block">
+                Lastname:
+              </label>
+              <VTextField
+              id="name"
+              v-model="sponsor.last_name"
+              label="Enter Lastname"
+              :rules="rules"
+              type="text"
+              solo
+              />
+            </div>
+            <div class="col-span-1 md:col-span-2">
+              <label for="sponsordescription" class="mb-1 block">
+                Description:
+              </label>
+              <VTextarea
+              id="name"
+              v-model="sponsor.description"
+              label="Enter Description"
+              :rules="rules"
+              type="text"
+              solo
+              />
+            </div>
+            <div class="col-span-1 md:col-span-2">
+              <ImageUpload
+                @update-image="updateImage"
+              />
             </div>
           </div>
           <hr class="my-3">
@@ -335,73 +304,74 @@
       </OModal>
       <!-- Show Edit News -->
       <OModal
-      :active="showEditNewsModal"
-      @close="showEditNewsModal = false"
+      :active="showEditSponsorsModal"
+      @close="showEditSponsorsModal = false"
     >
       <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
         <h3 class="text-swd-red mb-3 font-bold">
-          Edit Discount Code
+          Edit Partner Sponsor
         </h3>
         <hr class="my-3">
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div class="col-span-3 mb-4">
-            <label class="mb-1 block"> Codename: </label>
-            <input
-              v-model="discount.codename"
-              class="
-                w-full
-                appearance-none
-                border border-gray-100
-                bg-gray-200
-                py-2
-                px-3
-                hover:border-gray-400
-                focus:border-gray-400 focus:outline-none
-              "
-              required
+        <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
+          <div class="col-span-1 md:col-span-2">
+            <label for="sponsorname" class="mb-1 block">
+              Company Name:
+            </label>
+            <VTextField
+            id="name"
+            v-model="sponsor.company_name"
+            label="Enter Company Name"
+            :rules="rules"
+            type="text"
+            solo
             />
           </div>
-          <div class="col-span-3 mb-4 lg:col-span-1">
-            <label class="mb-1 block">Discount Rate:</label>
-            <div class="flex flex-wrap">
-            <OInput
-                v-model="discount.rate"
-                placeholder="Rate"
-                type="text"
-                icon="percent"
-                required
-            ></OInput>
-            </div>
-        </div>
-        <div class="col-span-3 mb-4 lg:col-span-1">
-          <div class="flex flex-wrap">
-        <label class="mb-1 block">Applied to carts with at least:</label>
-              <OInput
-                  v-model="discount.amountapplied"
-                  placeholder="Amount"
-                  type="number"
-                  icon="currency-usd"
-                  min="0"
-                  max="100"
-                  class="w-40"
-              ></OInput>
-          </div>
-        </div>
-        <div class="col-span-3 mb-4">
-            <label class="mb-1 block"> Short Description: </label>
-            <input
-                v-model="discount.description"
-                class="
-                w-full
-                appearance-none
-                bg-gray-200
-                py-2
-                px-3
-                hover:border-gray-400
-                focus:border-gray-400 focus:outline-none
-                "
+          <div class="col-span-1">
+            <label for="sponsorfirst" class="mb-1 block">
+              Firstname:
+            </label>
+            <VTextField
+            id="name"
+            v-model="sponsor.first_name"
+            label="Enter Firstname"
+            :rules="rules"
+            type="text"
+            solo
             />
-            </div>
+          </div>
+          <div class="col-span-1">
+            <label for="sponsorlast" class="mb-1 block">
+              Lastname:
+            </label>
+            <VTextField
+            id="name"
+            v-model="sponsor.last_name"
+            label="Enter Lastname"
+            :rules="rules"
+            type="text"
+            solo
+            />
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <label for="sponsordescription" class="mb-1 block">
+              Description:
+            </label>
+            <VTextarea
+            id="name"
+            v-model="sponsor.description"
+            label="Enter Description"
+            :rules="rules"
+            type="text"
+            solo
+            />
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <ImageUploadEdit
+              :imglistedit="imgListEdit"
+              :imgurledit="imgUrlEdit"
+              @update-image-edit="updateImageEdit"
+              />
+          </div>
         </div>
         <hr class="my-3">
         <div class="block lg:flex lg:flex-auto lg:justify-end">
@@ -450,58 +420,60 @@
     </OModal>
     <!-- showRemoveProduct modal component -->
     <OModal
-      :active="showRemoveNewsModal"
-      @close="showRemoveNewsModal = false"
+      :active="showRemoveSponsorsModal"
+      @close="showRemoveSponsorsModal = false"
     >
       <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
         <h3 class="text-swd-red mb-3 font-bold">
-          Remove Discount Code {{ discount.codename }}
+          Remove Sponsor {{ sponsor.company_name }}
         </h3>
         <hr class="my-3">
         <p class="text-center text-lg font-semibold">
           Are you sure you want to delete this ?
         </p>
         <hr class="my-3">
-        <button
-          type="button"
-          class="
-            my-2
-            inline-block
-            w-full
-            border border-transparent
-            bg-brand-green
-            py-3
-            px-5
-            text-center
-            font-bold
-            text-white
-            hover:bg-green-800
-            lg:mx-4 lg:w-48
-          "
-          @click="remove(editingNo)"
-        >
-          Yes, remove it
-        </button>
-        <button
-          type="button"
-          class="
-            my-2
-            inline-block
-            w-full
-            border border-transparent
-            bg-brand-red
-            py-3
-            px-5
-            text-center
-            font-bold
-            text-white
-            hover:bg-brand-dred
-            lg:mx-4 lg:w-48
-          "
-          @click="closeRemove"
-        >
-          No
-        </button>
+        <div class="block lg:flex lg:flex-auto lg:justify-center">
+          <button
+            type="button"
+            class="
+              my-2
+              inline-block
+              w-full
+              border border-transparent
+              bg-brand-green
+              py-3
+              px-5
+              text-center
+              font-bold
+              text-white
+              hover:bg-green-800
+              lg:mx-4 lg:w-48
+              "
+            @click="remove(editingNo)"
+            >
+            Yes, remove it
+          </button>
+          <button
+            type="button"
+            class="
+              my-2
+              inline-block
+              w-full
+              border border-transparent
+              bg-brand-red
+              py-3
+              px-5
+              text-center
+              font-bold
+              text-white
+              hover:bg-brand-dred
+              lg:mx-4 lg:w-48
+              "
+            @click="closeRemove"
+            >
+            No
+          </button>
+        </div>
       </div>
     </OModal>
     </div>
@@ -511,11 +483,13 @@
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
 import logout from '~/mixins/auth/logout';
-import handlesMedia from '~/mixins/shop/handlesMedia'
+import handlesMedia from '~/mixins/shop/handlesMedia';
 import BasePagination from '~/components/base/BasePagination';
 import SearchBar from '~/components/SearchBar'
 import aosMixin from '@/mixins/aos';
 import currencyMixin from '@/mixins/currency';
+import ImageUpload from '~/components/ImageUpload'
+import ImageUploadEdit from '~/components/ImageUploadEdit'
 
 const toNumber = (str) => +str;
 export default {
@@ -523,6 +497,8 @@ export default {
   components: {
     BasePagination,
     SearchBar,
+    ImageUpload,
+    ImageUploadEdit
   },
   mixins: [
     aosMixin,
@@ -532,30 +508,20 @@ export default {
   ],
   data() {
     return {
+      sponsor: {
+        // eslint-disable-next-line camelcase
+        company_name: '',
+        // eslint-disable-next-line camelcase
+        first_name: '',
+        // eslint-disable-next-line camelcase
+        last_name: '',
+        description: '',
+      },
       myCroppa: {},
       myEditCroppa: {},
       showGenerateCreatedImageBtn: false,
       showGenerateEditedImageBtn: false,
-      discount: {
-        codename: '',
-        rate: '',
-        description: '',
-        amountapplied: '',
-      },
-      showAddNewsError: {
-        codename: {
-          status: false,
-          message: ''
-        },
-        rate: {
-          status: false,
-          message: ''
-        },
-        description: {
-          status: false,
-          message: ''
-        },
-      },
+      rules: [ value => !!value || 'Required' ],
       imgUrl: [],
       imgUrlEdit: [],
       imgList: [],
@@ -566,32 +532,13 @@ export default {
       totalPages: 0,
       totalItems: 0,
       newsList: [],
-      showThumbnail: false,
-      discountCodeList: [],
-      discountCodeListTest: [
-        {
-          id: 1,
-          code: 'CODE1',
-          description: 'This is a test',
-          rate: 30,
-          // eslint-disable-next-line camelcase
-          created_at: '2023-10-21 00:00:00'
-        },
-        {
-          id: 2,
-          code: 'CODE2',
-          description: 'This is a test',
-          rate: 20,
-          // eslint-disable-next-line camelcase
-          created_at: '2023-10-22 04:30:00'
-        },
-      ],
-      editingNo: -1,
+      partnerSponsors: [],
+      editingNo: null,
       isNewsLoading: false,
       isNewsAdded: false,
-      showAddNewsModal: false,
-      showEditNewsModal: false,
-      showRemoveNewsModal: false,
+      showAddSponsorsModal: false,
+      showEditSponsorsModal: false,
+      showRemoveSponsorsModal: false,
       showModal: false,
       headline: '',
       content: '',
@@ -623,38 +570,24 @@ export default {
     },
   },
   mounted() {
-    this.retrieveNews();
+    this.retrieveSponsors();
     this.page = 1 // Reset pagination
   },
   methods: {
-    setAddNewsErrorContentStatus(status) {
-      this.showAddNewsError.content.status = status
-    },
-    getExcerptContent(content) {
-      const truncate = (str, max, suffix) => (str.length < max ? str : `${str.substr(0, str.substr(0, max - suffix.length).lastIndexOf(' '))}${suffix}`);
-      return truncate(content, 190, '...')
-    },
     addPartnerSponsor() {
-      this.showAddNewsModal = true;
+      this.showAddSponsorsModal = true;
       this.reset()
     },
     close() {
-      this.showAddNewsModal = false;
+      this.showAddSponsorsModal = false;
     },
     closeEdit() {
-      this.showEditNewsModal = false;
+      this.showEditSponsorsModal = false;
     },
     closeRemove() {
-      this.showRemoveNewsModal = false;
+      this.showRemoveSponsorsModal = false;
     },
-    isDisable() {
-      return (
-        this.headline === '' ||
-        this.content === '' ||
-        this.imgUrl === ''
-      );
-    },
-    retrieveNews() {
+    retrieveSponsors() {
       this.isNewsLoading = true;
 
       const query = {
@@ -670,17 +603,18 @@ export default {
       })
       const queryString = new URLSearchParams(query).toString()
       this.$axios
-        .$get(`v1/discountcode?${queryString}`)
+        .$get(`v1/partnersponsors?${queryString}`)
         .then((response) => {
-          this.discountCodeList = response.data.discountcode
+          this.partnerSponsors = response.data.partnerSponsors
         })
         .finally(() => {
           this.isNewsLoading = false;
+          console.log(this.partnerSponsors)
         });
     },
     setPage(page) {
       this.page = page
-      this.retrieveNews()
+      this.retrieveSponsors()
     },
     handleCroppaFileSizeExceed(file) {
       this.$oruga.notification.open({
@@ -810,7 +744,6 @@ export default {
     },
     handleNewImageCreate() {
       this.showGenerateCreatedImageBtn = true;
-      this.showAddNewsError.imgList.status = false
     },
     handleImageRemoveCreate() {
       this.showGenerateCreatedImageBtn = false;
@@ -828,103 +761,39 @@ export default {
     toDecimal(x) {
       return Number.parseFloat(x/100).toFixed(2)
     },
-    create() {
-      if (!this.isCreateNewsFormEmpty()) {
-        const decimalRate = this.toDecimal(this.discount.rate)
-        const discountcode = {
-          code: this.discount.codename,
-          rate: decimalRate,
-          description: this.discount.description,
-          amountapplied: this.discount.amountapplied
-        };
-        const form = new FormData();
-        form.append('code', discountcode.code);
-        form.append('rate', discountcode.rate);
-        form.append('description', discountcode.description);
-        form.append('amountapplied', discountcode.amountapplied);
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-        this.$axios
-          .$post('/v1/discountcode', form, config)
-          .then((response) => {
-            this.showAddNewsModal = false;
-            this.isNewsAdded = true;
-            this.$oruga.notification.open({
-              message: response.message,
-              variant: 'success',
-              duration: 5000,
-              position: 'bottom',
-              queue: true,
-            });
-            this.reset();
-            this.retrieveNews();
-          })
-          .catch((err) => {
-            this.$oruga.notification.open({
-              duration: 5000,
-              message: err.message,
-              position: 'bottom',
-              variant: 'danger',
-              closable: true,
-              queue: true,
-            });
-          });
-      } else {
-        const isHeadlineEmptyOrUndefined = (this.discount.codename === '' ||
-        typeof this.discount.codename === 'undefined')
-        const isContentEmptyOrUndefined = (this.discount.rate === '' || typeof this.discount.rate === 'undefined')
-        const isImgListEmpty = (this.discount.description.length === 0)
-        if (isHeadlineEmptyOrUndefined) {
-          this.showAddNewsError.codename.status = true
-          this.showAddNewsError.codename.message = 'Please indicate the discount code'
-          this.$oruga.notification.open({
-            message: this.showAddNewsError.codename.message,
-            variant: 'info',
-            duration: 5000,
-            position: 'bottom',
-            queue: true,
-          });
-        }
-        if (isContentEmptyOrUndefined) {
-          this.showAddNewsError.rate.message = 'Please add discount rate.'
-          this.$oruga.notification.open({
-            message: this.showAddNewsError.rate.message,
-            variant: 'info',
-            duration: 5000,
-            position: 'bottom',
-            queue: true,
-          });
-        }
-        if (isImgListEmpty) {
-          this.showAddNewsError.description.status = true
-          this.showAddNewsError.description.message = 'Please add a short description.'
-        }
-      }
+    updateImage(image) {
+      this.imgList = image
     },
-    editNews(index) {
-      this.$oruga.notification.open({
-        message: 'Retrieving...',
-        variant: 'info',
-        duration: 2000,
-        position: 'bottom',
-        queue: true,
-      });
-      this.editingNo = toNumber(index);
+    updateImageEdit(image) {
+      this.imgListEdit = image
+    },
+    create() {
+      const form = new FormData();
+      form.append('company_name', this.sponsor.company_name)
+      form.append('first_name', this.sponsor.first_name)
+      form.append('last_name', this.sponsor.last_name)
+      form.append('description', this.sponsor.description)
+
+      for (let i = 0; i < this.imgList.length; i++) {
+        form.append('photo[]', this.imgList[i], 'newsThumbnail.png');
+      }
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
       this.$axios
-        .$get(`v1/discountcode/${this.editingNo}`)
+        .$post('/v1/partnersponsors', form, config)
         .then((response) => {
+          this.showAddNewsModal = false;
+          this.isNewsAdded = true;
           this.$oruga.notification.open({
-            message: response.title,
+            message: 'Partner Sponsor Added',
             variant: 'success',
-            duration: 2000,
+            duration: 5000,
             position: 'bottom',
             queue: true,
           });
-          this.discount.codename = response.data.discountcode.code;
-          this.discount.rate = response.data.discountcode.rate * 100;
-          this.discount.description = response.data.discountcode.description;
-          this.discount.amountapplied = response.data
-            .discountcode.amountapplied;
-          this.showEditNewsModal = true;
+          this.reset();
+          this.showAddSponsorsModal = false
+          this.retrieveSponsors();
         })
         .catch((err) => {
           this.$oruga.notification.open({
@@ -932,35 +801,61 @@ export default {
             message: err.message,
             position: 'bottom',
             variant: 'danger',
-            closable: true,
+            queue: true,
+          });
+        });
+    },
+    editSponsor(index) {
+      this.editingNo = toNumber(index);
+      this.$axios
+        .$get(`v1/partnersponsors/${this.editingNo}`)
+        .then((response) => {
+          console.log(response.data)
+          // eslint-disable-next-line max-len, camelcase, vue/max-len
+          this.sponsor.company_name = response.data.partnerSponsor.company_name;
+          // eslint-disable-next-line camelcase
+          this.sponsor.first_name = response.data.partnerSponsor.first_name;
+          // eslint-disable-next-line camelcase
+          this.sponsor.last_name = response.data.partnerSponsor.last_name;
+          this.sponsor.description = response.data.partnerSponsor.description;
+          this.imgUrlEdit = response.data.partnerSponsor.media.map((x) =>
+            `${this.$config.baseURL}/storage/${x.path}`);
+          // eslint-disable-next-line max-len, vue/max-len
+          this.imgListEdit = response.data.partnerSponsor.media.map((x) => x.hash);
+
+          this.showEditSponsorsModal = true;
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.message,
+            position: 'bottom',
+            variant: 'danger',
             queue: true,
           });
         });
     },
     edit(index) {
-      const editObject = this.discountCodeList.find(
-        (itemNews) => itemNews.id === this.editingNo
+      const editObject = this.partnerSponsors.find(
+        (item) => item.id === this.editingNo
       );
-      const decimalRate = this.toDecimal(this.discount.rate)
-      const editedNews = {
-        code: this.discount.codename,
-        rate: decimalRate,
-        description: this.discount.description,
-        amountapplied: this.discount.amountapplied
-      };
       const form = new FormData();
-      form.append('_method', 'PATCH');
-      form.append('code', editedNews.code);
-      form.append('rate', editedNews.rate);
-      form.append('description', editedNews.description);
-      form.append('amountapplied', editedNews.amountapplied);
+      form.append('company_name', this.sponsor.company_name)
+      form.append('first_name', this.sponsor.first_name)
+      form.append('last_name', this.sponsor.last_name)
+      form.append('description', this.sponsor.description)
+
+      for (let i = 0; i < this.imgListEdit.length; i++) {
+        form.append('photo[]', this.imgListEdit[i]);
+      }
+
       form.append('id', index);
       this.$axios
-        .$post(`v1/discountcode/${editObject.id}`, form)
+        .$post(`v1/partnersponsors/${editObject.id}`, form)
         .then((response) => {
           this.showEditNewsModal = false;
           this.$oruga.notification.open({
-            message: response.Message,
+            message: 'Partner Sponsor Updated',
             variant: 'success',
             duration: 5000,
             position: 'bottom',
@@ -968,7 +863,8 @@ export default {
           });
           this.editingNo = '';
           this.reset();
-          this.retrieveNews();
+          this.showEditSponsorsModal = false
+          this.retrieveSponsors();
         })
         .catch((err) => {
           this.$oruga.notification.open({
@@ -976,36 +872,38 @@ export default {
             message: err.message,
             position: 'bottom',
             variant: 'danger',
-            closable: true,
             queue: true,
           });
         });
     },
     removeNews(index) {
       this.editingNo = toNumber(index);
-      this.$axios.$get(`v1/discountcode/${this.editingNo}`)
+      this.$axios.$get(`v1/partnersponsors/${this.editingNo}`)
         .then((response) => {
-          this.discount.codename = response.data.discountcode.code;
+          // eslint-disable-next-line max-len, camelcase, vue/max-len
+          this.sponsor.company_name = response.data.partnerSponsor.company_name;
         });
       setTimeout(() => {
-        this.showRemoveNewsModal = true;
+        this.showRemoveSponsorsModal = true;
       }, 1000);
     },
     remove(index) {
-      const editObject = this.discountCodeList.find(
-        (itemNews) => itemNews.id === this.editingNo
+      const editObject = this.partnerSponsors.find(
+        (item) => item.id === this.editingNo
       );
       this.$axios
-        .$delete(`/v1/discountcode/${editObject.id}`)
+        .$delete(`/v1/partnersponsors/${editObject.id}`)
         .then((response) => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: response.Message,
+            message: 'Partner Sponsor Deleted',
             position: 'bottom',
             variant: 'success',
             queue: true,
           });
-          this.retrieveNews();
+          this.reset();
+          this.showRemoveSponsorsModal = false
+          this.retrieveSponsors();
         })
         .catch(() => {
           this.$oruga.notification.open({
@@ -1016,42 +914,59 @@ export default {
             queue: true,
           });
         });
-      this.discountCodeList.splice(index, 1);
       this.reset();
       this.showRemoveNewsModal = false;
     },
     reset() {
-      this.headline = '';
-      this.content = '';
-      this.discount.codename = ''
-      this.discount.rate = ''
-      this.discount.description = ''
-      this.discount.amountapplied = ''
+      // eslint-disable-next-line camelcase
+      this.sponsor.company_name = '';
+      // eslint-disable-next-line camelcase
+      this.sponsor.first_name = '';
+      // eslint-disable-next-line camelcase
+      this.sponsor.last_name = '';
+      this.sponsor.description = '';
       this.imgList = []
       this.imgUrl = []
-    },
-    isCreateNewsFormEmpty() {
-      return (
-        this.discount.codename === '' ||
-        typeof this.discount.codename === 'undefined' ||
-        this.discount.rate === '' ||
-        typeof this.discount.rate === 'undefined' ||
-        this.discount.description.length === 0 ||
-        typeof this.discount.description === 'undefined'
-      );
+      this.imgListEdit = []
     },
   },
 };
 
 </script>
 
-<style>
-    .croppa-container {
-    background-color: #abb8c3;
-    border: 3px solid #3981da;
-    }
-    .o-inputit__item--danger {
-    background-color: #e73538 !important;
-    }
+<style scoped>
+.croppa-container {
+  background-color: #abb8c3;
+  border: 3px solid #1C1B1C;
+}
+.o-inputit__item--danger {
+  background-color: #e73538 !important;
+}
+
+.part-item__actions [class^="ri-"] {
+  padding-right: 0.25rem;
+}
+
+::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
+> .v-input__control > .v-input__slot {
+box-shadow: none;
+border: 1px rgb(243 244 246 / var(--tw-border-opacity));
+background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+padding: 0.5rem 0.75rem;
+width: 100%;
+appearance: none;
+border-radius: 0;
+transition: border-color 0.3s;
+}
+
+::v-deep .v-text-field input::placeholder {
+font-size: 1rem !important;
+font-family: inherit !important;
+color: rgb(104, 104, 104) !important;
+}
+
+.custom-btn {
+  height: 50px !important;
+}
 </style>
 

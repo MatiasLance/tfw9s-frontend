@@ -1,5 +1,5 @@
 <template>
-  <li v-show="!isPendingDeletion" class="group">
+  <li v-show="!isPendingDeletion" class="group text-white">
     <div
       class="
         flex
@@ -10,7 +10,8 @@
         gap-1
         rounded
         px-2
-        hover:bg-gray-200
+        bg-[#212121]
+        hover:brightness-125
       "
       @click.prevent="toggle"
     >
@@ -21,7 +22,7 @@
           class="
             cursor-pointer
             border border-brand-black
-            text-brand-black
+            text-white
             outline-1 outline-brand-black
           "
           @click.stop="selected = !selected"

@@ -7,7 +7,7 @@
               height="450"
               :show-arrows="false"
               cycle
-              hide-delimiters
+              hide-delimiters-background
               >
           <VCarouselItem
               v-for="(photo, i) in photos"

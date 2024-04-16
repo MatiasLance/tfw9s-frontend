@@ -380,11 +380,13 @@ export default {
     },
     closeDialog() {
       this.$emit('close')
+      this.reset()
     },
     reset() {
       this.TeamData = []
       this.imgList = []
       this.imgUrl = []
+      this.showGenerateCreatedImageBtn = false
     },
     handleCroppaFileSizeExceed(file) {
       this.$oruga.notification.open({

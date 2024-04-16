@@ -257,7 +257,9 @@ export default {
       return formattedTime;
     },
     formattedDate(dateString) {
-      return new Date(dateString);
+      const date = new Date(dateString);
+      date.setHours(0, 0, 0, 0);
+      return date;
     },
     calendarDate(date) {
       const month = date.getMonth() + 1;
@@ -328,7 +330,7 @@ export default {
         q: this.query,
         sort: 'latest',
         page: this.page,
-        maxEventsPerPage: 5,
+        maxEventsPerPage: 6,
       };
 
       Object.keys(query).forEach((key) => {
