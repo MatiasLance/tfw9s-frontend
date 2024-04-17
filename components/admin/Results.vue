@@ -235,7 +235,7 @@ export default {
         duration: 5000,
         message: 'Submission Fail',
         position: 'bottom',
-        variant: 'error',
+        variant: 'danger',
         queue: true
       })
       this.showSubmitResultModal = false

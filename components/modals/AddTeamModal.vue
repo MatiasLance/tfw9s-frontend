@@ -97,7 +97,7 @@
                     <VTextField
                     id="name"
                     v-model="TeamData.manager_name"
-                    label="Enter Coach Name"
+                    label="Enter Manager Name"
                     :rules="rules"
                     type="text"
                     solo
@@ -123,7 +123,7 @@
                     <VTextField
                     id="email"
                     v-model="TeamData.manager_email"
-                    label="Enter Coach Email"
+                    label="Enter Manager Email"
                     :rules="rules"
                     type="email"
                     solo

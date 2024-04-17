@@ -148,7 +148,8 @@ export default {
           queue: true,
         });
         return false;
-      } else if (this.ageGroupData.min_age > this.ageGroupData.max_age) {
+        // eslint-disable-next-line max-len, vue/max-len
+      } else if (parseInt(this.ageGroupData.min_age) > parseInt(this.ageGroupData.max_age)) {
         this.$oruga.notification.open({
           duration: 5000,
           message: 'Minimum Age should be lower than Maximum Age',
@@ -157,7 +158,8 @@ export default {
           queue: true,
         });
         return false;
-      } else if (this.ageGroupData.min_age === this.ageGroupData.max_age) {
+        // eslint-disable-next-line max-len, vue/max-len
+      } else if (parseInt(this.ageGroupData.min_age) === parseInt(this.ageGroupData.max_age)) {
         this.$oruga.notification.open({
           duration: 5000,
           message: 'Minimum and Maximum Age should not have the same value',

@@ -97,7 +97,7 @@
                     <VTextField
                     id="name"
                     v-model="TeamData.manager_name"
-                    label="Enter Coach Name"
+                    label="Enter Manager Name"
                     :rules="rules"
                     type="text"
                     solo
@@ -123,7 +123,7 @@
                     <VTextField
                     id="email"
                     v-model="TeamData.manager_email"
-                    label="Enter Coach Email"
+                    label="Enter Manager Email"
                     :rules="rules"
                     type="email"
                     solo
@@ -323,6 +323,14 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.TeamData = this.team;
+          const matchingAgeGroup = this.formattedAgeGroup.find(agegroup =>
+            agegroup.value === this.team.agegroup_id);
+          this.TeamData.agegroup_id = matchingAgeGroup ?
+            matchingAgeGroup.value : null;
+          const matchingField = this.filteredField.find(field =>
+            field.value === this.team.field_id);
+          this.TeamData.field_id = matchingField ?
+            matchingField.value : null;
           this.imgUrl = this.TeamData.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
           this.imgList = this.TeamData.media.map((x) => x.hash);
