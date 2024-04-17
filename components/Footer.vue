@@ -11,13 +11,49 @@
           </span>
         </div>
         <div class="md:justify-right col-span-1 flex justify-center">
-
+        <!--
           <span
           class="mr-5 transition
           duration-300 ease-in-out hover:text-[#5EE738]"
           >
-            Contact
+          Contact
           </span>
+        -->
+          <VMenu
+          top
+          :offset-y="offset"
+          origin="center center"
+          transition="scale-transition"
+          >
+          <template v-slot:activator="{ on, attrs }">
+            <span
+            class="transition
+            duration-300 ease-in-out hover:text-[#5EE738]"
+            v-bind="attrs"
+            v-on="on"
+            >
+            Contact
+            </span>
+          </template>
+            <VList dark class="rounded-lg">
+              <VListItem>
+                <VListItemTitle>
+                  <i
+                  title="Visit Facebook Page"
+                  class="ri-facebook-circle-fill text-3xl brightness-75
+                  transition duration-200 hover:scale-110 hover:brightness-100"
+                  @click="openLink('https://www.facebook.com/thefinalwhistleRL/')"
+                  />
+                  <i
+                  title="Visit Instagram Page"
+                  class="ri-instagram-fill text-3xl brightness-75
+                  transition duration-200 hover:scale-110 hover:brightness-100"
+                  @click="openLink('https://l.facebook.com/l.php?u=https%3A%2F%2Finstagram.com%2Ftfw9s%3Figshid%3DOGQ5ZDc2ODk2ZA%253D%253D%26utm_source%3Dqr%26fbclid%3DIwZXh0bgNhZW0CMTAAAR2BTIykFbgN7_LWAQ2FQNn0g7Qc8YTPyoOTPV9-UMQGtrOjtPntwhZKo6w_aem_AS0HPNsfcSzS1IUprNhe78jjaBZRTBO_BsnO2Eno2PYRiBQwkg9_74z8a5VbolGNRb_LMdw_hWzOQFhwc1fTLLUg&h=AT0qMKlBY3_pYjGjQxkBNR-qMUoooyU4VhqJgkw4W1XGXAyfPLh4OEcY5APVZIFozfyw_4QoI2m70QqCD_dazeutUpTN5hYmciEsQFwh6-wBs5rbKIoikdmdEflIJAkZlEGB8A')"
+                  />
+                </VListItemTitle>
+              </VListItem>
+            </VList>
+          </VMenu>
           <NuxtLink v-if="$store.state.auth.user === null" to="/login">
             <span
             class="px-5 text-white transition
@@ -72,7 +108,25 @@ import 'remixicon/fonts/remixicon.css';
 import logout from '~/mixins/auth/logout';
 import aosMixin from '@/mixins/aos';
 
-export default { mixins: [ logout, aosMixin ] }
+export default {
+  mixins: [ logout, aosMixin ],
+  data() {
+    return {
+      offset: true,
+      icons: [
+        'mdi-facebook',
+        'mdi-twitter',
+        'mdi-linkedin',
+        'mdi-instagram',
+      ]
+    }
+  },
+  methods: {
+    openLink(url) {
+      window.open(url, '_blank');
+    }
+  },
+}
 </script>
 
 <style>

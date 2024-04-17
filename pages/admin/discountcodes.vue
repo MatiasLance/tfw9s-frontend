@@ -104,12 +104,14 @@
             group
             mb-5 flex
             rounded
-            border border-gray-200
-            bg-white
+            text-white
+            bg-[#212121]
             shadow-sm
             transition
             duration-200
             hover:cursor-pointer hover:shadow-xl
+            flex
+            flex-col
             "
             data-aos="fade-up"
         >
@@ -132,7 +134,7 @@
                 </div>
                 <div class="mb-6 w-full">
                 <p
-                    class="paragraph text-left"
+                    class="text-left text-slate-400 line-clamp-1"
                     v-html="code.description"
                 >
                 </p>
@@ -141,8 +143,9 @@
                 <button
                     type="button"
                     class="
-                    hover:text-swd-red
-                    hover:decoration-swd-red
+                    text-brand-green
+                    hover:text-brand-green
+                    hover:decoration-brand-green
                     mr-2
                     flex
                     cursor-pointer
@@ -156,9 +159,9 @@
                 <button
                     type="button"
                     class="
-                    text-swd-red
-                    hover:text-swd-red
-                    hover:decoration-swd-red
+                    text-brand-red
+                    hover:text-brand-red
+                    hover:decoration-brand-red
                     mr-2
                     flex
                     cursor-pointer

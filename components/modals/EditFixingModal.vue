@@ -271,7 +271,10 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.Event = this.event;
-          this.Event.managerId = this.Event.manager.id
+          const matchingManager = this.filteredManagers.find(manager =>
+            manager.value === this.Event.manager.id);
+          this.Event.managerId = matchingManager ?
+            matchingManager.value : null;
           this.Event.fieldId = this.Event.field.id
           this.multipleMatch = this.Event.eventmatch.map(event => ({
             id: event.id,

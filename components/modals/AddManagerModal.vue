@@ -3,49 +3,70 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Edit Field
+                    Add Manager
                 </h3>
                 <hr class="my-3"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1">
-                    <label for="fieldname" class="mb-1 block">
-                      Name:
+                    <label for="firstname" class="mb-1 block">
+                      Firstname:
                     </label>
                     <VTextField
-                    id="name"
-                    v-model="FieldData.name"
-                    label="Enter Field Name"
+                    id="firstname"
+                    v-model="managerData.first"
+                    label="Enter Firstname"
                     :rules="rules"
                     type="text"
                     solo
                     />
                   </div>
                   <div class="col-span-1">
-                    <label for="selectregion" class="mb-1 block">
-                      Region:
+                    <label for="lastname" class="mb-1 block">
+                      Lastname:
                     </label>
-                    <VSelect
-                    v-model="FieldData.region_id"
-                    :items="filteredRegions"
-                    placeholder="Choose a Region"
+                    <VTextField
+                    id="lastname"
+                    v-model="managerData.last"
+                    label="Enter Lastname"
                     :rules="rules"
+                    type="text"
                     solo
-                    >
-                      <template #prepend-item>
-                        <div class="sticky-search-bar px-3">
-                          <SearchBar v-model="regionQuery" />
-                        </div>
-                      </template>
-                    </VSelect>
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="mobile" class="mb-1 block">
+                      Mobile Number:
+                    </label>
+                    <VTextField
+                    id="mobile"
+                    v-model="managerData.mobile"
+                    label="Enter Mobile Number"
+                    :rules="rules"
+                    type="tel"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="email" class="mb-1 block">
+                      Email:
+                    </label>
+                    <VTextField
+                    id="email"
+                    v-model="managerData.email"
+                    label="Enter Email"
+                    :rules="rules"
+                    type="email"
+                    solo
+                    />
                   </div>
                   <div class="col-span-1 md:col-span-2">
-                    <label for="fielddescription" class="mb-1 block">
+                    <label for="fixingname" class="mb-1 block">
                       Description:
                     </label>
                     <VTextarea
                     id="name"
-                    v-model="FieldData.description"
-                    label="Enter Field Description"
+                    v-model="managerData.description"
+                    label="Enter Manager Description"
                     :rules="rules"
                     type="text"
                     solo
@@ -82,61 +103,24 @@
 import 'vue-croppa/dist/vue-croppa.css';
 
 export default {
-  name: 'EditFieldModal',
+  name: 'AddManagerModal',
   props: {
     active: {
       type: Boolean,
       required: true
     },
-    field: {
-      type: Object,
-      default: () => ({}),
-    },
-    // eslint-disable-next-line vue/prop-name-casing
-    regions: {
-      type: Array,
-      required: true
-    },
   },
   data() {
     return {
-      regionQuery: '',
       valid: true,
-      FieldData: {
-        name: '',
-        description: '',
-        region_id: [],
+      managerData: {
+        name: null,
+        description: null
       },
       rules: [ value => !!value || 'Required' ],
     }
   },
-  computed: {
-    formattedRegions() {
-      return this.regions.map(region =>
-        ({ text: region.name, value: region.id }));
-    },
-    filteredRegions() {
-      return this.formattedRegions.filter(region =>
-        region && region.text && typeof region.text === 'string' ?
-          region.text.toLowerCase().includes(this.regionQuery.toLowerCase()) :
-          false
-      );
-    },
-  },
-  watch: {
-    active: {
-      handler(newActive) {
-        if (newActive) {
-          this.FieldData = this.field;
-          const matchingRegion = this.filteredRegions.find(manager =>
-            manager.value === this.field.region_id);
-          this.FieldData.region_id = matchingRegion ?
-            matchingRegion.value : null;
-        }
-      },
-      immediate: true,
-    },
-  },
+
   methods: {
     validate() {
       if (!this.$refs.form.validate()) {
@@ -148,7 +132,7 @@ export default {
           queue: true,
         });
         return false;
-      } else if (this.FieldData.description === '') {
+      } else if (this.managerData.description === '') {
         this.$oruga.notification.open({
           duration: 5000,
           message: 'Description should not be empty',
@@ -158,25 +142,26 @@ export default {
         });
         return false;
       } else {
-        this.confirmField();
+        this.confirmManager();
         return true;
       }
     },
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    confirmField() {
-      this.editField()
+    confirmManager() {
+      this.addManager()
       this.closeDialog()
     },
-    editField() {
+    addManager() {
       const formData = new FormData();
-      formData.append('name', this.FieldData.name);
-      formData.append('description', this.FieldData.description);
-      formData.append('region_id', this.FieldData.region_id);
-
+      formData.append('firstname', this.managerData.first);
+      formData.append('lastname', this.managerData.last);
+      formData.append('mobile', this.managerData.mobile);
+      formData.append('email', this.managerData.email);
+      formData.append('description', this.managerData.description);
       this.$axios
-        .$post(`v1/fields/${this.field.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .$post('v1/managers', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
           console.log('Success')
@@ -192,9 +177,10 @@ export default {
     },
     closeDialog() {
       this.$emit('close')
+      this.reset()
     },
     reset() {
-      this.FieldData = []
+      this.managerData = []
     },
   }
 }

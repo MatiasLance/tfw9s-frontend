@@ -344,6 +344,7 @@ export default {
       this.$axios
         .$get(`v1/events?${queryString}`)
         .then((response) => {
+          console.log(response.data);
           this.EventList = response.data.events.map(event => {
             return {
               ...event,

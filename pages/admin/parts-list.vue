@@ -51,13 +51,20 @@
             />
           </div>
           <div v-if="activeTab === 'ages'">
-            <AgeGroup/>
+            <AgeGroup
+            :getAgeGroups="retrieveAgeGroups"
+            />
           </div>
           <div v-if="activeTab === 'teams'">
             <Teams
             :FieldList="FieldList"
             :AgeGroupList="AgeGroupList"
             :getTeams="retrieveTeams"
+            />
+          </div>
+          <div v-if="activeTab === 'managers'">
+            <Managers
+            :getManagers="retrieveManagers"
             />
           </div>
           <div v-if="activeTab === 'fixings'">
@@ -102,6 +109,7 @@ import Regions from '~/components/admin/Regions.vue';
 import Fields from '~/components/admin/Fields.vue';
 import AgeGroup from '~/components/admin/AgeGroup.vue';
 import Teams from '~/components/admin/Teams.vue';
+import Managers from '~/components/admin/Managers.vue';
 import Fixings from '~/components/admin/Fixings.vue';
 import Results from '~/components/admin/Results.vue';
 import Ladders from '~/components/admin/Ladders.vue';
@@ -113,6 +121,7 @@ export default {
     Fields,
     AgeGroup,
     Teams,
+    Managers,
     Fixings,
     Results,
     Ladders,
@@ -183,6 +192,7 @@ export default {
         { value: 'fields', label: 'Fields' },
         { value: 'ages', label: 'Ages' },
         { value: 'teams', label: 'Teams' },
+        { value: 'managers', label: 'Managers' },
         { value: 'fixings', label: 'Fixings' },
         { value: 'results', label: 'Results' },
         { value: 'ladders', label: 'Ladders' }

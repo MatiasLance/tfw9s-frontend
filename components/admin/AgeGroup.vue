@@ -116,6 +116,12 @@ export default {
     EditAgeGroupModal,
     DeleteAgeGroupModal
   },
+  props: {
+    getAgeGroups: {
+      type: Function,
+      required: true,
+    },
+  },
   data() {
     return {
       selectedageGroup: ({}),
@@ -197,6 +203,7 @@ export default {
       })
       this.showAddageGroupModal = false;
       this.retrieveAgeGroups();
+      this.getAgeGroups();
     },
     UpdateAgeGroup(data) {
       this.$oruga.notification.open({
@@ -208,6 +215,7 @@ export default {
       })
       this.showEditageGroupModal = false;
       this.retrieveAgeGroups();
+      this.getAgeGroups();
     },
     DeleteAgeGroup(data) {
       this.$oruga.notification.open({
@@ -219,6 +227,7 @@ export default {
       })
       this.showDeleteageGroupModal = false;
       this.retrieveAgeGroups();
+      this.getAgeGroups();
     },
     retrieveAgeGroups() {
       const query = {
