@@ -42,7 +42,7 @@
             />
         </div>
         <section
-        class="col-span-1 overflow-x-auto
+        class="col-span-1 overflow-x-scroll
         overflow-y-hidden md:overflow-x-hidden"
         >
           <div class="grid min-w-[640px] grid-cols-1 gap-2">

@@ -357,7 +357,7 @@ export default {
     calculatePriceAggregates() {
       const itemCostData = this.items.map((item) => {
         const quantity = this.getQuantity(item.id)
-        const price = item.price;
+        const price = item.is_on_sale? item.saleprice: item.price
         return {
           id: item.id, quantity, price
         };

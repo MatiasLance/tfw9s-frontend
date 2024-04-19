@@ -188,7 +188,10 @@
        :active="showAddNewsModal"
        @close="showAddNewsModal = false"
        >
-        <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+        <VForm
+        ref="form" v-model="valid" lazy-validation
+        class="p-2 md:p-4"
+        >
           <h3
         class="
         mb-3
@@ -246,7 +249,8 @@
                 hover:bg-green-700
                 lg:mx-4 lg:w-48
               "
-              @click="create"
+              :disabled="!valid"
+              @click="validate('Add')"
             >
               OK
             </button>
@@ -271,14 +275,17 @@
               Cancel
             </button>
           </div>
-        </div>
+        </VForm>
       </OModal>
       <!-- Show Edit News -->
       <OModal
       :active="showEditNewsModal"
       @close="showEditNewsModal = false"
     >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <VForm
+      ref="form" v-model="valid" lazy-validation
+      class="p-2 md:p-4"
+      >
         <h3 class="text-swd-red mb-3 font-bold">
           Edit News
         </h3>
@@ -334,7 +341,8 @@
               hover:bg-green-800
               lg:mx-4 lg:w-48
             "
-            @click="edit(editingNo)"
+            :disabled="!valid"
+            @click="validate('Edit')"
           >
             Confirm
           </button>
@@ -359,7 +367,7 @@
             Cancel
           </button>
         </div>
-      </div>
+      </VForm>
     </OModal>
     <!-- showRemoveProduct modal component -->
     <OModal
@@ -454,12 +462,13 @@ export default {
   ],
   data() {
     return {
+      valid: true,
       query: '',
       rules: [ value => !!value || 'Required' ],
       news: {
         headline: '',
         lead: '',
-        content: '',
+        content: '<p></p>',
       },
       newsList: [],
       myEditCroppa: {},
@@ -495,6 +504,35 @@ export default {
     this.page = 1 // Reset pagination
   },
   methods: {
+    validate(type) {
+      if (!this.$refs.form.validate()) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Fill out all required fields',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else if (this.news.content === '<p></p>') {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Fill out news content',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else if (type === 'Add') {
+        this.create()
+        return true;
+      } else if (type === 'Edit') {
+        this.edit()
+        return true;
+      } else {
+        return false;
+      }
+    },
     setAddNewsErrorContentStatus(status) {
       this.showAddNewsError.content.status = status
     },
@@ -693,7 +731,7 @@ export default {
           });
         });
     },
-    edit(index) {
+    edit() {
       const editObject = this.newsList.find(
         (itemNews) => itemNews.id === this.editingNo
       );
@@ -709,7 +747,7 @@ export default {
         form.append('photo[]', this.imgListEdit[i]);
       }
 
-      form.append('id', index);
+      form.append('id', this.news.id);
       this.$axios
         .$post(`v1/news/${editObject.id}`, form)
         .then((response) => {
@@ -775,7 +813,7 @@ export default {
     },
     reset() {
       this.news.headline = '';
-      this.news.content = ''
+      this.news.content = '<p></p>'
       this.imgList = []
       this.imgListEdit = []
     },

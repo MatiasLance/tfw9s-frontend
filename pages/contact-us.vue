@@ -1,25 +1,27 @@
 <template>
-  <div>
-    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
+  <div class="min-h-screen bg-[#1A1A1B]">
+    <BaseHeader
+    class="mx-auto max-w-screen-xl gap-4
+    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    >
       <div
         class="
           col-span-12
-          space-y-3
-          px-6
           text-center
-          sm:space-y-3 sm:text-left
+          lg:space-y-3
+          lg:text-left
           lg:col-span-6
-          xl:mt-10
-        "
+          xl:mt-10"
+          data-aos="fade-right"
       >
         <span
           class="
             superheadline
             flex flex-row
             items-center
-            pb-3
             text-[1rem]
             font-normal
+            text-white
           "
         >
           <span class="font-medium">
@@ -28,8 +30,8 @@
             </NuxtLink>
           </span>
         </span>
-        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-6xl">
-          NEWS
+        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
+          Contact Us
         </h1>
       </div>
     </BaseHeader>
@@ -49,25 +51,26 @@
                   text-[1rem]
                   font-bold
                   capitalize
-                  text-[#1a1d18]
+                  text-white
                 "
               >
-                Contact Drum HQ
+              The Final Whistle - Rugby League
               </span>
             </h2>
             <h1 class="text-[3.75rem] leading-[1]">
               <span
-                class="
-                  font-montserrat
-                  block
-                  text-[2.5rem]
-                  font-bold
-                  uppercase
-                  leading-tight
-                  text-black
-                  sm:pr-8 sm:text-5xl
-                  xl:pr-10 xl:text-6xl
-                "
+                class="font-montserrat from-70%
+                via-95% to-100% mb-4
+                bg-gradient-to-b
+                from-[#5EE738]
+                via-[#3e872a]
+                to-[#050505]
+                bg-clip-text
+                text-[2.5rem]
+                font-bold uppercase
+                leading-tight
+                text-transparent sm:pr-8 sm:text-5xl
+                xl:pr-10 xl:text-6xl"
               >
                 {{ headline }}
               </span>
@@ -85,16 +88,18 @@
                     class="rounded-xl
                     bg-brand-black px-6 py-3
                     text-base text-white hover:bg-slate-200
-                    hover:text-black"
+                    hover:text-white"
                     @click="getDirectionsLink"
                   >
                   Get directions
                 </button>
               </template>
-              <address class="my-4">
+              <address class="my-4 text-white opacity-75">
                   <!-- eslint-disable-next-line vue/no-v-html -->
-                  <p v-html="address">
-                  </p>
+                  <span class="flex items-center">
+                    <i class="ri-map-pin-fill pr-1"/>
+                    <p v-html="address"/>
+                  </span>
                   <p
                     v-if="showNotes"
                     class="my-3 text-[16px] sm:text-sm"
@@ -105,22 +110,22 @@
               <span class="mb-2 block">
                 <a
                   :href="`tel:${mobile}`"
-                  class="
-                  hover:underline
-                  hover:decoration-gray-400
-                  hover:decoration-4
-                  hover:underline-offset-8"
+                  class="flex items-center
+                  opacity-75 transition
+                  duration-300 ease-in-out
+                  hover:opacity-100"
                 >
-                  {{ mobile }}
+                <i class="ri-phone-fill pr-1"/>{{ mobile }}
                 </a>
               </span>
               <a
-                class="mb-2 block hover:text-slate-400
-                hover:decoration-slate-700
-                hover:underline-offset-4"
+                class="flex items-center
+                opacity-75 transition
+                duration-300 ease-in-out
+                hover:opacity-100"
                 :href="toemail"
               >
-                {{ email }}
+              <i class="ri-mail-send-line pr-1"/>{{ email }}
               </a>
             </div>
           </header>
@@ -130,7 +135,7 @@
             class="max-w-[calc(100% + 40px)] grid grid-cols-12"
           >
             <div class="col-span-12 md:col-span-6">
-              <h5 class="text-[1.563rem] font-bold leading-[1] text-[#1a1d18]">
+              <h5 class="text-[1.563rem] font-bold leading-[1] text-white">
                 Hours
               </h5>
               <div class="mb-3"></div>
@@ -155,7 +160,7 @@
           <div class="mb-[40px]"></div>
           <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
             <div v-if="socials.activate" class="col-span-12 md:col-span-6">
-              <h5 class="text-[1.563rem] font-bold leading-[1] text-[#1a1d18]">
+              <h5 class="text-[1.563rem] font-bold leading-[1] text-white">
                 Follow us
               </h5>
               <div class="mb-3"></div>
@@ -170,14 +175,17 @@
                       flex
                       h-[48px]
                       w-[48px]
+                      text-white
                       cursor-pointer
                       items-center
                       justify-center
-                      bg-gray-200
-                      hover:bg-slate-400 hover:text-white
+                      transition
+                      opacity-75
+                      hover:scale-125
+                      hover:opacity-100
                     "
                   >
-                    <i class="ri-facebook-line text-2xl"></i>
+                    <i class="ri-facebook-box-line text-5xl"></i>
                   </div>
                 </a>
                 <a
@@ -190,14 +198,17 @@
                       flex
                       h-[48px]
                       w-[48px]
+                      text-white
                       cursor-pointer
                       items-center
                       justify-center
-                      bg-gray-200
-                      hover:bg-slate-400 hover:text-white
+                      transition
+                      opacity-75
+                      hover:scale-125
+                      hover:opacity-100
                     "
                   >
-                    <i class="ri-linkedin-box-line text-2xl"></i>
+                    <i class="ri-linkedin-box-line text-5xl"></i>
                   </div>
                 </a>
                 <a
@@ -206,18 +217,21 @@
                   target="_blank"
                 >
                   <div
-                    class="
-                      flex
-                      h-[48px]
-                      w-[48px]
-                      cursor-pointer
-                      items-center
-                      justify-center
-                      bg-gray-200
-                      hover:bg-slate-400 hover:text-white
-                    "
+                  class="
+                  flex
+                  h-[48px]
+                  w-[48px]
+                  text-white
+                  cursor-pointer
+                  items-center
+                  justify-center
+                  transition
+                  opacity-75
+                  hover:scale-125
+                  hover:opacity-100
+                "
                   >
-                    <i class="ri-instagram-line text-2xl"></i>
+                    <i class="ri-instagram-line text-5xl"></i>
                   </div>
                 </a>
                 <a
@@ -226,18 +240,21 @@
                   target="_blank"
                 >
                   <div
-                    class="
-                      flex
-                      h-[48px]
-                      w-[48px]
-                      cursor-pointer
-                      items-center
-                      justify-center
-                      bg-gray-200
-                      hover:bg-slate-400 hover:text-white
-                    "
+                  class="
+                  flex
+                  h-[48px]
+                  w-[48px]
+                  text-white
+                  cursor-pointer
+                  items-center
+                  justify-center
+                  transition
+                  opacity-75
+                  hover:scale-125
+                  hover:opacity-100
+                "
                   >
-                    <i class="ri-youtube-line text-2xl"></i>
+                    <i class="ri-youtube-line text-5xl"></i>
                   </div>
                 </a>
                 <a
@@ -246,18 +263,21 @@
                   target="_blank"
                 >
                   <div
-                    class="
-                      flex
-                      h-[48px]
-                      w-[48px]
-                      cursor-pointer
-                      items-center
-                      justify-center
-                      bg-gray-200
-                      hover:bg-slate-400 hover:text-white
-                    "
+                  class="
+                  flex
+                  h-[48px]
+                  w-[48px]
+                  text-white
+                  cursor-pointer
+                  items-center
+                  justify-center
+                  transition
+                  opacity-75
+                  hover:scale-125
+                  hover:opacity-100
+                "
                   >
-                    <i class="ri-music-line text-2xl"></i>
+                    <i class="ri-music-line text-5xl"></i>
                   </div>
                 </a>
               </div>
@@ -284,13 +304,13 @@ export default {
   },
   data() {
     return {
-      address: 'Suite 11 / 1407 Logan Rd<br>Mt Gravatt QLD 4122',
+      address: 'Establishment Address here 📌',
       importantNotes: 'For local (Gold Coast) customers and order pickups only. Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.',
       mapslink: 'https://www.google.com/maps/dir/?api=1&destination=280+Brisbane+Road+Labrador+QLD+4215',
       mobile: '0411 965 954',
-      email: 'hello@thedrumhq.com.au',
-      toemail: 'mailto:hello@thedrumhq.com.au',
-      headline: 'ENQUIRE / BOOK TO VISIT US!',
+      email: 'thefinalwhistlerl@hotmail.com',
+      toemail: 'mailto:thefinalwhistlerl@hotmail.com',
+      headline: 'Message Here 🤌',
       pageSEO: {
         title: 'Contact Us - Drum HQ',
         description: 'How can we help? Reach out to us for more information.',
@@ -301,9 +321,9 @@ export default {
       time4: 'CLOSED',
       socials: {
         activate: true,
-        fb: 'https://www.facebook.com/profile.php?id=100090914588551',
+        fb: 'https://www.facebook.com/thefinalwhistleRL/',
         linkedin: '',
-        ig: 'https://www.instagram.com/the_drum_hq/',
+        ig: 'https://www.instagram.com/tfw9s',
         tiktok: '',
         youtube: ''
       },
@@ -316,7 +336,7 @@ export default {
   },
   head() {
     return {
-      title: 'Contact Us - Drum HQ',
+      title: 'Contact Us - TFW9s',
       meta: [
         {
           hid: 'description',
@@ -333,3 +353,12 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+a{
+  color: white !important;
+}
+a:hover{
+  color: #5EE738 !important;
+}
+</style>

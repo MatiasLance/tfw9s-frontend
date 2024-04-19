@@ -71,8 +71,11 @@
             <p class="text-white font-semibold not-italic">
               {{ formatCurrency(totalItemCost) }}
             </p>
-            <span class="text-gray-400 text-sm">
+            <span v-if="!isOnSale" class="text-gray-400 text-sm">
               {{ formatCurrency(price) }} / item
+            </span>
+            <span v-if="isOnSale" class="text-brand-green text-sm">
+              {{ formatCurrency(saleprice) }} / item
             </span>
           </div>
         </div>
@@ -154,7 +157,7 @@ export default {
     totalItemCost: {
       get() {
         return currency(this.editableQuantity, { fromCents: false })
-          .multiply(this.price)
+          .multiply(this.isOnSale ? this.saleprice : this.price)
       },
     },
   },

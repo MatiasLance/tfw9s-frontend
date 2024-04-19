@@ -163,7 +163,7 @@
     <div>
       <OModal :active="deleteDialog" @close="closeDeleteDialog">
         <div class="w-full rounded bg-white sm:w-[440px]">
-          <div class="p-4">
+          <div class="p-4 text-brand-black">
             <div class="text-lg leading-tight">
               Are you sure you want to delete
               <span class="font-bold text-brand-black">{{ item.name }}</span>
@@ -186,6 +186,7 @@
                 rounded
                 px-2
                 py-1
+                text-brand-black
                 hover:bg-gray-500
                 hover:text-white
               "
@@ -343,3 +344,37 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+input[type="checkbox"] {
+  -webkit-appearance: none; /* Remove default styles */
+  -moz-appearance: none;
+  appearance: none;
+  background-color: white; /* Transparent background */
+  border: 2px solid white; /* White border */
+  width: 25px; /* Adjust width and height as needed */
+  height: 25px;
+  outline: none; /* Remove outline */
+  cursor: pointer; /* Show pointer on hover */
+  border-radius: 5px;
+}
+
+/* Background color for checked checkbox */
+input[type="checkbox"]:checked {
+  background-color:#4cbe5c; /* Orange background */
+}
+
+/* Optional: Styles for checkmark */
+input[type="checkbox"]::after {
+  display: inline-block;
+  font-size: 14px; /* Adjust size as needed */
+  color: white; /* Color of the checkmark */
+  line-height: 1; /* Vertical alignment */
+  visibility: hidden; /* Hide by default */
+}
+
+/* Show checkmark when checkbox is checked */
+input[type="checkbox"]:checked::after {
+  visibility: visible;
+}
+</style>

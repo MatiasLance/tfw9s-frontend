@@ -65,37 +65,55 @@
         </NuxtLink>
       </h3>
       <span class="w-9 border-t-2 border-white my-4"/>
-        <span v-if="!isOnSale" class="text-[18px] font-medium text-white">
-          <span>
-            {{ formatCurrency(price) }}
-          </span>
+      <span v-if="!isOnSale" class="text-[18px] font-medium text-white">
+        <span>
+          {{ formatCurrency(price) }}
         </span>
-        <span v-if="isOnSale" class="text-[18px] font-medium flex">
-          <span v-if="isRrp"
-          class="text-white opacity-75 line-through mr-2"
-          >
-            {{formatCurrency(price)}}
-          </span>
-          <span class="font-semibold text-brand-green">
-             {{formatCurrency(saleprice)}}
-          </span>
-        </span>
-      <BaseButton
-      class="from-40% via-95% to-100%
-      w-full rounded-lg
-      bg-gradient-to-tr
-      from-[#5EE738]
-      via-[#3e872a]
-      to-[#050505]
-      py-4
-      px-8
-      mb-6"
-      @click="addToCart"
-      >
-      <span class="font-semibold normal-case text-white">
-        Add to Cart
       </span>
-      </BaseButton>
+      <span v-if="isOnSale" class="text-[18px] font-medium flex">
+        <span v-if="isRrp"
+        class="text-white opacity-75 line-through mr-2"
+        >
+          {{formatCurrency(price)}}
+        </span>
+        <span class="font-semibold text-brand-green">
+           {{formatCurrency(saleprice)}}
+        </span>
+      </span>
+      <div class="mt-4 flex flex-wrap justify-start gap-2">
+        <button
+            type="button"
+            class="
+            text-brand-green
+            hover:text-brand-green
+            hover:decoration-brand-green
+            mr-2
+            flex
+            cursor-pointer
+            items-center
+            text-sm hover:underline
+            "
+            @click="$emit('update', uid)"
+        >
+            <i class="ri-edit-line"></i> Edit
+        </button>
+        <button
+            type="button"
+            class="
+            text-brand-red
+            hover:text-brand-red
+            hover:decoration-brand-red
+            mr-2
+            flex
+            cursor-pointer
+            items-center
+            text-sm hover:underline
+            "
+            @click="$emit('delete', uid)"
+        >
+            <i class="ri-delete-bin-5-line"></i> Remove
+        </button>
+        </div>
     </div>
   </div>
 </template>
@@ -136,11 +154,11 @@ export default {
       type: String,
       required: true
     },
-    isOnSale: {
+    isRrp: {
       type: Boolean,
       required: true
     },
-    isRrp: {
+    isOnSale: {
       type: Boolean,
       required: true
     },

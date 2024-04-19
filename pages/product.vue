@@ -81,8 +81,20 @@
           >
           <!-- todo: add Sale Price (if there is) and slash the RRP (price) -->
           <span class="amount">
-              <span>
-                {{ formatCurrency(product.price) }}
+              <span v-if="!product.is_on_sale">
+                <span>
+                  {{ formatCurrency(product.price) }}
+                </span>
+              </span>
+              <span v-if="product.is_on_sale" class="flex">
+                <span v-if="product.show_rrp"
+                class="font-medium text-white opacity-75 line-through mr-8"
+                >
+                  {{formatCurrency(product.price)}}
+                </span>
+                <span class="font-semibold text-brand-green">
+                   {{formatCurrency(product.saleprice)}}
+                </span>
               </span>
             </span>
           </p>

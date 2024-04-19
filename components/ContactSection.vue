@@ -1,17 +1,17 @@
 <template>
   <div>
     <form class="my-10 w-full max-w-lg" @submit.prevent="submit">
-      <div class="-mx-3 mb-6 flex flex-wrap">
-        <div class="mb-6 w-full px-3">
+      <div class="-mx-3 mb-2 flex flex-wrap">
+        <div class="mb-2 w-full px-3">
           <label
             class="
               mb-2
               block
-              text-xs
+              text-sm
               font-bold
               uppercase
               tracking-wide
-              text-gray-700
+              text-[#555555]
             "
             for="name"
           >
@@ -21,7 +21,7 @@
             id="name"
             v-model="name"
             class="
-              mb-3
+              mb-2
               block
               w-full
               appearance-none
@@ -42,11 +42,11 @@
             class="
               mb-2
               block
-              text-xs
+              text-sm
               font-bold
               uppercase
               tracking-wide
-              text-gray-700
+              text-[#555555]
             "
             for="grid-password"
           >
@@ -56,7 +56,7 @@
             id="email"
             v-model="email"
             class="
-              mb-3
+              mb-2
               block
               w-full
               border border-gray-100
@@ -64,7 +64,7 @@
               py-3
               px-4
               leading-tight
-              text-gray-700
+              text-[#555555]
               hover:border-gray-400
               focus:border-gray-400 focus:outline-none
             "
@@ -72,20 +72,20 @@
             placeholder="example@gmail.com"
             required
           />
-          <p class="text-xs italic text-gray-600"></p>
+          <p class="text-sm italic text-gray-600"></p>
         </div>
       </div>
-      <div class="-mx-3 mb-6 flex flex-wrap">
+      <div class="-mx-3 mb-2 flex flex-wrap">
         <div class="w-full px-3">
           <label
             class="
               mb-2
               block
-              text-xs
+              text-sm
               font-bold
               uppercase
               tracking-wide
-              text-gray-700
+              text-[#555555]
             "
             for="grid-message"
           >
@@ -95,7 +95,7 @@
             id="message"
             v-model="message"
             class="
-              mb-3
+              mb-2
               block
               h-48
               w-full
@@ -106,12 +106,12 @@
               py-3
               px-4
               leading-tight
-              text-gray-700
+              text-[#555555]
               focus:outline-none
             "
             required
           ></textarea>
-          <p class="text-xs italic text-gray-600"></p>
+          <p class="text-sm italic text-gray-600"></p>
         </div>
       </div>
       <div class="md:flex md:items-center">
@@ -119,13 +119,17 @@
           <button
             class="
               focus:shadow-outline
-              bg-brand-black
+              from-40% via-95% to-100%
+              bg-gradient-to-tr
+              from-[#5EE738]
+              via-[#3e872a]
+              to-[#050505]
+              rounded-lg
               py-3
               px-7
               font-bold
               text-white
               shadow
-              hover:bg-brand-black
               focus:outline-none
             "
             type="submit"
