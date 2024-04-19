@@ -42,37 +42,70 @@
               @change="setPage"
               />
           </div>
-          <section class="col-span-1">
+          <!--
+            <section class="col-span-1">
             <div
-            class="grid grid-cols-1 overflow-x-auto
+            class="grid grid-cols-1 overflow-x-scroll
             overflow-y-hidden md:overflow-x-hidden"
             >
-              <div
-              v-for="(region) in RegionList"
-              :key="region.id" class="col-span-1 mb-0.5 gap-0"
+            <div
+            v-for="(region) in RegionList"
+            :key="region.id" class="col-span-1 mb-0.5 gap-0"
+            data-aos="flip-down" data-aos-duration="500"
+            data-aos-offset="0"
+            >
+            <div class="flex min-w-[640px] items-center justify-center">
+            <input
+            v-model="region.name"
+            :rules="Rules"
+            placeholder="Enter Region"
+            hide-details
+            required
+            :disabled="true"
+            class="mr-0.5 flex-1 border-black bg-white p-1"
+            />
+            <i
+            class="ri-pencil-fill px-4 text-xl text-white"
+            @click="openEditRegionDialog(region)"
+            />
+            <i
+            class="ri-delete-bin-fill px-4 text-xl text-red-400"
+            @click="openDeleteRegionDialog(region)"
+            />
+            </div>
+            </div>
+            </div>
+            </section>
+          -->
+          <section v-if="totalPages > 0" class="col-span-1">
+            <div
+            class="grid grid-cols-1 overflow-x-scroll
+            overflow-y-hidden md:overflow-x-hidden"
+            >
+            <table class="col-span-1 min-w-[640px]">
+              <tr v-for="(region) in RegionList"
+              :key="region.id"
               data-aos="flip-down" data-aos-duration="500"
               data-aos-offset="0"
               >
-              <div class="flex w-[640px] items-center justify-center md:w-auto">
-                <input
-                v-model="region.name"
-                :rules="Rules"
-                placeholder="Enter Region"
-                hide-details
-                required
-                :disabled="true"
-                class="flex-1 border-black bg-white p-1 text-lg"
-                />
-                <i
-                class="ri-pencil-fill px-4 text-xl text-white"
-                @click="openEditRegionDialog(region)"
-                />
-                <i
-                class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                @click="openDeleteRegionDialog(region)"
-                />
-              </div>
-              </div>
+                <td
+                class="flex-1 bg-white px-2 py-1
+                border-b-[2.5px] border-[#1a1a1b]"
+                >
+                  {{region.name??'Unknown'}}
+                </td>
+                <td class="w-[116px] text-center">
+                  <i
+                  class="ri-pencil-fill px-4 text-xl text-white"
+                  @click="openEditRegionDialog(region)"
+                  />
+                  <i
+                  class="ri-delete-bin-fill px-4 text-xl text-red-400"
+                  @click="openDeleteRegionDialog(region)"
+                  />
+                </td>
+              </tr>
+            </table>
             </div>
           </section>
           <section

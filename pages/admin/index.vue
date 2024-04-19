@@ -123,7 +123,7 @@ export default {
         {
           title: 'Merch Products',
           icon: 'fas fa-shopping-cart',
-          route: '/admin/parts-list3',
+          route: '/admin/products',
           desc: 'See all products',
           count: 0
         },

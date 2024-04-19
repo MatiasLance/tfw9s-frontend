@@ -96,6 +96,7 @@
           <button
             type="button"
             :class="`
+                bg-gray-200
                 text-bold
                 flex
                 items-center
@@ -179,10 +180,10 @@ export default {
     moveCategoryDisableClass: {
       get() {
         if (this.moveCategoryDisabled) {
-          return 'bg-gray-200 border-gray-200 cursor-not-allowed';
+          return 'bg-[#212121] text-[#555555] border-none cursor-not-allowed';
         }
 
-        return 'hover:border-brand-black hover:bg-brand-black hover:text-white border-gray-500 cursor-pointer';
+        return 'bg-gray-200 border-gray-200 hover:border-brand-black hover:bg-brand-black hover:text-white cursor-pointer';
       },
     },
   },
@@ -266,7 +267,7 @@ export default {
       this.newCategoryName = '';
     },
     goToPartsList() {
-      this.$router.push('/admin/parts-list');
+      this.$router.push('/admin/products');
     },
     createCategory() {
       this.$axios

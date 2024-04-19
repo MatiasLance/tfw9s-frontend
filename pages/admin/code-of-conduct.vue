@@ -77,7 +77,7 @@
                   />
               </div>
               <section
-              class="col-span-1 overflow-x-auto
+              class="col-span-1 overflow-x-scroll
               overflow-y-hidden md:overflow-x-hidden"
               >
                 <div class="grid min-w-[640px] grid-cols-1 gap-2">
@@ -142,7 +142,10 @@
       :active="showAddContentModal"
       @close="closeAddContentDialog"
       >
-       <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+        <VForm
+        ref="form" v-model="valid" lazy-validation
+        class="p-2 md:p-4"
+        >
          <h3
        class="
        mb-3
@@ -180,7 +183,8 @@
                hover:bg-green-700
                lg:mx-4 lg:w-48
              "
-             @click="contentData.content !== '<p></p>'? AddContent() : Invalid()"
+             :disabled="!valid"
+             @click="validate('Add')"
            >
              OK
            </button>
@@ -205,13 +209,16 @@
              Cancel
            </button>
          </div>
-       </div>
+        </VForm>
      </OModal>
      <OModal
      :active="showEditContentModal"
      @close="closeEditContentDialog"
      >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <VForm
+      ref="form" v-model="valid" lazy-validation
+      class="p-2 md:p-4"
+      >
         <h3
       class="
       mb-3
@@ -249,7 +256,8 @@
               hover:bg-green-700
               lg:mx-4 lg:w-48
             "
-            @click="contentData.content !== '<p></p>'? UpdateContent() : Invalid()"
+            :disabled="!valid"
+            @click="validate('Edit')"
           >
             OK
           </button>
@@ -274,7 +282,7 @@
             Cancel
           </button>
         </div>
-      </div>
+      </VForm>
     </OModal>
     <OModal
     :active="showDeleteContentModal"
@@ -350,11 +358,12 @@ export default {
   components: { Tiptap },
   data() {
     return {
+      valid: true,
       showAddContentModal: false,
       showEditContentModal: false,
       showDeleteContentModal: false,
       rules: [ value => !!value || 'Required' ],
-      contentData: ({}),
+      contentData: { content: '<p></p>' },
       ContentList: [],
       query: '',
       from: 0,
@@ -395,6 +404,35 @@ export default {
     },
   },
   methods: {
+    validate(type) {
+      if (!this.$refs.form.validate()) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Fill out all required fields',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else if (this.contentData.content === '<p></p>') {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Fill out Guideline Content',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else if (type === 'Add') {
+        this.AddContent()
+        return true;
+      } else if (type === 'Edit') {
+        this.UpdateContent()
+        return true;
+      } else {
+        return false;
+      }
+    },
     Invalid() {
       this.$oruga.notification.open({
         message: 'Please Fill Content Field',
@@ -516,7 +554,7 @@ export default {
         });
     },
     reset() {
-      this.contentData = { content: '' }
+      this.contentData = { content: '<p></p>' }
     },
     retrieveGuidelines() {
       const query = {

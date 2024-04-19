@@ -44,7 +44,7 @@
           </div>
           <section class="col-span-1">
             <div
-            class="grid grid-cols-1 overflow-x-auto
+            class="grid grid-cols-1 overflow-x-scroll
             overflow-y-hidden md:overflow-x-hidden"
             >
               <div
@@ -71,7 +71,7 @@
               data-aos="flip-down" data-aos-duration="500"
               data-aos-offset="0"
               >
-              <div class="flex w-[640px] items-center justify-center md:w-auto">
+              <div class="flex min-w-[640px] items-center justify-center">
                 <input
                 v-model="data.name"
                 :rules="Rules"
@@ -79,7 +79,7 @@
                 hide-details
                 required
                 :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1 text-lg"
+                class="mr-0.5 flex-1 border-black bg-white p-1"
                 />
                 <input
                 v-model="data.regionName"
@@ -88,7 +88,7 @@
                 hide-details
                 required
                 :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1 text-lg"
+                class="mr-0.5 flex-1 border-black bg-white p-1"
                 />
                 <i
                 class="ri-pencil-fill px-4 text-xl text-white"

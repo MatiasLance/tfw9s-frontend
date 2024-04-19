@@ -78,11 +78,16 @@
         <section class="mb-8" data-aos="fade-up">
         <div
           class="
-            flex flex-wrap items-center justify-end
+            flex flex-wrap items-center justify-around
             gap-x-2
             md:justify-between
           "
         >
+          <span class="flex items-center">
+            <p class="text-base leading-[2.5em] text-white">
+              Showing {{ from }}-{{ to }} of {{ totalItems }} results
+            </p>
+          </span>
             <BasePagination
               :active-page="page"
               :total-pages="totalPages"
@@ -141,9 +146,10 @@
               </span>
               </div>
               <div class="mb-6 w-full">
-              <span class="text-left text-slate-400 line-clamp-1">
-                {{sponsor.description}}
-              </span>
+              <span
+              class="text-left text-slate-400 line-clamp-1"
+              v-html="sponsor.description"
+              />
               </div>
               <div class="mt-4 flex flex-wrap justify-start gap-2">
               <button
@@ -174,7 +180,7 @@
                   items-center
                   text-sm hover:underline
                   "
-                  @click="removeNews(sponsor.id)"
+                  @click="removeSponsor(sponsor.id)"
               >
                   <i class="ri-delete-bin-5-line"></i> Remove
               </button>
@@ -189,7 +195,10 @@
        :active="showAddSponsorsModal"
        @close="showAddSponsorsModal = false"
        >
-        <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+        <VForm
+        ref="form" v-model="valid" lazy-validation
+        class="p-2 md:p-4"
+        >
           <h3
         class="
         mb-3
@@ -242,13 +251,9 @@
               <label for="sponsordescription" class="mb-1 block">
                 Description:
               </label>
-              <VTextarea
-              id="name"
+              <Tiptap
+              id="content"
               v-model="sponsor.description"
-              label="Enter Description"
-              :rules="rules"
-              type="text"
-              solo
               />
             </div>
             <div class="col-span-1 md:col-span-2">
@@ -275,7 +280,8 @@
                 hover:bg-green-700
                 lg:mx-4 lg:w-48
               "
-              @click="create"
+              :disabled="!valid"
+              @click="validate('Add')"
             >
               OK
             </button>
@@ -300,14 +306,17 @@
               Cancel
             </button>
           </div>
-        </div>
+        </VForm>
       </OModal>
       <!-- Show Edit News -->
       <OModal
       :active="showEditSponsorsModal"
       @close="showEditSponsorsModal = false"
     >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+      <VForm
+      ref="form" v-model="valid" lazy-validation
+      class="p-2 md:p-4"
+      >
         <h3 class="text-swd-red mb-3 font-bold">
           Edit Partner Sponsor
         </h3>
@@ -356,13 +365,9 @@
             <label for="sponsordescription" class="mb-1 block">
               Description:
             </label>
-            <VTextarea
-            id="name"
+            <Tiptap
+            id="content"
             v-model="sponsor.description"
-            label="Enter Description"
-            :rules="rules"
-            type="text"
-            solo
             />
           </div>
           <div class="col-span-1 md:col-span-2">
@@ -391,7 +396,8 @@
               hover:bg-green-800
               lg:mx-4 lg:w-48
             "
-            @click="edit(editingNo)"
+            :disabled="!valid"
+            @click="validate('Edit')"
           >
             Confirm
           </button>
@@ -416,7 +422,7 @@
             Cancel
           </button>
         </div>
-      </div>
+      </VForm>
     </OModal>
     <!-- showRemoveProduct modal component -->
     <OModal
@@ -490,11 +496,13 @@ import aosMixin from '@/mixins/aos';
 import currencyMixin from '@/mixins/currency';
 import ImageUpload from '~/components/ImageUpload'
 import ImageUploadEdit from '~/components/ImageUploadEdit'
+import Tiptap from '~/components/Wysiwyg/Tiptap';
 
 const toNumber = (str) => +str;
 export default {
   buildModules: [ '@nuxtjs/moment' ],
   components: {
+    Tiptap,
     BasePagination,
     SearchBar,
     ImageUpload,
@@ -508,6 +516,7 @@ export default {
   ],
   data() {
     return {
+      valid: true,
       sponsor: {
         // eslint-disable-next-line camelcase
         company_name: '',
@@ -574,6 +583,35 @@ export default {
     this.page = 1 // Reset pagination
   },
   methods: {
+    validate(type) {
+      if (!this.$refs.form.validate()) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Fill out all required fields',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else if (this.sponsor.description === '<p></p>') {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Fill out description fields',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else if (type === 'Add') {
+        this.create()
+        return true;
+      } else if (type === 'Edit') {
+        this.edit()
+        return true;
+      } else {
+        return false;
+      }
+    },
     addPartnerSponsor() {
       this.showAddSponsorsModal = true;
       this.reset()
@@ -835,7 +873,7 @@ export default {
           });
         });
     },
-    edit(index) {
+    edit() {
       const editObject = this.partnerSponsors.find(
         (item) => item.id === this.editingNo
       );
@@ -849,7 +887,7 @@ export default {
         form.append('photo[]', this.imgListEdit[i]);
       }
 
-      form.append('id', index);
+      form.append('id', this.sponsor.id);
       this.$axios
         .$post(`v1/partnersponsors/${editObject.id}`, form)
         .then((response) => {
@@ -876,7 +914,7 @@ export default {
           });
         });
     },
-    removeNews(index) {
+    removeSponsor(index) {
       this.editingNo = toNumber(index);
       this.$axios.$get(`v1/partnersponsors/${this.editingNo}`)
         .then((response) => {
@@ -915,7 +953,7 @@ export default {
           });
         });
       this.reset();
-      this.showRemoveNewsModal = false;
+      this.showRemoveSponsorsModal = false;
     },
     reset() {
       // eslint-disable-next-line camelcase
