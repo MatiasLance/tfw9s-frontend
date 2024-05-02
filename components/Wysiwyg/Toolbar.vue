@@ -29,6 +29,9 @@
       <ToolbarButton @click="underline">
         <i class="ri-underline"></i>
       </ToolbarButton>
+      <ToolbarButton @click="strikethrough">
+        <i class="ri-strikethrough"></i>
+      </ToolbarButton>
     </span>
 
     <span class="flex items-center justify-center">
@@ -39,6 +42,55 @@
         br
       </ToolbarButton>
     </span>
+
+    <span class="flex items-center justify-center">
+      <ToolbarButton @click="insertLink">
+        <i class="ri-link"></i>
+      </ToolbarButton>
+      <ToolbarButton @click="unlink">
+        <i class="ri-link-unlink"></i>
+      </ToolbarButton>
+    </span>
+
+    <span class="flex items-center justify-center">
+      <ToolbarButton @click="unorderedList">
+        <i class="ri-list-unordered"></i>
+      </ToolbarButton>
+      <ToolbarButton @click="orderedList">
+        <i class="ri-list-ordered"></i>
+      </ToolbarButton>
+    </span>
+
+    <span class="flex items-center justify-center">
+      <ToolbarButton @click="paragraph">
+        <i class="ri-paragraph"></i>
+      </ToolbarButton>
+      <ToolbarButton @click="heading1">
+      <i class="ri-h-1"></i>
+      </ToolbarButton>
+      <ToolbarButton @click="heading2">
+      <i class="ri-h-2"></i>
+      </ToolbarButton>
+      <ToolbarButton @click="heading3">
+      <i class="ri-h-3"></i>
+      </ToolbarButton>
+    </span>
+
+    <span class="flex items-center justify-center">
+      <ToolbarButton @click="alignLeft">
+        <i class="ri-align-left"></i>
+      </ToolbarButton>
+      <ToolbarButton @click="alignCenter">
+        <i class="ri-align-center"></i>
+      </ToolbarButton>
+      <ToolbarButton @click="alignRight">
+        <i class="ri-align-right"></i>
+      </ToolbarButton>
+      <ToolbarButton @click="alignJustify">
+        <i class="ri-align-justify"></i>
+      </ToolbarButton>
+    </span>
+
   </div>
 </template>
 
@@ -90,18 +142,11 @@ export default {
         .toggleUnderline()
         .run()
     },
-    unordered() {
+    strikethrough() {
       this.editor
         .chain()
         .focus()
-        .toggleBulletList()
-        .run()
-    },
-    ordered() {
-      this.editor
-        .chain()
-        .focus()
-        .toggleOrderedList()
+        .toggleStrike()
         .run()
     },
     horizontalRule() {
@@ -118,6 +163,95 @@ export default {
         .setHardBreak()
         .run()
     },
+    insertLink() {
+      const url = prompt('Enter the URL:')
+      if (url) {
+        this.editor
+          .chain()
+          .focus()
+          .extendMarkRange('link')
+          .setLink({ href: url })
+          .run()
+      }
+    },
+    unlink() {
+      this.editor
+        .chain()
+        .focus()
+        .unsetLink()
+        .run()
+    },
+    unorderedList() {
+      this.editor
+        .chain()
+        .focus()
+        .toggleBulletList()
+        .run()
+    },
+    orderedList() {
+      this.editor
+        .chain()
+        .focus()
+        .toggleOrderedList()
+        .run()
+    },
+    paragraph() {
+      this.editor
+        .chain()
+        .focus()
+        .setParagraph()
+        .run()
+    },
+    heading1() {
+      this.editor
+        .chain()
+        .focus()
+        .toggleHeading({ level: 1 })
+        .run()
+    },
+    heading2() {
+      this.editor
+        .chain()
+        .focus()
+        .toggleHeading({ level: 2 })
+        .run()
+    },
+    heading3() {
+      this.editor
+        .chain()
+        .focus()
+        .toggleHeading({ level: 3 })
+        .run()
+    },
+    alignLeft() {
+      this.editor
+        .chain()
+        .focus()
+        .setTextAlign('left')
+        .run()
+    },
+    alignCenter() {
+      this.editor
+        .chain()
+        .focus()
+        .setTextAlign('center')
+        .run()
+    },
+    alignRight() {
+      this.editor
+        .chain()
+        .focus()
+        .setTextAlign('right')
+        .run()
+    },
+    alignJustify() {
+      this.editor
+        .chain()
+        .focus()
+        .setTextAlign('justify')
+        .run()
+    },
   },
 }
 </script>
+

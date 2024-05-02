@@ -90,11 +90,44 @@
                   <Form class="grid grid-cols-3 gap-2 p-2">
                     <div class="col-span-3 font-semibold">
                       {{ `Guideline ${index + 1}`}}
+                      <span v-if="content.isActive">
+                        <ActiveChip />
+                      </span>
                     </div>
                     <span class="col-span-3 indent-8 line-clamp-4"
                     v-html="content.content"
                     />
                     <div class="col-span-3 flex justify-end gap-4">
+                      <div v-if="!content.isActive">
+                        <BaseButton
+                          class="
+                            max-w-full rounded-lg
+                            border border-gray-200
+                            bg-[#737373]
+                            py-2
+                            px-4
+                            text-white
+                            "
+                            @click="setActive(content.id)"
+                          >
+                          Set as Active
+                        </BaseButton>
+                      </div>
+                      <div v-else>
+                        <BaseButton
+                          class="
+                            max-w-full rounded-lg
+                            border border-gray-200
+                            bg-[#737373]
+                            py-2
+                            px-4
+                            text-white
+                            "
+                            @click="deactivate(content.id)"
+                          >
+                          Deactivate
+                        </BaseButton>
+                      </div>
                       <BaseButton
                       class="
                         max-w-full rounded-lg
@@ -354,8 +387,12 @@
 
 <script>
 import Tiptap from '~/components/Wysiwyg/Tiptap'
+import ActiveChip from '~/components/chips/ActiveChip';
 export default {
-  components: { Tiptap },
+  components: {
+    Tiptap,
+    ActiveChip
+  },
   data() {
     return {
       valid: true,
@@ -466,6 +503,54 @@ export default {
     closeDeleteContentDialog(data) {
       this.contentData = ({})
       this.showDeleteContentModal = false
+    },
+    setActive(id) {
+      this.$axios
+        .$post(`v1/guidelines/active/${id}`)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: 'Guideline Activated',
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          this.reset();
+          this.retrieveGuidelines();
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.message,
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        });
+    },
+    deactivate(id) {
+      this.$axios
+        .$post(`v1/guidelines/deactivate/${id}`)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: 'Guideline Deactivated',
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          this.reset();
+          this.retrieveGuidelines();
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.message,
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        });
     },
     AddContent() {
       const form = new FormData();

@@ -77,17 +77,12 @@
         data-aos="fade-up"
         data-aos-offset="0"
         >
-          <h3 class="text-xl mb-2 font-bold underline">
-            Code of Conduct:
-          </h3>
-          <ul class="pl-8 list-outside list-disc space-y-2">
-              <li
-                  v-for="statement in filteredCode"
-                  :key="statement.id"
+          <div
+              v-for="statement in filteredCode"
+              :key="statement.id"
               >
-                  <span v-html="statement.content"/>
-              </li>
-          </ul>
+              <span class="info" v-html="statement.content"/>
+          </div>
         </span>
         <span
         v-if="activeTab == 'rules'"
@@ -95,17 +90,12 @@
         data-aos="fade-up"
         data-aos-offset="0"
         >
-          <h3 class="text-xl mb-2 font-bold underline">
-            Rules and Regulations:
-          </h3>
-          <ul class="pl-8 list-outside list-disc space-y-2">
-              <li
-                  v-for="statement in filteredRules"
-                  :key="statement.id"
+          <div
+              v-for="statement in filteredRules"
+              :key="statement.id"
               >
-                  <span v-html="statement.content"/>
-              </li>
-          </ul>
+              <span class="info" v-html="statement.content"/>
+          </div>
         </span>
         <span
         v-if="activeTab == 'insurance'"
@@ -113,17 +103,12 @@
         data-aos="fade-up"
         data-aos-offset="0"
         >
-          <h3 class="text-xl mb-2 font-bold underline">
-            Insurance Policies:
-          </h3>
-          <ul class="pl-8 list-outside list-disc space-y-2">
-              <li
-                  v-for="statement in filteredInsurance"
-                  :key="statement.id"
+          <div
+              v-for="statement in filteredInsurance"
+              :key="statement.id"
               >
-                  <span v-html="statement.content"/>
-              </li>
-          </ul>
+              <span class="info" v-html="statement.content"/>
+          </div>
         </span>
       </div>
     </section>
@@ -244,7 +229,10 @@ export default {
       this.activeTab = tab;
     },
     retrieveGuidelines() {
-      const query = { q: this.query };
+      const query = {
+        q: this.query,
+        isActive: true,
+      };
 
       Object.keys(query).forEach((key) => {
         if (query[key] == null) {
@@ -264,8 +252,19 @@ export default {
 };
 </script>
 
-<style scoped>
-.superheadline {
-  color: aliceblue;
+<style>
+.info h1,
+.info h2,
+.info h3,
+.info p {
+  font-size: revert !important;
 }
+
+.info ul,
+.info ol {
+  list-style: revert !important;
+  margin: 0 !important;
+  padding-left: 20px !important;
+}
+
 </style>
