@@ -1,6 +1,6 @@
 <template>
   <!-- min-h-screen added temporarily to avoid glitching when changing tabs -->
-  <div class="min-h-screen">
+  <div>
     <div class="mx-auto max-w-screen-xl">
       <div class="flex flex-wrap">
         <main class="w-full">
@@ -70,15 +70,16 @@
           <div v-if="activeTab === 'fixings'">
             <Fixings
             :ManagerList="ManagerList"
+            :RegionList="RegionList"
             :FieldList="FieldList"
             :AgeGroupList="AgeGroupList"
             :TeamList="TeamList"
+            :SeriesList="SeriesList"
             :getEvents="retrieveEvents"
             />
           </div>
           <div v-if="activeTab === 'results'">
             <Results
-            :FieldList="FieldList"
             :Matches="MatchList"
             :getEvents="retrieveEvents"
             />
@@ -87,6 +88,14 @@
             <Ladders
             :TeamList="TeamList"
             :EventList="EventList"
+            />
+          </div>
+          <div v-if="activeTab === 'series'">
+            <Series
+            :TeamList="TeamList"
+            :EventList="EventList"
+            :AgeGroupList="AgeGroupList"
+            :getSeries="retrieveSeries"
             />
           </div>
         </main>
@@ -113,6 +122,7 @@ import Managers from '~/components/admin/Managers.vue';
 import Fixings from '~/components/admin/Fixings.vue';
 import Results from '~/components/admin/Results.vue';
 import Ladders from '~/components/admin/Ladders.vue';
+import Series from '~/components/admin/Series.vue';
 export default {
   name: 'parts-list',
   components: {
@@ -125,6 +135,7 @@ export default {
     Fixings,
     Results,
     Ladders,
+    Series,
   },
   data() {
     return {
@@ -133,6 +144,7 @@ export default {
       AgeGroupList: [],
       ManagerList: [],
       TeamList: [],
+      SeriesList: [],
       EventList: [],
       MatchList: [],
       totalEvents: [],
@@ -192,10 +204,10 @@ export default {
         { value: 'fields', label: 'Fields' },
         { value: 'ages', label: 'Ages' },
         { value: 'teams', label: 'Teams' },
-        { value: 'managers', label: 'Managers' },
+        { value: 'managers', label: 'TFW Staffs' },
+        { value: 'series', label: 'Series' },
         { value: 'fixings', label: 'Fixings' },
         { value: 'results', label: 'Results' },
-        { value: 'ladders', label: 'Ladders' }
       ],
     };
   },
@@ -205,6 +217,7 @@ export default {
     this.retrieveAgeGroups()
     this.retrieveManagers()
     this.retrieveTeams()
+    this.retrieveSeries()
     this.retrieveEvents()
   },
   methods: {
@@ -227,7 +240,7 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/regions?${queryString}`)
+        .$get(`v1/regions/all?${queryString}`)
         .then((response) => {
           this.RegionList = response.data.regions;
         })
@@ -248,7 +261,7 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/fields?${queryString}`)
+        .$get(`v1/fields/all?${queryString}`)
         .then((response) => {
           this.FieldList= response.data.fields;
         })
@@ -309,9 +322,30 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/teams?${queryString}`)
+        .$get(`v1/teams/all?${queryString}`)
         .then((response) => {
           this.TeamList = response.data.teams;
+        })
+    },
+    retrieveSeries() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/series?${queryString}`)
+        .then((response) => {
+          this.SeriesList = response.data.series;
         })
     },
     retrieveEvents() {
@@ -330,7 +364,7 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/events?${queryString}`)
+        .$get(`v1/events/all?${queryString}`)
         .then((response) => {
           this.EventList = response.data.events.map(event => {
             return {

@@ -9,8 +9,39 @@
       v-model="matchData.time" type="time"
       placeholder="Click to select..."
       step="900"
+      :min="'08:00'"
+      :max="'18:00'"
       :rules="rules"
       />
+    <!--
+      <VTimePicker
+      v-model="matchData.time"
+      full-width
+      no-title
+      landscape
+      color="green"
+      min="08:00:00"
+      max="18:00:00"
+      />
+    -->
+    </div>
+    <div class="col-span-1">
+      <label for="fielf" class="mb-1 block">
+        Field:
+      </label>
+      <VSelect
+      v-model="matchData.field_id"
+      :items="filteredFields"
+      placeholder="Choose Field"
+      :rules="rules"
+      solo
+      >
+        <template #prepend-item>
+          <div class="sticky-search-bar px-3">
+            <SearchBar v-model="fieldQuery" />
+          </div>
+        </template>
+      </VSelect>
     </div>
     <div class="col-span-1">
       <label for="match_team1" class="mb-1 block">
@@ -62,18 +93,31 @@ export default {
       type: Array,
       required: true,
     },
+    fieldList: {
+      type: Array,
+      required: true,
+    },
+    region: {
+      type: Number,
+      default: null,
+      required: false,
+    },
     agegroup: {
       type: Number,
-      required: true,
-    }
+      default: null,
+      required: false,
+    },
   },
   data() {
     return {
+      fieldQuery: '',
       team1Query: '',
       team2Query: '',
       rules: [ value => !!value || 'Required' ],
       matchData: {
         id: this.match.id || null,
+        // eslint-disable-next-line camelcase
+        field_id: this.match.field_id || '',
         time: this.match.time,
         team1: this.match.team1 || '',
         team2: this.match.team2|| '',
@@ -88,6 +132,21 @@ export default {
           value: team.id,
           age: team.agegroup_id
         }));
+    },
+    formattedField() {
+      return this.fieldList.map(field =>
+        ({
+          text: field.name,
+          value: field.id,
+          region: field.region_id
+        }));
+    },
+    filteredFields() {
+      return this.formattedField.filter(field => {
+        return field && field.text && typeof field.text === 'string' &&
+          field.text.toLowerCase().includes(this.fieldQuery.toLowerCase()) &&
+          (this.region ? this.region === field.region : true);
+      });
     },
     filteredTeam1() {
       return this.formattedTeam.filter(team =>
@@ -127,10 +186,7 @@ export default {
 </script>
 
 <style scoped>
-.o-tpck__select {
-  width: 100px !important; /* Override width */
-}
-.o-tpck__select o-tpck__select-placeholder{
-  width: 100px !important; /* Override width */
+select.o-tpck__select {
+  appearance: auto !important;
 }
 </style>

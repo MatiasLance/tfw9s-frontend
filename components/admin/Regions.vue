@@ -25,7 +25,7 @@
           v-if="totalPages > 0"
           class="col-span-1 flex flex-wrap items-center
           justify-around gap-x-2 md:justify-between"
-          data-aos="flip-up"
+          data-aos="flip-up" data-aos-once="true"
           >
             <span
             class="font-medium text-white"
@@ -86,7 +86,7 @@
               <tr v-for="(region) in RegionList"
               :key="region.id"
               data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="0"
+              data-aos-offset="0"  data-aos-once="true"
               >
                 <td
                 class="flex-1 bg-white px-2 py-1

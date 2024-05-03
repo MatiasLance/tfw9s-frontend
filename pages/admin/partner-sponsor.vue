@@ -494,8 +494,8 @@ import BasePagination from '~/components/base/BasePagination';
 import SearchBar from '~/components/SearchBar'
 import aosMixin from '@/mixins/aos';
 import currencyMixin from '@/mixins/currency';
-import ImageUpload from '~/components/ImageUpload'
-import ImageUploadEdit from '~/components/ImageUploadEdit'
+import ImageUpload from '~/components/ImageUploadSolo'
+import ImageUploadEdit from '~/components/ImageUploadEditSolo'
 import Tiptap from '~/components/Wysiwyg/Tiptap';
 
 const toNumber = (str) => +str;
@@ -644,6 +644,10 @@ export default {
         .$get(`v1/partnersponsors?${queryString}`)
         .then((response) => {
           this.partnerSponsors = response.data.partnerSponsors
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
         })
         .finally(() => {
           this.isNewsLoading = false;

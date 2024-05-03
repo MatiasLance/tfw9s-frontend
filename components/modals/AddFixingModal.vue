@@ -5,7 +5,7 @@
           <h3 class="mb-3 font-bold text-brand-black">
               Add Fixing
           </h3>
-          <hr class="my-3"/>
+          <hr class="my-3 lg:w-[918px]"/>
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div class="col-span-1">
               <label for="eventname" class="mb-1 block">
@@ -22,12 +22,12 @@
             </div>
             <div class="col-span-1">
               <label for="selectmanager" class="mb-1 block">
-                Manager:
+                TFW Staff:
               </label>
               <VSelect
               v-model="Event.managerId"
               :items="filteredManagers"
-              placeholder="Choose a Manager"
+              placeholder="Choose a Staff"
               :rules="rules"
               solo
               >
@@ -53,21 +53,52 @@
             </div>
             <div class="col-span-1">
               <label for="selectfield" class="mb-1 block">
-                Field:
+                Region:
               </label>
               <VSelect
-              v-model="Event.fieldId"
-              :items="filteredFields"
+              v-model="Event.region_id"
+              :items="filteredRegions"
               placeholder="Choose a Field"
               :rules="rules"
               solo
            >
             <template #prepend-item>
               <div class="sticky-search-bar px-3">
-                <SearchBar v-model="fieldQuery" />
+                <SearchBar v-model="regionQuery" />
               </div>
             </template>
           </VSelect>
+          </div>
+          <div class="col-span-1">
+            <label for="selectfield" class="mb-1 block">
+              Series:
+            </label>
+            <VSelect
+              v-model="SeriesId"
+              :items="filteredSeries"
+              placeholder="Choose a Series"
+              :rules="rules"
+              solo
+          >
+            <template #prepend-item>
+              <div class="sticky-search-bar px-3">
+                <SearchBar v-model="seriesQuery" />
+              </div>
+            </template>
+          </VSelect>
+          </div>
+          <div class="col-span-1">
+            <label for="eventname" class="mb-1 block">
+              Team Count:
+            </label>
+            <VTextField
+            id="name"
+            v-model="Event.teamcount"
+            label="Enter Event Title"
+            :rules="rules"
+            type="number"
+            solo
+            />
           </div>
           <div class="col-span-1">
               <label for="selectdate" class="mb-1 block">
@@ -77,6 +108,8 @@
               v-model="Event.date"
               placeholder="Click to select..."
               icon="calendar"
+              :min-date="mindate"
+              :max-date="maxdate"
               :rules="rules"
               />
           </div>
@@ -149,6 +182,8 @@
                     :match="matchBuffer"
                     :agegroup="Event.agegroup_id"
                     :teamList="teams"
+                    :fieldList="fields"
+                    :region="Event.region_id"
                     @update-event="updateMatch(matchIndex, $event)"
                   />
                 </div>
@@ -198,6 +233,10 @@ export default {
       type: Array,
       required: true
     },
+    regions: {
+      type: Array,
+      required: true
+    },
     fields: {
       type: Array,
       required: true
@@ -210,16 +249,25 @@ export default {
       type: Array,
       required: true
     },
+    series: {
+      type: Array,
+      required: true
+    },
   },
   data() {
     return {
+      SeriesId: null,
+      mindate: null,
+      maxdate: null,
       valid: true,
+      seriesQuery: '',
       managerQuery: '',
-      fieldQuery: '',
+      regionQuery: '',
       Event: {},
       multipleMatch: [
         {
           time: null,
+          field_id: null,
           team1: [],
           team2: [],
         }
@@ -228,9 +276,13 @@ export default {
     }
   },
   computed: {
-    formattedField() {
-      return this.fields.map(field =>
-        ({ text: field.name, value: field.id }));
+    formattedSeries() {
+      return this.series.map(series =>
+        ({ text: series.name, value: series.id }));
+    },
+    formattedRegion() {
+      return this.regions.map(region =>
+        ({ text: region.name, value: region.id }));
     },
     formattedAgeGroup() {
       return this.agegroup.map(agegroup =>
@@ -244,10 +296,10 @@ export default {
           value: manager.id,
         }));
     },
-    filteredFields() {
-      return this.formattedField.filter(field =>
-        field && field.text && typeof field.text === 'string' ?
-          field.text.toLowerCase().includes(this.fieldQuery.toLowerCase()) :
+    filteredRegions() {
+      return this.formattedRegion.filter(region =>
+        region && region.text && typeof region.text === 'string' ?
+          region.text.toLowerCase().includes(this.regionQuery.toLowerCase()) :
           false
       );
     },
@@ -258,8 +310,34 @@ export default {
           false
       );
     },
+    filteredSeries() {
+      return this.formattedSeries.filter(series =>
+        series && series.text && typeof series.text === 'string' ?
+          series.text.toLowerCase().includes(this.seriesQuery.toLowerCase()) :
+          false
+      );
+    },
+  },
+  watch: {
+    SeriesId: {
+      handler(newSeries) {
+        if (newSeries) {
+          const data = this.series.find((x) => x.id === newSeries);
+          console.log(data)
+          this.mindate = this.formattedDate(data.start);
+          this.maxdate = this.formattedDate(data.end);
+          this.Event.date = null;
+        }
+      },
+      immediate: true,
+    },
   },
   methods: {
+    formattedDate(dateString) {
+      const date = new Date(dateString);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    },
     reformatTime(timeString) {
       const [
         hours,
@@ -328,13 +406,16 @@ export default {
       formData.append('datetime', event_date);
       formData.append('name', this.Event.name);
       formData.append('description', this.Event.description);
-      formData.append('field_id', this.Event.fieldId);
+      formData.append('region_id', this.Event.region_id);
       formData.append('manager_id', this.Event.managerId);
       formData.append('agegroup_id', this.Event.agegroup_id);
+      formData.append('series', this.SeriesId);
+      formData.append('teamcount', this.Event.teamcount);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
         formData.append(`matches[${i}][time]`, match.time?match.time:'00:00');
+        formData.append(`matches[${i}][field_id]`, match.field_id);
         formData.append(`matches[${i}][team1]`, match.team1.id);
         formData.append(`matches[${i}][team2]`, match.team2.id);
       }

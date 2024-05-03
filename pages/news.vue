@@ -1,6 +1,6 @@
 <!-- eslint-disable max-len -->
 <template>
-  <div class="h-full  bg-[#1A1A1B]">
+  <div class="min-h-screen  bg-[#1A1A1B]">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -73,8 +73,8 @@
       <article class="mx-auto max-w-screen-xl gap-4">
           <div class="grid grid-cols-1 gap-4">
             <div
-            v-for="(news, index) in newsList"
-            :key="index" class="group col-span-1 bg-[#212121]"
+            v-for="(news) in newsList"
+            :key="news.id" class="group col-span-1 bg-[#212121]"
             data-aos="fade-up"
           >
             <div
@@ -133,7 +133,7 @@
                 <img
                   :src="getMediaURL(news.media[0], 'news')"
                   alt="Product Image"
-                  class="h-64 w-full object-cover transition-all
+                  class="h-full w-full object-cover transition-all
                     group-hover:scale-110"
                   >
               </div>
@@ -308,5 +308,8 @@ color: rgb(104, 104, 104) !important;
 
 .custom-btn {
 height: 50px !important;
+}
+img{
+  aspect-ratio: 16 / 9
 }
 </style>

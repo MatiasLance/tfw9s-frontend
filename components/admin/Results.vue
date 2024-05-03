@@ -78,11 +78,6 @@ export default {
     SubmitResultModal,
   },
   props: {
-    // eslint-disable-next-line vue/prop-name-casing
-    FieldList: {
-      type: Array,
-      required: true
-    },
     Matches: {
       type: Array,
       required: true
@@ -106,6 +101,7 @@ export default {
       selectedData: [],
       dataColumns: [
         { name: 'event_date', label: 'Date' },
+        { name: 'matchtime', label: 'Time' },
         { name: 'field', label: 'Field' },
         { name: 'team1', label: 'Team' },
         { name: 'team1_score', label: 'Points' },
@@ -159,6 +155,12 @@ export default {
     },
   },
   methods: {
+    convertTo12HourFormat(timeString) {
+      const [ hour, minute ] = timeString.split(':');
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const formattedHour = (hour % 12) || 12; // Convert 0 to 12
+      return `${formattedHour}:${minute} ${period}`;
+    },
     openManageResultDialog(data) {
       this.selectedMatch = data
       this.showManageResultModal = true
@@ -259,18 +261,7 @@ export default {
       const month = date.getMonth() + 1;
       const day = date.getDate();
       const year = date.getFullYear();
-      return `${month}/${day}/${year.toString().slice(-2)}`;
-    },
-    // eslint-disable-next-line camelcase
-    findField(field_id) {
-      // eslint-disable-next-line camelcase
-      const foundField = this.FieldList.find(field => field.id === field_id);
-      if (foundField) {
-        return foundField.name;
-      } else {
-        // If no matching field is found, return "unknown"
-        return 'Unknown';
-      }
+      return `${day}/${month}/${year.toString().slice(-2)}`;
     },
     retrieveEvents() {
       let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
@@ -335,11 +326,12 @@ export default {
                 return {
                   ...match,
                   time: this.reformatTime(match.match_time),
+                  matchtime: this.convertTo12HourFormat(match.match_time),
                   // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
                   date: event.event_date,
                   // eslint-disable-next-line camelcase
-                  field: this.findField(event.field_id),
+                  field: match.field.name??'Unknown',
                   submit: match.submitted === 1
                 };
               })

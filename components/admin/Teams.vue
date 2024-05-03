@@ -25,7 +25,7 @@
           v-if="totalPages > 0"
           class="col-span-1 flex flex-wrap items-center
           justify-around gap-x-2 md:justify-between"
-          data-aos="flip-up"
+          data-aos="flip-up" data-aos-once="true"
           >
             <span
             class="font-medium text-white"
@@ -44,8 +44,8 @@
           </div>
           <section class="col-span-1">
             <div
-            class="grid grid-cols-1 overflow-x-scroll
-            overflow-y-hidden md:overflow-x-hidden"
+            class="grid grid-cols-1 overflow-y-hidden
+            overflow-x-scroll md:overflow-x-hidden"
             >
               <div
               v-if="totalPages > 0"
@@ -69,7 +69,7 @@
               v-for="(data) in Teams"
               :key="data.id" class="col-span-1 mb-0.5 gap-0"
               data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="0"
+              data-aos-offset="0"  data-aos-once="true"
               >
               <div class="flex min-w-[640px] items-center justify-center">
                 <input
@@ -130,7 +130,7 @@
     />
     <DeleteTeamModal
     :active="showDeleteTeamModal"
-    :team_data="selectedData"
+    :team="selectedData"
     @close="closeDeleteTeamDialog"
     @confirm="DeleteTeam"
     />

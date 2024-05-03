@@ -4,12 +4,28 @@
     >
         <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
         <v-app>
-            <TopHeader v-if="showComponents.topheader" />
+            <TopHeader v-if="showComponents.topheader"/>
+            <button
+            v-if="showTopScroll" type="button"
+            class="UpBtn fixed bottom-24 right-2 z-[9999]
+            sm:bottom-16 md:right-6 lg:right-10 xl:right-12"
+            data-aos="fade-left" @click="scrollUp"
+            >
+              <i
+              title="Scroll to Top"
+              class="ri-arrow-up-line rounded-lg bg-[#4cbe5c]
+              p-2 text-3xl font-bold text-white drop-shadow-xl
+              transition hover:brightness-125"
+              />
+            </button>
             <NavHeader
               class="font-montserrat sm:custom-py-4
               custom-py-1 relative font-semibold"
             />
-            <Nuxt />
+            <div class="relative min-h-screen bg-[#1A1A1B]">
+              <div class="page-top"/>
+              <Nuxt />
+            </div>
             <Footer />
         </v-app>
     </div>
@@ -21,6 +37,7 @@ export default {
   components: { TopHeader },
   data() {
     return {
+      showTopScroll: false,
       showComponents: {
         topheader: false,
         navheader: true,
@@ -29,10 +46,28 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener('scroll', this.handleScroll)
     document.addEventListener('click', this.close)
   },
   beforeDestroy() {
+    window.removeEventListener('scroll', this.handleScroll)
     document.removeEventListener('click', this.close)
+  },
+  methods: {
+    scrollUp() {
+      const pageTop = document.querySelector('.page-top');
+      pageTop.scrollIntoView({ behavior: 'smooth' });
+    },
+    handleScroll() {
+      const pageTop = document.querySelector('.page-top');
+      const sticky = pageTop.offsetTop;
+
+      if (window.pageYOffset > sticky) {
+        this.showTopScroll = true
+      } else {
+        this.showTopScroll = false
+      }
+    }
   },
 }
 </script>

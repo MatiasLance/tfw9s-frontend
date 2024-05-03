@@ -25,7 +25,7 @@
         v-if="totalPages > 0"
         class="col-span-1 flex flex-wrap items-center
         justify-around gap-x-2 md:justify-between"
-        data-aos="flip-up"
+        data-aos="flip-up" data-aos-once="true"
         >
           <span
           class="font-medium text-white"
@@ -42,8 +42,8 @@
             />
         </div>
         <section
-        class="col-span-1 overflow-x-scroll
-        overflow-y-hidden md:overflow-x-hidden"
+        class="col-span-1 overflow-y-hidden
+        overflow-x-scroll md:overflow-x-hidden"
         >
           <div class="grid min-w-[640px] grid-cols-1 gap-2">
             <div
@@ -73,7 +73,7 @@
                 text-lg font-semibold
                 text-white"
                 >
-                  {{ event.field_name }}
+                  {{ event.region_name }}
                 </div>
                 <div class="col-span-3">
                   <CustomVueTable
@@ -128,18 +128,22 @@
   <AddFixingModal
   :active="showAddFixingModal"
   :managers="ManagerList"
+  :regions="RegionList"
   :fields="FieldList"
   :agegroup="AgeGroupList"
   :teams="TeamList"
+  :series="SeriesList"
   @close="closeAddFixingDialog"
   @confirm="AddFixing"
   />
   <EditFixingModal
   :active="showEditFixingModal"
   :managers="ManagerList"
+  :regions="RegionList"
   :fields="FieldList"
   :agegroup="AgeGroupList"
   :teams="TeamList"
+  :series="SeriesList"
   :event="selectedFixing"
   @close="closeEditFixingDialog"
   @confirm="UpdateFixing"
@@ -172,6 +176,11 @@ export default {
       required: true
     },
     // eslint-disable-next-line vue/prop-name-casing
+    RegionList: {
+      type: Array,
+      required: true
+    },
+    // eslint-disable-next-line vue/prop-name-casing
     FieldList: {
       type: Array,
       required: true
@@ -183,6 +192,11 @@ export default {
     },
     // eslint-disable-next-line vue/prop-name-casing
     TeamList: {
+      type: Array,
+      required: true
+    },
+    // eslint-disable-next-line vue/prop-name-casing
+    SeriesList: {
       type: Array,
       required: true
     },
@@ -204,7 +218,7 @@ export default {
       totalPages: 0,
       totalItems: 0,
       dataColumns: [
-        { name: 'time', label: 'Time' },
+        { name: 'matchtime', label: 'Time' },
         { name: 'team1', label: 'Team 1' },
         { name: 'team2', label: 'Team 2' },
       ],
@@ -248,6 +262,12 @@ export default {
     setPage() {
       this.retrieveEvents();
     },
+    convertTo12HourFormat(timeString) {
+      const [ hour, minute ] = timeString.split(':');
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const formattedHour = (hour % 12) || 12; // Convert 0 to 12
+      return `${formattedHour}:${minute} ${period}`;
+    },
     reformatTime(timeString) {
       const [
         hours,
@@ -265,12 +285,13 @@ export default {
       const month = date.getMonth() + 1;
       const day = date.getDate();
       const year = date.getFullYear();
-      return `${month}/${day}/${year.toString().slice(-2)}`;
+      return `${day}/${month}/${year.toString().slice(-2)}`;
     },
     openAddFixingDialog() {
       this.showAddFixingModal = true
     },
     openEditFixingDialog(data) {
+      console.log('Event data: ', data)
       this.selectedFixing = data
       this.showEditFixingModal = true
     },
@@ -344,7 +365,6 @@ export default {
       this.$axios
         .$get(`v1/events?${queryString}`)
         .then((response) => {
-          console.log(response.data);
           this.EventList = response.data.events.map(event => {
             return {
               ...event,
@@ -352,12 +372,13 @@ export default {
               manager_name: `${event.manager.user.first_name}
                ${event.manager.user.last_name}`,
               // eslint-disable-next-line camelcase
-              field_name: event.field.name,
+              region_name: event.region.name,
               date: this.formattedDate(event.event_date),
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
-                  time: this.reformatTime(match.match_time)
+                  time: this.reformatTime(match.match_time),
+                  matchtime: this.convertTo12HourFormat(match.match_time),
                 };
               })
             };

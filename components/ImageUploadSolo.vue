@@ -1,99 +1,98 @@
 <template>
-  <div>
-    <div class="col-span-4 mb-4 w-full">
-      <label for="photo" class="mb-1 block">
+  <div class="col-span-1 md:col-span-2">
+    <label for="photo" class="mb-1 block">
         Image upload:
-      </label>
-      <!-- Insert myCroppa here -->
-      <Croppa
-        v-model="myCroppa"
-        :width="320"
-        :height="320"
-        :quality="5"
-        placeholder="Place image here"
-        :placeholder-font-size="15"
-        accept=".png, .webp, .jpeg, .jpg"
-        :file-size-limit="31457280"
-        :zoom-speed="5"
-        :prevent-white-space="false"
-        :show-loading="true"
-        initial-size="contain"
-        @file-size-exceed="handleCroppaFileSizeExceed"
-        @file-type-mismatch="handleCroppaFileTypeMismatch"
-        @new-image-drawn="handleNewImageCreate"
-        @image-remove="handleImageRemoveCreate"
-        @loading-end="applyMetadata"
+    </label>
+    <!-- Insert myCroppa here -->
+    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div class="col-span-1">
+        <Croppa
+          v-model="myCroppa"
+          :width="320"
+          :height="320"
+          :quality="5"
+          placeholder="Place image here"
+          :placeholder-font-size="15"
+          accept=".png, .webp, .jpeg, .jpg"
+          :file-size-limit="31457280"
+          :zoom-speed="5"
+          :prevent-white-space="false"
+          :show-loading="true"
+          initial-size="contain"
+          @file-size-exceed="handleCroppaFileSizeExceed"
+          @file-type-mismatch="handleCroppaFileTypeMismatch"
+          @new-image-drawn="handleNewImageCreate"
+          @image-remove="handleImageRemoveCreate"
+          @loading-end="applyMetadata"
         >
-      </Croppa>
-      <br />
-      <div class="flex justify-start">
-        <VBtn @click="rotateAnti">
-          <i class="ri-anticlockwise-line"></i>
-        </VBtn>
-        <VBtn @click="rotate">
-          <i class="ri-clockwise-line"></i>
-        </VBtn>
-        <VBtn @click="flipx">
-          <i class="ri-arrow-left-right-line"></i>
-        </VBtn>
-        <VBtn @click="flipy">
-          <i class="ri-arrow-up-down-line"></i>
-        </VBtn>
-      </div>
-      <div class="flex justify-start">
-        <VBtn @click="zoomIn">
-          <i class="ri-zoom-in-line"></i>
-        </VBtn>
-        <VBtn @click="zoomOut">
-          <i class="ri-zoom-out-line"></i>
-        </VBtn>
-        <VBtn plain @click="setImagePreset">
-          set
-        </VBtn>
-        <VBtn plain @click="clearImagePreset">
-          clr
-        </VBtn>
-      </div>
-      <br />
-      <VBtn
+        </Croppa>
+        <br />
+        <div class="flex justify-start">
+            <VBtn @click="rotateAnti">
+                <i class="ri-anticlockwise-line"></i>
+            </VBtn>
+            <VBtn @click="rotate">
+                <i class="ri-clockwise-line"></i>
+            </VBtn>
+            <VBtn @click="flipx">
+                <i class="ri-arrow-left-right-line"></i>
+            </VBtn>
+            <VBtn @click="flipy">
+                <i class="ri-arrow-up-down-line"></i>
+            </VBtn>
+        </div>
+        <div class="flex justify-start">
+            <VBtn @click="zoomIn">
+                <i class="ri-zoom-in-line"></i>
+            </VBtn>
+            <VBtn @click="zoomOut">
+                <i class="ri-zoom-out-line"></i>
+            </VBtn>
+            <VBtn plain @click="setImagePreset">
+                set
+            </VBtn>
+            <VBtn plain @click="clearImagePreset">
+                clr
+            </VBtn>
+        </div>
+        <br />
+        <VBtn
         v-if="showGenerateCreatedImageBtn"
         dark
         large
         class="bg-gradient-to-r from-brand-black to-brand-black"
         @click="generateImage"
         >
-        GENERATE
-      </VBtn>
-    </div>
-    <div class="col-span-4 mb-4 w-full">
-      <div
-        class="grid grid-cols-1 gap-3 lg:grid-cols-3"
-        >
+          GENERATE
+        </VBtn>
+      </div>
+      <div class="col-span-1 max-h-[320px] max-w-[320px]">
         <div
-          v-for="(photo, photoIndex) in imgUrl"
-          :key="photo"
-          class="relative flex justify-center gap-1"
-          >
-            <VImg :src="photo"></VImg>
-            <button
-              type="button"
-              class="
-                absolute
-                left-0 my-2
-                h-6
-                w-6 text-brand-lgrey
-                shadow-sm
-                hover:bg-brand-black
-                hover:text-white
-                "
-                @click="removeImage(photoIndex)"
-                >
-                <div class="ri-close-fill ri-lg"></div>
-            </button>
+            v-for="(photo, photoIndex) in imgUrl"
+            :key="photo"
+            class="relative flex justify-center gap-1"
+        >
+        <VImg :src="photo"></VImg>
+        <button
+            type="button"
+            class="
+            absolute
+            left-0 my-2
+            h-6
+            w-6 text-brand-lgrey
+            shadow-sm
+            hover:bg-brand-black
+            hover:text-white
+            "
+            @click="removeImage(photoIndex)"
+        >
+            <div class="ri-close-fill ri-lg"></div>
+        </button>
         </div>
       </div>
     </div>
-  </div>
+
+</div>
 </template>
 
 <script>
@@ -182,8 +181,8 @@ export default {
       this.showGenerateCreatedImageBtn = false;
       this.myCroppa.generateBlob(
         (blob) => {
-          this.imgUrl.push(URL.createObjectURL(blob));
-          this.imgList.push(blob)
+          this.imgUrl.splice(0, 1, URL.createObjectURL(blob));
+          this.imgList.splice(0, 1, blob);
         },
       );
       this.myCroppa.refresh();

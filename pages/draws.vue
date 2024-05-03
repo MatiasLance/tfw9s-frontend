@@ -54,9 +54,9 @@
             class="md:w-80 lg:w-80"
             />
             <VSelect
-            v-model="selectedEvent"
-            :items="filteredEvents"
-            placeholder="Select Event"
+            v-model="selectedRegion"
+            :items="formattedRegions"
+            placeholder="Select Region"
             solo
             class="md:w-80 lg:w-80"
             />
@@ -178,11 +178,10 @@ export default {
         title: 'Draws - TFW Rugby League',
         description: ''
       },
-      selectedEvent: null,
+      selectedRegion: null,
       selectedAgeGroup: null,
       selectedYear: null,
       AgeGroupList: [],
-      FieldList: [],
       EventList: [],
       MatchList: [],
       isLoaded: false,
@@ -231,6 +230,26 @@ export default {
       }));
       return formattedYears;
     },
+    formattedRegions() {
+      const regions = this.EventList.map(event => ({
+        id: event.region ? event.region.id : null,
+        name: event.region ? event.region.name : 'Unknown'
+      }));
+
+      // Filter out duplicates and sort the region names alphabetically
+      const uniqueRegions = [ ...new Set(regions.map(region => region.name)) ]
+        .filter(region => region).sort();
+
+      // Create formatted region objects with text and value properties
+      const formattedRegions = uniqueRegions.map(regionName => {
+        const regionId = regions.find(region => region.name === regionName).id;
+        return {
+          text: regionName,
+          value: regionId
+        };
+      });
+      return formattedRegions;
+    },
   },
   watch: {
     EventList: {
@@ -241,7 +260,7 @@ export default {
             const eventDate = new Date(firstEvent.event_date);
             if (!isNaN(eventDate)) {
               this.selectedYear = eventDate.getFullYear();
-              this.selectedEvent = firstEvent.id;
+              this.selectedRegion = firstEvent.region_id;
               this.selectedAgeGroup = firstEvent.agegroup_id;
               this.retrieveEventMatch()
             } else {
@@ -261,11 +280,11 @@ export default {
         if (newYear && this.isLoaded) {
           this.page = 1
           /*
-           * this.selectedEvent = null
+           * this.selectedRegion = null
            * this.selectedAgeGroup = null
            */
           this.selectedAgeGroup = this.formattedAgeGroup[0]?.value ?? null;
-          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
+          this.selectedRegion = this.formattedRegions[0]?.value ?? null;
         }
       },
       immediate: true,
@@ -274,12 +293,13 @@ export default {
       handler(newYear) {
         if (newYear && this.isLoaded) {
           this.page = 1
-          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
+          this.selectedRegion = null;
+          this.retrieveEventMatch()
         }
       },
       immediate: true,
     },
-    selectedEvent: {
+    selectedRegion: {
       handler(newEvent) {
         if (newEvent && this.isLoaded) {
           this.page = 1
@@ -369,16 +389,6 @@ export default {
       return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`;
     },
     // eslint-disable-next-line camelcase
-    findField(field_id) {
-      // eslint-disable-next-line camelcase
-      const foundField = this.FieldList.find(field => field.id === field_id);
-      if (foundField) {
-        return foundField.name;
-      } else {
-        // If no matching field is found, return "unknown"
-        return 'Unknown';
-      }
-    },
     retrieveEvents() {
       const query = {
         q: this.query,
@@ -400,7 +410,7 @@ export default {
           this.EventList = response.data.events;
         })
         .finally(() => {
-          this.retrieveFields();
+          this.retrieveEventMatch();
         });
     },
     retrieveAgeGroups() {
@@ -423,34 +433,11 @@ export default {
           this.AgeGroupList= response.data.ageGroups;
         })
     },
-    retrieveFields() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/fields?${queryString}`)
-        .then((response) => {
-          this.FieldList= response.data.fields;
-        })
-        .finally(() => {
-          this.retrieveEventMatch();
-        });
-    },
     retrieveEventMatch() {
       const query = {
         sort: 'latest',
-        event: this.selectedEvent,
+        region: this.selectedRegion,
+        agegroup: this.selectedAgeGroup,
         year: this.selectedYear,
       };
 
@@ -477,7 +464,7 @@ export default {
                   // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
                   // eslint-disable-next-line camelcase
-                  field: this.findField(event.field_id),
+                  field: match.field.name??'Unknown',
                   submit: match.submitted === 1
                 };
               })

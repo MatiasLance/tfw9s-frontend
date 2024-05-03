@@ -13,16 +13,16 @@
                 >
                     {{ content.title }}
                 </h2>
-                <div
+                <ul
                     v-for="text in content.paragraphs"
                     :key="text"
-                    class="my-5"
+                    class="my-5 list-outside list-disc"
                 >
                     <!-- eslint-disable-next-line vue/no-v-html -->
-                    <p class="paragraph text-base">
+                    <li class="paragraph text-base">
                       {{ text }}
-                    </p>
-                </div>
+                    </li>
+                </ul>
             </section>
     </article>
 </div>
@@ -38,44 +38,44 @@ export default {
       contents: [
         {
           type: 'section',
-          title: 'Pricing',
-          paragraphs: [ 'All prices are in Australian dollars (AUD) and are inclusive of GST. The prices listed on the website do not include delivery charges. Delivery prices will be automatically calculated in the checkout process based on the delivery option and location you require the item to be shipped.' ]
-        },
-        {
-          type: 'section',
-          title: 'Payment Methods: Credit and Debit Cards',
+          title: 'Refund policy',
           paragraphs: [
             `
-            We accept credit card payments via Visa,
-            Mastercard & American Express. All information
-            is encrypted using SSL encryption, which prevents
-            unauthorised access to card details.
-            You will be asked for your card number, its
-            period of validity and the CVN.
-            `
-          ]
-        },
-        {
-          type: 'section',
-          title: 'Order Cancellations',
-          paragraphs: [
-            `
-            Please note, after you have placed an order, a
-            receipt is automatically mailed to you confirming
-            the purchase intent.
-            This receipt does not constitute a contract, and orders
-            may be cancelled at any time due to insufficient stock,
-            inability to authorise a
-            credit card, suspicion of fraudulent activity,
-            or any unforeseen reason or circumstance, as we see fit.
+            There are no full refunds, when you register with us,
+             you fully accept our policy on refunds.
             `,
             `
-            In the event that one of the above has taken place,
-            and your nominated credit card has been charged,
-            your order will be subsequently cancelled, and
-            a refund will be organised.
-
+            Cancelling team 7 days out from the event will be
+             subject to an administration fee (50% of the team registration)
+            `,
             `
+            Cancelling team 5 days out from the event will be subject
+             to an administration fee (75% of the team registration)
+            `,
+            `
+            Cancelling team 24hrs out from the event will be subject
+             to an administration fee (100% of the team registration)
+            `,
+            `
+            Administration fee of 20% apply to prior timeframes above.
+            `,
+            `
+            To avoid administration fees, there is a credit option
+             for your team to utilise to go towards the next event.
+            `,
+            `
+            If an event is rescheduled due to unforeseen circumstances,
+             a credit will apply for next event.
+            `,
+            `
+            Credit of fees for the next event is the event you can attend
+             within a 12 month period. Please note our weekly summer series
+              is not a part of this policy.
+            `,
+            `
+            If an event is postponed due to weather or act of god, your
+             team registration will be used as credit towards the next event.
+            `,
           ]
         },
       ]

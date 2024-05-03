@@ -34,9 +34,9 @@
                     :step="1"
                     :max="100"
                     :rules="rules"
-                    @keyup="handleMinAge"
                     solo
                     inputmode="numeric"
+                    @keyup="handleMinAge"
                     />
                   </div>
                   <div class="col-span-1">
@@ -53,9 +53,9 @@
                     :step="1"
                     :max="100"
                     :rules="rules"
-                    @keyup="handleMaxAge"
                     solo
                     inputmode="numeric"
+                    @keyup="handleMaxAge"
                     />
                   </div>
                 </div>

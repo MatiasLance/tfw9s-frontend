@@ -73,7 +73,7 @@ export default {
         .catch(() => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Failed to remove manager',
+            message: 'Failed to remove Team',
             position: 'bottom',
             variant: 'danger',
             queue: true,

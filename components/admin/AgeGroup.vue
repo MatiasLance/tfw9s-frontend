@@ -25,7 +25,7 @@
           v-if="totalPages > 0"
           class="col-span-1 flex flex-wrap items-center
           justify-around gap-x-2 md:justify-between"
-          data-aos="flip-up"
+          data-aos="flip-up" data-aos-once="true"
           >
             <span
             class="font-medium text-white"
@@ -79,18 +79,19 @@
           -->
           <section v-if="totalPages > 0" class="col-span-1">
             <div
-            class="grid grid-cols-1 overflow-x-scroll
-            overflow-y-hidden md:overflow-x-hidden"
+            class="grid grid-cols-1 overflow-y-hidden
+            overflow-x-scroll md:overflow-x-hidden"
             >
             <table class="col-span-1 min-w-[640px]">
-              <tr v-for="(agegroup) in ageGroupList"
+              <tr
+              v-for="(agegroup) in ageGroupList"
               :key="agegroup.id"
               data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="0"
+              data-aos-offset="0"  data-aos-once="true"
               >
                 <td
-                class="flex-1 bg-white px-2 py-1
-                border-b-[2.5px] border-[#1a1a1b]"
+                class="flex-1 border-b-[2.5px] border-[#1a1a1b] bg-white
+                px-2 py-1"
                 >
                   {{agegroup.name??'Unknown'}}
                 </td>

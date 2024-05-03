@@ -85,7 +85,7 @@
             <tr v-for="(manager) in ManagerList"
             :key="manager.id"
             data-aos="flip-down" data-aos-duration="500"
-            data-aos-offset="0"
+            data-aos-offset="0" data-aos-once="true"
             >
               <td
               class="flex-1 bg-white px-2 py-1
@@ -217,12 +217,6 @@ export default {
       const date = new Date(dateString);
       date.setHours(0, 0, 0, 0);
       return date;
-    },
-    calendarDate(date) {
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const year = date.getFullYear();
-      return `${month}/${day}/${year.toString().slice(-2)}`;
     },
     openAddManagerDialog() {
       this.showAddManagerModal = true

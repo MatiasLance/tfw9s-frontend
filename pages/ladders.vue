@@ -136,7 +136,7 @@ export default {
         '25 and above'
       ],
       dataColumns: [
-        { name: 'position', label: 'Pos' },
+        { name: 'pos', label: 'Pos' },
         { name: 'team', label: 'Team' },
         { name: 'win', label: 'Win' },
         { name: 'loss', label: 'Loss' },
@@ -283,7 +283,7 @@ export default {
     retrieveTeamPosition() {
       const query = {
         q: this.query,
-        sort: 'a_to_z',
+        sort: 'points',
         page: this.page,
         maxTeamPositionsPerPage: 10,
         event: this.selectedEvent,
@@ -300,10 +300,11 @@ export default {
       this.$axios
         .$get(`v1/teampositions?${queryString}`)
         .then((response) => {
-          this.team = response.data.teamPositions.map(team => {
+          this.team = response.data.teamPositions.map((team, index) => {
             return {
               ...team,
-              team: team.team.name
+              team: team.team.name,
+              pos: index + 1,
             };
           });
           this.totalItems = response.data.total_items;

@@ -268,7 +268,7 @@ export default {
       const month = date.getMonth() + 1;
       const day = date.getDate();
       const year = date.getFullYear();
-      return `${month}/${day}/${year.toString().slice(-2)}`;
+      return `${day}/${month}/${year.toString().slice(-2)}`;
     },
     // eslint-disable-next-line camelcase
     findField(field_id) {

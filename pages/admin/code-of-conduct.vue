@@ -186,7 +186,7 @@
        >
            Add Content
          </h3>
-         <hr class="my-3">
+         <hr class="my-3  lg:w-[918px]"/>
          <div class="grid grid-cols-1">
            <div class="col-span-1">
              <label for="headline" class="mb-1 block">
@@ -198,7 +198,7 @@
              />
            </div>
          </div>
-         <hr class="my-3">
+         <hr class="my-3  lg:w-[918px]"/>
          <div class="block lg:flex lg:flex-auto lg:justify-end">
            <button
              type="button"
@@ -259,7 +259,7 @@
       >
           Edit Content
         </h3>
-        <hr class="my-3">
+        <hr class="my-3  lg:w-[918px]"/>
         <div class="grid grid-cols-1">
           <div class="col-span-1">
             <label for="headline" class="mb-1 block">
@@ -271,7 +271,7 @@
             />
           </div>
         </div>
-        <hr class="my-3">
+        <hr class="my-3  lg:w-[918px]"/>
         <div class="block lg:flex lg:flex-auto lg:justify-end">
           <button
             type="button"
@@ -329,7 +329,7 @@
      >
          Delete Content
        </h3>
-       <hr class="my-3">
+       <hr class="my-3  lg:w-[918px]"/>
        <div class="grid grid-cols-1">
          <div class="col-span-1">
            <label for="headline" class="mb-1 block">
@@ -337,7 +337,7 @@
            </label>
          </div>
        </div>
-       <hr class="my-3">
+       <hr class="my-3  lg:w-[918px]"/>
        <div class="block lg:flex lg:flex-auto lg:justify-end">
          <button
            type="button"

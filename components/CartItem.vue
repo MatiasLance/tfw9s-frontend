@@ -36,7 +36,7 @@
                 :key="category.id"
                 class="mt-1 text-gray-400"
               >
-              <i class="ri-price-tag-3-line mr-1 text-[#1a1d18]"></i>
+              <i class="ri-price-tag-3-line mr-1 text-gray-400"></i>
               {{ category.name }}
               </span>
             </div>
@@ -44,7 +44,7 @@
         </figure>
       </div>
       <div>
-        <div class="relative flex w-full flex-row">
+        <div class="relative flex w-full flex-row items-center">
           <input
             v-model="editableQuantity"
             type="number"

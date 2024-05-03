@@ -14,6 +14,8 @@
              whitespace-normal border border-white
              px-4 py-2 text-center align-middle
              text-[11px] font-semibold uppercase text-white"
+             data-aos="flip-up"
+             data-aos-once="true"
             >
               {{ column.label }}
             </th>
@@ -33,6 +35,9 @@
              :key="column.name"
              class="whitespace-normal border text-center
              border-white p-2 px-4 align-middle text-[11px] text-white"
+             data-aos="flip-up"
+             data-aos-once="true"
+             data-aos-offset="0px"
             >
                 <slot :name="column.name" :data="row">
                   <template v-if="column.name === 'fullname'">

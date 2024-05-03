@@ -93,12 +93,34 @@ input:-webkit-autofill:active {
 @keyframes fadeUpSlideAnimation {
   0% {
     opacity: 0;
+    display: none;
     transform: translateY(130px); /* Initial position off the screen to the left */
   }
 
   100% {
     opacity: 1;
+    display: block;
     transform: translateY(0); /* Final position, no translation */
+  }
+}
+
+.fade-down {
+  animation: fadeDownSlideAnimation ease 0.3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeDownSlideAnimation {
+  0% {
+    opacity: 1;
+    display: block;
+    transform: translateY(0); /* Initial position off the screen to the left */
+  }
+
+  100% {
+    opacity: 0;
+    display: none;
+    transform: translateY(130px); /* Final position, no translation */
   }
 }
 
