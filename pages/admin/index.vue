@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+  <div class="min-h-screen w-screen bg-[#1A1A1B] transition">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -259,7 +259,7 @@ export default {
         return []
       }
     },
-  }
+  },
 };
 </script>
 

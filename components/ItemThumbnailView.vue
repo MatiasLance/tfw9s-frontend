@@ -16,6 +16,7 @@
     <div class="flex w-full items-center justify-center overflow-hidden">
       <img
         class="
+          h-64
           cursor-pointer
           object-cover
           transition

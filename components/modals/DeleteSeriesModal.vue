@@ -1,13 +1,13 @@
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-            <form @submit.prevent="deleteTeam">
+            <form @submit.prevent="deleteSeries">
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Delete Field
+                    Delete Series
                 </h3>
                 <hr class="my-3"/>
                   <p>
-                    Are you sure you want to remove {{teamData.name}}?
+                    Are you sure you want to remove {{ seriesData.name }}?
                   </p>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
@@ -38,20 +38,21 @@
 import 'vue-croppa/dist/vue-croppa.css';
 
 export default {
-  name: 'DeleteTeamModal',
+  name: 'DeleteSeriesModal',
   props: {
     active: {
       type: Boolean,
       required: true
     },
-    team: {
+    // eslint-disable-next-line vue/prop-name-casing
+    series: {
       type: Object,
       default: () => ({}),
     },
   },
   data() {
     return {
-      teamData: { name: '' },
+      seriesData: { name: '' },
       rules: [ value => !!value || 'Required' ],
     }
   },
@@ -59,7 +60,7 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.teamData = this.team;
+          this.seriesData = this.series;
         }
       },
       immediate: true,
@@ -67,13 +68,13 @@ export default {
   },
 
   methods: {
-    deleteTeam() {
+    deleteSeries() {
       this.$axios
-        .$delete(`/v1/teams/${this.team.id}`)
+        .$delete(`/v1/series/${this.series.id}`)
         .catch(() => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Failed to remove manager',
+            message: 'Failed to remove gym',
             position: 'bottom',
             variant: 'danger',
             queue: true,

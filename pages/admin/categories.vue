@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+  <div class="min-h-screen w-screen bg-[#1A1A1B]">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -46,18 +46,18 @@
             <button
               type="button"
               class="
-                bg-gradient-to-br
-                from-[#5EE738]
-                to-[#050505]
                 text-bold
-                text-white
                 mr-2
                 flex
                 items-center
                 rounded
-                py-1 pl-2 pr-3
-                hover:brightness-125
+                bg-gradient-to-br
+                from-[#5EE738]
+                to-[#050505]
+                py-1
+                pl-2 pr-3 text-white
                 transition
+                hover:brightness-125
               "
             >
               <i class="ri-add-fill"></i>
@@ -112,7 +112,7 @@
             <span class="ml-1">Products</span>
           </button>
         </div>
-        <ul class="text-sm sm:text-base gap-2">
+        <ul class="gap-2 text-sm sm:text-base">
           <TreeItem
             v-for="category in categories"
             :key="category.id"

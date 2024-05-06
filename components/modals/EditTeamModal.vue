@@ -5,7 +5,7 @@
                 <h3 class="mb-3 font-bold text-brand-black">
                     Edit Team
                 </h3>
-                <hr class="my-3"/>
+                <hr class="my-3 lg:w-[918px]"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1 md:col-span-2">
                     <label for="teamname" class="mb-1 block">
@@ -386,7 +386,6 @@ export default {
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i]);
-        console.log('Team image data: ', this.imgList[i])
       }
 
       this.$axios

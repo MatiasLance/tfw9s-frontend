@@ -11,7 +11,7 @@
         data-aos="flip-up"
         data-aos-offset="0"
       >
-        <span class="text-white text-base leading-[2.5em]">
+        <span class="text-base leading-[2.5em] text-white">
           Showing {{ from }}-{{ to }} of {{ totalItems }} results
         </span>
         <BasePagination
@@ -50,8 +50,8 @@
         :stock="product.stock"
         :path="getMediaURL(product.media[0])"
         :has-variants="product.has_variants"
-        :is-rrp="product.show_rrp"
-        :is-on-sale="product.is_on_sale"
+        :is-rrp="product.show_rrp===1?true:false"
+        :is-on-sale="product.is_on_sale===1?true:false"
         :is-hide-out-of-stock="product.isHideOutOfStock"
         data-aos="fade-up"
         data-aos-offset="30"

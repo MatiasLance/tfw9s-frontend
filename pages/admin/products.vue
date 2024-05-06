@@ -127,13 +127,13 @@
             :stock="product.stock"
             :path="getMediaURL(product.media[0])"
             :has-variants="product.has_variants"
-            :is-rrp="product.show_rrp"
-            :is-on-sale="product.is_on_sale"
+            :is-rrp="product.show_rrp===1?true:false"
+            :is-on-sale="product.is_on_sale===1?true:false"
             :is-hide-out-of-stock="product.isHideOutOfStock"
-            @update="editMerchItem"
-            @delete="removeMerchItem"
             data-aos="fade-up"
             data-aos-offset="30"
+            @update="editMerchItem"
+            @delete="removeMerchItem"
           />
         </section>
       </div>
@@ -1096,7 +1096,6 @@ export default {
         })
         .finally(() => {
           this.isNewsLoading = false;
-          console.log(this.MerchItems)
         });
     },
     retrieveTags() {
@@ -1118,7 +1117,6 @@ export default {
         })
         .finally(() => {
           this.isNewsLoading = false;
-          console.log(this.Taglist)
         });
     },
     addCategoryPicker() {
@@ -1363,8 +1361,6 @@ export default {
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
         .then((response) => {
-          console.log(response.data.item)
-          // eslint-disable-next-line max-len, camelcase, vue/max-len
           this.item = response.data.item
           this.tags = response.data.item.tags.map(x => x.id);
           const categoryLineages = response.data.item.categoryLineages
@@ -1393,7 +1389,7 @@ export default {
       const editObject = this.MerchItems.find(
         (item) => item.id === this.editingNo
       );
-      console.log(this.selectedCategory)
+
       const categoryId = this.selectedCategory.map(x => x.id);
 
       const form = new FormData();
@@ -1418,6 +1414,8 @@ export default {
       for (let i = 0; i < this.imgListEdit.length; i++) {
         form.append('photo[]', this.imgListEdit[i]);
       }
+
+      console.log(this.imgListEdit)
 
       // Placeholder Data
       form.append('selected_shippingid', '0')

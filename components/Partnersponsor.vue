@@ -1,31 +1,20 @@
 <template>
   <section class="mx-auto max-w-screen-xl gap-4 p-7">
-    <div
-    class="grid grid-cols-1 gap-4 sm:grid-cols-2
-    md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-      >
       <div
-      v-for="(item) in partnerSponsors"
-      :key="item.id" class="flex h-72 flex-col items-center
-      justify-center rounded-lg text-white brightness-50
-      hover:brightness-100"
-      data-aos="fade-up"
+      class="relative flex w-full snap-x gap-6
+      overflow-y-hidden overflow-x-scroll pb-14"
       >
-        <div class="w-full overflow-hidden h-64">
-          <img
+        <img
+          v-for="(item, index) in partnerSponsors"
+          :key="index"
+          class="h-40 w-40 shrink-0 snap-center overflow-hidden rounded-lg
+          object-contain brightness-50 transition duration-300 ease-in-out
+          first:pl-8 last:pr-8 hover:scale-125 hover:brightness-100"
+          data-aos="fade-up"
           :src="getMediaURL(item.media[0])"
           alt="Sponsor Image"
-          class="w-full h-full object-contain transition-all
-            group-hover:scale-110"
-          >
-        </div>
-        <div class="text-center">
-          <p class="text-2xl font-bold line-clamp-1">
-            {{ item.company_name }}
-          </p>
-        </div>
+        />
       </div>
-    </div>
   </section>
 </template>
 
@@ -66,9 +55,6 @@ export default {
         .then((response) => {
           this.partnerSponsors = response.data.partnerSponsors
         })
-        .finally(() => {
-          console.log(this.partnerSponsors)
-        });
     },
   }
 };

@@ -5,7 +5,7 @@
                 <h3 class="mb-3 font-bold text-brand-black">
                     Edit Field
                 </h3>
-                <hr class="my-3"/>
+                <hr class="my-3 lg:w-[918px]"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1">
                     <label for="fieldname" class="mb-1 block">
