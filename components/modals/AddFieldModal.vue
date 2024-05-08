@@ -27,7 +27,7 @@
                     <VSelect
                     v-model="FieldData.region_id"
                     :items="filteredRegions"
-                    placeholder="Choose a Region"
+                    label="Choose a Region"
                     :rules="rules"
                     solo
                     >
@@ -139,14 +139,14 @@ export default {
         });
         return false;
       } else {
-        this.confirmField();
+        this.confirm();
         return true;
       }
     },
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    confirmField() {
+    confirm() {
       this.addField()
       this.closeDialog()
     },
@@ -206,7 +206,7 @@ border-radius: 0;
 transition: border-color 0.3s;
 }
 
-::v-deep .v-text-field input::placeholder {
+::v-deep .v-text-field input::label {
 font-size: 1rem !important;
 font-family: inherit !important;
 color: rgb(104, 104, 104) !important;

@@ -7,7 +7,7 @@
       <input
       id="time"
       v-model="matchData.time" type="time"
-      placeholder="Click to select..."
+      label="Click to select..."
       step="900"
       :min="'08:00'"
       :max="'18:00'"
@@ -32,7 +32,7 @@
       <VSelect
       v-model="matchData.field_id"
       :items="filteredFields"
-      placeholder="Choose Field"
+      label="Choose Field"
       :rules="rules"
       solo
       >
@@ -50,7 +50,7 @@
       <VSelect
       v-model="matchData.team1.id"
       :items="filteredTeam1"
-      placeholder="Choose Team 1"
+      label="Choose Team 1"
       :rules="rules"
       solo
       >
@@ -68,7 +68,7 @@
       <VSelect
       v-model="matchData.team2.id"
       :items="filteredTeam2"
-      placeholder="Choose Team 2"
+      label="Choose Team 2"
       :rules="rules"
       solo
       >
@@ -102,7 +102,7 @@ export default {
       default: null,
       required: false,
     },
-    agegroup: {
+    event: {
       type: Number,
       default: null,
       required: false,
@@ -130,7 +130,7 @@ export default {
         ({
           text: team.name,
           value: team.id,
-          age: team.agegroup_id
+          event: team.event_id
         }));
     },
     formattedField() {
@@ -153,7 +153,7 @@ export default {
         team && team.text && typeof team.text === 'string' ?
           team.text.toLowerCase().includes(this.team1Query.toLowerCase()) &&
           this.matchData.team2.id !== team.value &&
-          (this.agegroup?this.agegroup === team.age:true):
+          (this.event?this.event === team.event:true):
           false
       );
     },
@@ -162,7 +162,7 @@ export default {
         team && team.text && typeof team.text === 'string' ?
           team.text.toLowerCase().includes(this.team2Query.toLowerCase()) &&
           this.matchData.team1.id !== team.value &&
-          (this.agegroup?this.agegroup === team.age:true):
+          (this.event?this.event === team.event:true):
           false
       );
     },

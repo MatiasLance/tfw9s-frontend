@@ -38,28 +38,52 @@
     <section class="mx-auto max-w-screen-xl gap-4 p-7">
       <div class="grid grid-cols-3 gap-2">
         <div class="col-span-3 p-2"  data-aos="fade-up">
-          <span class="flex flex-wrap gap-2">
-            <VSelect
-            v-model="selectedYear"
-            :items="formattedYears"
-            placeholder="Select Event Year"
-            solo
-            class="md:w-80 lg:w-80"
-            />
-            <VSelect
-            v-model="selectedAgeGroup"
-            :items="formattedAgeGroup"
-            placeholder="Select Age Group"
-            solo
-            class="md:w-80 lg:w-80"
-            />
-            <VSelect
-            v-model="selectedRegion"
-            :items="formattedRegions"
-            placeholder="Select Region"
-            solo
-            class="md:w-80 lg:w-80"
-            />
+          <span class="grid grid-cols-1 gap-2 md:grid-cols-3">
+            <div class="col-span-1">
+              <span
+              class="hidden w-full py-2 align-middle text-[20px]
+              font-semibold text-[#555555] md:block"
+              >
+              Event Year
+              </span>
+              <VSelect
+              v-model="selectedYear"
+              :items="formattedYears"
+              placeholder="Select Event Year"
+              solo
+              class="w-full"
+              />
+            </div>
+            <div class="col-span-1">
+              <span
+              class="hidden w-full py-2 align-middle text-[20px]
+              font-semibold text-[#555555] md:block"
+              >
+              Age Group
+              </span>
+              <VSelect
+              v-model="selectedAgeGroup"
+              :items="formattedAgeGroup"
+              placeholder="Select Age Group"
+              solo
+              class="w-full"
+              />
+            </div>
+            <div class="col-span-1">
+              <span
+              class="hidden w-full py-2 align-middle text-[20px]
+              font-semibold text-[#555555] md:block"
+              >
+              Region
+              </span>
+              <VSelect
+              v-model="selectedRegion"
+              :items="formattedRegions"
+              placeholder="Select Region"
+              solo
+              class="w-full"
+              />
+            </div>
           </span>
         </div>
         <div class="col-span-3">

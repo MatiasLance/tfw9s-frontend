@@ -27,7 +27,7 @@
                     <VSelect
                     v-model="TeamData.field_id"
                     :items="filteredField"
-                    placeholder="Choose a Field"
+                    label="Choose a Field"
                     :rules="rules"
                     solo
                     >
@@ -39,13 +39,13 @@
                     </VSelect>
                   </div>
                   <div class="col-span-1">
-                    <label for="selectagegroup" class="mb-1 block">
-                      Age Group:
+                    <label for="selectevent" class="mb-1 block">
+                      Event:
                     </label>
                     <VSelect
-                    v-model="TeamData.agegroup_id"
-                    :items="formattedAgeGroup"
-                    placeholder="Choose Age Group"
+                    v-model="TeamData.event_id"
+                    :items="formattedEvent"
+                    label="Choose Age Group"
                     :rules="rules"
                     solo
                     >
@@ -154,8 +154,8 @@
                           :width="320"
                           :height="320"
                           :quality="5"
-                          placeholder="Place image here"
-                          :placeholder-font-size="15"
+                          label="Place image here"
+                          :label-font-size="15"
                           accept=".png, .webp, .jpeg, .jpg"
                           :file-size-limit="31457280"
                           :zoom-speed="5"
@@ -282,7 +282,7 @@ export default {
       type: Array,
       required: true
     },
-    agegroup: {
+    event: {
       type: Array,
       required: true
     },
@@ -294,6 +294,7 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrl: [],
       imgList: [],
+      eventId: null,
       TeamData: {
         name: null,
         description: null
@@ -306,9 +307,13 @@ export default {
       return this.field.map(field =>
         ({ text: field.name, value: field.id }));
     },
-    formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
+    formattedEvent() {
+      return this.event.map(event => ({
+        text: `${event.name} - ${event.agegroup?event.agegroup.name:''}`,
+        value: event.id,
+        // eslint-disable-next-line max-len, vue/max-len
+        disabled: this.eventId === event.id?false:event.team.length >= event.teamcount
+      }));
     },
     filteredField() {
       return this.formattedField.filter(field =>
@@ -323,10 +328,11 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.TeamData = this.team;
-          const matchingAgeGroup = this.formattedAgeGroup.find(agegroup =>
-            agegroup.value === this.team.agegroup_id);
-          this.TeamData.agegroup_id = matchingAgeGroup ?
-            matchingAgeGroup.value : null;
+          this.eventId = this.team.event_id
+          const matchingEvent = this.formattedEvent.find(event =>
+            event.value === this.team.event_id);
+          this.TeamData.event_id = matchingEvent ?
+            matchingEvent.value : null;
           const matchingField = this.filteredField.find(field =>
             field.value === this.team.field_id);
           this.TeamData.field_id = matchingField ?
@@ -360,14 +366,14 @@ export default {
         });
         return false;
       } else {
-        this.confirmField();
+        this.confirm();
         return true;
       }
     },
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    confirmField() {
+    confirm() {
       this.editTeam()
       this.closeDialog()
     },
@@ -376,7 +382,7 @@ export default {
       formData.append('name', this.TeamData.name);
       formData.append('description', this.TeamData.description);
       formData.append('field_id', this.TeamData.field_id);
-      formData.append('agegroup_id', this.TeamData.agegroup_id);
+      formData.append('event_id', this.TeamData.event_id);
       formData.append('coach_name', this.TeamData.coach_name);
       formData.append('coach_mobile', this.TeamData.coach_mobile);
       formData.append('coach_email', this.TeamData.coach_email);
@@ -532,7 +538,7 @@ border-radius: 0;
 transition: border-color 0.3s;
 }
 
-::v-deep .v-text-field input::placeholder {
+::v-deep .v-text-field input::label {
 font-size: 1rem !important;
 font-family: inherit !important;
 color: rgb(104, 104, 104) !important;

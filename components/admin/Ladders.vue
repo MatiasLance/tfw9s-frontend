@@ -6,20 +6,20 @@
         <VSelect
         v-model="selectedYear"
         :items="formattedYears"
-        placeholder="Select Event Year"
+        label="Select Event Year"
         solo
         class="col-span-1"
         />
         <VSelect
         v-model="selectedEvent"
         :items="filteredEvents"
-        placeholder="Select Event"
+        label="Select Event"
         solo
         class="col-span-1"
         />
         <VTextField
         v-model="query"
-        placeholder="Search"
+        label="Search"
         solo
         class="col-span-1"
         />

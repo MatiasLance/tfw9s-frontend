@@ -62,7 +62,7 @@
                 class="flex-1 px-4 py-2 align-middle
                 text-[20px] font-semibold text-[#555555]"
                 >
-                Age Group
+                Event
                 </span>
               </div>
               <div
@@ -82,7 +82,7 @@
                 class="mr-0.5 flex-1 border-black bg-white p-1"
                 />
                 <input
-                v-model="data.agegroupName"
+                v-model="data.eventName"
                 :rules="Rules"
                 placeholder="Enter Field"
                 hide-details
@@ -116,14 +116,14 @@
     <AddTeamModal
     :active="showAddTeamModal"
     :field="FieldList"
-    :agegroup="AgeGroupList"
+    :event="EventList"
     @close="closeAddTeamDialog"
     @confirm="AddTeam"
     />
     <EditTeamModal
     :active="showEditTeamModal"
     :field="FieldList"
-    :agegroup="AgeGroupList"
+    :event="EventList"
     :team="selectedData"
     @close="closeEditTeamDialog"
     @confirm="EditTeam"
@@ -154,11 +154,15 @@ export default {
       required: true
     },
     // eslint-disable-next-line vue/prop-name-casing
-    AgeGroupList: {
+    EventList: {
       type: Array,
       required: true
     },
     getTeams: {
+      type: Function,
+      required: true,
+    },
+    getEvents: {
       type: Function,
       required: true,
     },
@@ -250,6 +254,7 @@ export default {
       this.showAddTeamModal = false;
       this.retrieveTeams();
       this.getTeams();
+      this.getEvents();
     },
     EditTeam() {
       this.$oruga.notification.open({
@@ -262,6 +267,7 @@ export default {
       this.showEditTeamModal = false;
       this.retrieveTeams();
       this.getTeams();
+      this.getEvents();
     },
     DeleteTeam() {
       this.$oruga.notification.open({
@@ -274,6 +280,7 @@ export default {
       this.showDeleteTeamModal = false;
       this.retrieveTeams();
       this.getTeams();
+      this.getEvents();
     },
     retrieveTeams() {
       const query = {
@@ -298,7 +305,7 @@ export default {
             return {
               ...team,
               fieldName: team.field && team.field.name ? team.field.name : '',
-              agegroupName: team.agegroup && team.agegroup.name ? team.agegroup.name : '',
+              eventName: `${team.event && team.event.name ? team.event.name : ''} - ${team.event && team.event.agegroup ? team.event.agegroup.name:''}`,
             };
           });
           this.totalItems = response.data.total_items;

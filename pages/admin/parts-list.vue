@@ -58,8 +58,9 @@
           <div v-if="activeTab === 'teams'">
             <Teams
             :FieldList="FieldList"
-            :AgeGroupList="AgeGroupList"
+            :EventList="EventList"
             :getTeams="retrieveTeams"
+            :getEvents="retrieveEvents"
             />
           </div>
           <div v-if="activeTab === 'managers'">
@@ -322,7 +323,7 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/teams/all?${queryString}`)
+        .$get(`v1/teams?${queryString}`)
         .then((response) => {
           this.TeamList = response.data.teams;
         })
@@ -364,7 +365,7 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/events/all?${queryString}`)
+        .$get(`v1/events?${queryString}`)
         .then((response) => {
           this.EventList = response.data.events.map(event => {
             return {

@@ -27,7 +27,7 @@
                     <VSelect
                     v-model="SeriesData.type"
                     :items="SeriesList"
-                    placeholder="Choose Category"
+                    label="Choose Category"
                     :rules="rules"
                     solo
                     >
@@ -53,7 +53,7 @@
                     </label>
                     <ODatepicker
                     v-model="SeriesData.start"
-                    placeholder="Click to select..."
+                    label="Click to select..."
                     icon="calendar"
                     :rules="rules"
                     />
@@ -64,7 +64,7 @@
                     </label>
                     <ODatepicker
                     v-model="SeriesData.end"
-                    placeholder="Click to select..."
+                    label="Click to select..."
                     icon="calendar"
                     :rules="rules"
                     />
@@ -78,6 +78,13 @@
                     v-model="SeriesData.description"
                     />
                   </div>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                  <ImageUploadEdit
+                    :imglistedit="imgListEdit"
+                    :imgurledit="imgUrlEdit"
+                    @update-image-edit="updateImageEdit"
+                    />
                 </div>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
@@ -108,10 +115,14 @@
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
 import Tiptap from '~/components/Wysiwyg/Tiptap'
+import ImageUploadEdit from '~/components/ImageUploadEdit'
 
 export default {
   name: 'EditSeriesModal',
-  components: { Tiptap },
+  components: {
+    Tiptap,
+    ImageUploadEdit
+  },
   props: {
     active: {
       type: Boolean,
@@ -130,8 +141,8 @@ export default {
     return {
       valid: true,
       showGenerateCreatedImageBtn: false,
-      imgUrl: [],
-      imgList: [],
+      imgUrlEdit: [],
+      imgListEdit: [],
       SeriesData: {
         name: null,
         description: null
@@ -149,6 +160,9 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.SeriesData = this.series;
+          this.imgUrlEdit = this.SeriesData.media.map((x) =>
+            `${this.$config.baseURL}/storage/${x.path}`);
+          this.imgListEdit = this.SeriesData.media.map((x) => x.hash);
         }
       },
       immediate: true,
@@ -161,6 +175,9 @@ export default {
     },
   },
   methods: {
+    updateImageEdit(image) {
+      this.imgListEdit = image
+    },
     DatePickerToSQL(datestring) {
       let eventYear = datestring.getUTCFullYear();
       let eventMonth = datestring.getUTCMonth() + 1;
@@ -235,6 +252,10 @@ export default {
       formData.append('address', this.SeriesData.address);
       formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
       formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
+
+      for (let i = 0; i < this.imgListEdit.length; i++) {
+        formData.append('photo[]', this.imgListEdit[i]);
+      }
 
       this.$axios
         .$post(`v1/series/${this.series.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
@@ -380,7 +401,7 @@ border-radius: 0;
 transition: border-color 0.3s;
 }
 
-::v-deep .v-text-field input::placeholder {
+::v-deep .v-text-field input::label {
 font-size: 1rem !important;
 font-family: inherit !important;
 color: rgb(104, 104, 104) !important;
