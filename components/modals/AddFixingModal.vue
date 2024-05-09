@@ -8,6 +8,37 @@
           <hr class="my-3 lg:w-[918px]"/>
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div class="col-span-1">
+              <label for="selectfield" class="mb-1 block">
+                Series:
+              </label>
+              <VSelect
+                v-model="SeriesId"
+                :items="filteredSeries"
+                label="Choose a Series"
+                :rules="rules"
+                solo
+            >
+              <template #prepend-item>
+                <div class="sticky-search-bar px-3">
+                  <SearchBar v-model="seriesQuery" />
+                </div>
+              </template>
+            </VSelect>
+            </div>
+            <div class="col-span-1">
+              <label for="selectagegroup" class="mb-1 block">
+                Age Group:
+              </label>
+              <VSelect
+              v-model="Event.agegroup_id"
+              :items="formattedAgeGroup"
+              label="Choose Age Group"
+              :rules="rules"
+              solo
+              >
+              </VSelect>
+            </div>
+            <div class="col-span-1 md:col-span-2">
               <label for="eventname" class="mb-1 block">
                 Title:
               </label>
@@ -27,7 +58,7 @@
               <VSelect
               v-model="Event.managerId"
               :items="filteredManagers"
-              placeholder="Choose a Staff"
+              label="Choose a Staff"
               :rules="rules"
               solo
               >
@@ -39,50 +70,19 @@
               </VSelect>
             </div>
             <div class="col-span-1">
-              <label for="selectagegroup" class="mb-1 block">
-                Age Group:
-              </label>
-              <VSelect
-              v-model="Event.agegroup_id"
-              :items="formattedAgeGroup"
-              placeholder="Choose Age Group"
-              :rules="rules"
-              solo
-              >
-              </VSelect>
-            </div>
-            <div class="col-span-1">
               <label for="selectfield" class="mb-1 block">
                 Region:
               </label>
               <VSelect
               v-model="Event.region_id"
               :items="filteredRegions"
-              placeholder="Choose a Field"
+              label="Choose a Region"
               :rules="rules"
               solo
            >
             <template #prepend-item>
               <div class="sticky-search-bar px-3">
                 <SearchBar v-model="regionQuery" />
-              </div>
-            </template>
-          </VSelect>
-          </div>
-          <div class="col-span-1">
-            <label for="selectfield" class="mb-1 block">
-              Series:
-            </label>
-            <VSelect
-              v-model="SeriesId"
-              :items="filteredSeries"
-              placeholder="Choose a Series"
-              :rules="rules"
-              solo
-          >
-            <template #prepend-item>
-              <div class="sticky-search-bar px-3">
-                <SearchBar v-model="seriesQuery" />
               </div>
             </template>
           </VSelect>
@@ -101,12 +101,33 @@
             />
           </div>
           <div class="col-span-1">
+            <label
+            for="price"
+            class="mb-1 flex justify-between"
+            >
+              <p>Registration Fee: </p>
+              <span class="font-semibold">
+                {{ formatCurrency(Event.price) }}
+              </span>
+            </label>
+            <VTextField
+            id="name"
+            v-model="Event.price"
+            label="Enter Fee"
+            :rules="rules"
+            type="number"
+            step=".01"
+            min="0.00"
+            solo
+            />
+          </div>
+          <div class="col-span-1">
               <label for="selectdate" class="mb-1 block">
                 Date:
               </label>
               <ODatepicker
               v-model="Event.date"
-              placeholder="Click to select..."
+              label="Click to select..."
               icon="calendar"
               :min-date="mindate"
               :max-date="maxdate"
@@ -125,70 +146,6 @@
             type="text"
             solo
             />
-          </div>
-          <div class="col-span-1 mb-4 lg:col-span-2">
-            <div class="flex items-center justify-between">
-              <label class="mb-1 block"> Matches: </label>
-              <button
-                type="button"
-                class="
-                  flex
-                  items-center
-                  justify-center
-                  border border-solid border-brand-black
-                  bg-brand-black
-                  px-4
-                  py-2
-                  text-white
-                "
-                @click="addMatchForm"
-              >
-                <i class="ri-add-fill"></i>
-                Add Match
-              </button>
-            </div>
-            <div class="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
-              <div
-              v-for="(matchBuffer, matchIndex) in multipleMatch"
-              :key="matchIndex"
-              class="flex justify-center gap-1"
-              >
-              <!-- data Map -->
-                <div
-                class="
-                  relative
-                  h-auto
-                  w-full
-                  rounded-lg
-                  border-2
-                  border-[#CCCCCC]
-                  p-4"
-                >
-                  <button
-                    type="button"
-                    class="
-                      absolute
-                      right-2
-                      top-2
-                      h-6 w-6
-                      text-brand-black
-                      hover:bg-brand-black hover:text-white
-                    "
-                    @click="removeMatch(matchIndex)"
-                  >
-                    <div class="ri-close-fill ri-lg"></div>
-                  </button>
-                  <Match
-                    :match="matchBuffer"
-                    :agegroup="Event.agegroup_id"
-                    :teamList="teams"
-                    :fieldList="fields"
-                    :region="Event.region_id"
-                    @update-event="updateMatch(matchIndex, $event)"
-                  />
-                </div>
-              </div>
-            </div>
           </div>
           </div>
           <hr class="my-3"/>
@@ -219,11 +176,11 @@
 <script>
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
-import Match from '~/components/Match.vue';
+import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'AddFixingModal',
-  components: { Match },
+  mixins: [ currencyMixin ],
   props: {
     active: {
       type: Boolean,
@@ -237,15 +194,7 @@ export default {
       type: Array,
       required: true
     },
-    fields: {
-      type: Array,
-      required: true
-    },
     agegroup: {
-      type: Array,
-      required: true
-    },
-    teams: {
       type: Array,
       required: true
     },
@@ -411,6 +360,7 @@ export default {
       formData.append('agegroup_id', this.Event.agegroup_id);
       formData.append('series', this.SeriesId);
       formData.append('teamcount', this.Event.teamcount);
+      formData.append('price', this.Event.price);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
@@ -502,7 +452,7 @@ input{
   transition: border-color 0.3s;
   }
 
-  ::v-deep .v-text-field input::placeholder {
+  ::v-deep .v-text-field input::label {
   font-size: 1rem !important;
   font-family: inherit !important;
   color: rgb(104, 104, 104) !important;

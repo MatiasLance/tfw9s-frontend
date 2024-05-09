@@ -27,7 +27,7 @@
                     <VSelect
                     v-model="SeriesData.type"
                     :items="SeriesList"
-                    placeholder="Choose Category"
+                    label="Choose Category"
                     :rules="rules"
                     solo
                     >
@@ -53,7 +53,7 @@
                     </label>
                     <ODatepicker
                     v-model="SeriesData.start"
-                    placeholder="Click to select..."
+                    label="Click to select..."
                     icon="calendar"
                     :rules="rules"
                     />
@@ -64,7 +64,7 @@
                     </label>
                     <ODatepicker
                     v-model="SeriesData.end"
-                    placeholder="Click to select..."
+                    label="Click to select..."
                     icon="calendar"
                     :rules="rules"
                     />
@@ -78,6 +78,11 @@
                     v-model="SeriesData.description"
                     />
                   </div>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                  <ImageUpload
+                     @update-image="updateImage"
+                  />
                 </div>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
@@ -108,10 +113,14 @@
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
 import Tiptap from '~/components/Wysiwyg/Tiptap'
+import ImageUpload from '~/components/ImageUpload'
 
 export default {
   name: 'AddSeriesModal',
-  components: { Tiptap },
+  components: {
+    Tiptap,
+    ImageUpload,
+  },
   props: {
     active: {
       type: Boolean,
@@ -147,6 +156,9 @@ export default {
     },
   },
   methods: {
+    updateImage(image) {
+      this.imgList = image
+    },
     DatePickerToSQL(datestring) {
       let eventYear = datestring.getUTCFullYear();
       let eventMonth = datestring.getUTCMonth() + 1;
@@ -221,6 +233,10 @@ export default {
       formData.append('address', this.SeriesData.address);
       formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
       formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
+
+      for (let i = 0; i < this.imgList.length; i++) {
+        formData.append('photo[]', this.imgList[i], 'newsThumbnail.png');
+      }
 
       this.$axios
         .$post('v1/series', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
@@ -366,7 +382,7 @@ border-radius: 0;
 transition: border-color 0.3s;
 }
 
-::v-deep .v-text-field input::placeholder {
+::v-deep .v-text-field input::label {
 font-size: 1rem !important;
 font-family: inherit !important;
 color: rgb(104, 104, 104) !important;

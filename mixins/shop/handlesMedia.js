@@ -6,6 +6,7 @@ export default {
       } else {
         switch (tab) {
         case 'news': return require('~/assets/images/kidsplaying.jpg')
+        case 'temp': return require('~/assets/images/kidsplaying.jpg')
         default: return require('~/assets/images/the-final-whistle-logo.png')
         }
       }

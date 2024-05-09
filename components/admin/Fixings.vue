@@ -75,12 +75,27 @@
                 >
                   {{ event.region_name }}
                 </div>
-                <div class="col-span-3">
+                <div
+                v-if="event.eventmatch.length > 0"
+                class="col-span-3"
+                >
                   <CustomVueTable
                   v-if="showCustomVueTable"
                   :columns="dataColumns"
                   :data="event.eventmatch"
                 />
+                </div>
+                <div
+                v-if="event.eventmatch.length === 0"
+                class="col-span-3"
+                >
+                <span
+                class="flex h-32 w-full items-center
+                justify-center font-semibold
+                text-[#555555]"
+                >
+                No match saved yet
+                </span>
                 </div>
                 <div class="col-span-3 flex justify-end gap-4">
                   <BaseButton
@@ -94,7 +109,7 @@
                     "
                     @click="openEditFixingDialog(event)"
                   >
-                    Edit
+                    Manage
                   </BaseButton>
                   <BaseButton
                   class="

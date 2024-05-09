@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#1A1A1B]">
+  <div  class="w-screen min-h-screen bg-[#1A1A1B]">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -12,11 +12,13 @@
           sm:text-left
           lg:col-span-6
           xl:mt-10"
-        data-aos="fade-right"
+          data-aos="fade-right"
       >
         <span
+          color="white"
           class="
-            superheadline flex flex-row
+            superheadline
+            flex flex-row
             items-center
             text-[1rem]
             font-normal
@@ -34,330 +36,325 @@
         </h1>
       </div>
     </BaseHeader>
-
-    <div class="mx-auto max-w-screen-xl px-4 py-28">
-      <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-12 px-10 lg:col-span-6">
-          <header class="text-left">
-            <h2 class="text-[3.75rem] leading-[1]">
-              <span
-                class="
-                  superheadline
-                  font-montserrat
-                  flex flex-row
-                  items-center
-                  pb-3
-                  text-[1rem]
-                  font-bold
-                  capitalize
-                  text-white
-                "
-              >
-              The Final Whistle - Rugby League
-              </span>
-            </h2>
-            <h1 class="text-[3.75rem] leading-[1]">
-              <span
-                class="font-montserrat from-70%
-                via-95% to-100% mb-4
-                bg-gradient-to-b
-                from-[#5EE738]
-                via-[#3e872a]
-                to-[#050505]
-                bg-clip-text
-                text-[2.5rem]
-                font-bold uppercase
-                leading-tight
-                text-transparent sm:pr-8 sm:text-5xl
-                xl:pr-10 xl:text-6xl"
-              >
-                {{ headline }}
-              </span>
-            </h1>
-            <div class="mt-0 pt-3 text-[1.125rem] leading-[1.5em]">
-              <template v-if="showMap">
-                  <div class="my-4">
-                    <iframe
-       src="https://www.editmysite.com/ajax/apps/generateMap.php?elementid=04a40800-69fb-11ed-a163-6117b7a7504e&amp;map=google&amp;ineditor=0&amp;width=auto&amp;point=1&amp;control=3&amp;scalecontrol=1&amp;height=350px&amp;zoom=10&amp;zoomScale=50&amp;lat=-27.932873&amp;long=153.38002&amp;pincolor=%23ffffff&amp;pincontrastcolor=%23000000&amp;styles=%5B%7B%22featureType%22%3A%22poi%22%2C%22elementType%22%3A%22labels.text%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22poi.business%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22road%22%2C%22elementType%22%3A%22labels.icon%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%2C%7B%22featureType%22%3A%22transit%22%2C%22stylers%22%3A%5B%7B%22visibility%22%3A%22off%22%7D%5D%7D%5D&amp;touch=1&amp;forcemapdrag=1" title="" allowtransparency="true" frameborder="0" scrolling="no" loading="lazy" data-v-ab1ca44a=""
-                    style="width: 100%; height: 350px;"
-      ></iframe>
-                  </div>
-                  <button
-                    type="button"
-                    class="rounded-xl
-                    bg-brand-black px-6 py-3
-                    text-base text-white hover:bg-slate-200
-                    hover:text-white"
-                    @click="getDirectionsLink"
-                  >
-                  Get directions
-                </button>
-              </template>
-              <address class="my-4 text-white opacity-75">
-                  <!-- eslint-disable-next-line vue/no-v-html -->
-                  <span class="flex items-center">
-                    <i class="ri-map-pin-fill pr-1"/>
-                    <p v-html="address"/>
-                  </span>
-                  <p
-                    v-if="showNotes"
-                    class="my-3 text-[16px] sm:text-sm"
-                  >
-                    Note: {{ importantNotes }}
-                  </p>
-              </address>
-              <span class="mb-2 block">
-                <a
-                  :href="`tel:${mobile}`"
-                  class="flex items-center
-                  opacity-75 transition
-                  duration-300 ease-in-out
-                  hover:opacity-100"
-                >
-                <i class="ri-phone-fill pr-1"/>{{ mobile }}
-                </a>
-              </span>
-              <a
-                class="flex items-center
-                opacity-75 transition
-                duration-300 ease-in-out
-                hover:opacity-100"
-                :href="toemail"
-              >
-              <i class="ri-mail-send-line pr-1"/>{{ email }}
-              </a>
+    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12" data-aos="fade-up">
+      <VForm ref="form" v-model="valid" lazy-validation>
+      <div
+      class="grid grid-cols-1 gap-4 rounded-md bg-[#212121] p-4 md:grid-cols-2"
+      >
+      <div class="col-span-1">
+        <label for="selectfield" class="mb-2 block text-white">
+          Tournament:
+        </label>
+        <VSelect
+        v-model="series"
+        :items="filteredSeries"
+        :hint="serieshint"
+        label="Select Tournament"
+        :rules="rules"
+        :disabled="true"
+        persistent-hint
+        dark
+        outlined
+        >
+          <template #prepend-item>
+            <div class="sticky-search-bar px-3">
+              <SearchBar v-model="seriesQuery" />
             </div>
-          </header>
-          <div class="mb-[40px]"></div>
-          <div
-            v-if="showHours"
-            class="max-w-[calc(100% + 40px)] grid grid-cols-12"
-          >
-            <div class="col-span-12 md:col-span-6">
-              <h5 class="text-[1.563rem] font-bold leading-[1] text-white">
-                Hours
-              </h5>
-              <div class="mb-3"></div>
-              <div v-if="showTimes" class="flex justify-start gap-2">
-                <small class="paragraph my-3 block text-sm">
-                  MONDAY: {{ time1 }}<br>
-                  TUESDAY: {{ time1 }}<br>
-                  WEDNESDAY: {{ time1 }}<br>
-                  THURSDAY: {{ time1 }}<br>
-                  FRIDAY: {{ time1 }}<br>
-                  SATURDAY: {{ time3 }}<br>
-                  SUNDAY: {{ time4 }}
-                </small>
-              </div>
-              <div v-if="showAppointmentMsg" class="flex justify-start gap-2">
-                <small class="paragraph my-3 block text-base">
-                  By Appointment Only
-                </small>
-              </div>
-            </div>
-          </div>
-          <div class="mb-[40px]"></div>
-          <div class="max-w-[calc(100% + 40px)] grid grid-cols-12">
-            <div v-if="socials.activate" class="col-span-12 md:col-span-6">
-              <h5 class="text-[1.563rem] font-bold leading-[1] text-white">
-                Follow us
-              </h5>
-              <div class="mb-3"></div>
-              <div class="flex justify-start gap-2">
-                <a
-                  v-if="socials.fb.length != 0"
-                  :href="socials.fb"
-                  target="_blank"
-                >
-                  <div
-                    class="
-                      flex
-                      h-[48px]
-                      w-[48px]
-                      text-white
-                      cursor-pointer
-                      items-center
-                      justify-center
-                      transition
-                      opacity-75
-                      hover:scale-125
-                      hover:opacity-100
-                    "
-                  >
-                    <i class="ri-facebook-box-line text-5xl"></i>
-                  </div>
-                </a>
-                <a
-                  v-if="socials.linkedin.length != 0"
-                  :href="socials.linkedin"
-                  target="_blank"
-                >
-                  <div
-                    class="
-                      flex
-                      h-[48px]
-                      w-[48px]
-                      text-white
-                      cursor-pointer
-                      items-center
-                      justify-center
-                      transition
-                      opacity-75
-                      hover:scale-125
-                      hover:opacity-100
-                    "
-                  >
-                    <i class="ri-linkedin-box-line text-5xl"></i>
-                  </div>
-                </a>
-                <a
-                  v-if="socials.ig.length != 0"
-                  :href="socials.ig"
-                  target="_blank"
-                >
-                  <div
-                  class="
-                  flex
-                  h-[48px]
-                  w-[48px]
-                  text-white
-                  cursor-pointer
-                  items-center
-                  justify-center
-                  transition
-                  opacity-75
-                  hover:scale-125
-                  hover:opacity-100
-                "
-                  >
-                    <i class="ri-instagram-line text-5xl"></i>
-                  </div>
-                </a>
-                <a
-                  v-if="socials.youtube != 0"
-                  :href="socials.youtube"
-                  target="_blank"
-                >
-                  <div
-                  class="
-                  flex
-                  h-[48px]
-                  w-[48px]
-                  text-white
-                  cursor-pointer
-                  items-center
-                  justify-center
-                  transition
-                  opacity-75
-                  hover:scale-125
-                  hover:opacity-100
-                "
-                  >
-                    <i class="ri-youtube-line text-5xl"></i>
-                  </div>
-                </a>
-                <a
-                  v-if="socials.tiktok.length != 0"
-                  :href="socials.tiktok"
-                  target="_blank"
-                >
-                  <div
-                  class="
-                  flex
-                  h-[48px]
-                  w-[48px]
-                  text-white
-                  cursor-pointer
-                  items-center
-                  justify-center
-                  transition
-                  opacity-75
-                  hover:scale-125
-                  hover:opacity-100
-                "
-                  >
-                    <i class="ri-music-line text-5xl"></i>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-span-12 px-10 lg:col-span-6">
-          <ContactSection />
-        </div>
+          </template>
+        </VSelect>
       </div>
-    </div>
+      <div class="col-span-1">
+        <label for="selectfield" class="mb-2 block text-white">
+          Event:
+        </label>
+        <VSelect
+        v-model="event"
+        :items="formattedEvent"
+        label="Select Event"
+        :rules="rules"
+        dark
+        outlined
+        >
+          <template #prepend-item>
+            <div class="sticky-search-bar px-3">
+              <SearchBar v-model="eventQuery" />
+            </div>
+          </template>
+        </VSelect>
+      </div>
+      <div class="col-span-1 md:col-span-2">
+        <label for="teamname" class="mb-2 block text-white">
+          Team Name:
+        </label>
+        <VTextField
+        id="title"
+        v-model="RegisterData.name"
+        label="Enter Team Name"
+        :rules="rules"
+        type="text"
+        dark
+        outlined
+        />
+      </div>
+      <div class="col-span-1 md:col-span-2">
+        <label for="teamname" class="mb-2 block text-white">
+          Coach Name:
+        </label>
+        <VTextField
+        id="name"
+        v-model="RegisterData.coach_name"
+        label="Enter Coach Name"
+        :rules="rules"
+        type="text"
+        dark
+        outlined
+        />
+      </div>
+      <div class="col-span-1">
+        <label for="teamname" class="mb-2 block text-white">
+          Coach Mobile Number:
+        </label>
+        <VTextField
+        id="number"
+        v-model="RegisterData.coach_mobile"
+        label="Enter Mobile Number"
+        :rules="rules"
+        type="tel"
+        dark
+        outlined
+        />
+      </div>
+      <div class="col-span-1">
+        <label for="teamname" class="mb-2 block text-white">
+          Coach Email:
+        </label>
+        <VTextField
+        id="email"
+        v-model="RegisterData.coach_email"
+        label="Enter Coach Email"
+        :rules="rules"
+        type="email"
+        dark
+        outlined
+        />
+      </div>
+      <div class="col-span-1 md:col-span-2">
+        <label for="teamname" class="mb-2 block text-white">
+          Manager Name:
+        </label>
+        <VTextField
+        id="name"
+        v-model="RegisterData.manager_name"
+        label="Enter Manager Name"
+        :rules="rules"
+        type="text"
+        dark
+        outlined
+        />
+      </div>
+      <div class="col-span-1">
+        <label for="teamname" class="mb-2 block text-white">
+          Manager Mobile Number:
+        </label>
+        <VTextField
+        id="number"
+        v-model="RegisterData.manager_mobile"
+        label="Enter Mobile Number"
+        :rules="rules"
+        type="tel"
+        dark
+        outlined
+        />
+      </div>
+      <div class="col-span-1">
+        <label for="teamname" class="mb-2 block text-white">
+          Manager Email:
+        </label>
+        <VTextField
+        id="email"
+        v-model="RegisterData.manager_email"
+        label="Enter Manager Email"
+        :rules="rules"
+        type="email"
+        dark
+        outlined
+        />
+      </div>
+      <NuxtLink
+      :to="'/tournaments'"
+      class="col-span-1"
+      >
+      <span
+      class="
+        inline-block
+        w-full
+        rounded-lg
+        bg-[#212121] text-[#999999]
+        border-2
+        border-[#414141]
+        py-3
+        px-4
+        text-center text-lg
+        font-medium
+        shadow-sm
+        hover:text-white
+        hover:bg-[#414141]
+        transition
+      "
+    >
+      Back to Tournaments
+    </span>
+    </NuxtLink>
+    <button
+    type="button"
+    class="
+    inline-block
+    col-span-1
+    select-none
+    border border-transparent
+    from-40% via-95% to-100%
+    bg-gradient-to-tr
+    from-[#5EE738]
+    via-[#3e872a]
+    to-[#050505]
+    rounded-lg
+    py-3
+    px-4
+    text-center text-lg
+    font-medium
+    text-white
+    hover:brightness-125
+    transition
+  "
+  :disabled="!valid"
+  @click="validate"
+    >
+      Proceed to Payment
+  </button>
+      </div>
+      </VForm>
+    </section>
   </div>
 </template>
 
 <script>
-import 'remixicon/fonts/remixicon.css';
-import BaseHeader from '~/components/base/BaseHeader.vue';
-import ContactSection from '~/components/ContactSection.vue';
+
 export default {
-  name: 'register',
-  components: {
-    BaseHeader,
-    ContactSection,
-  },
   data() {
     return {
-      address: 'Establishment Address here 📌',
-      importantNotes: 'For local (Gold Coast) customers and order pickups only. Strictly no walk-in policy, unless appointment is scheduled. Please email or phone for a prearranged, curb side pick-up.',
-      mapslink: 'https://www.google.com/maps/dir/?api=1&destination=280+Brisbane+Road+Labrador+QLD+4215',
-      mobile: '0411 965 954',
-      email: 'thefinalwhistlerl@hotmail.com',
-      toemail: 'mailto:thefinalwhistlerl@hotmail.com',
-      headline: 'Message Here 🤌',
-      pageSEO: {
-        title: 'Contact Us - Drum HQ',
-        description: 'How can we help? Reach out to us for more information.',
-      },
-      time1: '9:00AM - 4:00PM',
-      time2: '9:00AM - 7:00PM',
-      time3: '10:00AM - 3:00PM',
-      time4: 'CLOSED',
-      socials: {
-        activate: true,
-        fb: 'https://www.facebook.com/thefinalwhistleRL/',
-        linkedin: '',
-        ig: 'https://www.instagram.com/tfw9s',
-        tiktok: '',
-        youtube: ''
-      },
-      showHours: true,
-      showTimes: false,
-      showAppointmentMsg: true,
-      showMap: false,
-      showNotes: false
-    }
-  },
-  head() {
-    return {
-      title: 'Contact Us - TFW9s',
-      meta: [
-        {
-          hid: 'description',
-          name: 'description',
-          content: this.pageSEO.description,
-        },
-      ],
+      valid: false,
+      RegisterData: [],
+      series: null,
+      event: null,
+      serieshint: '',
+      EventList: [],
+      SeriesList: [],
+      seriesQuery: '',
+      eventQuery: '',
+      rules: [ value => !!value || 'Required' ],
     };
   },
+  computed: {
+    formattedEvent() {
+      return this.EventList.map(x => ({
+        text: `${x.name} - ${x.agename}`,
+        value: x.id,
+        disabled: x.team.length >= x.teamcount,
+      }));
+    },
+    formattedSeries() {
+      return this.SeriesList.map(series => ({
+        text: series.name,
+        value: series.id,
+      }));
+    },
+    filteredSeries() {
+      return this.formattedSeries.filter(series =>
+        series && series.text && typeof series.text === 'string' ?
+          series.text.toLowerCase().includes(this.seriesQuery.toLowerCase()) :
+          false
+      );
+    },
+  },
+  watch: {
+    series: {
+      handler(newseries) {
+        let data = []
+        data = this.SeriesList.find(x => x.id === newseries);
+        this.serieshint = this.seriesType(data.type) ?? '';
+        console.log('Series Data: ', data)
+
+        this.EventList = data.event.map(x => {
+          return { ...x, agename: x.agegroup.name??'???' }
+        });
+      },
+      deep: true
+    },
+  },
+  created() {
+    this.retrieveSeries()
+  },
   methods: {
-    getDirectionsLink() {
-      window.open(this.mapslink, '_blank')
-    }
+    seriesType(type) {
+      if (type === 'weekly') {
+        return 'Weekly Competitions'
+      } else if (type === 'tournament') {
+        return 'Tournaments'
+      } else if (type === 'coast') {
+        return 'Central Coast'
+      } else {
+        return false
+      }
+    },
+    validate() {
+      if (!this.$refs.form.validate()) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Fill out all required fields',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        return false;
+      } else {
+        this.confirm();
+        return true;
+      }
+    },
+    confirm() {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Work in Progress...',
+        position: 'bottom',
+        variant: 'info',
+        queue: true,
+      });
+      console.log(this.RegisterData, this.series, this.event)
+    },
+    retrieveSeries() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/series?${queryString}`)
+        .then((response) => {
+          this.SeriesList = response.data.series;
+        })
+        .finally(() => {
+          this.series = parseInt(this.$route.query.id);
+        });
+    },
   }
 };
 </script>
-
-<style scoped>
-a{
-  color: white !important;
-}
-a:hover{
-  color: #5EE738 !important;
-}
-</style>

@@ -28,7 +28,7 @@
         <VSelect
         v-model="ActiveTab"
         :items="SeriesTabs"
-        placeholder="Select Event Year"
+        label="Select Event Year"
         solo
         class="col-span-1"
         />
@@ -112,20 +112,20 @@
         <VSelect
         v-model="selectedYear"
         :items="formattedYears"
-        placeholder="Select Event Year"
+        label="Select Event Year"
         solo
         class="col-span-1"
         />
         <VSelect
         v-model="selectedEvent"
         :items="filteredEvents"
-        placeholder="Select Event"
+        label="Select Event"
         solo
         class="col-span-1"
         />
         <VTextField
         v-model="query"
-        placeholder="Search"
+        label="Search"
         solo
         class="col-span-1"
         />
@@ -290,6 +290,10 @@ export default {
       type: Array,
       required: true
     },
+    getSeries: {
+      type: Function,
+      required: true,
+    },
   },
   data() {
     return {
@@ -414,6 +418,7 @@ export default {
       })
       this.showAddSeriesModal = false;
       this.retrieveSeries();
+      this.getSeries();
     },
     openEditSeriesDialog(data) {
       this.selecetedData = data
@@ -433,6 +438,7 @@ export default {
       })
       this.showEditSeriesModal = false;
       this.retrieveSeries();
+      this.getSeries();
     },
     openDeleteSeriesDialog(data) {
       this.selecetedData = data
@@ -452,6 +458,7 @@ export default {
       })
       this.showDeleteSeriesModal = false;
       this.retrieveSeries();
+      this.getSeries();
     },
     setTab(tab) {
       this.ActiveTab = tab

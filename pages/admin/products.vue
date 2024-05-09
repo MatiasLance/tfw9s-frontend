@@ -231,7 +231,7 @@
               <VSelect
               v-model="tags"
               :items="filteredTags"
-              placeholder="Choose Tags"
+              label="Choose Tags"
               :rules="rules"
               chips
               multiple
@@ -574,7 +574,7 @@
             <VSelect
             v-model="tags"
             :items="filteredTags"
-            placeholder="Choose Tags"
+            label="Choose Tags"
             :rules="rules"
             chips
             multiple
@@ -1326,7 +1326,7 @@ export default {
         form.append('photo[]', this.imgList[i], 'newsThumbnail.png');
       }
 
-      // Placeholder Data
+      // label Data
       form.append('selected_shippingid', '0')
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
@@ -1417,7 +1417,7 @@ export default {
 
       console.log(this.imgListEdit)
 
-      // Placeholder Data
+      // label Data
       form.append('selected_shippingid', '0')
 
       form.append('id', this.item.id);
@@ -1526,7 +1526,7 @@ border-radius: 0;
 transition: border-color 0.3s;
 }
 
-::v-deep .v-text-field input::placeholder {
+::v-deep .v-text-field input::label {
 font-size: 1rem !important;
 font-family: inherit !important;
 color: rgb(104, 104, 104) !important;

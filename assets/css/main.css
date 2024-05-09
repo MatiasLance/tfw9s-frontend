@@ -180,3 +180,24 @@ input[type="name"]{
   /* Override Oruga's danger color for elements with this specific class */
   background-color: #1fe730 !important; /* Set your desired color here */
 }
+.green-drop-shadow {
+  filter: drop-shadow(0 4px 6px rgb(13, 208, 39)); /* Adjust shadow color and opacity */
+}
+
+/* .half-opacity::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0), #212121);
+  transition: opacity 0.5s ease;
+  z-index: 1;
+}
+
+.half-opacity img {
+  width: 50%;
+  height: 100%;
+  display: block;
+} */

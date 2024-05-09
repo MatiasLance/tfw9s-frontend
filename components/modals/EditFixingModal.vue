@@ -3,11 +3,42 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
       <VForm ref="form" v-model="valid" lazy-validation>
           <h3 class="mb-3 font-bold text-brand-black">
-              Edit Fixing
+              Manage Fixing
           </h3>
           <hr class="my-3 lg:w-[918px]"/>
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div class="col-span-1">
+              <label for="selectfield" class="mb-1 block">
+                Series:
+              </label>
+              <VSelect
+                v-model="SeriesId"
+                :items="filteredSeries"
+                label="Choose a Series"
+                :rules="rules"
+                solo
+            >
+              <template #prepend-item>
+                <div class="sticky-search-bar px-3">
+                  <SearchBar v-model="seriesQuery" />
+                </div>
+              </template>
+            </VSelect>
+            </div>
+            <div class="col-span-1">
+              <label for="selectagegroup" class="mb-1 block">
+                Age Group:
+              </label>
+              <VSelect
+              v-model="Event.agegroup_id"
+              :items="formattedAgeGroup"
+              label="Choose Age Group"
+              :rules="rules"
+              solo
+              >
+              </VSelect>
+            </div>
+            <div class="col-span-1 md:col-span-2">
               <label for="eventname" class="mb-1 block">
                 Title:
               </label>
@@ -27,7 +58,7 @@
               <VSelect
               v-model="Event.managerId"
               :items="filteredManagers"
-              placeholder="Choose a Staff"
+              label="Choose a Staff"
               :rules="rules"
               solo
               >
@@ -39,50 +70,19 @@
               </VSelect>
             </div>
             <div class="col-span-1">
-              <label for="selectagegroup" class="mb-1 block">
-                Age Group:
-              </label>
-              <VSelect
-              v-model="Event.agegroup_id"
-              :items="formattedAgeGroup"
-              placeholder="Choose Age Group"
-              :rules="rules"
-              solo
-              >
-              </VSelect>
-            </div>
-            <div class="col-span-1">
               <label for="selectfield" class="mb-1 block">
                 Region:
               </label>
               <VSelect
               v-model="Event.region_id"
               :items="filteredRegions"
-              placeholder="Choose a Region"
+              label="Choose a Region"
               :rules="rules"
               solo
            >
             <template #prepend-item>
               <div class="sticky-search-bar px-3">
                 <SearchBar v-model="regionQuery" />
-              </div>
-            </template>
-          </VSelect>
-          </div>
-          <div class="col-span-1">
-            <label for="selectfield" class="mb-1 block">
-              Series:
-            </label>
-            <VSelect
-              v-model="SeriesId"
-              :items="filteredSeries"
-              placeholder="Choose a Series"
-              :rules="rules"
-              solo
-          >
-            <template #prepend-item>
-              <div class="sticky-search-bar px-3">
-                <SearchBar v-model="seriesQuery" />
               </div>
             </template>
           </VSelect>
@@ -101,12 +101,33 @@
             />
           </div>
           <div class="col-span-1">
+            <label
+            for="price"
+            class="mb-1 flex justify-between"
+            >
+              <p>Registration Fee: </p>
+              <span class="font-semibold">
+                {{ formatCurrency(Event.price) }}
+              </span>
+            </label>
+            <VTextField
+            id="name"
+            v-model="Event.price"
+            label="Enter Fee"
+            :rules="rules"
+            type="number"
+            step=".01"
+            min="0.00"
+            solo
+            />
+          </div>
+          <div class="col-span-1">
               <label for="selectdate" class="mb-1 block">
                 Date:
               </label>
               <ODatepicker
               v-model="Event.date"
-              placeholder="Click to select..."
+              label="Click to select..."
               icon="calendar"
               :min-date="mindate"
               :max-date="maxdate"
@@ -186,7 +207,7 @@
                     :teamList="teams"
                     :fieldList="fields"
                     :region="Event.region_id"
-                    :agegroup="Event.agegroup_id"
+                    :event="Event.id"
                     @update-event="updateMatch(matchIndex, $event)"
                   />
                 </div>
@@ -223,10 +244,12 @@
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
 import Match from '~/components/Match.vue';
+import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'EditFixingModal',
   components: { Match },
+  mixins: [ currencyMixin ],
   props: {
     active: {
       type: Boolean,
@@ -439,6 +462,7 @@ export default {
       formData.append('agegroup_id', this.Event.agegroup_id);
       formData.append('series', this.SeriesId);
       formData.append('teamcount', this.Event.teamcount);
+      formData.append('price', this.Event.price);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
@@ -528,7 +552,7 @@ input{
   transition: border-color 0.3s;
   }
 
-  ::v-deep .v-text-field input::placeholder {
+  ::v-deep .v-text-field input::label {
   font-size: 1rem !important;
   font-family: inherit !important;
   color: rgb(104, 104, 104) !important;
