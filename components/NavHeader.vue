@@ -482,6 +482,10 @@ export default {
           text: 'Ladders',
         },
         {
+          to: '/tournaments',
+          text: 'Register',
+        },
+        {
           to: '/shop',
           text: 'Merch',
         },

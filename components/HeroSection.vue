@@ -21,7 +21,7 @@
         <p class="mb-4 text-justify indent-10 text-lg text-white">
             {{ contentblurb }}
         </p>
-          <NuxtLink to="/shop">
+          <NuxtLink to="/tournaments">
           <BaseButton
             class="
               from-40% via-95% to-100%
@@ -73,7 +73,7 @@ export default {
         contentblurb: false
       },
       headline: 'TFW RL 9’S',
-      cta: 'Shop Now',
+      cta: 'Register Now',
       contentblurb: 'The Final Whistle is a dynamic platform dedicated to sharing uplifting stories from Junior Rugby League. Through engaging content and vibrant storytelling, it celebrates the achievements, resilience, and sportsmanship of young athletes. By amplifying these positive narratives, it aims to inspire and empower the rugby league community, fostering a culture of inclusivity and encouragement. With a focus on teamwork, perseverance, and community spirit, The Final Whistle showcases the transformative power of sport in shaping young lives.\n(Temporary Statement)',
     };
   },

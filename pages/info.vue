@@ -36,7 +36,7 @@
     </BaseHeader>
     <section class="mx-auto max-w-screen-xl gap-4 p-6">
       <div class="grid grid-cols-1 gap-4">
-        <span class="col-cpan-1">
+        <span class="col-span-1">
           <VueSlickCarousel
             v-bind="slickSettings"
             draggable
@@ -266,5 +266,4 @@ export default {
   margin: 0 !important;
   padding-left: 20px !important;
 }
-
 </style>

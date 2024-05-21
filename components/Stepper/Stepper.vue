@@ -8,7 +8,7 @@
   >
     <div class="w-1/2">
       <StepperItem :active="step === 1">
-        1. Shipping Information
+        1. {{ stepname }}
       </StepperItem>
     </div>
     <div class="w-1/2">
@@ -29,6 +29,10 @@ export default {
       type: Number,
       required: true
     },
+    stepname: {
+      type: String,
+      default: 'Shipping Information'
+    }
   },
 }
 </script>

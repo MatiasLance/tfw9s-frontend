@@ -101,27 +101,6 @@
             />
           </div>
           <div class="col-span-1">
-            <label
-            for="price"
-            class="mb-1 flex justify-between"
-            >
-              <p>Registration Fee: </p>
-              <span class="font-semibold">
-                {{ formatCurrency(Event.price) }}
-              </span>
-            </label>
-            <VTextField
-            id="name"
-            v-model="Event.price"
-            label="Enter Fee"
-            :rules="rules"
-            type="number"
-            step=".01"
-            min="0.00"
-            solo
-            />
-          </div>
-          <div class="col-span-1">
               <label for="selectdate" class="mb-1 block">
                 Date:
               </label>
@@ -272,7 +251,6 @@ export default {
       handler(newSeries) {
         if (newSeries) {
           const data = this.series.find((x) => x.id === newSeries);
-          console.log(data)
           this.mindate = this.formattedDate(data.start);
           this.maxdate = this.formattedDate(data.end);
           this.Event.date = null;
@@ -360,7 +338,6 @@ export default {
       formData.append('agegroup_id', this.Event.agegroup_id);
       formData.append('series', this.SeriesId);
       formData.append('teamcount', this.Event.teamcount);
-      formData.append('price', this.Event.price);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];

@@ -1,5 +1,5 @@
 <template>
-  <div  class="w-screen min-h-screen bg-[#1A1A1B]">
+  <div class="min-h-full bg-[#1A1A1B]">
     <BaseHeader
     class="mx-auto max-w-screen-xl gap-4
     bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
@@ -11,11 +11,11 @@
           sm:space-y-3
           sm:text-left
           lg:col-span-6
-          xl:mt-10"
-          data-aos="fade-right"
+          xl:mt-10
+        "
+        data-aos="fade-right"
       >
         <span
-          color="white"
           class="
             superheadline
             flex flex-row
@@ -32,329 +32,330 @@
           </span>
         </span>
         <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Register
+          Registration
         </h1>
       </div>
     </BaseHeader>
-    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12" data-aos="fade-up">
-      <VForm ref="form" v-model="valid" lazy-validation>
-      <div
-      class="grid grid-cols-1 gap-4 rounded-md bg-[#212121] p-4 md:grid-cols-2"
-      >
-      <div class="col-span-1">
-        <label for="selectfield" class="mb-2 block text-white">
-          Tournament:
-        </label>
-        <VSelect
-        v-model="series"
-        :items="filteredSeries"
-        :hint="serieshint"
-        label="Select Tournament"
-        :rules="rules"
-        :disabled="true"
-        persistent-hint
-        dark
-        outlined
-        >
-          <template #prepend-item>
-            <div class="sticky-search-bar px-3">
-              <SearchBar v-model="seriesQuery" />
-            </div>
+
+    <div class="my-24 mx-auto max-w-screen-xl bg-gray-200">
+      <div class="mb-12 w-full bg-white">
+        <Stepper :step="activeStep" stepname="Information" />
+      </div>
+
+      <div class="flex flex-col gap-4 p-2 md:flex-row">
+        <template v-if="activeStep === 1">
+          <template v-if="seriestype === 'weekly'">
+            <IndividualInformationForm
+              :is-loading="isStepperLoading"
+              @submit="toPayStep"
+            />
           </template>
-        </VSelect>
-      </div>
-      <div class="col-span-1">
-        <label for="selectfield" class="mb-2 block text-white">
-          Event:
-        </label>
-        <VSelect
-        v-model="event"
-        :items="formattedEvent"
-        label="Select Event"
-        :rules="rules"
-        dark
-        outlined
-        >
-          <template #prepend-item>
-            <div class="sticky-search-bar px-3">
-              <SearchBar v-model="eventQuery" />
-            </div>
+          <template
+            v-if="seriestype === 'tournament' || seriestype === 'coast'"
+          >
+            <TeamInformationForm
+              :is-loading="isStepperLoading"
+              @submit="toPayStep"
+            />
           </template>
-        </VSelect>
+        </template>
+        <template v-else-if="activeStep === 2">
+          <PaymentForm
+            :subtotal="subtotal"
+            :total="total"
+            @active-step="setPreviousStep"
+          />
+        </template>
+        <!-- col.// -->
       </div>
-      <div class="col-span-1 md:col-span-2">
-        <label for="teamname" class="mb-2 block text-white">
-          Team Name:
-        </label>
-        <VTextField
-        id="title"
-        v-model="RegisterData.name"
-        label="Enter Team Name"
-        :rules="rules"
-        type="text"
-        dark
-        outlined
-        />
-      </div>
-      <div class="col-span-1 md:col-span-2">
-        <label for="teamname" class="mb-2 block text-white">
-          Coach Name:
-        </label>
-        <VTextField
-        id="name"
-        v-model="RegisterData.coach_name"
-        label="Enter Coach Name"
-        :rules="rules"
-        type="text"
-        dark
-        outlined
-        />
-      </div>
-      <div class="col-span-1">
-        <label for="teamname" class="mb-2 block text-white">
-          Coach Mobile Number:
-        </label>
-        <VTextField
-        id="number"
-        v-model="RegisterData.coach_mobile"
-        label="Enter Mobile Number"
-        :rules="rules"
-        type="tel"
-        dark
-        outlined
-        />
-      </div>
-      <div class="col-span-1">
-        <label for="teamname" class="mb-2 block text-white">
-          Coach Email:
-        </label>
-        <VTextField
-        id="email"
-        v-model="RegisterData.coach_email"
-        label="Enter Coach Email"
-        :rules="rules"
-        type="email"
-        dark
-        outlined
-        />
-      </div>
-      <div class="col-span-1 md:col-span-2">
-        <label for="teamname" class="mb-2 block text-white">
-          Manager Name:
-        </label>
-        <VTextField
-        id="name"
-        v-model="RegisterData.manager_name"
-        label="Enter Manager Name"
-        :rules="rules"
-        type="text"
-        dark
-        outlined
-        />
-      </div>
-      <div class="col-span-1">
-        <label for="teamname" class="mb-2 block text-white">
-          Manager Mobile Number:
-        </label>
-        <VTextField
-        id="number"
-        v-model="RegisterData.manager_mobile"
-        label="Enter Mobile Number"
-        :rules="rules"
-        type="tel"
-        dark
-        outlined
-        />
-      </div>
-      <div class="col-span-1">
-        <label for="teamname" class="mb-2 block text-white">
-          Manager Email:
-        </label>
-        <VTextField
-        id="email"
-        v-model="RegisterData.manager_email"
-        label="Enter Manager Email"
-        :rules="rules"
-        type="email"
-        dark
-        outlined
-        />
-      </div>
-      <NuxtLink
-      :to="'/tournaments'"
-      class="col-span-1"
-      >
-      <span
-      class="
-        inline-block
-        w-full
-        rounded-lg
-        bg-[#212121] text-[#999999]
-        border-2
-        border-[#414141]
-        py-3
-        px-4
-        text-center text-lg
-        font-medium
-        shadow-sm
-        hover:text-white
-        hover:bg-[#414141]
-        transition
-      "
-    >
-      Back to Tournaments
-    </span>
-    </NuxtLink>
-    <button
-    type="button"
-    class="
-    inline-block
-    col-span-1
-    select-none
-    border border-transparent
-    from-40% via-95% to-100%
-    bg-gradient-to-tr
-    from-[#5EE738]
-    via-[#3e872a]
-    to-[#050505]
-    rounded-lg
-    py-3
-    px-4
-    text-center text-lg
-    font-medium
-    text-white
-    hover:brightness-125
-    transition
-  "
-  :disabled="!valid"
-  @click="validate"
-    >
-      Proceed to Payment
-  </button>
-      </div>
-      </VForm>
-    </section>
+      <!-- grid.// -->
+    </div>
+    <!-- container.// -->
   </div>
 </template>
 
 <script>
+import BaseHeader from '~/components/base/BaseHeader';
+import IndividualInformationForm from '~/components/registration/IndividualInformationForm';
+import TeamInformationForm from '~/components/registration/TeamInformationForm';
+import Stepper from '~/components/Stepper/Stepper';
+import currencyMixin from '~/mixins/currency';
+import PaymentForm from '~/components/payment/PaymentForm';
 
 export default {
+  name: 'register',
+  components: {
+    BaseHeader,
+    IndividualInformationForm,
+    TeamInformationForm,
+    Stepper,
+    PaymentForm,
+  },
+  mixins: [ currencyMixin ],
   data() {
     return {
-      valid: false,
-      RegisterData: [],
-      series: null,
-      event: null,
-      serieshint: '',
-      EventList: [],
-      SeriesList: [],
-      seriesQuery: '',
-      eventQuery: '',
-      rules: [ value => !!value || 'Required' ],
+      clientSecret: '',
+      activeStep: 1,
+      isStepperLoading: false,
+      seriestype: ''
     };
   },
   computed: {
-    formattedEvent() {
-      return this.EventList.map(x => ({
-        text: `${x.name} - ${x.agename}`,
-        value: x.id,
-        disabled: x.team.length >= x.teamcount,
-      }));
-    },
-    formattedSeries() {
-      return this.SeriesList.map(series => ({
-        text: series.name,
-        value: series.id,
-      }));
-    },
-    filteredSeries() {
-      return this.formattedSeries.filter(series =>
-        series && series.text && typeof series.text === 'string' ?
-          series.text.toLowerCase().includes(this.seriesQuery.toLowerCase()) :
-          false
-      );
-    },
-  },
-  watch: {
-    series: {
-      handler(newseries) {
-        let data = []
-        data = this.SeriesList.find(x => x.id === newseries);
-        this.serieshint = this.seriesType(data.type) ?? '';
-        console.log('Series Data: ', data)
-
-        this.EventList = data.event.map(x => {
-          return { ...x, agename: x.agegroup.name??'???' }
-        });
+    registrationInformation: {
+      get() {
+        return this.$store.state.registration.registrationInformation;
       },
-      deep: true
+      set(v) {
+        this.$store.commit('registration/setRegistrationInformation', v);
+      },
+    },
+    subtotal: {
+      get() {
+        return this.$store.state.cart.subtotal;
+      },
+      set(v) {
+        this.$store.commit('cart/setSubtotal', v);
+      },
+    },
+    gst: {
+      get() {
+        return this.$store.state.cart.gst;
+      },
+      set(v) {
+        this.$store.commit('cart/setGst', v);
+      },
+    },
+    total: {
+      get() {
+        return this.$store.state.cart.total;
+      },
+      set(v) {
+        this.$store.commit('cart/setTotal', v);
+      },
     },
   },
   created() {
-    this.retrieveSeries()
+    this.retrieveSeries();
   },
   methods: {
-    seriesType(type) {
-      if (type === 'weekly') {
-        return 'Weekly Competitions'
-      } else if (type === 'tournament') {
-        return 'Tournaments'
-      } else if (type === 'coast') {
-        return 'Central Coast'
-      } else {
-        return false
-      }
-    },
-    validate() {
-      if (!this.$refs.form.validate()) {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Fill out all required fields',
-          position: 'bottom',
-          variant: 'danger',
-          queue: true,
-        });
-        return false;
-      } else {
-        this.confirm();
-        return true;
-      }
-    },
-    confirm() {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Work in Progress...',
-        position: 'bottom',
-        variant: 'info',
-        queue: true,
-      });
-      console.log(this.RegisterData, this.series, this.event)
-    },
     retrieveSeries() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
+      this.id = this.$route.query.id;
 
       this.$axios
-        .$get(`v1/series?${queryString}`)
+        .$get(`v1/series/${this.id}`)
         .then((response) => {
-          this.SeriesList = response.data.series;
+          this.seriestype = response.data.series.type
         })
-        .finally(() => {
-          this.series = parseInt(this.$route.query.id);
-        });
     },
-  }
+    retrieveToggleTaxControl() {
+      const id = 1;
+      // todo: check endpoint
+      const endpoint = `v1/toogletax/retrieve/${id}`
+      this.$axios
+        .$get(endpoint)
+        .then((response) => {
+          this.toggleControl1 = response.me.toggleControl1
+          this.toggleControl2 = response.me.toggleControl2
+          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
+          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
+    setPreviousStep(stepNo) {
+      this.activeStep = stepNo
+    },
+    toPayStep(registrationInformation) {
+      this.registrationInformation = registrationInformation;
+      this.isStepperLoading = true;
+      setTimeout(() => {
+        this.activeStep = 2;
+        this.isStepperLoading = false;
+      }, 3000);
+    },
+    async checkStatus() {
+      const clientSecret = this.$route.query.payment_intent_client_secret;
+
+      if (!clientSecret) {
+        return false;
+      }
+
+      const { paymentIntent } = await this.$stripe.retrievePaymentIntent(
+        clientSecret
+      );
+
+      switch (paymentIntent.status) {
+      case 'succeeded':
+        this.showMessage('Success! Payment received.');
+        this.$router.push('/shop');
+        break;
+      case 'processing':
+        this.showMessage('Your payment is processing.');
+        break;
+      case 'requires_payment_method':
+        this.showMessage(
+          'Your payment was not successful, please try again.'
+        );
+        break;
+      default:
+        this.showMessage('Something went wrong.');
+        break;
+      }
+    },
+  },
 };
 </script>
+
+<style>
+  .croppa-container {
+  background-color: #abb8c3;
+  border: 3px solid #3981da;
+  }
+  .o-inputit__item--danger {
+  background-color: #e73538 !important;
+  }
+/* Variables */
+#payment-message {
+  color: rgb(105, 115, 134);
+  font-size: 16px;
+  line-height: 20px;
+  padding-top: 12px;
+  text-align: center;
+}
+
+#payment-element {
+  margin-bottom: 24px;
+}
+
+/* Buttons and links */
+button#stripeSubmit {
+  background: #1a1d18;
+  color: #ffffff;
+  border-radius: 4px;
+  border: 0;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+  transition: all 0.2s ease;
+  box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
+  width: 100%;
+}
+
+button#backCart {
+  background: #ffffff;
+  color: #000;
+  border-radius: 4px;
+  border: 0;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+  transition: all 0.2s ease;
+  box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
+  width: 100%;
+}
+
+button#stripeSubmit:hover {
+  filter: contrast(115%);
+}
+
+button#stripeSubmit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* spinner/processing state, errors */
+.spinner,
+.spinner:before,
+.spinner:after {
+  border-radius: 50%;
+}
+.spinner {
+  color: #ffffff;
+  font-size: 22px;
+  text-indent: -99999px;
+  margin: 0px auto;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  box-shadow: inset 0 0 0 2px;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.spinner:before,
+.spinner:after {
+  position: absolute;
+  content: '';
+}
+.spinner:before {
+  width: 10.4px;
+  height: 20.4px;
+  background: #5469d4;
+  border-radius: 20.4px 0 0 20.4px;
+  top: -0.2px;
+  left: -0.2px;
+  -webkit-transform-origin: 10.4px 10.2px;
+  transform-origin: 10.4px 10.2px;
+  -webkit-animation: loading 2s infinite ease 1.5s;
+  animation: loading 2s infinite ease 1.5s;
+}
+.spinner:after {
+  width: 10.4px;
+  height: 10.2px;
+  background: #5469d4;
+  border-radius: 0 10.2px 10.2px 0;
+  top: -0.1px;
+  left: 10.2px;
+  -webkit-transform-origin: 0px 10.2px;
+  transform-origin: 0px 10.2px;
+  -webkit-animation: loading 2s infinite ease;
+  animation: loading 2s infinite ease;
+}
+
+@-webkit-keyframes loading {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes loading {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  form {
+    width: 80vw;
+    min-width: initial;
+  }
+}
+
+.selected {
+  background: #1a1d18;
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+</style>
+

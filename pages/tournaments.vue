@@ -1,293 +1,313 @@
 <template>
-  <div class="min-h-screen w-screen bg-[#1A1A1B]">
-    <section class="relative mx-auto max-w-screen-xl gap-4 p-7">
-      <div v-if="!SeriesList" class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div class="col-span-1 lg:col-span-2">
-          <span class="rounded-md bg-[#4cbe5c] px-4 py-2 font-semibold">
-            Weekly Competitions
-          </span>
-        <article
-        class="relative flex flex-row w-full snap-x gap-6
-        overflow-y-hidden overflow-x-scroll pt-2"
+  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+    <BaseHeader
+    class="mx-auto max-w-screen-xl gap-4
+    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    >
+      <div
+        class="
+          col-span-12
+          text-center
+          sm:space-y-3
+          sm:text-left
+          lg:col-span-6
+          xl:mt-10"
+        data-aos="fade-right"
+      >
+        <span
+          class="
+            superheadline flex flex-row
+            items-center
+            text-[1rem]
+            font-normal
+            text-white
+          "
         >
-          <div
-          v-for="(item, index) in filteredWeekly" :key="item.id"
-          class="relative h-[282px] w-[500px] shrink-0 snap-center
-          overflow-hidden rounded bg-[#212121] backdrop-blur border-double
-          border-[#4cbe5c] border-2  group"
-          data-aos="zoom-in"
-          data-aos-once="true"
-          :data-aos-delay="`${index}00`"
+          <span class="font-medium">
+            <NuxtLink to="/">
+              <VBtn text color="white">Home</VBtn>
+            </NuxtLink>
+          </span>
+        </span>
+        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
+          Registration
+        </h1>
+      </div>
+    </BaseHeader>
+    <section class="mx-auto max-w-screen-xl gap-4 p-6">
+      <div class="grid grid-cols-1 gap-4">
+        <span class="col-span-1">
+          <VueSlickCarousel
+            v-bind="slickSettings"
+            draggable
+            focus-on-select
+            >
+            <div
+              v-for="tab in tabs"
+              :key="tab.name" class="px-2"
+            >
+              <button
+                type="button"
+                class="
+                w-full
+                rounded-md
+                py-1.5
+                text-center
+                font-semibold
+                "
+                :class="(activeTab == tab.name)
+                ? `from-40% via-95% to-100%
+                    bg-gradient-to-br
+                    from-[#5EE738]
+                    via-[#3e872a]
+                    to-[#050505]
+                    text-white`
+                :
+                'bg-[#212121] text-[#555555]'"
+                @click="setTab(tab.name)"
+              >
+                {{ tab.Label }}
+              </button>
+            </div>
+          </VueSlickCarousel>
+        </span>
+        <span
+        v-if="activeTab == 'weekly'"
+        class="col-cpan-1 p-4 text-white"
+        data-aos="fade-up"
+        data-aos-offset="0"
+        >
+          <article
+            class="grid md:grid-cols-2 grid-cols-1 w-full gap-4 pt-2"
           >
+            <div
+              v-for="(item, index) in filteredWeekly" :key="item.id"
+              class="relative shrink-0 snap-center
+              rounded bg-[#212121] backdrop-blur border-double
+              border-[#4cbe5c] border-2 group"
+              data-aos="zoom-in"
+              data-aos-once="true"
+              :data-aos-delay="`${index}00`"
+            >
 
-          <img
-          class="absolute z-0 h-full w-full object-cover
-          group-hover:scale-125 transition"
-          :src="getMediaURL(item.media[0], 'temp')"
-          alt="Series Image"
-          />
-
-          <div
-          class="absolute top-0 right-0 z-10 rounded-bl-xl
-          bg-black p-2 pl-4 font-semibold text-white"
-          >
-            {{ DateRange(item.start, item.end) }}
-          </div>
-
-          <div
-          class="absolute bottom-0 z-10 w-full bg-black
-          bg-opacity-75 p-2 pl-4 transition"
-          >
-            <span class="w-full font-semibold text-white">{{ item.name }}</span>
-            <span
-            class="w-full line-clamp-3 text-sm text-white h-0
-            opacity-0 group-hover:h-16 group-hover:opacity-100
-            transform-translate text-left transition-all origin-left"
-            v-html="item.description"
+            <img
+              class="z-0 h-full w-full object-cover
+              transition"
+              :src="getMediaURL(item.media[0], 'temp')"
+              alt="Series Image"
             />
-            <span
-            class="w-full line-clamp-1 text-white h-0 font-medium
-            opacity-100 group-hover:h-6 group-hover:opacity-100 text-sm
-            transform-translate text-center transition-all origin-left"
-            @click="ViewArticle(item.id)"
-            >See more</span>
+
+            <div
+              class="absolute top-0 right-0 z-10 rounded-bl-xl
+              bg-black p-2 pl-4 font-semibold text-white"
+            >
+              {{ DateRange(item.start, item.end) }}
+            </div>
+
+            <div
+              class="absolute bottom-0 z-10 w-full bg-black
+              bg-opacity-75 p-2 pl-4 transition"
+            >
+              <span class="w-full font-semibold text-white">
+                {{ item.name }}
+              </span>
+              <span
+                class="w-full line-clamp-3 text-sm text-white h-0
+                opacity-0 group-hover:h-16 group-hover:opacity-100
+                transform-translate text-left transition-all origin-left"
+                v-html="item.description"
+              />
+              <span
+                class="w-full line-clamp-1 text-white h-0 font-medium
+                opacity-100 group-hover:h-6 group-hover:opacity-100 text-sm
+                transform-translate text-center transition-all origin-left
+                cursor-pointer"
+                @click="ViewArticle(item.id)"
+              >See more</span>
+            </div>
           </div>
+        </article>
+        </span>
+        <span
+          v-if="activeTab == 'tournament'"
+          class="col-cpan-1 p-4 text-white"
+          data-aos="fade-up"
+          data-aos-offset="0"
+        >
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              v-for="(item, index) in filteredTournament" :key="item.id"
+              class="relative col-span-1 overflow-hidden rounded-lg
+              bg-[#212121] group p-4"
+              data-aos="zoom-in"
+              data-aos-once="true"
+              :data-aos-delay="`${index}00`"
+            >
+
+              <article class="w-full overflow-hidden rounded-md">
+                <img
+                  class=" w-full object-cover group-hover:scale-125 transition"
+                  :src="getMediaURL(item.media[0], 'temp')"
+                  alt="Series Image"
+                />
+              </article>
+              <div class="w-full flex flex-row pt-4">
+                <div class="flex w-5/6 flex-col px-2">
+                  <span class="w-full font-semibold text-white line-clamp-1">
+                    {{ item.name }}
+                  </span>
+                  <span
+                    class="w-full text-xs font-medium
+                    text-white opacity-75"
+                  >
+                    {{ DateRange(item.start, item.end) }}
+                  </span>
+                </div>
+                <div class="flex w-1/6 items-center justify-center">
+                  <span
+                    class="rounded-md bg-[#212121] px-2 text-3xl
+                    text-white transition hover:brightness-125"
+                    @click="ViewArticle(item.id)"
+                  >
+                    <i class="ri-arrow-right-line"/>
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        </article>
-        </div>
-      </div>
-      <div v-if="!SeriesList"
-      class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
-      >
-        <article
-        v-for="(item, index) in filteredWeekly" :key="item.id"
-        class="relative col-span-1 shrink-0 snap-center
-        overflow-hidden rounded bg-[#212121] backdrop-blur border-double
-        border-[#4cbe5c] border-2  group"
-        data-aos="zoom-in"
-        data-aos-once="true"
-        :data-aos-delay="`${index}00`"
-        >
-
-        <img
-        class="absolute z-0 h-full w-full object-cover
-        group-hover:scale-125 transition"
-        :src="getMediaURL(item.media[0], 'temp')"
-        alt="Series Image"
-        />
-
-        <div
-        class="absolute top-0 right-0 z-10 rounded-bl-xl
-        bg-black p-2 pl-4 font-semibold text-white"
-        >
-          {{ DateRange(item.start, item.end) }}
-        </div>
-
-        <div
-        class="absolute bottom-0 z-10 w-full bg-black
-        bg-opacity-75 p-2 pl-4 transition"
-        >
-          <span class="w-full font-semibold text-white">{{ item.name }}</span>
-          <span
-          class="w-full line-clamp-3 text-sm text-white h-0
-          opacity-0 group-hover:h-16 group-hover:opacity-100
-          transform-translate text-left transition-all origin-left"
-          v-html="item.description"
-          />
-          <span
-          class="w-full line-clamp-1 text-white h-0 font-medium
-          opacity-100 group-hover:h-6 group-hover:opacity-100 text-sm
-          transform-translate text-center transition-all origin-left"
-          @click="ViewArticle(item.id)"
-          >See more</span>
-        </div>
-        </article>
-      </div>
-      <div v-if="!SeriesList"
-      class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
-      >
-        <div
-        v-for="(item, index) in SeriesList" :key="item.id"
-        class="relative col-span-1 overflow-hidden rounded-lg
-        bg-[#212121] group p-4"
-        data-aos="zoom-in"
-        data-aos-once="true"
-        :data-aos-delay="`${index}00`"
-        >
-
-        <article class="w-full overflow-hidden rounded-md">
-        <img
-        class=" w-full object-cover group-hover:scale-125 transition"
-        :src="getMediaURL(item.media[0], 'temp')"
-        alt="Series Image"
-        />
-        </article>
-        <div class="w-full flex flex-row pt-4">
-        <div class="flex w-5/6 flex-col px-2">
-          <span class="w-full font-semibold text-white line-clamp-1">
-            {{ item.name }}
-          </span>
-          <span class="w-full text-xs font-medium text-white opacity-75">
-            {{ DateRange(item.start, item.end) }}
-          </span>
-        </div>
-        <div class="flex w-1/6 items-center justify-center">
-          <span
-          class="rounded-md bg-[#212121] px-2 text-3xl
-          text-white transition hover:brightness-125"
-          @click="ViewArticle(item.id)"
-          >
-            <i class="ri-arrow-right-line"/>
-          </span>
-        </div>
-        </div>
-      </div>
-      </div>
-      <div class="py-4">
-        <span class="rounded-md bg-[#4cbe5c] px-4 py-2 font-semibold">
-          Weekly Competitions
         </span>
-      </div>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div
-        v-for="(item, index) in filteredWeekly" :key="item.id"
-        class="relative col-span-1 overflow-hidden rounded-lg
-        bg-[#212121] group p-4"
-        data-aos="zoom-in"
-        data-aos-once="true"
-        :data-aos-delay="`${index}00`"
+        <span
+        v-if="activeTab == 'coast'"
+        class="col-cpan-1 p-4 text-white"
+        data-aos="fade-up"
+        data-aos-offset="0"
         >
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              v-for="(item, index) in filteredCentral" :key="item.id"
+              class="relative col-span-1 overflow-hidden rounded-lg
+              bg-[#212121] group p-4"
+              data-aos="zoom-in"
+              data-aos-once="true"
+              :data-aos-delay="`${index}00`"
+            >
 
-        <article class="w-full overflow-hidden rounded-md">
-        <img
-        class=" w-full object-cover group-hover:scale-125 transition"
-        :src="getMediaURL(item.media[0], 'temp')"
-        alt="Series Image"
-        />
-        </article>
-        <div class="w-full flex flex-row pt-4">
-        <div class="flex w-5/6 flex-col px-2">
-          <span class="w-full font-semibold text-white line-clamp-1">
-            {{ item.name }}
-          </span>
-          <span class="w-full text-xs font-medium text-white opacity-75">
-            {{ DateRange(item.start, item.end) }}
-          </span>
-        </div>
-        <div class="flex w-1/6 items-center justify-center">
-          <span
-          class="rounded-md bg-[#212121] px-2 text-3xl
-          text-white transition hover:brightness-125"
-          @click="ViewArticle(item.id)"
-          >
-            <i class="ri-arrow-right-line"/>
-          </span>
-        </div>
-        </div>
-      </div>
-      </div>
-      <div class="py-4">
-        <span class="rounded-md bg-[#ff9933] px-4 py-2 font-semibold">
-          Tournaments
+              <article class="w-full overflow-hidden rounded-md">
+                <img
+                  class=" w-full object-cover group-hover:scale-125 transition"
+                  :src="getMediaURL(item.media[0], 'temp')"
+                  alt="Series Image"
+                />
+              </article>
+              <div class="w-full flex flex-row pt-4">
+                <div class="flex w-5/6 flex-col px-2">
+                  <span class="w-full font-semibold text-white line-clamp-1">
+                    {{ item.name }}
+                  </span>
+                  <span
+                    class="w-full text-xs font-medium
+                    text-white opacity-75"
+                  >
+                    {{ DateRange(item.start, item.end) }}
+                  </span>
+                </div>
+                <div class="flex w-1/6 items-center justify-center">
+                  <span
+                    class="rounded-md bg-[#212121] px-2 text-3xl
+                    text-white transition hover:brightness-125"
+                    @click="ViewArticle(item.id)"
+                  >
+                    <i class="ri-arrow-right-line"/>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </span>
-      </div>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div
-        v-for="(item, index) in filteredTournament" :key="item.id"
-        class="relative col-span-1 overflow-hidden rounded-lg
-        bg-[#212121] group p-4"
-        data-aos="zoom-in"
-        data-aos-once="true"
-        :data-aos-delay="`${index}00`"
-        >
-
-        <article class="w-full overflow-hidden rounded-md">
-        <img
-        class=" w-full object-cover group-hover:scale-125 transition"
-        :src="getMediaURL(item.media[0], 'temp')"
-        alt="Series Image"
-        />
-        </article>
-        <div class="w-full flex flex-row pt-4">
-        <div class="flex w-5/6 flex-col px-2">
-          <span class="w-full font-semibold text-white line-clamp-1">
-            {{ item.name }}
-          </span>
-          <span class="w-full text-xs font-medium text-white opacity-75">
-            {{ DateRange(item.start, item.end) }}
-          </span>
-        </div>
-        <div class="flex w-1/6 items-center justify-center">
-          <span
-          class="rounded-md bg-[#212121] px-2 text-3xl
-          text-white transition hover:brightness-125"
-          @click="ViewArticle(item.id)"
-          >
-            <i class="ri-arrow-right-line"/>
-          </span>
-        </div>
-        </div>
-      </div>
-      </div>
-      <div class="py-4">
-        <span class="rounded-md bg-[#3366ff] px-4 py-2 font-semibold">
-          Central Cost
-        </span>
-      </div>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div
-        v-for="(item, index) in filteredCentral" :key="item.id"
-        class="relative col-span-1 overflow-hidden rounded-lg
-        bg-[#212121] group p-4"
-        data-aos="zoom-in"
-        data-aos-once="true"
-        :data-aos-delay="`${index}00`"
-        >
-
-        <article class="w-full overflow-hidden rounded-md">
-        <img
-        class=" w-full object-cover group-hover:scale-125 transition"
-        :src="getMediaURL(item.media[0], 'temp')"
-        alt="Series Image"
-        />
-        </article>
-        <div class="w-full flex flex-row pt-4">
-        <div class="flex w-5/6 flex-col px-2">
-          <span class="w-full font-semibold text-white line-clamp-1">
-            {{ item.name }}
-          </span>
-          <span class="w-full text-xs font-medium text-white opacity-75">
-            {{ DateRange(item.start, item.end) }}
-          </span>
-        </div>
-        <div class="flex w-1/6 items-center justify-center">
-          <span
-          class="rounded-md bg-[#212121] px-2 text-3xl
-          text-white transition hover:brightness-125"
-          @click="ViewArticle(item.id)"
-          >
-            <i class="ri-arrow-right-line"/>
-          </span>
-        </div>
-        </div>
-      </div>
       </div>
     </section>
   </div>
 </template>
 
 <script>
+import VueSlickCarousel from 'vue-slick-carousel'
 import handlesMedia from '~/mixins/shop/handlesMedia';
+
 export default {
+  components: { VueSlickCarousel },
   mixins: [ handlesMedia ],
   data() {
     return {
       pageSEO: {
-        title: 'Draws - TFW Rugby League',
+        title: 'Registration - TFW Rugby League',
         description: ''
       },
+      activeTab: 'weekly',
+      tabs: [
+        { name: 'weekly', Label: 'Weekly Competitions' },
+        { name: 'tournament', Label: 'Tournaments' },
+        { name: 'coast', Label: 'Central Coast' },
+      ],
       SeriesList: [],
-    }
+      slickSettings: {
+        arrows: false,
+        slidesToShow: 4,
+        responsive: [
+          {
+            breakpoint: 1280,
+            settings: {
+              slidesToShow: 4,
+              slidesToScroll: 4,
+              initialSlide: 0,
+              infinite: true,
+              arrows: true
+            }
+          },
+          {
+            breakpoint: 768,
+            settings: {
+              slidesToShow: 2,
+              slidesToScroll: 3,
+              initialSlide: 0,
+              infinite: true,
+              arrows: true
+            }
+          },
+          {
+            breakpoint: 480,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              initialSlide: 0,
+              infinite: true,
+              arrows: true
+            }
+          },
+          {
+            breakpoint: 370,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              initialSlide: 0,
+              infinite: true,
+              arrows: true
+            }
+          }
+        ],
+      },
+    };
+  },
+  head() {
+    return {
+      title: this.pageSEO.title,
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.pageSEO.description,
+        },
+      ],
+    };
   },
   computed: {
     filteredWeekly() {
@@ -316,6 +336,9 @@ export default {
     this.retrieveSeries();
   },
   methods: {
+    setTab(tab) {
+      this.activeTab = tab;
+    },
     ViewArticle(id) {
       this.$router.push(`/tournament-article/?id=${id}`);
     },
@@ -359,12 +382,12 @@ export default {
       // eslint-disable-next-line max-len, vue/max-len, no-return-assign
       return `${startmonth === endmonth? startmonth:endmonth} ${startdate}${startsuffix} -  ${startmonth !== endmonth? endmonth:''} ${enddate}${endsuffix} ${startyear === endyear? startyear: endyear}`;
     },
-    // eslint-disable-next-line camelcase
     retrieveSeries() {
       const query = {
         q: this.query,
         sort: 'start_date',
         page: this.page,
+        withFixing: 'with_fixing'
       };
 
       Object.keys(query).forEach((key) => {
@@ -388,17 +411,22 @@ export default {
         })
     },
   }
-}
+};
 </script>
 
-<style scoped>
-.v-label.theme--light {
-  color: black
+<style>
+.info h1,
+.info h2,
+.info h3,
+.info p {
+  font-size: revert !important;
 }
-article{
-  aspect-ratio: 16 / 9
-}
-img{
-  aspect-ratio: 16 / 9
+
+.info ul,
+.info ol {
+  list-style: revert !important;
+  margin: 0 !important;
+  padding-left: 20px !important;
 }
 </style>
+
