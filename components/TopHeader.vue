@@ -116,8 +116,8 @@ export default {
       address: '280 Brisbane Road\nLabrador, Queensland 4215 Australia',
       mobile: '0451 620 707',
       socials: {
-        fb: 'https://www.facebook.com/people/The-Drum-HQ/100090914588551/',
-        ig: 'https://www.instagram.com/the_drum_hq/',
+        fb: 'https://www.facebook.com/',
+        ig: 'https://www.instagram.com/',
         tiktok: '',
         youtube: ''
       }

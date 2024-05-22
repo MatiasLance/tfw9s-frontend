@@ -1,4 +1,4 @@
-# drum-hq-frontend
+# the-final-wistle-frontend
 
 ## Build Setup
 

@@ -2,24 +2,40 @@
   <div class="min-h-screen bg-[#1A1A1B] text-white">
     <div>
       <div class="block gap-4 md:grid md:grid-cols-12">
-        <div class="article-gallery col-span-12">
+        <div class="article-gallery col-span-12 relative">
           <VCarousel
-              height="450"
-              :show-arrows="false"
-              cycle
-              hide-delimiters-background
-              >
-          <VCarouselItem
+            height="450"
+            :show-arrows="false"
+            cycle
+            hide-delimiters-background
+          >
+            <VCarouselItem
               v-for="(photo, i) in photos"
               :key="i"
               :src="photo"
               cover
-              />
-          <VCarouselItem
+            >
+              <span
+                @click="backToNews"
+                class="back-button absolute top-2
+                left-2 cursor-pointer z-10 text-white"
+              >
+                <i class="ri-arrow-left-line text-2xl"></i>
+              </span>
+            </VCarouselItem>
+            <VCarouselItem
               v-if="photos.length === 0"
-              src='http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg'
+              src="http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg"
               cover
-              />
+            >
+              <span
+                @click="backToNews"
+                class="back-button absolute top-2
+                left-2 cursor-pointer z-10 text-white"
+              >
+                <i class="ri-arrow-left-line text-2xl"></i>
+              </span>
+            </VCarouselItem>
           </VCarousel>
         </div>
         <div
@@ -180,6 +196,9 @@ export default {
           this.photos = this.article.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
         })
+    },
+    backToNews() {
+      this.$router.push('/news');
     },
   },
 };
