@@ -166,7 +166,8 @@
                 <div class="flex w-1/6 items-center justify-center">
                   <span
                     class="rounded-md bg-[#212121] px-2 text-3xl
-                    text-white transition hover:brightness-125"
+                    text-white transition hover:brightness-125
+                    cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
                     <i class="ri-arrow-right-line"/>
@@ -214,7 +215,8 @@
                 <div class="flex w-1/6 items-center justify-center">
                   <span
                     class="rounded-md bg-[#212121] px-2 text-3xl
-                    text-white transition hover:brightness-125"
+                    text-white transition hover:brightness-125
+                    cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
                     <i class="ri-arrow-right-line"/>

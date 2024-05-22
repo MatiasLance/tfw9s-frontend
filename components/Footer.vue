@@ -58,7 +58,8 @@
                 <VListItemTitle
                 title="Visit Facebook Page"
                 class="flex items-center brightness-75 transition
-                duration-200 hover:scale-105 hover:brightness-100"
+                duration-200 hover:scale-105 hover:brightness-100
+                cursor-pointer"
                 @click="openLink('https://www.facebook.com/thefinalwhistleRL/')"
                 >
                   <i
@@ -73,7 +74,8 @@
                 <VListItemTitle
                 title="Visit Instagram Page"
                 class="flex items-center brightness-75 transition
-                duration-200 hover:scale-105 hover:brightness-100"
+                duration-200 hover:scale-105 hover:brightness-100
+                cursor-pointer"
                 @click="openLink('https://www.instagram.com/tfw9s')"
                 >
                   <i
@@ -88,7 +90,8 @@
                 <VListItemTitle
                 title="Compose Email"
                 class="flex items-center brightness-75 transition
-                duration-200 hover:scale-105 hover:brightness-100"
+                duration-200 hover:scale-105 hover:brightness-100
+                cursor-pointer"
                 @click="openLink('https://mail.google.com/mail/u/0/?fs=1&to=example@thefinalwhistle.com&su=&body=&tf=cm')"
                 >
                   <i class="ri-mail-add-fill text-2xl"/>
@@ -101,7 +104,8 @@
                 <VListItemTitle
                 title="Save Number"
                 class="flex items-center brightness-75 transition
-                duration-200 hover:scale-105 hover:brightness-100"
+                duration-200 hover:scale-105 hover:brightness-100
+                cursor-pointer"
                 @click="toClipboard('+1 (899) 884-3727')"
                 >
                   <i class="ri-phone-fill text-2xl"/>
@@ -149,7 +153,8 @@
           v-if="$store.state.auth.user !== null &&
           ($route.path === '/admin' || $route.path === '/manage')"
           class="z-10 px-5 text-white transition
-          duration-300 ease-in-out hover:text-[#5EE738]"
+          duration-300 ease-in-out hover:text-[#5EE738]
+          cursor-pointer"
           @click="logout"
           >
             Logout
