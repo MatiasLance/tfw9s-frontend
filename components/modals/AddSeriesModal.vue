@@ -69,6 +69,27 @@
                     :rules="rules"
                     />
                   </div>
+                  <div class="col-span-1">
+                    <label
+                      for="price"
+                      class="mb-1 flex justify-between"
+                    >
+                      <p>Registration Fee: </p>
+                      <span class="font-semibold">
+                        {{ formatCurrency(SeriesData.price) }}
+                      </span>
+                    </label>
+                    <VTextField
+                      id="name"
+                      v-model="SeriesData.price"
+                      label="Enter Fee"
+                      :rules="rules"
+                      type="number"
+                      step=".01"
+                      min="0.00"
+                      solo
+                    />
+                  </div>
                   <div class="col-span-1 md:col-span-2">
                     <label for="teamdescription" class="mb-1 block">
                       Description:
@@ -114,6 +135,7 @@
 import 'vue-croppa/dist/vue-croppa.css';
 import Tiptap from '~/components/Wysiwyg/Tiptap'
 import ImageUpload from '~/components/ImageUpload'
+import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'AddSeriesModal',
@@ -121,6 +143,7 @@ export default {
     Tiptap,
     ImageUpload,
   },
+  mixins: [ currencyMixin ],
   props: {
     active: {
       type: Boolean,
@@ -233,6 +256,7 @@ export default {
       formData.append('address', this.SeriesData.address);
       formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
       formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
+      formData.append('price', this.SeriesData.price);
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'newsThumbnail.png');
@@ -390,6 +414,17 @@ color: rgb(104, 104, 104) !important;
 
 .custom-btn {
   height: 50px !important;
+}
+
+::v-deep .o-input {
+  box-shadow: none !important;
+  border: 1px rgb(243 244 246 / var(--tw-border-opacity)) !important;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
+  height: 2.75rem;
+  width: 100% !important;
+  appearance: none !important;
+  border-radius: 0 !important;
+  transition: border-color 0.3s !important;
 }
 </style>
 

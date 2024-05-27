@@ -36,7 +36,7 @@
     </BaseHeader>
     <section class="mx-auto max-w-screen-xl gap-4 p-6">
       <div class="grid grid-cols-1 gap-4">
-        <span class="col-span-1">
+        <span class="col-span-1 mx-4">
           <VueSlickCarousel
             v-bind="slickSettings"
             draggable
@@ -133,7 +133,7 @@ export default {
       ],
       ContentList: [],
       slickSettings: {
-        arrows: false,
+        arrows: true,
         slidesToShow: 4,
         responsive: [
           {
@@ -149,7 +149,7 @@ export default {
           {
             breakpoint: 768,
             settings: {
-              slidesToShow: 2,
+              slidesToShow: 1,
               slidesToScroll: 3,
               initialSlide: 0,
               infinite: true,
@@ -160,7 +160,7 @@ export default {
             breakpoint: 480,
             settings: {
               slidesToShow: 1,
-              slidesToScroll: 2,
+              slidesToScroll: 1,
               initialSlide: 0,
               infinite: true,
               arrows: true
@@ -265,5 +265,9 @@ export default {
   list-style: revert !important;
   margin: 0 !important;
   padding-left: 20px !important;
+}
+
+.slick-prev:before, .slick-next:before {
+  color: #ffffff !important;
 }
 </style>

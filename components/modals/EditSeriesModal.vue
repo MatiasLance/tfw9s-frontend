@@ -69,6 +69,27 @@
                     :rules="rules"
                     />
                   </div>
+                  <div class="col-span-1">
+                    <label
+                      for="price"
+                      class="mb-1 flex justify-between"
+                    >
+                      <p>Registration Fee: </p>
+                      <span class="font-semibold">
+                        {{ formatCurrency(SeriesData.price) }}
+                      </span>
+                    </label>
+                    <VTextField
+                      id="name"
+                      v-model="SeriesData.price"
+                      label="Enter Fee"
+                      :rules="rules"
+                      type="number"
+                      step=".01"
+                      min="0.00"
+                      solo
+                    />
+                  </div>
                   <div class="col-span-1 md:col-span-2">
                     <label for="teamdescription" class="mb-1 block">
                       Description:
@@ -116,6 +137,7 @@
 import 'vue-croppa/dist/vue-croppa.css';
 import Tiptap from '~/components/Wysiwyg/Tiptap'
 import ImageUploadEdit from '~/components/ImageUploadEdit'
+import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'EditSeriesModal',
@@ -123,6 +145,7 @@ export default {
     Tiptap,
     ImageUploadEdit
   },
+  mixins: [ currencyMixin ],
   props: {
     active: {
       type: Boolean,
@@ -252,6 +275,7 @@ export default {
       formData.append('address', this.SeriesData.address);
       formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
       formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
+      formData.append('price', this.SeriesData.price);
 
       for (let i = 0; i < this.imgListEdit.length; i++) {
         formData.append('photo[]', this.imgListEdit[i]);

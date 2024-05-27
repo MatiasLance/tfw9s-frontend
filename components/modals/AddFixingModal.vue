@@ -438,4 +438,15 @@ input{
   .custom-btn {
     height: 50px !important;
   }
+
+  ::v-deep .o-input {
+    box-shadow: none !important;
+    border: 1px rgb(243 244 246 / var(--tw-border-opacity)) !important;
+    background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
+    height: 2.75rem;
+    width: 100% !important;
+    appearance: none !important;
+    border-radius: 0 !important;
+    transition: border-color 0.3s !important;
+  }
 </style>
