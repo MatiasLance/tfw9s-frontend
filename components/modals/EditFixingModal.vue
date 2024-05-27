@@ -17,13 +17,13 @@
                 label="Choose a Series"
                 :rules="rules"
                 solo
-            >
-              <template #prepend-item>
-                <div class="sticky-search-bar px-3">
-                  <SearchBar v-model="seriesQuery" />
-                </div>
-              </template>
-            </VSelect>
+              >
+                <template #prepend-item>
+                  <div class="sticky-search-bar px-3">
+                    <SearchBar v-model="seriesQuery" />
+                  </div>
+                </template>
+              </VSelect>
             </div>
             <div class="col-span-1">
               <label for="selectagegroup" class="mb-1 block">
@@ -79,14 +79,14 @@
               label="Choose a Region"
               :rules="rules"
               solo
-           >
-            <template #prepend-item>
-              <div class="sticky-search-bar px-3">
-                <SearchBar v-model="regionQuery" />
-              </div>
-            </template>
-          </VSelect>
-          </div>
+              >
+                <template #prepend-item>
+                  <div class="sticky-search-bar px-3">
+                    <SearchBar v-model="regionQuery" />
+                  </div>
+                </template>
+              </VSelect>
+            </div>
           <div class="col-span-1">
             <label for="eventname" class="mb-1 block">
               Team Count:
@@ -352,7 +352,6 @@ export default {
       handler(newSeries) {
         if (newSeries) {
           const data = this.series.find((x) => x.id === newSeries);
-          console.log(data)
           this.mindate = this.formattedDate(data.start);
           this.maxdate = this.formattedDate(data.end);
         }
@@ -500,40 +499,63 @@ export default {
 </script>
 
 <style scoped>
-input{
-  background: transparent;
-}
+  input {
+    box-shadow: none !important;
+    border: 1px rgb(243 244 246 / var(--tw-border-opacity)) !important;
+    background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
+    padding: 0.65rem 0.75rem !important;
+    width: 100% !important;
+    appearance: none !important;
+    border-radius: 0 !important;
+    transition: border-color 0.3s !important;
+  }
+
   .sticky-search-bar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: #ffffff;
-  padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #ffffff;
+    padding: 10px;
   }
 
   .v-list{
-  padding: 0px;
+    padding: 0px;
   }
 
   ::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
   > .v-input__control > .v-input__slot {
-  box-shadow: none;
-  border: 1px rgb(243 244 246 / var(--tw-border-opacity));
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-  padding: 0.5rem 0.75rem;
-  width: 100%;
-  appearance: none;
-  border-radius: 0;
-  transition: border-color 0.3s;
+    box-shadow: none;
+    border: 1px rgb(243 244 246 / var(--tw-border-opacity));
+    background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+    appearance: none;
+    border-radius: 0;
+    transition: border-color 0.3s;
   }
 
   ::v-deep .v-text-field input::label {
-  font-size: 1rem !important;
-  font-family: inherit !important;
-  color: rgb(104, 104, 104) !important;
+    font-size: 1rem !important;
+    font-family: inherit !important;
+    color: rgb(104, 104, 104) !important;
   }
 
   .custom-btn {
     height: 50px !important;
+  }
+
+  ::v-deep .o-input {
+    box-shadow: none !important;
+    border: 1px rgb(243 244 246 / var(--tw-border-opacity)) !important;
+    background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
+    height: 2.8rem;
+    width: 100% !important;
+    appearance: none !important;
+    border-radius: 0 !important;
+    transition: border-color 0.3s !important;
+  }
+
+  ::v-deep .o-tpck__select  {
+    padding: 5px 35px 5px !important;
   }
 </style>

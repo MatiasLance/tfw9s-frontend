@@ -1,32 +1,7 @@
 <template>
   <div>
-    <div class="col-span-2">
-      <label for="match_time" class="mb-1 block">
-          Match Time:
-      </label>
-      <input
-      id="time"
-      v-model="matchData.time" type="time"
-      label="Click to select..."
-      step="900"
-      :min="'08:00'"
-      :max="'18:00'"
-      :rules="rules"
-      />
-    <!--
-      <VTimePicker
-      v-model="matchData.time"
-      full-width
-      no-title
-      landscape
-      color="green"
-      min="08:00:00"
-      max="18:00:00"
-      />
-    -->
-    </div>
     <div class="col-span-1">
-      <label for="fielf" class="mb-1 block">
+      <label for="field" class="mb-1 block">
         Field:
       </label>
       <VSelect
