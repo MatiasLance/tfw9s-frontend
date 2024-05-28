@@ -9,6 +9,7 @@ export const state = () => ({
     teamName: '',
     dob: '',
     ageGroup: '',
+    price: '',
     coachesName: '',
     coachesEmail: '',
     coachesPhoneNumber: '',
@@ -45,6 +46,8 @@ export const mutations = {
       registrationInformation.dob
     state.registrationInformation.ageGroup =
       registrationInformation.ageGroup
+    state.registrationInformation.price =
+      registrationInformation.price
     state.registrationInformation.coachesName =
       registrationInformation.coachesName
     state.registrationInformation.coachesEmail =
@@ -80,4 +83,3 @@ export const mutations = {
     state.registrationFee = registrationFee
   },
 }
-

@@ -35,6 +35,13 @@
                formattedDate(article.end)) }}
           </p>
         </div>
+        <div
+        class="article-context font-bold px-[1rem]
+        mx-auto max-w-screen-xl w-full
+        text-4xl"
+        >
+        $ {{ article.price }}
+        </div>
         <article
         class="article-description p-[1rem]
         mx-auto max-w-screen-xl w-full text-wrap
@@ -46,7 +53,15 @@
           />
         </article>
         <div class="mb-4 flex w-full justify-center">
-          <NuxtLink :to="'/register/?id=' + article.id">
+          <NuxtLink
+            :to="{
+              path: '/register/?id=' + article.id,
+            query: {
+              series: article.name,
+              price: article.price,
+            }
+            }"
+          >
             <button
             type="button"
             class="

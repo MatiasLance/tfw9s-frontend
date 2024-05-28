@@ -196,7 +196,7 @@
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
-          type="text"
+          type="date"
           placeholder="Date of Birth"
           required
         />
@@ -230,7 +230,8 @@
               class="
               absolute inset-y-0 left-0
               flex items-center pl-3
-              pointer-events-none text-gray-500"
+              pointer-events-none text-gray-500
+              "
             >
               Age Group
             </div>
@@ -320,6 +321,10 @@ export default {
       type: Boolean,
       default: false
     },
+    price: {
+      type: [ String ],
+      required: true
+    },
   },
   data() {
     return {
@@ -367,7 +372,9 @@ export default {
         playerLastName: this.player.lastName,
         teamName: this.player.teamName,
         dob: this.player.dob,
-        ageGroup: this.player.ageGroup
+        ageGroup: this.player.ageGroup,
+        price: this.price
+
       })
 
       return false

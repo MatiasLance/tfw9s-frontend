@@ -47,6 +47,7 @@
           <template v-if="seriestype === 'weekly'">
             <IndividualInformationForm
               :is-loading="isStepperLoading"
+              :price="price"
               @submit="toPayStep"
             />
           </template>
@@ -63,6 +64,9 @@
           <PaymentForm
             :subtotal="subtotal"
             :total="total"
+            :series="series"
+            :seriestype="seriestype"
+            :price="price"
             @active-step="setPreviousStep"
           />
         </template>
@@ -97,7 +101,9 @@ export default {
       clientSecret: '',
       activeStep: 1,
       isStepperLoading: false,
-      seriestype: ''
+      seriestype: '',
+      seeries: null,
+      price: null,
     };
   },
   computed: {
@@ -136,6 +142,8 @@ export default {
   },
   created() {
     this.retrieveSeries();
+    this.series = this.$route.query.series
+    this.price = this.$route.query.price
   },
   methods: {
     retrieveSeries() {

@@ -53,16 +53,16 @@
               data-aos="flip-up"
               >
                 <span
-                class="flex-1 px-4 py-2 align-middle
+                class="flex-1 text-center px-4 py-2 align-middle
                 text-[20px] font-semibold text-[#555555]"
                 >
                 Team
                 </span>
                 <span
-                class="flex-1 px-4 py-2 align-middle
+                class="flex-1 text-center px-4 py-2 align-middle
                 text-[20px] font-semibold text-[#555555]"
                 >
-                Event
+                Home Field Select
                 </span>
               </div>
               <div
@@ -82,7 +82,7 @@
                 class="mr-0.5 flex-1 border-black bg-white p-1"
                 />
                 <input
-                v-model="data.eventName"
+                v-model="data.fieldName"
                 :rules="Rules"
                 placeholder="Enter Field"
                 hide-details

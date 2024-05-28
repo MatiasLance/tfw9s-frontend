@@ -39,6 +39,9 @@
         v-if="paymentMethod === 'stripe'"
         class="payment-module gap-3 text-gray-600"
         :discount-code="discountcode"
+        :series="series"
+        :seriestype="seriestype"
+        :price="price"
         @active-step="activeStepPrev"
       />
 
@@ -136,15 +139,11 @@
             <span class="font-bold">
               ({{ discountRate * 100 }}% discount applied):</span>
           </span>
-          <span>{{ formatCurrency(subtotal) }}</span>
+          <span>{{ formatCurrency(price) }}</span>
         </li>
         <li v-else class="mb-1 flex justify-between">
           <span>Subtotal:</span>
-          <span>{{ formatCurrency(subtotal) }}</span>
-        </li>
-        <li class="mb-1 flex justify-between">
-          <span>Shipping:</span>
-          <span>{{ formatCurrency(shipping) }}</span>
+          <span>{{ formatCurrency(price) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
@@ -154,7 +153,7 @@
         <li class="mt-3 flex justify-between border-t pt-3">
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
-            {{ formatCurrency(overallTotal) }}
+            {{ formatCurrency(price) }}
           </span>
         </li>
         <li class="mb-1 flex justify-between text-xs font-light">
@@ -172,7 +171,7 @@ import PaypalCheckout from '~/components/PaypalCheckout.vue';
 import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency';
-import StripeCheckout from '~/components/StripeCheckout.vue';
+import StripeCheckout from '~/components/registration/StripeCheckout.vue';
 
 export default {
   components: {
@@ -186,6 +185,18 @@ export default {
     subtotal: {
       type: [ Number ],
       required: true,
+    },
+    series: {
+      type: [ String ],
+      required: true
+    },
+    seriestype: {
+      type: [ String ],
+      required: true
+    },
+    price: {
+      type: [ String ],
+      required: true
     },
   },
   data() {
@@ -248,12 +259,12 @@ export default {
         this.$store.commit('cart/setTaxAmount', v)
       }
     },
-    shippingInformation: {
+    registrationInformation: {
       get() {
-        return this.$store.state.order.shippingInformation;
+        return this.$store.state.registration.registrationInformation;
       },
       set(v) {
-        this.$store.commit('order/setShippingInformation', v);
+        this.$store.commit('registration/setRegistrationInformation', v);
       },
     },
     toggleControl1: {
@@ -443,15 +454,13 @@ for this code.
     },
     initialize() {
       this.isStepperLoading = true
-      const items = this.$store.state.cart.cart
-      const metadata = this.shippingInformation
+      const metadata = this.registrationInformation
       const discounted = this.isDiscountCodeMatch
       const discountcode = this.discountcode ?? ''
       // eslint-disable-next-line camelcase
       const payment_method = this.paymentMethod
       this.$axios
         .$post('v1/orders/calculation', {
-          items,
           metadata,
           // eslint-disable-next-line camelcase
           payment_method,
@@ -461,7 +470,7 @@ for this code.
         })
         .then((response) => {
           this.activeStep = 2
-          if (this.shippingInformation.shippingType === 'pickup') {
+          if (this.registrationInformation.shippingType === 'pickup') {
             response.shippingCalculation.totalShipping = 0
           }
           this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
