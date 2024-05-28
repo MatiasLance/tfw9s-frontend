@@ -47,7 +47,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1 mb-6">
                     <label for="selectdate" class="mb-1 block">
                       Start Date:
                     </label>
@@ -58,7 +58,7 @@
                     :rules="rules"
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1 mb-6">
                     <label for="selectdate" class="mb-1 block">
                       End Date:
                     </label>
@@ -94,9 +94,13 @@
                     <label for="teamdescription" class="mb-1 block">
                       Description:
                     </label>
-                    <Tiptap
-                    id="content"
-                    v-model="SeriesData.description"
+                    <VTextarea
+                      id="name"
+                      v-model="SeriesData.description"
+                      label="Enter Event Description"
+                      :rules="rules"
+                      type="text"
+                      solo
                     />
                   </div>
                 </div>
@@ -135,16 +139,12 @@
 <script>
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
-import Tiptap from '~/components/Wysiwyg/Tiptap'
 import ImageUploadEdit from '~/components/ImageUploadEdit'
 import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'EditSeriesModal',
-  components: {
-    Tiptap,
-    ImageUploadEdit
-  },
+  components: { ImageUploadEdit },
   mixins: [ currencyMixin ],
   props: {
     active: {
@@ -433,6 +433,17 @@ color: rgb(104, 104, 104) !important;
 
 .custom-btn {
   height: 50px !important;
+}
+
+::v-deep .o-input {
+  box-shadow: none !important;
+  border: 1px rgb(243 244 246 / var(--tw-border-opacity)) !important;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
+  height: 2.75rem;
+  width: 100% !important;
+  appearance: none !important;
+  border-radius: 0 !important;
+  transition: border-color 0.3s !important;
 }
 </style>
 

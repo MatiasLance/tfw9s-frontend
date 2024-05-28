@@ -172,7 +172,7 @@ import PaypalCheckout from '~/components/PaypalCheckout.vue';
 import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency';
-import StripeCheckout from '~/components/StripeCheckout.vue';
+import StripeCheckout from '~/components/registration/StripeCheckout.vue';
 
 export default {
   components: {

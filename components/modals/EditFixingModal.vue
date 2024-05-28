@@ -339,7 +339,7 @@ export default {
             matchingManager.value : null;
           this.multipleMatch = this.Event.eventmatch.map(event => ({
             id: event.id,
-            time: this.reformatTime(event.match_time),
+            time: this.convertTimeToDate(event.match_time),
             field_id: event.field_id,
             team1: event.team1,
             team2: event.team2
@@ -365,13 +365,11 @@ export default {
       date.setHours(0, 0, 0, 0);
       return date;
     },
-    reformatTime(timeString) {
-      const [
-        hours,
-        minutes
-      ] = timeString.split(':');
-      const formattedTime = `${hours}:${minutes}`;
-      return formattedTime;
+    convertTimeToDate(timeString) {
+      const [ hours, minutes ] = timeString.split(':').map(Number);
+      const today = new Date();
+      today.setHours(hours, minutes, 0, 0);
+      return today;
     },
     validate() {
       if (!this.$refs.form.validate()) {

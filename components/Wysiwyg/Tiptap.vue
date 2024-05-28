@@ -22,7 +22,6 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import TextAlign from '@tiptap/extension-text-align'
-import Heading from '@tiptap/extension-heading'
 import Toolbar from '~/components/Wysiwyg/Toolbar'
 
 export default {
@@ -72,13 +71,6 @@ export default {
             'left', 'center', 'right', 'justify'
           ],
         }),
-        Heading.configure({
-          HTMLAttributes: {
-            levels: [
-              1, 2, 3
-            ],
-          },
-        }),
         Underline,
         Link,
       ],
@@ -88,7 +80,9 @@ export default {
     })
   },
   beforeDestroy() {
-    this.editor.destroy()
+    if (this.editor) {
+      this.editor.destroy()
+    }
   },
 }
 </script>

@@ -3,7 +3,7 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Edit Manager
+                    Edit Staff
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
