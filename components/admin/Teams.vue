@@ -62,7 +62,7 @@
                 class="flex-1 text-center px-4 py-2 align-middle
                 text-[20px] font-semibold text-[#555555]"
                 >
-                Home Field Select
+                Series
                 </span>
               </div>
               <div

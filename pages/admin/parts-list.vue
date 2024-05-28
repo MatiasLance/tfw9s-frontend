@@ -55,6 +55,11 @@
             :getAgeGroups="retrieveAgeGroups"
             />
           </div>
+          <div v-if="activeTab === 'players'">
+            <Players
+            :getAgeGroups="retrieveAgeGroups"
+            />
+          </div>
           <div v-if="activeTab === 'teams'">
             <Teams
             :FieldList="FieldList"
@@ -155,7 +160,7 @@ export default {
       isEventsLoading: false,
       slickSettings: {
         arrows: false,
-        slidesToShow: 8,
+        slidesToShow: 9,
         responsive: [
           {
             breakpoint: 1280,
@@ -204,6 +209,7 @@ export default {
         { value: 'regions', label: 'Regions' },
         { value: 'fields', label: 'Fields' },
         { value: 'ages', label: 'Ages' },
+        { value: 'players', label: 'Players' },
         { value: 'teams', label: 'Teams' },
         { value: 'managers', label: 'TFW Staffs' },
         { value: 'series', label: 'Series' },

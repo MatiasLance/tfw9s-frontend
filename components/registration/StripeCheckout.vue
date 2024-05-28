@@ -78,10 +78,10 @@ export default {
   computed: {
     registrationInformation: {
       get() {
-        return this.$store.state.register.registrationInformation;
+        return this.$store.state.registration.registrationInformation;
       },
       set(v) {
-        this.$store.commit('register/setRegistrationInformation', v);
+        this.$store.commit('registration/setRegistrationInformation', v);
       },
     },
   },
@@ -96,7 +96,7 @@ export default {
       this.isStepperLoading = true;
       const metadata = this.registrationInformation;
       const clientSecret = await this.$axios
-        .$post('v1/tournament/checkout', {
+        .$post('/v1/tournament/checkout', {
           // eslint-disable-next-line camelcase
           payment_method: 'stripe',
           metadata,

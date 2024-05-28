@@ -1,6 +1,18 @@
 <template>
   <div>
     <div class="col-span-1">
+      <label for="match_time" class="mb-1 block">
+        Match Time:
+      </label>
+      <section class="mb-6">
+        <OTimepicker
+          v-model="matchData.time"
+          placeholder="Click to select"
+        >
+        </OTimepicker>
+      </section>
+    </div>
+    <div class="col-span-1">
       <label for="field" class="mb-1 block">
         Field:
       </label>

@@ -40,12 +40,12 @@
                   </div>
                   <div class="col-span-1">
                     <label for="selectevent" class="mb-1 block">
-                      Event:
+                      :
                     </label>
                     <VSelect
                     v-model="TeamData.event_id"
                     :items="formattedEvents"
-                    label="Choose Event"
+                    label="Choose Series"
                     :rules="rules"
                     solo
                     >

@@ -47,7 +47,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1 mb-6">
                     <label for="selectdate" class="mb-1 block">
                       Start Date:
                     </label>
@@ -58,7 +58,7 @@
                     :rules="rules"
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1 mb-6">
                     <label for="selectdate" class="mb-1 block">
                       End Date:
                     </label>
@@ -94,9 +94,13 @@
                     <label for="teamdescription" class="mb-1 block">
                       Description:
                     </label>
-                    <Tiptap
-                    id="content"
-                    v-model="SeriesData.description"
+                    <VTextarea
+                      id="name"
+                      v-model="SeriesData.description"
+                      label="Enter Event Description"
+                      :rules="rules"
+                      type="text"
+                      solo
                     />
                   </div>
                 </div>
@@ -133,16 +137,12 @@
 <script>
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
-import Tiptap from '~/components/Wysiwyg/Tiptap'
 import ImageUpload from '~/components/ImageUpload'
 import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'AddSeriesModal',
-  components: {
-    Tiptap,
-    ImageUpload,
-  },
+  components: { ImageUpload },
   mixins: [ currencyMixin ],
   props: {
     active: {
@@ -209,7 +209,6 @@ export default {
       return event_date;
     },
     validate() {
-      console.log(this.SeriesData)
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
           duration: 5000,
