@@ -92,11 +92,11 @@
                 class="flex items-center brightness-75 transition
                 duration-200 hover:scale-105 hover:brightness-100
                 cursor-pointer"
-                @click="openLink('https://mail.google.com/mail/u/0/?fs=1&to=example@thefinalwhistle.com&su=&body=&tf=cm')"
+                @click="openLink('https://mail.google.com/mail/u/0/?fs=1&to=admin@thefinalwhistle.com&su=&body=&tf=cm')"
                 >
                   <i class="ri-mail-add-fill text-2xl"/>
                   <span class="ml-2 text-sm">
-                    example@thefinalwhistle.com
+                    admin@thefinalwhistle.com
                   </span>
                 </VListItemTitle>
               </VListItem>

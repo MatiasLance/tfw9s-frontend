@@ -20,7 +20,10 @@
                 class="back-button absolute top-2
                 left-2 cursor-pointer z-10 text-white"
               >
-                <i class="ri-arrow-left-line text-2xl"></i>
+                <div class="md:m-4 flex items-center justify-center gap-2">
+                  <i class="ri-arrow-left-line text-xl"></i>
+                  <span class="text-sm font-semibold">BACK</span>
+                </div>
               </span>
             </VCarouselItem>
             <VCarouselItem
@@ -33,7 +36,10 @@
                 class="back-button absolute top-2
                 left-2 cursor-pointer z-10 text-white"
               >
-                <i class="ri-arrow-left-line text-2xl"></i>
+                <div class="md:m-4 flex items-center justify-center gap-2">
+                  <i class="ri-arrow-left-line text-xl"></i>
+                  <span class="text-sm font-semibold">BACK</span>
+                </div>
               </span>
             </VCarouselItem>
           </VCarousel>
