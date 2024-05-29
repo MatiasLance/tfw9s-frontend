@@ -50,7 +50,7 @@
           <p
             class="my-4 text-white"
             v-html="article.description"
-          />
+          />d
         </article>
         <div class="mb-4 flex w-full justify-center">
           <NuxtLink
