@@ -57,7 +57,9 @@
           </div>
           <div v-if="activeTab === 'players'">
             <Players
-            :getAgeGroups="retrieveAgeGroups"
+            :AgeGroupList="AgeGroupList"
+            :PlayersList="PlayersList"
+            :getSeries="retrievePlayers"
             />
           </div>
           <div v-if="activeTab === 'teams'">
@@ -129,6 +131,7 @@ import Fixings from '~/components/admin/Fixings.vue';
 import Results from '~/components/admin/Results.vue';
 import Ladders from '~/components/admin/Ladders.vue';
 import Series from '~/components/admin/Series.vue';
+import Players from '~/components/admin/Players.vue';
 export default {
   name: 'parts-list',
   components: {
@@ -142,6 +145,7 @@ export default {
     Results,
     Ladders,
     Series,
+    Players,
   },
   data() {
     return {
@@ -151,6 +155,7 @@ export default {
       ManagerList: [],
       TeamList: [],
       SeriesList: [],
+      PlayersList: [],
       EventList: [],
       MatchList: [],
       totalEvents: [],
@@ -226,6 +231,7 @@ export default {
     this.retrieveTeams()
     this.retrieveSeries()
     this.retrieveEvents()
+    this.retrievePlayers()
   },
   methods: {
     setActiveTab(tab) {
@@ -388,6 +394,27 @@ export default {
           this.MatchList = this.EventList.flatMap(data => {
             return data.eventmatch;
           });
+        })
+    },
+    retrievePlayers() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/players?${queryString}`)
+        .then((response) => {
+          this.PlayersList = response.data.players;
         })
     },
   },

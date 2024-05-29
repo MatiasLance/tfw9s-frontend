@@ -3,7 +3,6 @@
   <div class="bg-[#1A1A1B]" data-aos="fade-up">
     <section class="mx-auto max-w-screen-xl gap-4 p-4">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
-
         <div class="col-span-1 flex items-center md:col-span-3">
           <button
           type="button"
@@ -59,16 +58,13 @@
             >
               <Form class="grid grid-cols-3 gap-2 p-2">
                 <div class="col-span-2 font-semibold">
-                  {{ player.name}}
-                </div>
-                <div class="col-span-1 font-medium text-right">
-                  {{ DateRange(player.start, player.end) }}
+                  {{ player.contact_firstname}}
                 </div>
                 <span class="col-span-3 line-clamp-4"
-                v-html="player.description"
+                v-html="player.team_name"
                 />
                 <span class="col-span-3">
-                  {{ `Location: ${player.address}` }}
+                  {{ `${player.description}` }}
                 </span>
                 <div class="col-span-3 flex justify-end gap-4">
                   <BaseButton
@@ -80,7 +76,7 @@
                     px-4
                     text-white
                     "
-                    @click="openEditSeriesDialog(player)"
+                    @click="openEditPlayersDialog(player)"
                   >
                     Edit
                   </BaseButton>
@@ -93,7 +89,7 @@
                     px-4
                     text-white
                     "
-                    @click="openDeleteSeriesDialog(player)"
+                    @click="openDeletePlayersDialog(player)"
                   >
                     Delete
                   </BaseButton>
@@ -113,45 +109,45 @@
       </div>
     </section>
   </div>
-  <AddSeriesModal
-  :active="showAddSeriesModal"
+  <AddPlayersModal
+  :active="showAddPlayersModal"
   :agegroup="AgeGroupList"
-  :teams="TeamList"
-  @close="closeAddSeriesDialog"
+  :teams="PlayersList"
+  @close="closeAddPlayerDialog"
   @confirm="AddSeries"
   />
-  <EditSeriesModal
-  :active="showEditSeriesModal"
+  <EditPlayersModal
+  :active="showEditPlayersModal"
   :agegroup="AgeGroupList"
-  :teams="TeamList"
+  :teams="PlayersList"
   :series="selecetedData"
-  @close="closeEditSeriesDialog"
+  @close="closeEditPlayersDialog"
   @confirm="EditSeries"
   />
-  <DeleteSeriesModal
-  :active="showDeleteSeriesModal"
+  <DeletePlayersModal
+  :active="showDeletePlayersModal"
   :agegroup="AgeGroupList"
-  :teams="TeamList"
+  :teams="PlayersList"
   :series="selecetedData"
-  @close="closeDeleteSeriesDialog"
+  @close="closeDeletePlayersDialog"
   @confirm="DeleteSeries"
   />
   </div>
 </template>
 
 <script>
-import AddSeriesModal from '~/components/modals/AddSeriesModal.vue';
-import EditSeriesModal from '~/components/modals/EditSeriesModal.vue';
-import DeleteSeriesModal from '~/components/modals/DeleteSeriesModal.vue';
+import AddPlayersModal from '~/components/modals/AddPlayersModal.vue';
+import EditPlayersModal from '~/components/modals/EditPlayersModal.vue';
+import DeletePlayersModal from '~/components/modals/DeletePlayersModal.vue';
 export default {
   components: {
-    AddSeriesModal,
-    EditSeriesModal,
-    DeleteSeriesModal,
+    AddPlayersModal,
+    EditPlayersModal,
+    DeletePlayersModal,
   },
   props: {
     // eslint-disable-next-line vue/prop-name-casing
-    TeamList: {
+    PlayersList: {
       type: Array,
       required: true
     },
@@ -173,9 +169,9 @@ export default {
         { text: 'Tournaments', value: 'tournament' },
         { text: 'Central Coast', value: 'coast' },
       ],
-      showAddSeriesModal: false,
-      showEditSeriesModal: false,
-      showDeleteSeriesModal: false,
+      showAddPlayersModal: false,
+      showEditPlayersModal: false,
+      showDeletePlayersModal: false,
       selecetedData: ({}),
       Players: [],
       query: null,
@@ -233,61 +229,61 @@ export default {
     },
   },
   methods: {
-    openAddSeriesDialog() {
-      this.showAddSeriesModal = true
+    openAddPlayerDialog() {
+      this.showAddPlayersModal = true
     },
-    closeAddSeriesDialog() {
-      this.showAddSeriesModal = false
+    closeAddPlayerDialog() {
+      this.showAddPlayersModal = false
     },
     AddSeries(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Tournament Series Added',
+        message: 'Player Series Added',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
-      this.showAddSeriesModal = false;
+      this.showAddPlayersModal = false;
       this.retrieveSeries();
       this.getSeries();
     },
-    openEditSeriesDialog(data) {
+    openEditPlayersDialog(data) {
       this.selecetedData = data
-      this.showEditSeriesModal = true
+      this.showEditPlayersModal = true
     },
-    closeEditSeriesDialog() {
+    closeEditPlayersDialog() {
       this.selecetedData = ({})
-      this.showEditSeriesModal = false
+      this.showEditPlayersModal = false
     },
     EditSeries(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Tournament Series Modified',
+        message: 'Player Modified',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
-      this.showEditSeriesModal = false;
+      this.showEditPlayersModal = false;
       this.retrieveSeries();
       this.getSeries();
     },
-    openDeleteSeriesDialog(data) {
+    openDeletePlayersDialog(data) {
       this.selecetedData = data
-      this.showDeleteSeriesModal = true
+      this.showDeletePlayersModal = true
     },
-    closeDeleteSeriesDialog() {
+    closeDeletePlayersDialog() {
       this.selecetedData = ({})
-      this.showDeleteSeriesModal = false
+      this.showDeletePlayersModal = false
     },
     DeleteSeries(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Tournament Series Removed',
+        message: 'Players Removed',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
-      this.showDeleteSeriesModal = false;
+      this.showDeletePlayersModal = false;
       this.retrieveSeries();
       this.getSeries();
     },
@@ -300,7 +296,7 @@ export default {
     // eslint-disable-next-line camelcase
     FindTeam(team_id) {
       // eslint-disable-next-line camelcase
-      const foundField = this.TeamList.find(team => team.id === team_id);
+      const foundField = this.PlayersList.find(team => team.id === team_id);
       if (foundField) {
         return foundField.name;
       } else {
@@ -362,7 +358,7 @@ export default {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
-        maxSeriesPerPage: 10,
+        maxPlayersPerPage: 10,
       };
 
       Object.keys(query).forEach((key) => {
@@ -374,18 +370,27 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/players?${queryString}`)
+        .$get(`/v1/players?${queryString}`)
         .then((response) => {
+          console.log(response.data.players)
           this.Players = response.data.players.map(player => {
             return {
               ...player,
-              name: `${player.firstname} ${player.lastname}`,
+              name: `${player.contact_firstname} ${player.contact_lastname}`,
             };
           });
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
+        })
+        .catch((error) => {
+          console.error('API request failed', error);
+          this.Players = [];
+          this.totalItems = 0;
+          this.totalPages = 0;
+          this.from = 0;
+          this.to = 0;
         })
         .finally(() => {
           this.showVueTable = true;
