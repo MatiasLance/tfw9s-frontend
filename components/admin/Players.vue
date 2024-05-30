@@ -21,9 +21,62 @@
             +
           </button>
         </div>
-
-        <div class="col-span-1 md:col-span-2"></div>
-
+        <div class="flex items-center col-start-1">
+          <select
+            v-model="ActiveTab"
+            class="
+              mt-1
+              block
+              w-full
+              appearance-none
+              rounded-md
+              border border-gray-200
+              bg-gray-100
+              py-[13px]
+              px-[15px]
+              font-normal
+              outline-inherit
+              hover:border-gray-400
+              focus:border-gray-400
+              focus:bg-white
+              focus:outline-none
+              focus:ring-0
+            "
+          >
+            <option
+              v-for="option in options"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.text }}
+            </option>
+          </select>
+        </div>
+        <div class="flex items-center col-start-3">
+          <input
+            v-model="query"
+            type="text"
+            class="
+              mt-1
+              block
+              w-full
+              appearance-none
+              rounded-md
+              border border-gray-200
+              bg-gray-100
+              py-[13px]
+              px-[15px]
+              font-normal
+              outline-inherit
+              hover:border-gray-400
+              focus:border-gray-400
+              focus:bg-white
+              focus:outline-none
+              focus:ring-0
+            "
+            placeholder="Search"
+          >
+        </div>
         <div
         v-if="showVueTable"
         class="col-span-1 flex flex-wrap items-center justify-around
@@ -163,11 +216,15 @@ export default {
   },
   data() {
     return {
-      ActiveTab: 'weekly',
-      SeriesTabs: [
-        { text: 'Weekly Competitions', value: 'weekly' },
-        { text: 'Tournaments', value: 'tournament' },
-        { text: 'Central Coast', value: 'coast' },
+      ActiveTab: null,
+      options: [
+        { text: 'All Age Group', value: null },
+        { text: 'Under 6', value: '6' },
+        { text: 'Under 7', value: '7' },
+        { text: 'Under 8', value: '8' },
+        { text: 'Under 9', value: '9' },
+        { text: 'Under 10', value: '10' },
+        { text: 'Under 11', value: '11' },
       ],
       showAddPlayersModal: false,
       showEditPlayersModal: false,
@@ -358,6 +415,7 @@ export default {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
+        type: this.ActiveTab,
         maxPlayersPerPage: 10,
       };
 

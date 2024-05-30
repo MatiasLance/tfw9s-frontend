@@ -389,7 +389,8 @@ export default {
         q: this.query,
         sort: 'start_date',
         page: this.page,
-        withFixing: 'with_fixing'
+        withFixing: 'with_fixing',
+        isPaused: 0,
       };
 
       Object.keys(query).forEach((key) => {
