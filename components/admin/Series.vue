@@ -196,6 +196,36 @@
                   {{ `Location: ${data.address}` }}
                 </span>
                 <div class="col-span-3 flex justify-end gap-4">
+                  <div v-if="!data.is_paused">
+                    <BaseButton
+                      class="
+                        max-w-full rounded-lg
+                        border border-gray-200
+                        bg-[#737373]
+                        py-2
+                        px-4
+                        text-white
+                      "
+                      @click="pauseSeries(data.id)"
+                    >
+                      Pause
+                    </BaseButton>
+                  </div>
+                  <div v-if="data.is_paused">
+                    <BaseButton
+                      class="
+                        max-w-full rounded-lg
+                        border border-gray-200
+                        bg-[#737373]
+                        py-2
+                        px-4
+                        text-white
+                      "
+                      @click="resumeSeries(data.id)"
+                    >
+                      Resume
+                    </BaseButton>
+                  </div>
                   <BaseButton
                   class="
                     max-w-full rounded-lg
@@ -526,6 +556,9 @@ export default {
     setPage() {
       this.retrieveSeries();
     },
+    reset() {
+      this.contentData = { content: '<p></p>' }
+    },
     retrieveSeries() {
       const query = {
         q: this.query,
@@ -560,6 +593,54 @@ export default {
         })
         .finally(() => {
           this.showVueTable = true;
+        });
+    },
+    pauseSeries(id) {
+      this.$axios
+        .$post(`v1/series/pause/${id}`)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: 'Series paused.',
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          this.reset();
+          this.retrieveSeries();
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.message,
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        });
+    },
+    resumeSeries(id) {
+      this.$axios
+        .$post(`v1/series/resume/${id}`)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: 'Series resume.',
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          this.reset();
+          this.retrieveSeries();
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.message,
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
         });
     },
   }
