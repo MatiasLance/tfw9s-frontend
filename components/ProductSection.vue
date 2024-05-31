@@ -159,8 +159,19 @@ export default {
         this.$store.commit('shop/setPage', value)
       },
     },
+    query: {
+      get() {
+        return this.$store.state.shop.q
+      },
+    }
   },
   watch: {
+    query: {
+      handler(newPage) {
+        this.retrieveProductsWithScroll();
+      },
+      immediate: true,
+    },
     totalPages() {
       if (this.page > this.totalPages) {
         this.setPage(1)
@@ -178,7 +189,7 @@ export default {
   methods: {
     retrieveProducts() {
       const query = {
-        q: this.$store.state.shop.q,
+        q: this.query,
         sort: this.$store.state.shop.sortBy,
         page: this.$store.state.shop.page,
         category: this.$store.state.shop.selectedCategory,

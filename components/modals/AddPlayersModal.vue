@@ -121,6 +121,7 @@
                     </label>
                     <ODatepicker
                     v-model="player.dob"
+                    label="Click to select..."
                     icon="calendar"
                     :rules="rules"
                     />
@@ -237,7 +238,7 @@ export default {
     },
     formattedAgeGroup() {
       return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.max_age }));
+        ({ text: agegroup.name, value: agegroup.name }));
     },
   },
   methods: {
@@ -318,7 +319,7 @@ export default {
       formData.append('player_firstname', this.player.firstName);
       formData.append('player_lastname', this.player.lastName);
       formData.append('team_name', this.player.teamName);
-      formData.append('dob', this.player.dob);
+      formData.append('dob', this.DatePickerToSQL(this.player.dob));
       formData.append('agegroup', this.player.ageGroup);
       formData.append('description', this.player.description);
 

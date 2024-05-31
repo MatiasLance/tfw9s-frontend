@@ -138,7 +138,7 @@
                   >
               </div>
             </div>
-          </div>y
+          </div>
           </div>
       </article>
     </div>
@@ -167,7 +167,7 @@ export default {
   ],
   data() {
     return {
-      query: '',
+      query: null,
       rules: [ value => !!value || 'Required' ],
       news: {
         headline: '',
@@ -187,6 +187,12 @@ export default {
     };
   },
   watch: {
+    query: {
+      handler(newPage) {
+        this.retrieveNews();
+      },
+      immediate: true,
+    },
     totalPages() {
       if (this.page > this.totalPages) {
         this.setPage(1)
