@@ -40,7 +40,7 @@
         mx-auto max-w-screen-xl w-full
         text-4xl"
         >
-        $ {{ article.price }}
+        {{ formatCurrencyFromCent(article.price) }}
         </div>
         <article
         class="article-description p-[1rem]
@@ -122,10 +122,11 @@
 
 <script>
 import 'remixicon/fonts/remixicon.css';
+import currency from 'currency.js';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
-import currencyMixin from '~/mixins/currency'
+import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 const slickSettings = {
   arrows: true,
@@ -174,19 +175,23 @@ export default {
   data() {
     return {
       isSelected: '',
-      salePriceMock: 100,
+      addTaxOnCartPrice: 0,
+      includeTaxOnCartPrice: 0,
+      showGSTIncluded: true,
+      showGSTExcluded: false,
+      taxrateValue: 0,
+      subtotal: 0,
       showRRP: true,
-      isOnSaleMock: true,
       article: {
         id: 0,
         name: '',
         description: '',
         start: new Date(),
         end: new Date(),
+        price: 0,
         // eslint-disable-next-line camelcase
         updated_at: null,
       },
-      showOutOfStock: true,
       activeImageURL: '',
       photos: [],
       quantity: 1,
@@ -208,15 +213,57 @@ export default {
     };
   },
   computed: {
-    cartItems: {
+    tax: {
       get() {
-        return this.$store.state.cart.cart
+        return this.$store.state.cart.tax
+      },
+      set(v) {
+        this.$store.commit('cart/setTax', v)
+      }
+    },
+    taxAmount: {
+      get() {
+        return this.$store.state.cart.taxAmount
+      },
+      set(v) {
+        this.$store.commit('cart/setTaxAmount', v)
+      }
+    },
+    gst: {
+      get() {
+        return this.$store.state.cart.gst
+      },
+      set(v) {
+        this.$store.commit('cart/setGst', v)
       },
     },
-    cartCount: {
+    total: {
       get() {
-        return this.$store.getters['cart/cartCount']
+        return this.$store.state.cart.total
       },
+      set(v) {
+        this.$store.commit('cart/setTotal', v)
+      },
+    },
+    toggleControl1: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl1
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl1', val)
+      }
+    },
+    toggleControl2: {
+      get() {
+        return (
+          this.$store.state.master.toggleControl2
+        )
+      },
+      set(val) {
+        this.$store.commit('master/setToggleControl2', val)
+      }
     },
   },
   watch: {
@@ -230,6 +277,8 @@ export default {
     }
   },
   mounted() {
+    this.retrieveToggleTaxControl()
+    this.retrieveTaxValue()
     this.retrieveSeries(this.$route.query.id);
   },
   methods: {
@@ -288,9 +337,96 @@ export default {
           this.article = response.data.series
           this.photos = this.article.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
-          console.log(this.article)
+          this.calculatePriceAggregates()
+        })
+
+    },
+    calculatePriceAggregates() {
+      const itemCostData = {
+        id: this.$route.query.id,
+        price: this.article.price
+      };
+
+      // Calculate the subtotal directly from the single item's price
+      const subtotal = currency(itemCostData.price, { fromCents: true }).value;
+
+      // Determine which GST mode is active based on the toggle controls
+      if (this.toggleControl1) {
+        this.showGSTExcluded = true;
+        this.showGSTIncluded = false;
+      } else if (this.toggleControl2) {
+        this.showGSTExcluded = false;
+        this.showGSTIncluded = true;
+      }
+
+      // Calculate GST exclusive and inclusive values
+      const exclusiveValue = currency(subtotal, { fromCents: false })
+        .multiply(1 + this.taxrateValue)
+        .value;
+
+      const inclusiveValue = currency(subtotal, { fromCents: false })
+        .divide(1 + this.taxrateValue)
+        .value;
+
+      // Set the subtotal
+      this.subtotal = subtotal;
+
+      // Determine the total based on the active GST mode
+      const total = this.toggleControl1 ? exclusiveValue : subtotal;
+      this.total = total;
+
+      // Calculate the tax amount based on the active GST mode
+      this.taxAmount = this.toggleControl2 ?
+        this.total - inclusiveValue :
+        this.total - this.subtotal;
+
+      // Commit the tax amount and total to the store
+      this.$store.commit('cart/setTaxAmount', this.taxAmount);
+      this.$store.commit('cart/setTotal', total);
+
+    },
+    retrieveToggleTaxControl() {
+      const id = 1;
+      const endpoint = `v1/toogletax/retrieve/${id}`
+      this.$axios
+        .$get(endpoint)
+        .then((response) => {
+          this.toggleControl1 = response.me.toggleControl1
+          this.toggleControl2 = response.me.toggleControl2
+          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
+          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
         })
     },
+    async retrieveTaxValue() {
+      try {
+        const id = 1
+        const response = await this.$axios.$get(`v1/tax/${id}`)
+        this.addTaxOnCartPrice = response.me.addTaxValue
+        this.includeTaxOnCartPrice = response.me.includeTaxValue
+        const taxAmount = this.toggleControl1 ?
+          this.addTaxOnCartPrice :
+          (this.toggleControl2 ? this.includeTaxOnCartPrice : 0);
+        this.$store.commit('cart/setTax', taxAmount);
+        this.taxrateValue = this.tax / 100
+      } catch (err) {
+        this.$oruga.notification.open({
+          message: err.message,
+          duration: 5000,
+          variant: 'danger',
+          queue: true,
+          position: 'bottom'
+        })
+      }
+    }
   },
 };
 </script>

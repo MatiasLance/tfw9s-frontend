@@ -66,6 +66,7 @@
             :total="total"
             :series="series"
             :seriestype="seriestype"
+            :taxAmount="taxAmount"
             :price="price"
             @active-step="setPreviousStep"
           />
@@ -123,13 +124,13 @@ export default {
         this.$store.commit('cart/setSubtotal', v);
       },
     },
-    gst: {
+    taxAmount: {
       get() {
-        return this.$store.state.cart.gst;
+        return this.$store.state.cart.taxAmount
       },
       set(v) {
-        this.$store.commit('cart/setGst', v);
-      },
+        this.$store.commit('cart/setTaxAmount', v)
+      }
     },
     total: {
       get() {
@@ -203,7 +204,7 @@ export default {
       switch (paymentIntent.status) {
       case 'succeeded':
         this.showMessage('Success! Payment received.');
-        this.$router.push('/shop');
+        this.$router.push('/tournaments');
         break;
       case 'processing':
         this.showMessage('Your payment is processing.');

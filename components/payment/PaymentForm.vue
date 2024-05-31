@@ -3,13 +3,15 @@
     <div class="payment-section flex grow flex-col bg-gray-200">
 
       <div class="flex">
-        <PaymentTab
+        <!--
+          <PaymentTab
           v-if="showPaypal"
           :active="paymentMethod === 'paypal'"
           @click="setAsPaymentMethod('paypal')"
-        >
+          >
           Paypal
-        </PaymentTab>
+          </PaymentTab>
+        -->
         <PaymentTab
           v-if="showStripe"
           :active="paymentMethod === 'stripe'"
@@ -26,14 +28,16 @@
         </PaymentTab>
       </div>
 
-      <PaypalCheckout
+      <!--
+        <PaypalCheckout
         v-if="paymentMethod === 'paypal'"
         id="paypal-payment-form"
         class="payment-module p-10"
         :cart-total="overallTotal"
         :discount-code="discountcode"
         @active-step="activeStepPrev"
-      />
+        />
+      -->
 
       <StripeCheckout
         v-if="paymentMethod === 'stripe'"
@@ -137,13 +141,14 @@
         <li v-if="isDiscountCodeMatch" class="mb-1 flex justify-between">
           <span>Subtotal
             <span class="font-bold">
-              ({{ discountRate * 100 }}% discount applied):</span>
+              ({{ discountRate * 100 }}% discount applied):
+            </span>
           </span>
-          <span>{{ formatCurrency(price) }}</span>
+          <span>{{ formatCurrencyFromCent(price) }}</span>
         </li>
         <li v-else class="mb-1 flex justify-between">
           <span>Subtotal:</span>
-          <span>{{ formatCurrency(price) }}</span>
+          <span>{{ formatCurrencyFromCent(price) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
@@ -153,12 +158,12 @@
         <li class="mt-3 flex justify-between border-t pt-3">
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
-            {{ formatCurrency(price) }}
+            {{ formatCurrencyFromCent(overallTotal) }}
           </span>
         </li>
         <li class="mb-1 flex justify-between text-xs font-light">
           <span>( Tax Amount:</span>
-          <span>{{ formatCurrency(taxAmount) + ' )' }}</span>
+          <span>{{ formatCurrencyFromCent(taxAmount) + ' )' }}</span>
         </li>
       </ul>
     </article>
@@ -166,16 +171,15 @@
 </template>
 
 <script>
-import currency from 'currency.js';
-import PaypalCheckout from '~/components/PaypalCheckout.vue';
+// import PaypalCheckout from '~/components/PaypalCheckout.vue';
 import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
-import currencyMixin from '~/mixins/currency';
+import currencyMixin from '~/mixins/currency/handlesCurrency';
 import StripeCheckout from '~/components/registration/StripeCheckout.vue';
 
 export default {
   components: {
-    PaypalCheckout,
+    // PaypalCheckout,
     SquareCheckout,
     PaymentTab,
     StripeCheckout
@@ -204,7 +208,7 @@ export default {
       showGSTIncluded: true,
       showGSTExcluded: false,
       isGSTInclusive: true,
-      paymentMethod: 'paypal',
+      paymentMethod: 'stripe',
       isStepperLoading: false,
       minimumAmount: 500,
       originalAmount: {
@@ -231,18 +235,10 @@ export default {
       ResponseMessage2: '',
       showTaxInfo: true,
       gstrate: '10%',
-      gstrateValue: 0.1
+      gstrateValue: 0.1,
     };
   },
   computed: {
-    shipping: {
-      get() {
-        return this.$store.state.cart.shipping
-      },
-      set(v) {
-        this.$store.commit('cart/setShipping', v)
-      }
-    },
     tax: {
       get() {
         return this.$store.state.cart.tax
@@ -303,7 +299,6 @@ export default {
     },
     retrieveToggleTaxControl() {
       const id = 1;
-      // todo: check endpoint
       const endpoint = `v1/toogletax/retrieve/${id}`
       this.$axios
         .$get(endpoint)
@@ -350,7 +345,7 @@ export default {
     },
     checkLesserMinimumAmount(minAmount) {
       const isLesserThanMinimumAmount = (
-        this.subtotal < minAmount)
+        this.price < minAmount)
       return isLesserThanMinimumAmount;
     },
     applyDiscount() {
@@ -380,20 +375,6 @@ for this code.
             } else {
               setTimeout(() => {
                 this.discountRate = response.discountcode.rate
-                this.newSubTotal = currency(this.subtotal)
-                  .multiply(1 - this.discountRate);
-
-                if (this.isGSTInclusive) {
-                // If GST is inclusive, overallTotal is the discounted subtotal
-                  this.overallTotal = this.newSubTotal.value;
-                } else {
-                // If GST is exclusive, add GST to the discounted subtotal
-                  const taxPercent = this.tax
-                  const gstAmount = this.newSubTotal.multiply(taxPercent / 100);
-                  this.overallTotal = this.newSubTotal.add(gstAmount).value;
-                }
-                this.$store.commit('cart/setSubtotal', this.newSubTotal)
-                this.$store.commit('cart/setTotal', this.overallTotal)
                 this.$oruga.notification.open({
                   message: response.message,
                   variant: 'success',
@@ -454,50 +435,38 @@ for this code.
     },
     initialize() {
       this.isStepperLoading = true
-      const metadata = this.registrationInformation
+      const item = this.$route.query.id;
+      const toggleControl1 = this.toggleControl1;
+      const toggleControl2 = this.toggleControl2;
+      const tax = this.tax;
       const discounted = this.isDiscountCodeMatch
       const discountcode = this.discountcode ?? ''
-      // eslint-disable-next-line camelcase
-      const payment_method = this.paymentMethod
+
+      let endpoint = ''
+
+      if (this.seriestype === 'weekly') {
+        endpoint = '/v1/tournament/indiv/calculation'
+      } else {
+        endpoint = '/v1/tournament/team/calculation'
+      }
       this.$axios
-        .$post('v1/orders/calculation', {
-          metadata,
-          // eslint-disable-next-line camelcase
-          payment_method,
-          // todo: pass discounted and discountcode entered ?
+        .$post(endpoint, {
+          item,
+          toggleControl1,
+          toggleControl2,
+          tax,
           discounted,
           discountcode
         })
         .then((response) => {
           this.activeStep = 2
-          if (this.registrationInformation.shippingType === 'pickup') {
-            response.shippingCalculation.totalShipping = 0
-          }
-          this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
-          this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
-          this.newSubTotal = (this.subtotal + (this.shipping));
           let total = 0
-          let taxamount = 0
-          if (this.toggleControl1) {
-            total = currency(this.newSubTotal, { fromCents: false })
-              .multiply(1 + this.tax / 100)
-              .value;
-            taxamount = currency(total, { fromCents: false })
-              .multiply(this.tax)
-              .divide(100)
-              .value
-            this.taxAmount = taxamount;
-          } else {
-            total = this.newSubTotal
-            if (this.shipping > 0) {
-              taxamount = currency(total, { fromCents: false })
-                .multiply(this.tax)
-                .divide(100)
-                .value
-              this.taxAmount = taxamount;
-            }
-          }
+          total = response.calculation.totalPrice;
           this.overallTotal = total;
+          this.taxAmount = response.calculation.taxAmount;
+
+          this.$store.commit('cart/setSubtotal', this.price)
+          this.$store.commit('cart/setTotal', this.overallTotal)
         })
         .finally(() => {
           this.isStepperLoading = false

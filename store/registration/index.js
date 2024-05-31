@@ -15,15 +15,15 @@ export const state = () => ({
     coachesPhoneNumber: '',
     managerName: '',
     managerEmail: '',
-    managerPhoneNumber: ''
+    managerPhoneNumber: '',
   },
   paymentMethod: '',
   toggleMasterSetting1: true,
   toggleMasterSetting2: true,
-  registrationFee: 0,
   gst: 0,
   tax: 0,
-  taxAmount: 0
+  taxAmount: 0,
+  seriesType: ''
 })
 
 export const mutations = {
@@ -79,7 +79,7 @@ export const mutations = {
   setGst(state, gst) {
     state.gst = gst
   },
-  setRegistrationFee(state, registrationFee) {
-    state.registrationFee = registrationFee
+  setSeriesType(state, seriesType) {
+    state.seriesType = seriesType
   },
 }
