@@ -86,6 +86,20 @@
                       </h4>
                     </div>
                   </template>
+                  <template v-else>
+                    <small
+                    class="mb-1 font-bold  uppercase text-transparent"
+                    >TOTAL</small>
+                    <div class="flex items-start text-transparent">
+                      <h4
+                        class="mr-2 text-3xl font-bold"
+                        data-aos="fade-up"
+                      >
+                        {{ panel.count }}
+                      </h4>
+                    </div>
+                  </template>
+
                   <hr class="my-4">
                   <NuxtLink
                     :to="panel.route"
@@ -247,12 +261,14 @@ export default {
       switch (this.adminTab.toUpperCase()) {
       case 'MERCH':
         return this.panels.filter(panel => {
-          return [ 'Merch Products', 'Merch Categories' ].includes(panel.title)
+          return [
+            'Merch Products', 'Merch Categories', 'Discount Codes'
+          ].includes(panel.title)
         })
       case 'MASTER':
         return this.panels.filter(panel => {
           return [
-            'News', 'Partner Sponsor', 'Discount Codes', 'Code of Conduct', 'Rules', 'Insurance'
+            'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance'
           ].includes(panel.title)
         })
       default:

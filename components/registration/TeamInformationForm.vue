@@ -334,7 +334,6 @@ export default {
         phoneDigits: '',
       },
       teamName: '',
-      ageGroup: '',
       agegroup: [],
       phoneCode: '+61',
       hasAgreedToTerms: false,

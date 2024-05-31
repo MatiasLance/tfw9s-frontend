@@ -8,7 +8,7 @@
         <span
             id="button-text"
         >
-            Pay now {{ series }} | {{ seriestype }} | {{ price }}
+            Pay now {{ series }} | {{ seriestype }}
         </span>
         </button>
         <NuxtLink
@@ -67,10 +67,6 @@ export default {
       type: [ String ],
       required: true
     },
-    price: {
-      type: [ String ],
-      required: true
-    },
   },
   data() {
     return { isStepperLoading: false }
@@ -95,8 +91,17 @@ export default {
     async initialize() {
       this.isStepperLoading = true;
       const metadata = this.registrationInformation;
+      let endpoint = ''
+
+      if (this.seriestype === 'weekly') {
+        endpoint = '/v1/tournament/indiv/checkout'
+      } else {
+        endpoint = '/v1/tournament/team/checkout'
+      }
+
       const clientSecret = await this.$axios
-        .$post('/v1/tournament/checkout', {
+        .$post(endpoint, {
+          item: this.$route.query.id,
           // eslint-disable-next-line camelcase
           payment_method: 'stripe',
           metadata,
@@ -138,8 +143,11 @@ export default {
       this.setLoading(true);
       const { error } = await this.$stripe.confirmPayment({
         elements,
-        // eslint-disable-next-line camelcase
-        confirmParams: { return_url: `${this.$config.baseURL}/thank-you` },
+        confirmParams: {
+          // eslint-disable-next-line camelcase
+          return_url:
+          `${this.$config.baseURL}/thank-you1?seriesType=${this.seriestype}`
+        },
       });
 
       if (error.type === 'card_error' || error.type === 'validation_error') {

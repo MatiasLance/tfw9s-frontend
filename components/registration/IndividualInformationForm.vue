@@ -350,7 +350,7 @@ export default {
   computed: {
     phoneNumber: {
       get() {
-        return `${this.phoneCode}${this.phoneDigits}`
+        return `${this.phoneCode}${this.contact.phoneDigits}`
       },
     },
     formattedAgeGroup() {
@@ -373,8 +373,7 @@ export default {
         teamName: this.player.teamName,
         dob: this.player.dob,
         ageGroup: this.player.ageGroup,
-        price: this.price
-
+        price: this.price,
       })
 
       return false
