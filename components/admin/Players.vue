@@ -3,7 +3,7 @@
   <div class="bg-[#1A1A1B]" data-aos="fade-up">
     <section class="mx-auto max-w-screen-xl gap-4 p-4">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
-        <div class="col-span-1 flex items-center md:col-span-3">
+        <div class="col-span-2 flex items-center md:col-span-3">
           <button
           type="button"
           class="
@@ -21,7 +21,8 @@
             +
           </button>
         </div>
-        <div class="flex items-center col-start-1">
+        <div class="col-span-1 md:col-span-2"></div>
+        <div class="flex items-center col-span-3 md:col-start-1 md:col-span-1">
           <select
             v-model="ActiveTab"
             class="
@@ -52,7 +53,7 @@
             </option>
           </select>
         </div>
-        <div class="flex items-center col-start-3">
+        <div class="flex items-center col-span-3 md:col-start-3 md:col-span-1">
           <input
             v-model="query"
             type="text"
@@ -79,8 +80,8 @@
         </div>
         <div
         v-if="showVueTable"
-        class="col-span-1 flex flex-wrap items-center justify-around
-        gap-x-2 md:col-span-3 md:justify-between"
+        class="col-span-3 flex flex-wrap items-center justify-around
+        gap-x-2 md:justify-between"
         data-aos="flip-up" data-aos-once="true"
         >
           <span
@@ -219,12 +220,12 @@ export default {
       ActiveTab: null,
       options: [
         { text: 'All Age Group', value: null },
-        { text: 'Under 6', value: '6' },
-        { text: 'Under 7', value: '7' },
-        { text: 'Under 8', value: '8' },
-        { text: 'Under 9', value: '9' },
-        { text: 'Under 10', value: '10' },
-        { text: 'Under 11', value: '11' },
+        { text: 'Under 6', value: 'Under 6' },
+        { text: 'Under 7', value: 'Under 7' },
+        { text: 'Under 8', value: 'Under 8' },
+        { text: 'Under 9', value: 'Under 9' },
+        { text: 'Under 10', value: 'Under 10' },
+        { text: 'Under 11', value: 'Under 11' },
       ],
       showAddPlayersModal: false,
       showEditPlayersModal: false,
@@ -273,6 +274,12 @@ export default {
     }
   },
   watch: {
+    query: {
+      handler(newPage) {
+        this.retrieveSeries();
+      },
+      immediate: true,
+    },
     ActiveTab: {
       handler(newPage) {
         this.retrieveSeries();
@@ -346,6 +353,7 @@ export default {
     },
     setTab(tab) {
       this.ActiveTab = tab
+      this.query = tab
     },
     replaceUnderWithU(str) {
       return str.replace(/^Under \b/, 'U');

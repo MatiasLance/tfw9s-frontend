@@ -41,7 +41,7 @@
           <div class="flex justify-center">
             <div class="xl:w-96">
               <form @submit.prevent="emitUpdate(this)">
-                <SearchBar v-model="query" />
+                <SearchBar v-model="query"/>
               </form>
             </div>
           </div>

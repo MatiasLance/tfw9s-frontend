@@ -572,6 +572,12 @@ export default {
     },
   },
   watch: {
+    query: {
+      handler(newPage) {
+        this.retrieveSponsors();
+      },
+      immediate: true,
+    },
     totalPages() {
       if (this.page > this.totalPages) {
         this.setPage(1)

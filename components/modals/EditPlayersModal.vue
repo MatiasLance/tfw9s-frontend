@@ -6,6 +6,7 @@
                     Edit Players
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
+                {{ series }}
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-2 md:col-span-1">
                     <label for="teamname" class="mb-1 block">
@@ -120,6 +121,7 @@
                       Date of Birth *
                     </label>
                     <ODatepicker
+                    :value="selectedDate"
                     icon="calendar"
                     :rules="rules"
                     />
@@ -131,7 +133,7 @@
                       </label>
                       <VSelect
                         v-model="SeriesData.agegroup"
-                        :items="formattedAgeGroup"
+                        :items="AgeGroupList"
                         label="Choose Age Group"
                         :rules="rules"
                         solo
@@ -210,14 +212,18 @@ export default {
         name: null,
         description: null
       },
-      SeriesList: [
-        { text: 'Weekly Competitions', value: 'weekly' },
-        { text: 'Tournaments', value: 'tournament' },
-        { text: 'Central Coast', value: 'coast' },
+      AgeGroupList: [
+        { text: 'Under 6', value: 'Under 6' },
+        { text: 'Under 7', value: 'Under 7' },
+        { text: 'Under 8', value: 'Under 8' },
+        { text: 'Under 9', value: 'Under 9' },
+        { text: 'Under 10', value: 'Under 10' },
+        { text: 'Under 11', value: 'Under 11' },
       ],
       rules: [ value => !!value || 'Required' ],
       phoneCode: '+61',
       phoneDigits: '',
+      selectedDate: '',
     }
   },
   watch: {
@@ -225,6 +231,7 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.SeriesData = this.series;
+          this.selectedDate = new Date(this.SeriesData.dob);
         }
       },
       immediate: true,
@@ -238,7 +245,7 @@ export default {
     },
     formattedAgeGroup() {
       return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
+        ({ text: agegroup.name, value: agegroup.max_age }));
     },
   },
   methods: {
