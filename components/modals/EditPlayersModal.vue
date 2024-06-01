@@ -6,7 +6,6 @@
                     Edit Players
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
-                {{ series }}
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-2 md:col-span-1">
                     <label for="teamname" class="mb-1 block">
@@ -140,19 +139,6 @@
                         >
                       </VSelect>
                     </div>
-                  </div>
-                  <div class="col-span-1 md:col-span-2">
-                    <label for="teamdescription" class="mb-1 block">
-                      Description:
-                    </label>
-                    <VTextarea
-                      id="name"
-                      v-model="SeriesData.description"
-                      label="Enter Event Description"
-                      :rules="rules"
-                      type="text"
-                      solo
-                    />
                   </div>
                 </div>
                 <hr class="my-3"/>

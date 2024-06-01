@@ -139,7 +139,7 @@ export default {
           icon: 'fas fa-shopping-cart',
           route: '/admin/products',
           desc: 'See all products',
-          count: 0
+          count: 0,
         },
         {
           title: 'Merch Categories',
@@ -276,6 +276,25 @@ export default {
       }
     },
   },
+  mounted() {
+    this.fetchTotalCount();
+  },
+  methods: {
+    fetchTotalCount() {
+      this.$axios.get('/v1/total/')
+        .then(response => {
+          console.log(response);
+          this.panels[0].count = response.data.data.products;
+          this.panels[1].count = response.data.data.category;
+          this.panels[6].count = response.data.data.discountcode;
+          this.panels[9].count = response.data.data.news;
+          this.panels[10].count = response.data.data.partner_sponsor;
+        })
+        .catch(error => {
+          console.error('Error fetching total count:', error);
+        });
+    }
+  }
 };
 </script>
 

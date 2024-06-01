@@ -118,7 +118,7 @@
                 v-html="player.team_name"
                 />
                 <span class="col-span-3">
-                  {{ `${player.description}` }}
+                  {{ `${player.agegroup}` }}
                 </span>
                 <div class="col-span-3 flex justify-end gap-4">
                   <BaseButton

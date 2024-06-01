@@ -71,6 +71,22 @@
             </div>
           </VueSlickCarousel>
         </span>
+        <div class="grid grid-cols-3 px-4">
+          <ODatepicker
+            v-model="seriesDateRange"
+            class="col-start-1"
+            placeholder="Click to select..."
+            icon="calendar"
+            trap-focus
+            range
+          />
+          <OInput
+            v-model="query"
+            type="text"
+            class="col-start-3"
+            placeholder="Search..."
+          />
+        </div>
         <span
         v-if="activeTab == 'weekly'"
         class="col-cpan-1 p-4 text-white"
@@ -78,7 +94,7 @@
         data-aos-offset="0"
         >
           <article
-            class="grid md:grid-cols-2 grid-cols-1 w-full gap-4 pt-2"
+            class="grid md:grid-cols-3 grid-cols-2 w-full gap-4 pt-2"
           >
             <div
               v-for="(item, index) in filteredWeekly" :key="item.id"
@@ -297,6 +313,8 @@ export default {
           }
         ],
       },
+      query: null,
+      seriesDateRange: null,
     };
   },
   head() {
@@ -336,6 +354,14 @@ export default {
   },
   created() {
     this.retrieveSeries();
+  },
+  watch: {
+    query: {
+      handler(newPage) {
+        this.retrieveSeries();
+      },
+      immediate: true,
+    },
   },
   methods: {
     setTab(tab) {

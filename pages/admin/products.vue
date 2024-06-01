@@ -1088,6 +1088,7 @@ export default {
       this.$axios
         .$get(`v1/items?${queryString}`)
         .then((response) => {
+          this.$store.commit('admin/setTotalItems', response.data.total_items)
           this.MerchItems = response.data.items
           this.totalItems = response.data.total_items
           this.totalPages = response.data.last_page

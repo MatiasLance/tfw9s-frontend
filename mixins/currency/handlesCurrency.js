@@ -7,7 +7,7 @@ export default {
         symbol: '$',
         separator: ',',
         decimal: '.',
-        precision: 2,
+        precision: 0,
         fromCents: false,
       },
     }

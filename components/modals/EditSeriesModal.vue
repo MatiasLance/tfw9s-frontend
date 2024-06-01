@@ -6,7 +6,6 @@
                     Edit Series
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
-                {{ SeriesData }}
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1">
                     <label for="teamname" class="mb-1 block">

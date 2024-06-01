@@ -11,7 +11,7 @@
             to-[#050505]
             bg-clip-text
             text-[2.5rem]
-            font-bold uppercase
+            font-bold
             leading-tight
             text-transparent sm:pr-8 sm:text-5xl
             xl:pr-10 xl:text-6xl"
@@ -72,7 +72,7 @@ export default {
         cta: false,
         contentblurb: false
       },
-      headline: 'TFW RL 9’S',
+      headline: 'TFW9’s',
       cta: 'Register Now',
       contentblurb: 'The Final Whistle is a dynamic platform dedicated to sharing uplifting stories from Junior Rugby League. Through engaging content and vibrant storytelling, it celebrates the achievements, resilience, and sportsmanship of young athletes. By amplifying these positive narratives, it aims to inspire and empower the rugby league community, fostering a culture of inclusivity and encouragement. With a focus on teamwork, perseverance, and community spirit, The Final Whistle showcases the transformative power of sport in shaping young lives.\n(Temporary Statement)',
     };
