@@ -130,19 +130,6 @@
                     />
                   </div>
                   <div class="col-span-1 md:col-span-2">
-                    <label for="teamdescription" class="mb-1 block">
-                      Description:
-                    </label>
-                    <VTextarea
-                    id="description"
-                    v-model="TeamData.description"
-                    label="Enter Team Description"
-                    :rules="rules"
-                    type="text"
-                    solo
-                    />
-                  </div>
-                  <div class="col-span-1 md:col-span-2">
                     <label for="photo" class="mb-1 block">
                         Image upload:
                     </label>

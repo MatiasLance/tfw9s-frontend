@@ -465,25 +465,26 @@
           Are you sure you want to delete this ?
         </p>
         <hr class="my-3">
-        <button
-          type="button"
-          class="
-            my-2
-            inline-block
-            w-full
-            border border-transparent
-            bg-brand-green
-            py-3
-            px-5
-            text-center
-            font-bold
-            text-white
-            hover:bg-green-800
-            lg:mx-4 lg:w-48
-          "
-          @click="remove(editingNo)"
-        >
-          Yes, remove it
+        <div class="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            class="
+              my-2
+              inline-block
+              w-full
+              border border-transparent
+              bg-brand-green
+              py-3
+              px-5
+              text-center
+              font-bold
+              text-white
+              hover:bg-green-800
+              lg:mx-4 lg:w-48
+            "
+            @click="remove(editingNo)"
+          >
+            Yes, remove it
         </button>
         <button
           type="button"
@@ -505,6 +506,7 @@
         >
           No
         </button>
+      </div>
       </div>
     </OModal>
     </div>

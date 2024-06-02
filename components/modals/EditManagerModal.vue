@@ -59,19 +59,6 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1 md:col-span-2">
-                    <label for="fixingname" class="mb-1 block">
-                      Description:
-                    </label>
-                    <VTextarea
-                    id="name"
-                    v-model="managerData.description"
-                    label="Enter Manager Description"
-                    :rules="rules"
-                    type="text"
-                    solo
-                    />
-                  </div>
                 </div>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">

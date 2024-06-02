@@ -141,19 +141,6 @@
                       </VSelect>
                     </div>
                   </div>
-                  <div class="col-span-1 md:col-span-2">
-                    <label for="teamdescription" class="mb-1 block">
-                      Description:
-                    </label>
-                    <VTextarea
-                      id="name"
-                      v-model="player.description"
-                      label="Enter Event Description"
-                      :rules="rules"
-                      type="text"
-                      solo
-                    />
-                  </div>
                 </div>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
@@ -226,7 +213,7 @@ export default {
         teamName: '',
         dob: '',
         ageGroup: '',
-        description: '',
+        description: null,
       },
     }
   },

@@ -113,19 +113,6 @@
               :rules="rules"
               />
           </div>
-          <div class="col-span-1 md:col-span-2">
-            <label for="eventdescription" class="mb-1 block">
-              Description:
-            </label>
-            <VTextarea
-            id="name"
-            v-model="Event.description"
-            label="Enter Event Description"
-            :rules="rules"
-            type="text"
-            solo
-            />
-          </div>
           <div class="col-span-1 mb-4 lg:col-span-2">
             <div class="flex items-center justify-between">
               <label class="mb-1 block"> Matches: </label>

@@ -7,7 +7,7 @@
         class="col-span-1 md:col-span-3 flex justify-start"
         >
           <span class="text-center text-sm md:text-left">
-            Copyright, All Rights Reserved TFW Rugby League 2024
+            Copyright, All Rights Reserved TFW9's
           </span>
         </div>
         <div class="md:justify-right col-span-1 flex justify-center">
