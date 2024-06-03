@@ -138,7 +138,7 @@
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
 import ImageUpload from '~/components/ImageUpload'
-import currencyMixin from '@/mixins/currency';
+import currencyMixin from '@/mixins/currency/handlesCurrency';
 
 export default {
   name: 'AddSeriesModal',
@@ -255,7 +255,7 @@ export default {
       formData.append('address', this.SeriesData.address);
       formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
       formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
-      formData.append('price', this.SeriesData.price);
+      formData.append('price', this.currencyToCents(this.SeriesData.price));
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'newsThumbnail.png');
