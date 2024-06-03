@@ -426,8 +426,10 @@ export default {
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
+        const matchDateTime = new Date(match.time);
+        const matchTime = matchDateTime.toLocaleTimeString('en-US', { hour12: false });
         formData.append(`matches[${i}][id]`, match.id);
-        formData.append(`matches[${i}][time]`, match.time?match.time:'00:00');
+        formData.append(`matches[${i}][time]`, matchTime);
         formData.append(`matches[${i}][field_id]`, match.field_id);
         formData.append(`matches[${i}][team1]`, match.team1.id);
         formData.append(`matches[${i}][team2]`, match.team2.id);

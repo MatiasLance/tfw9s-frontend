@@ -102,6 +102,7 @@ export default {
       dataColumns: [
         { name: 'event_date', label: 'Date' },
         { name: 'matchtime', label: 'Time' },
+        { name: 'agegroup_id', label: 'Age Group' },
         { name: 'field', label: 'Field' },
         { name: 'team1', label: 'Team' },
         { name: 'team1_score', label: 'Points' },
@@ -316,17 +317,21 @@ export default {
         .$get(`v1/events?${queryString}`)
         .then((response) => {
           const EventList = response.data.events.map(event => {
+            const ageGroupName = event.agegroup.name;
             return {
               ...event,
               // eslint-disable-next-line camelcase
               manager_name: `${event.manager.user.first_name}
                ${event.manager.user.last_name}`,
               date: this.formattedDate(event.event_date),
+              // eslint-disable-next-line camelcase
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
                   time: this.reformatTime(match.match_time),
                   matchtime: this.convertTo12HourFormat(match.match_time),
+                  // eslint-disable-next-line camelcase
+                  agegroup_id: ageGroupName,
                   // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
                   date: event.event_date,

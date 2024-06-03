@@ -4,16 +4,23 @@
       class="relative flex w-full snap-x gap-6
       overflow-y-hidden overflow-x-scroll pb-14"
       >
+      <NuxtLink
+        v-for="(item, index) in partnerSponsors"
+        :key="index"
+        to="/admin/partner-sponsor"
+        class="snap-center"
+        data-aos="fade-up"
+      >
         <img
-          v-for="(item, index) in partnerSponsors"
-          :key="index"
-          class="h-40 w-40 shrink-0 snap-center overflow-hidden rounded-lg
-          object-contain brightness-50 transition duration-300 ease-in-out
-          first:pl-8 last:pr-8 hover:scale-125 hover:brightness-100"
-          data-aos="fade-up"
+          class="h-40 w-40 shrink-0 snap-center
+          overflow-hidden rounded-lg object-contain
+          brightness-50 transition duration-300
+          ease-in-out first:pl-8 last:pr-8
+          hover:scale-125 hover:brightness-100"
           :src="getMediaURL(item.media[0])"
           alt="Sponsor Image"
         />
+      </NuxtLink>
       </div>
   </section>
 </template>

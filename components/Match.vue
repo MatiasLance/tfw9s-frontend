@@ -5,6 +5,7 @@
         Match Time:
       </label>
       <section class="mb-6">
+        {{ matchData.time }}
         <OTimepicker
           v-model="matchData.time"
           placeholder="Click to select"

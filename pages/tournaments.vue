@@ -73,13 +73,13 @@
         </span>
         <div class="grid grid-cols-3 px-4">
           <ODatepicker
-            v-model="seriesDateRange"
-            class="col-start-1"
+            v-model="dateFilter"
             placeholder="Click to select..."
             icon="calendar"
-            trap-focus
-            range
-          />
+            class="rounded bg-white"
+            :events="EventDates"
+          >
+          </ODatepicker>
           <OInput
             v-model="query"
             type="text"
@@ -314,7 +314,7 @@ export default {
         ],
       },
       query: null,
-      seriesDateRange: null,
+      dateFilter: null,
     };
   },
   head() {
@@ -330,6 +330,10 @@ export default {
     };
   },
   computed: {
+    EventDates() {
+      return this.SeriesList.map(event =>
+        ({ date: new Date(event.start), type: event.submit?'danger':'success' }));
+    },
     filteredWeekly() {
       return this.SeriesList.filter(x =>
         x && x.type && typeof x.type === 'string' ?
@@ -358,6 +362,12 @@ export default {
   watch: {
     query: {
       handler(newPage) {
+        this.retrieveSeries();
+      },
+      immediate: true,
+    },
+    dateFilter: {
+      handler(newDate) {
         this.retrieveSeries();
       },
       immediate: true,
@@ -411,10 +421,44 @@ export default {
       return `${startmonth === endmonth? startmonth:endmonth} ${startdate}${startsuffix} -  ${startmonth !== endmonth? endmonth:''} ${enddate}${endsuffix} ${startyear === endyear? startyear: endyear}`;
     },
     retrieveSeries() {
+      let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
+      let eventMonth = this.dateFilter ?
+        (this.dateFilter.getUTCMonth() + 1) : null;
+      let eventDay = this.dateFilter ?
+        (this.dateFilter.getUTCDate()): null;
+
+      // Increment the day by 1
+      eventDay++;
+
+      // Get the last day of the current month
+      const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
+
+      if (eventDay > lastDayOfMonth) {
+        eventDay = 1;
+        eventMonth++;
+
+        if (eventMonth === 13) {
+          eventMonth = 1;
+          eventYear++;
+        }
+      }
+
+      const eventMonthStr = eventMonth? eventMonth.toString().padStart(2, '0') : null;
+      const eventDayStr = eventDay? eventDay.toString().padStart(2, '0') : null;
+
+      // eslint-disable-next-line camelcase
+      let event_date = null
+      if (eventYear && eventMonthStr && eventDayStr) {
+        // eslint-disable-next-line camelcase, no-const-assign
+        event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
+      }
+
       const query = {
         q: this.query,
         sort: 'start_date',
         page: this.page,
+        // eslint-disable-next-line camelcase
+        eventDate: event_date,
         withFixing: 'with_fixing',
         isPaused: 0,
       };
