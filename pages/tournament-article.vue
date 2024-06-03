@@ -1,54 +1,67 @@
 <template>
   <div class="flex min-h-screen items-center bg-[#1A1A1B] text-white">
-    <div>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-6">
-        <div class="article-gallery md:col-span-4">
-          <VCarousel
-              height="500"
-              :show-arrows="false"
-              cycle
-              hide-delimiters-background
-              >
-          <VCarouselItem
-              v-for="(photo, i) in photos"
-              :key="i"
-              :src="photo"
+    <div class="">
+      <div
+        class="p-10
+        h-screen
+        w-screen
+        grid
+        grid-cols-1
+        gap-4
+        md:grid-cols-6"
+      >
+        <div class="md:col-span-4">
+          <VImg
+            v-for="(photo, i) in photos"
+            :key="i"
+            :src="photo"
+            class="bg-white"
+            width="800"
+            cover
+          ></VImg>
+          <div class="flex items-center justify-center">
+            <VImg
+            v-if="photos.length === 0"
+              class="bg-white"
+              src="http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg"
+              width="500"
               cover
-              />
-          <VCarouselItem
-              v-if="photos.length === 0"
-              src='http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg'
-              cover
-              />
-          </VCarousel>
+            ></VImg>
+          </div>
         </div>
-        <div class="col-span-1 flex flex-col items-center md:col-span-2">
         <div
-        class="article-context font-semibold p-[1rem]
-        mx-auto max-w-screen-xl w-full"
+          class="
+          col-span-1
+          flex flex-col
+          items-center
+          md:col-span-2"
         >
-          <span class="text-3xl">
+        <div
+          class="font-semibold p-[1rem]
+          mx-auto max-w-screen-xl w-full"
+        >
+          <span class="text-xl md:text-3xl">
             {{article.name}}
           </span>
-          <p class="text-lg text-brand-slate">
+          <p class="text-base md:text-lg text-brand-slate">
             {{ DateRange(formattedDate(article.start),
-               formattedDate(article.end)) }}
+              formattedDate(article.end)) }}
           </p>
         </div>
         <div
-        class="article-context font-bold px-[1rem]
-        mx-auto max-w-screen-xl w-full
-        text-4xl"
+          class="article-context font-bold px-[1rem]
+          mx-auto max-w-screen-xl w-full
+          text-xl md:text-4xl"
         >
-        {{ formatCurrencyFromCent(article.price) }}
+          {{ formatCurrencyFromCent(article.price) }}
         </div>
         <article
-        class="article-description p-[1rem]
-        mx-auto max-w-screen-xl w-full text-wrap
-        h-[200px] overflow-y-scroll mb-4"
+          class="article-description p-[1rem]
+          mx-auto max-w-screen-xl w-full text-wrap
+          h-[200px] overflow-y-scroll mb-4"
         >
           <p
-            class="my-4 text-white"
+            class="my-4 text-white text-sm md:text-lg"
             v-html="article.description"
           />
         </article>
@@ -63,58 +76,58 @@
             }"
           >
             <button
-            type="button"
-            class="
-            from-40%
-            via-95%
-            to-100%
-            col-span-1 inline-block
-            w-[250px] select-none rounded-lg
-            border
-            border-transparent
-            bg-gradient-to-tr
-            from-[#5EE738]
-            via-[#3e872a]
-            to-[#050505]
-            py-2
-            px-6
-            text-center text-xl
-            font-semibold
-            text-white
-            transition
-            hover:brightness-125
-          "
+              type="button"
+              class="
+              from-40%
+              via-95%
+              to-100%
+              col-span-1 inline-block
+              w-[250px] select-none rounded-lg
+              border
+              border-transparent
+              bg-gradient-to-tr
+              from-[#5EE738]
+              via-[#3e872a]
+              to-[#050505]
+              py-2
+              px-6
+              text-center text-xl
+              font-semibold
+              text-white
+              transition
+              hover:brightness-125
+            "
             >
-            Register Now
-          </button>
-        </NuxtLink>
+              Register Now
+            </button>
+          </NuxtLink>
         </div>
         <div class="mb-4 flex w-full justify-center">
           <NuxtLink :to="'/tournaments'">
             <button
-            type="button"
-            class="
-            inline-block
-            w-[250px]
-            rounded-lg
-            bg-[#212121] text-[#999999]
-            border-2
-            border-[#414141]
-            py-3
-            px-4
-            text-center text-lg
-            font-medium
-            shadow-sm
-            hover:text-white
-            hover:bg-[#414141]
-            transition
-          "
+              type="button"
+              class="
+              inline-block
+              w-[250px]
+              rounded-lg
+              bg-[#212121] text-[#999999]
+              border-2
+              border-[#414141]
+              py-3
+              px-4
+              text-center text-lg
+              font-medium
+              shadow-sm
+              hover:text-white
+              hover:bg-[#414141]
+              transition
+            "
             >
-            Back to Tournaments
-          </button>
-        </NuxtLink>
+              Back to Tournaments
+            </button>
+          </NuxtLink>
         </div>
-        </div>
+       </div>
       </div>
     </div>
   </div>

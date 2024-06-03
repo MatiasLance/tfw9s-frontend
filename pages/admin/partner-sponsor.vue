@@ -146,10 +146,12 @@
               </span>
               </div>
               <div class="mb-6 w-full">
-              <span
-              class="text-left text-slate-400 line-clamp-1"
-              v-html="sponsor.description"
-              />
+              <!--
+                <span
+                class="text-left text-slate-400 line-clamp-1"
+                v-html="sponsor.description"
+                />
+              -->
               </div>
               <div class="mt-4 flex flex-wrap justify-start gap-2">
               <button
@@ -221,20 +223,19 @@
               solo
               />
             </div>
-            <div class="col-span-1">
-              <label for="sponsorfirst" class="mb-1 block">
-                Firstname:
-              </label>
-              <VTextField
-              id="name"
-              v-model="sponsor.first_name"
-              label="Enter Firstname"
-              :rules="rules"
-              type="text"
-              solo
-              />
+              <div class="col-span-1" hidden>
+                <label for="sponsorfirst" class="mb-1 block">
+                  Firstname:
+                </label>
+                <VTextField
+                id="name"
+                v-model="sponsor.first_name"
+                label="Enter Firstname"
+                type="text"
+                solo
+                />
             </div>
-            <div class="col-span-1">
+            <div class="col-span-1" hidden>
               <label for="sponsorlast" class="mb-1 block">
                 Lastname:
               </label>
@@ -242,12 +243,11 @@
               id="name"
               v-model="sponsor.last_name"
               label="Enter Lastname"
-              :rules="rules"
               type="text"
               solo
               />
             </div>
-            <div class="col-span-1 md:col-span-2">
+            <div class="col-span-1 md:col-span-2" hidden>
               <label for="sponsordescription" class="mb-1 block">
                 Description:
               </label>
@@ -335,7 +335,7 @@
             solo
             />
           </div>
-          <div class="col-span-1">
+          <div class="col-span-1" hidden>
             <label for="sponsorfirst" class="mb-1 block">
               Firstname:
             </label>
@@ -348,7 +348,7 @@
             solo
             />
           </div>
-          <div class="col-span-1">
+          <div class="col-span-1" hidden>
             <label for="sponsorlast" class="mb-1 block">
               Lastname:
             </label>
@@ -361,7 +361,7 @@
             solo
             />
           </div>
-          <div class="col-span-1 md:col-span-2">
+          <div class="col-span-1 md:col-span-2" hidden>
             <label for="sponsordescription" class="mb-1 block">
               Description:
             </label>
@@ -818,9 +818,9 @@ export default {
     create() {
       const form = new FormData();
       form.append('company_name', this.sponsor.company_name)
-      form.append('first_name', this.sponsor.first_name)
-      form.append('last_name', this.sponsor.last_name)
-      form.append('description', this.sponsor.description)
+      form.append('first_name', 'null')
+      form.append('last_name', 'null')
+      form.append('description', 'null')
 
       for (let i = 0; i < this.imgList.length; i++) {
         form.append('photo[]', this.imgList[i], 'newsThumbnail.png');
