@@ -7,7 +7,7 @@ export default {
         symbol: '$',
         separator: ',',
         decimal: '.',
-        precision: 0,
+        precision: 2,
         fromCents: false,
       },
     }
@@ -17,7 +17,7 @@ export default {
       return currency(value)
     },
     formatCurrency(value) {
-      return currency(value, this.currencyOptions).format()
+      return currency(value, this.currencyJsDefaults).format()
     },
     formatCurrencyFromCent(value) {
       const options = {
@@ -32,6 +32,9 @@ export default {
         fromCents: false,
       }
       return currency(value, options).value
+    },
+    currencyToCents(value) {
+      return currency(value, { fromCents: false }).intValue
     }
   },
 }
