@@ -224,7 +224,7 @@
               solo
               />
             </div>
-            <div class="col-span-1 md:col-span-2">
+            <div class="col-span-1 md:col-span-2" hidden>
               <label for="selectfield" class="mb-1 block">
                 Tags:
               </label>
@@ -567,7 +567,7 @@
             solo
             />
           </div>
-          <div class="col-span-1 md:col-span-2">
+          <div class="col-span-1 md:col-span-2" hidden>
             <label for="selectfield" class="mb-1 block">
               Tags:
             </label>
@@ -933,7 +933,7 @@ export default {
         description: '',
       },
       Taglist: [],
-      tags: [],
+      /* tags: [],*/
       multipleCategoryBuffer: [ 1 ],
       categoryLineages: [],
       selectedCategory: {},
@@ -990,6 +990,7 @@ export default {
         this.$store.commit('shop/setPage', value);
       },
     },
+    /*
     formattedTags() {
       return this.Taglist.map(cat =>
         ({
@@ -1004,6 +1005,7 @@ export default {
           false
       );
     },
+    */
   },
   watch: {
     totalPages() {
@@ -1014,7 +1016,7 @@ export default {
   },
   mounted() {
     this.retrieveMerchItems();
-    this.retrieveTags();
+    /* this.retrieveTags(); */
     this.page = 1 // Reset pagination
   },
   methods: {
@@ -1037,7 +1039,9 @@ export default {
           queue: true,
         });
         return false;
-      } else if (this.tags.length === 0) {
+      }
+      /*
+        else if (this.tags.length === 0) {
         this.$oruga.notification.open({
           duration: 5000,
           message: 'Item needs at least one tag',
@@ -1046,7 +1050,7 @@ export default {
           queue: true,
         });
         return false;
-      } else if (type === 'Add') {
+      } */ else if (type === 'Add') {
         this.create()
         return true;
       } else if (type === 'Edit') {
@@ -1099,6 +1103,7 @@ export default {
           this.isNewsLoading = false;
         });
     },
+    /*
     retrieveTags() {
       this.isNewsLoading = true;
 
@@ -1120,6 +1125,7 @@ export default {
           this.isNewsLoading = false;
         });
     },
+    */
     addCategoryPicker() {
       this.multipleCategoryCounter += 1
       this.multipleCategoryBuffer.push(this.multipleCategoryCounter)
@@ -1315,9 +1321,11 @@ export default {
       form.append('isOnSale', this.item.is_on_sale)
       form.append('isRRP', this.item.show_rrp)
 
+      /*
       for (let i = 0; i < this.tags.length; i++) {
         form.append('tags[]', this.tags[i]);
       }
+      */
 
       for (let i = 0; i < categoryId.length; i++) {
         form.append('categoryId[]', categoryId[i]);
@@ -1363,7 +1371,9 @@ export default {
         .$get(`v1/items/${this.editingNo}`)
         .then((response) => {
           this.item = response.data.item
+          /*
           this.tags = response.data.item.tags.map(x => x.id);
+          */
           const categoryLineages = response.data.item.categoryLineages
           this.multipleCategoryCounter = categoryLineages.length
           this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
@@ -1404,9 +1414,11 @@ export default {
       form.append('isOnSale', this.item.is_on_sale)
       form.append('isRRP', this.item.show_rrp)
 
+      /*
       for (let i = 0; i < this.tags.length; i++) {
         form.append('tags[]', this.tags[i]);
       }
+      */
 
       for (let i = 0; i < categoryId.length; i++) {
         form.append('categoryId[]', categoryId[i]);
@@ -1495,7 +1507,7 @@ export default {
       this.imgUrl = []
       this.imgListEdit = []
       this.selectedCategory = {}
-      this.tags = []
+      /* this.tags = [] */
     },
   },
 };

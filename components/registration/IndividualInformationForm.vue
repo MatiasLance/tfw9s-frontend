@@ -162,23 +162,38 @@
 
       <div class="mb-4">
         <label class="mb-1 block"> Team Name* </label>
-        <input
-          v-model="player.teamName"
-          name="teamname"
-          class="
-            w-full
-            appearance-none
-            border border-gray-200
-            bg-gray-100
-            py-2
-            px-3
-            hover:border-gray-400
-            focus:border-gray-400 focus:outline-none
-          "
-          type="text"
-          placeholder="Team Name"
-          required
-        />
+          <div class="relative">
+            <select
+              v-model="player.teamName"
+              name="teams"
+              class="
+              w-full appearance-none border
+              border-gray-200 bg-gray-100
+              py-2 px-3 hover:border-gray-400
+              focus:border-gray-400 focus:outline-none"
+              required
+            >
+              <option :value="null" disabled hidden>
+                Age Group
+              </option>
+              <option
+                v-for="team in teams"
+                :key="team.id" :value="team.name"
+              >
+                {{ team.name }}
+              </option>
+            </select>
+            <div
+              v-if="!player.teamName"
+              class="
+              absolute inset-y-0 left-0
+              flex items-center pl-3
+              pointer-events-none text-gray-500
+              "
+            >
+              Team Name
+            </div>
+        </div>
       </div>
 
       <div class="mb-4">
@@ -342,6 +357,7 @@ export default {
         ageGroup: '',
       },
       agegroup: [],
+      teams: [],
       phoneCode: '+61',
       hasAgreedToTerms: false,
       showTermsModal: false,
@@ -357,9 +373,14 @@ export default {
       return this.agegroup.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
     },
+    formattedTeams() {
+      return this.teams.map(teams =>
+        ({ text: teams.name, value: teams.name }));
+    },
   },
   created() {
     this.retrieveAgeGroups();
+    this.retrieveTeams();
   },
   methods: {
     submit() {
@@ -396,6 +417,26 @@ export default {
         .$get(`v1/agegroups?${queryString}`)
         .then((response) => {
           this.agegroup = response.data.ageGroups;
+        })
+    },
+    retrieveTeams() {
+      const query = {
+        q: this.query,
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/teams?${queryString}`)
+        .then((response) => {
+          this.teams = response.data.teams;
         })
     },
   }

@@ -8,7 +8,7 @@
         <span
             id="button-text"
         >
-            Pay now {{ series }} | {{ seriestype }}
+            Pay now
         </span>
         </button>
         <NuxtLink
@@ -58,10 +58,6 @@ export default {
     discountCode: {
       type: String,
       default: ''
-    },
-    series: {
-      type: [ String ],
-      required: true
     },
     seriestype: {
       type: [ String ],
