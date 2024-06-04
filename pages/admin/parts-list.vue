@@ -106,6 +106,12 @@
             :getSeries="retrieveSeries"
             />
           </div>
+          <div v-if="activeTab === 'registered'">
+            <Registered
+            :Matches="MatchList"
+            :getEvents="retrieveEvents"
+            />
+          </div>
         </main>
       </div>
     </div>
@@ -132,6 +138,7 @@ import Results from '~/components/admin/Results.vue';
 import Ladders from '~/components/admin/Ladders.vue';
 import Series from '~/components/admin/Series.vue';
 import Players from '~/components/admin/Players.vue';
+import Registered from '~/components/admin/Registered.vue';
 export default {
   name: 'parts-list',
   components: {
@@ -146,6 +153,7 @@ export default {
     Ladders,
     Series,
     Players,
+    Registered,
   },
   data() {
     return {
@@ -220,6 +228,7 @@ export default {
         { value: 'series', label: 'Series' },
         { value: 'fixings', label: 'Fixings' },
         { value: 'results', label: 'Results' },
+        { value: 'registered', label: 'Registered' },
       ],
     };
   },
