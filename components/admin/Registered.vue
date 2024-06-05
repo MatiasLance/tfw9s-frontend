@@ -418,28 +418,29 @@ export default {
       this.$axios
         .$get(`v1/teams?${queryString}`)
         .then((response) => {
-          const EventList = response.data.teams.map(team => {
-            console.log(team.name);
-            return {
-              ...team,
-              eventmatch: {
-                team: team.name,
-                coachPhone: team.coach_mobile,
-                coachEmail: team.coach_email,
-                manager: team.manager_name,
-                managerEmail: team.manager_email,
-                price: team.registration.price,
-                paymentmethod: team.registration.payment_gateway,
-                transactionid: team.registration.transaction_id,
-                timestamp: this.formattedDate(
-                  team.registration.created_at
-                ),
-                updated: this.formattedDate(
-                  team.registration.updated_at
-                ),
-              }
-            };
-          });
+          const EventList = response.data.teams
+            .filter(team => team.registration_id !== null)
+            .map(team => {
+              return {
+                ...team,
+                eventmatch: {
+                  team: team.name,
+                  coachPhone: team.coach_mobile,
+                  coachEmail: team.coach_email,
+                  manager: team.manager_name,
+                  managerEmail: team.manager_email,
+                  price: team.registration.price,
+                  paymentmethod: team.registration.payment_gateway,
+                  transactionid: team.registration.transaction_id,
+                  timestamp: this.formattedDate(
+                    team.registration.created_at
+                  ),
+                  updated: this.formattedDate(
+                    team.registration.updated_at
+                  ),
+                }
+              };
+            });
           this.teamList = EventList.flatMap(data => {
             return data.eventmatch;
           });

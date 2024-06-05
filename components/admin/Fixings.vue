@@ -109,7 +109,7 @@
                     "
                     @click="openEditFixingDialog(event)"
                   >
-                    Manage
+                    Edit
                   </BaseButton>
                   <BaseButton
                   class="
@@ -384,16 +384,16 @@ export default {
             return {
               ...event,
               // eslint-disable-next-line camelcase
-              manager_name: `${event.manager.user.first_name}
-               ${event.manager.user.last_name}`,
+              manager_name: `${event.manager?.user?.first_name ?? ''}
+                  ${event.manager?.user?.last_name ?? ''}`,
               // eslint-disable-next-line camelcase
-              region_name: event.region.name,
+              region_name: event.region?.name ?? '',
               date: this.formattedDate(event.event_date),
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
-                  time: this.reformatTime(match.match_time),
-                  matchtime: this.convertTo12HourFormat(match.match_time),
+                  time: this.reformatTime(match.match_time ?? ''),
+                  matchtime: this.convertTo12HourFormat(match.match_time ?? ''),
                 };
               })
             };

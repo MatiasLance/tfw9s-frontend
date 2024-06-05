@@ -7,69 +7,18 @@
           </h3>
           <hr class="my-3 lg:w-[918px]"/>
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <div class="col-span-1">
-              <label for="selectfield" class="mb-1 block">
-                Series:
+            <div class="col-span-2 md:col-span-1">
+              <label for="selectagegroup" class="mb-1 block">
+               Match Time
               </label>
               <VSelect
-                v-model="SeriesId"
-                :items="filteredSeries"
-                label="Choose a Series"
+                label="Choose Match Time"
                 :rules="rules"
                 solo
               >
-                <template #prepend-item>
-                  <div class="sticky-search-bar px-3">
-                    <SearchBar v-model="seriesQuery" />
-                  </div>
-                </template>
               </VSelect>
             </div>
-            <div class="col-span-1">
-              <label for="selectagegroup" class="mb-1 block">
-                Age Group:
-              </label>
-              <VSelect
-              v-model="Event.agegroup_id"
-              :items="formattedAgeGroup"
-              label="Choose Age Group"
-              :rules="rules"
-              solo
-              >
-              </VSelect>
-            </div>
-            <div class="col-span-1 md:col-span-2">
-              <label for="eventname" class="mb-1 block">
-                Title:
-              </label>
-              <VTextField
-              id="name"
-              v-model="Event.name"
-              label="Enter Event Title"
-              :rules="rules"
-              type="text"
-              solo
-              />
-            </div>
-            <div class="col-span-1">
-              <label for="selectmanager" class="mb-1 block">
-                TFW Staff:
-              </label>
-              <VSelect
-              v-model="Event.managerId"
-              :items="filteredManagers"
-              label="Choose a Staff"
-              :rules="rules"
-              solo
-              >
-                <template #prepend-item>
-                  <div class="sticky-search-bar px-3">
-                    <SearchBar v-model="managerQuery" />
-                  </div>
-                </template>
-              </VSelect>
-            </div>
-            <div class="col-span-1">
+            <div class="col-span-2 md:col-span-1">
               <label for="selectfield" class="mb-1 block">
                 Region:
               </label>
@@ -87,20 +36,20 @@
                 </template>
               </VSelect>
             </div>
-          <div class="col-span-1">
-            <label for="eventname" class="mb-1 block">
-              Team Count:
-            </label>
-            <VTextField
-            id="name"
-            v-model="Event.teamcount"
-            label="Enter Event Title"
-            :rules="rules"
-            type="number"
-            solo
-            />
-          </div>
-          <div class="col-span-1">
+            <div class="col-span-2 md:col-span-1">
+              <label for="selectagegroup" class="mb-1 block">
+                Age Group:
+              </label>
+              <VSelect
+              v-model="Event.agegroup_id"
+              :items="formattedAgeGroup"
+              label="Choose Age Group"
+              :rules="rules"
+              solo
+              >
+              </VSelect>
+            </div>
+            <div class="col-span-2 md:col-span-1">
               <label for="selectdate" class="mb-1 block">
                 Date:
               </label>
@@ -112,6 +61,50 @@
               :max-date="maxdate"
               :rules="rules"
               />
+            </div>
+            <div class="col-span-1 md:col-span-2" hidden>
+              <label for="eventname" class="mb-1 block">
+                Title:
+              </label>
+              <VTextField
+              id="name"
+              v-model="Event.name"
+              label="Enter Event Title"
+              :rules="rules"
+              type="text"
+              solo
+              />
+            </div>
+            <div class="col-span-1" hidden>
+              <label for="selectmanager" class="mb-1 block">
+                TFW Staff:
+              </label>
+              <VSelect
+              v-model="Event.managerId"
+              :items="filteredManagers"
+              label="Choose a Staff"
+              :rules="rules"
+              solo
+              >
+                <template #prepend-item>
+                  <div class="sticky-search-bar px-3">
+                    <SearchBar v-model="managerQuery" />
+                  </div>
+                </template>
+              </VSelect>
+            </div>
+          <div class="col-span-1" hidden>
+            <label for="eventname" class="mb-1 block">
+              Team Count:
+            </label>
+            <VTextField
+            id="name"
+            v-model="Event.teamcount"
+            label="Enter Event Title"
+            :rules="rules"
+            type="number"
+            solo
+            />
           </div>
           <div class="col-span-1 mb-4 lg:col-span-2">
             <div class="flex items-center justify-between">
@@ -135,8 +128,8 @@
               </button>
             </div>
             <div
-            class="
-            mt-2 grid grid-cols-1 gap-2 md:grid-cols-2"
+              class="
+              mt-2 grid grid-cols-1 gap-2 md:grid-cols-2"
             >
               <div
               v-for="(matchBuffer, matchIndex) in multipleMatch"
@@ -319,11 +312,6 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.Event = this.event;
-          this.SeriesId = this.event.series_id??null;
-          const matchingManager = this.filteredManagers.find(manager =>
-            manager.value === this.Event.manager.id);
-          this.Event.managerId = matchingManager ?
-            matchingManager.value : null;
           this.multipleMatch = this.Event.eventmatch.map(event => ({
             id: event.id,
             time: this.convertTimeToDate(event.match_time),
