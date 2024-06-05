@@ -40,94 +40,16 @@
                   </div>
                   <div class="col-span-1">
                     <label for="selectevent" class="mb-1 block">
-                      :
+                      Age Group
                     </label>
                     <VSelect
-                    v-model="TeamData.event_id"
+                    v-model="TeamData.agegroup_id"
                     :items="formattedEvents"
-                    label="Choose Series"
+                    label="Choose a Age Group"
                     :rules="rules"
                     solo
                     >
                     </VSelect>
-                  </div>
-                  <div class="col-span-1 md:col-span-2">
-                    <label for="teamname" class="mb-1 block">
-                      Coach Name:
-                    </label>
-                    <VTextField
-                    id="name"
-                    v-model="TeamData.coach_name"
-                    label="Enter Coach Name"
-                    :rules="rules"
-                    type="text"
-                    solo
-                    />
-                  </div>
-                  <div class="col-span-1">
-                    <label for="teamname" class="mb-1 block">
-                      Coach Mobile Number:
-                    </label>
-                    <VTextField
-                    id="number"
-                    v-model="TeamData.coach_mobile"
-                    label="Enter Mobile Number"
-                    :rules="rules"
-                    type="tel"
-                    solo
-                    />
-                  </div>
-                  <div class="col-span-1">
-                    <label for="teamname" class="mb-1 block">
-                      Coach Email:
-                    </label>
-                    <VTextField
-                    id="email"
-                    v-model="TeamData.coach_email"
-                    label="Enter Coach Email"
-                    :rules="rules"
-                    type="email"
-                    solo
-                    />
-                  </div>
-                  <div class="col-span-1 md:col-span-2">
-                    <label for="teamname" class="mb-1 block">
-                      Manager Name:
-                    </label>
-                    <VTextField
-                    id="name"
-                    v-model="TeamData.manager_name"
-                    label="Enter Manager Name"
-                    :rules="rules"
-                    type="text"
-                    solo
-                    />
-                  </div>
-                  <div class="col-span-1">
-                    <label for="teamname" class="mb-1 block">
-                      Manager Mobile Number:
-                    </label>
-                    <VTextField
-                    id="number"
-                    v-model="TeamData.manager_mobile"
-                    label="Enter Mobile Number"
-                    :rules="rules"
-                    type="tel"
-                    solo
-                    />
-                  </div>
-                  <div class="col-span-1">
-                    <label for="teamname" class="mb-1 block">
-                      Manager Email:
-                    </label>
-                    <VTextField
-                    id="email"
-                    v-model="TeamData.manager_email"
-                    label="Enter Manager Email"
-                    :rules="rules"
-                    type="email"
-                    solo
-                    />
                   </div>
                   <div class="col-span-1 md:col-span-2">
                     <label for="photo" class="mb-1 block">
@@ -291,8 +213,8 @@ export default {
     },
     formattedEvents() {
       return this.event.map(event => ({
-        text: `${event.name} - ${event.agegroup?event.agegroup.name:''}`,
-        value: event.id,
+        text: `${event.agegroup?event.agegroup.name:''}`,
+        value: event.agegroup.id,
         disabled: event.team.length >= event.teamcount
       }));
     },
@@ -339,15 +261,16 @@ export default {
     addTeam() {
       const formData = new FormData();
       formData.append('name', this.TeamData.name);
-      formData.append('description', this.TeamData.description);
+      formData.append('description', null);
       formData.append('field_id', this.TeamData.field_id);
-      formData.append('event_id', this.TeamData.event_id);
-      formData.append('coach_name', this.TeamData.coach_name);
-      formData.append('coach_mobile', this.TeamData.coach_mobile);
-      formData.append('coach_email', this.TeamData.coach_email);
-      formData.append('manager_name', this.TeamData.manager_name);
-      formData.append('manager_mobile', this.TeamData.manager_mobile);
-      formData.append('manager_email', this.TeamData.manager_email);
+      formData.append('agegroup_id', this.TeamData.agegroup_id);
+      formData.append('description', '');
+      formData.append('coach_name', '');
+      formData.append('coach_mobile', '');
+      formData.append('coach_email', '');
+      formData.append('manager_name', '');
+      formData.append('manager_mobile', '');
+      formData.append('manager_email', '');
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'gymThumbnail.png');

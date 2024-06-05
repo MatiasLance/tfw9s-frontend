@@ -7,25 +7,38 @@
           </h3>
           <hr class="my-3 lg:w-[918px]"/>
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <div class="col-span-1">
-              <label for="selectfield" class="mb-1 block">
-                Series:
+            <div class="col-span-2 md:col-span-1">
+              <label for="selectagegroup" class="mb-1 block">
+               Match Time
               </label>
               <VSelect
-                v-model="SeriesId"
-                :items="filteredSeries"
-                label="Choose a Series"
+                v-model="matchTime"
+                :items="matchTimeOption"
+                label="Choose Match Time"
                 :rules="rules"
                 solo
-            >
-              <template #prepend-item>
-                <div class="sticky-search-bar px-3">
-                  <SearchBar v-model="seriesQuery" />
-                </div>
-              </template>
-            </VSelect>
+              >
+              </VSelect>
             </div>
-            <div class="col-span-1">
+            <div class="col-span-2 md:col-span-1">
+              <label for="selectfield" class="mb-1 block">
+                Region:
+              </label>
+              <VSelect
+                v-model="Event.region_id"
+                :items="filteredRegions"
+                label="Choose a Region"
+                :rules="rules"
+                solo
+              >
+                <template #prepend-item>
+                  <div class="sticky-search-bar px-3">
+                    <SearchBar v-model="regionQuery" />
+                  </div>
+                </template>
+              </VSelect>
+            </div>
+            <div class="col-span-2 md:col-span-1">
               <label for="selectagegroup" class="mb-1 block">
                 Age Group:
               </label>
@@ -38,69 +51,7 @@
               >
               </VSelect>
             </div>
-            <div class="col-span-1 md:col-span-2">
-              <label for="eventname" class="mb-1 block">
-                Title:
-              </label>
-              <VTextField
-              id="name"
-              v-model="Event.name"
-              label="Enter Event Title"
-              :rules="rules"
-              type="text"
-              solo
-              />
-            </div>
-            <div class="col-span-1">
-              <label for="selectmanager" class="mb-1 block">
-                TFW Staff:
-              </label>
-              <VSelect
-              v-model="Event.managerId"
-              :items="filteredManagers"
-              label="Choose a Staff"
-              :rules="rules"
-              solo
-              >
-                <template #prepend-item>
-                  <div class="sticky-search-bar px-3">
-                    <SearchBar v-model="managerQuery" />
-                  </div>
-                </template>
-              </VSelect>
-            </div>
-            <div class="col-span-1">
-              <label for="selectfield" class="mb-1 block">
-                Region:
-              </label>
-              <VSelect
-              v-model="Event.region_id"
-              :items="filteredRegions"
-              label="Choose a Region"
-              :rules="rules"
-              solo
-           >
-            <template #prepend-item>
-              <div class="sticky-search-bar px-3">
-                <SearchBar v-model="regionQuery" />
-              </div>
-            </template>
-          </VSelect>
-          </div>
-          <div class="col-span-1">
-            <label for="eventname" class="mb-1 block">
-              Team Count:
-            </label>
-            <VTextField
-            id="name"
-            v-model="Event.teamcount"
-            label="Enter Event Title"
-            :rules="rules"
-            type="number"
-            solo
-            />
-          </div>
-          <div class="col-span-1">
+            <div class="col-span-2 md:col-span-1">
               <label for="selectdate" class="mb-1 block">
                 Date:
               </label>
@@ -112,6 +63,171 @@
               :max-date="maxdate"
               :rules="rules"
               />
+            </div>
+            <div class="col-span-2">
+              <div class="flex items-center justify-between">
+                <label class="mb-1 block"> Matches </label>
+                  <button
+                    type="button"
+                    class="
+                      flex
+                      items-center
+                      justify-center
+                      border border-solid border-brand-black
+                      bg-brand-black
+                      px-4
+                      py-2
+                      text-white
+                    "
+                    @click="addMatchForm"
+                  >
+                    <i class="ri-add-fill"></i>
+                    Add Match
+                  </button>
+              </div>
+              <div
+              class="
+              mt-2 grid grid-cols-1 gap-2 md:grid-cols-2"
+            >
+              <div
+              v-for="(matchBuffer, matchIndex) in multipleMatch"
+              :key="matchIndex"
+              class="flex justify-center gap-1"
+              >
+              <!-- data Map -->
+                <div
+                class="
+                  relative
+                  h-auto
+                  w-full
+                  rounded-lg
+                  border-2
+                  border-[#CCCCCC]
+                  p-4"
+                >
+                  <button
+                    type="button"
+                    class="
+                      absolute
+                      right-2
+                      top-2
+                      h-6 w-6
+                      text-brand-black
+                      hover:bg-brand-black hover:text-white
+                    "
+                    @click="removeMatch(matchIndex)"
+                  >
+                    <div class="ri-close-fill ri-lg"></div>
+                  </button>
+                  <div>
+                    <div class="col-span-1">
+                      <label for="field" class="mb-1 block">
+                        Field:
+                      </label>
+                      <VSelect
+                        v-model="matchBuffer.field_id"
+                        :items="fields"
+                        item-text="name"
+                        item-value="id"
+                        label="Choose Field"
+                        :rules="rules"
+                        solo
+                      >
+                      </VSelect>
+                    </div>
+                    <div class="col-span-1">
+                      <label for="match_team1" class="mb-1 block">
+                          Team 1:
+                      </label>
+                      <VSelect
+                        v-model="matchBuffer.team1"
+                        :items="filteredTeamsForTeam1"
+                        item-text="name"
+                        item-value="id"
+                        label="Choose Team 1"
+                        :rules="rules"
+                        solo
+                      >
+                      </VSelect>
+                    </div>
+                    <div class="col-span-1">
+                      <label for="match_team1" class="mb-1 block">
+                          Team 2:
+                      </label>
+                      <VSelect
+                        v-model="matchBuffer.team2"
+                        :items="filteredTeamsForTeam2"
+                        item-text="name"
+                        item-value="id"
+                        label="Choose Team 2"
+                        :rules="rules"
+                        solo
+                      >
+                      </VSelect>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="col-span-1 md:col-span-2" hidden>
+              <label for="eventname" class="mb-1 block">
+                Title:
+              </label>
+              <VTextField
+              id="name"
+              v-model="Event.name"
+              label="Enter Event Title"
+              type="text"
+              solo
+              />
+            </div>
+            <div class="col-span-1" hidden>
+              <label for="selectmanager" class="mb-1 block">
+                TFW Staff:
+              </label>
+              <VSelect
+              v-model="Event.managerId"
+              :items="filteredManagers"
+              label="Choose a Staff"
+              solo
+              >
+                <template #prepend-item>
+                  <div class="sticky-search-bar px-3">
+                    <SearchBar v-model="managerQuery" />
+                  </div>
+                </template>
+              </VSelect>
+            </div>
+            <div class="col-span-1" hidden>
+              <label for="selectfield" class="mb-1 block">
+                Series:
+              </label>
+              <VSelect
+                v-model="SeriesId"
+                :items="filteredSeries"
+                label="Choose a Series"
+
+                solo
+            >
+              <template #prepend-item>
+                <div class="sticky-search-bar px-3">
+                  <SearchBar v-model="seriesQuery" />
+                </div>
+              </template>
+            </VSelect>
+            </div>
+          <div class="col-span-1" hidden>
+            <label for="eventname" class="mb-1 block">
+              Team Count:
+            </label>
+            <VTextField
+            id="name"
+            v-model="Event.teamcount"
+            label="Enter Event Title"
+            type="number"
+            solo
+            />
           </div>
           </div>
           <hr class="my-3"/>
@@ -168,9 +284,43 @@ export default {
       type: Array,
       required: true
     },
+    fields: {
+      type: Array,
+      required: true
+    },
+    teams: {
+      type: Array,
+      required: true
+    },
   },
   data() {
     return {
+      matchTime: null,
+      matchTimeOption: [
+        { text: '8:00', value: '8:00' },
+        { text: '8:25', value: '8:25' },
+        { text: '8:50', value: '8:50' },
+        { text: '9:15', value: '9:15' },
+        { text: '9:40', value: '9:40' },
+        { text: '10:05', value: '10:05' },
+        { text: '10:30', value: '10:30' },
+        { text: '10:55', value: '10:55' },
+        { text: '11:20', value: '11:20' },
+        { text: '11:55', value: '11:55' },
+        { text: '12:10', value: '12:10' },
+        { text: '1:00', value: '13:00' },
+        { text: '1:25', value: '13:25' },
+        { text: '2:15', value: '14:15' },
+        { text: '2:40', value: '14:40' },
+        { text: '3:05', value: '15:05' },
+        { text: '3:30', value: '15:30' },
+        { text: '3:55', value: '15:55' },
+        { text: '4:20', value: '16:20' },
+        { text: '4:45', value: '16:45' },
+        { text: '5:10', value: '17:10' },
+        { text: '5:35', value: '17:35' },
+        { text: '6:00', value: '18:00' },
+      ],
       SeriesId: null,
       mindate: null,
       maxdate: null,
@@ -181,13 +331,14 @@ export default {
       Event: {},
       multipleMatch: [
         {
-          time: null,
           field_id: null,
           team1: [],
           team2: [],
         }
       ],
       rules: [ value => !!value || 'Required' ],
+      selectedTeam1: null,
+      selectedTeam2: null,
     }
   },
   computed: {
@@ -231,6 +382,16 @@ export default {
           series.text.toLowerCase().includes(this.seriesQuery.toLowerCase()) :
           false
       );
+    },
+    filteredTeamsForTeam1() {
+      const selectedTeam2Ids = this.multipleMatch.map(
+        match => match.team2).filter(id => id !== null);
+      return this.teams.filter(team => !selectedTeam2Ids.includes(team.id));
+    },
+    filteredTeamsForTeam2() {
+      const selectedTeam1Ids = this.multipleMatch.map(
+        match => match.team1).filter(id => id !== null);
+      return this.teams.filter(team => !selectedTeam1Ids.includes(team.id));
     },
   },
   watch: {
@@ -317,21 +478,16 @@ export default {
       const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
       const formData = new FormData();
-      formData.append('datetime', event_date);
-      formData.append('name', this.Event.name);
-      formData.append('description', this.Event.description);
       formData.append('region_id', this.Event.region_id);
-      formData.append('manager_id', this.Event.managerId);
       formData.append('agegroup_id', this.Event.agegroup_id);
-      formData.append('series', this.SeriesId);
-      formData.append('teamcount', this.Event.teamcount);
+      formData.append('datetime', event_date);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
-        formData.append(`matches[${i}][time]`, match.time?match.time:'00:00');
+        formData.append(`matches[${i}][time]`, this.matchTime);
         formData.append(`matches[${i}][field_id]`, match.field_id);
-        formData.append(`matches[${i}][team1]`, match.team1.id);
-        formData.append(`matches[${i}][team2]`, match.team2.id);
+        formData.append(`matches[${i}][team1]`, match.team1);
+        formData.append(`matches[${i}][team2]`, match.team2);
       }
       this.$axios
         .$post('v1/events', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
@@ -355,13 +511,16 @@ export default {
       this.Event = []
       this.multipleMatch = [
         {
-          time: null, team1: [], team2: []
+          team1: [],
+          team2: [],
         }
       ]
     },
     addMatchForm() {
       this.multipleMatch.push({
-        time: null, team1: [], team2: []
+        field_id: null,
+        team1: null,
+        team2: null,
       });
     },
     updateMatch(matchIndex, newMatch) {
