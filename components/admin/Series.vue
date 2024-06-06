@@ -227,6 +227,19 @@
                     </BaseButton>
                   </div>
                   <BaseButton
+                    v-show="ActiveTab === 'tournament' || ActiveTab === 'coast'"
+                  class="
+                    max-w-full rounded-lg
+                    border border-gray-200
+                    bg-[#737373]
+                    py-2
+                    px-4
+                    "
+                    @click="openTeamLimitDialog(data)"
+                  >
+                    Team Limit
+                  </BaseButton>
+                  <BaseButton
                   class="
                     max-w-full rounded-lg
                     border border-gray-200
@@ -275,6 +288,13 @@
   @close="closeAddSeriesDialog"
   @confirm="AddSeries"
   />
+  <ManageTeamLimitModal
+  :active="showTeamLimitModal"
+  :agegroup="AgeGroupList"
+  :seriesid="seriesid"
+  @close="closeTeamLimitDialog"
+  @confirm="EditTeamLimit"
+  />
   <EditSeriesModal
   :active="showEditSeriesModal"
   :agegroup="AgeGroupList"
@@ -298,9 +318,11 @@
 import AddSeriesModal from '~/components/modals/AddSeriesModal.vue';
 import EditSeriesModal from '~/components/modals/EditSeriesModal.vue';
 import DeleteSeriesModal from '~/components/modals/DeleteSeriesModal.vue';
+import ManageTeamLimitModal from '~/components/modals/ManageTeamLimitModal.vue';
 export default {
   components: {
     AddSeriesModal,
+    ManageTeamLimitModal,
     EditSeriesModal,
     DeleteSeriesModal,
   },
@@ -335,6 +357,7 @@ export default {
       ],
       showAddSeriesModal: false,
       showEditSeriesModal: false,
+      showTeamLimitModal: false,
       showDeleteSeriesModal: false,
       selecetedData: ({}),
       Data: [],
@@ -342,6 +365,7 @@ export default {
       selectedEvent: null,
       selectedYear: null,
       selectedGroup: [],
+      seriesid: 0,
       events: [
         'Event 1',
         'Event 2',
@@ -435,6 +459,13 @@ export default {
     openAddSeriesDialog() {
       this.showAddSeriesModal = true
     },
+    openTeamLimitDialog(data) {
+      this.seriesid = data.id
+      this.showTeamLimitModal = true
+    },
+    closeTeamLimitDialog() {
+      this.showTeamLimitModal = false
+    },
     closeAddSeriesDialog() {
       this.showAddSeriesModal = false
     },
@@ -457,6 +488,18 @@ export default {
     closeEditSeriesDialog() {
       this.selecetedData = ({})
       this.showEditSeriesModal = false
+    },
+    EditTeamLimit() {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Team Limit Modified',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      })
+      this.showTeamLimitModal = false;
+      this.retrieveSeries();
+      this.getSeries();
     },
     EditSeries(data) {
       this.$oruga.notification.open({

@@ -991,21 +991,21 @@ export default {
       },
     },
     /*
-    formattedTags() {
-      return this.Taglist.map(cat =>
-        ({
-          text: cat.name,
-          value: cat.id,
-        }));
-    },
-    filteredTags() {
-      return this.formattedTags.filter(cat =>
-        cat && cat.text && typeof cat.text === 'string' ?
-          cat.text.toLowerCase().includes(this.tagQuery.toLowerCase()):
-          false
-      );
-    },
-    */
+     * formattedTags() {
+     * return this.Taglist.map(cat =>
+     *   ({
+     *     text: cat.name,
+     *     value: cat.id,
+     *   }));
+     * },
+     * filteredTags() {
+     * return this.formattedTags.filter(cat =>
+     *   cat && cat.text && typeof cat.text === 'string' ?
+     *     cat.text.toLowerCase().includes(this.tagQuery.toLowerCase()):
+     *     false
+     * );
+     * },
+     */
   },
   watch: {
     totalPages() {
@@ -1039,18 +1039,7 @@ export default {
           queue: true,
         });
         return false;
-      }
-      /*
-        else if (this.tags.length === 0) {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Item needs at least one tag',
-          position: 'bottom',
-          variant: 'danger',
-          queue: true,
-        });
-        return false;
-      } */ else if (type === 'Add') {
+      } else if (type === 'Add') {
         this.create()
         return true;
       } else if (type === 'Edit') {
@@ -1059,6 +1048,18 @@ export default {
       } else {
         return false;
       }
+      /*
+       * else if (this.tags.length === 0) {
+       * this.$oruga.notification.open({
+       *   duration: 5000,
+       *   message: 'Item needs at least one tag',
+       *   position: 'bottom',
+       *   variant: 'danger',
+       *   queue: true,
+       * });
+       * return false;
+       * }
+       */
     },
     addMerchItem() {
       this.showAddMerchItemModal = true;
@@ -1104,28 +1105,27 @@ export default {
         });
     },
     /*
-    retrieveTags() {
-      this.isNewsLoading = true;
-
-      const query = { q: this.query };
-
-      // Sanitize and remove null values
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-      const queryString = new URLSearchParams(query).toString()
-      this.$axios
-        .$get(`v1/tags?${queryString}`)
-        .then((response) => {
-          this.Taglist = response.data.tags
-        })
-        .finally(() => {
-          this.isNewsLoading = false;
-        });
-    },
-    */
+     * retrieveTags() {
+     * this.isNewsLoading = true;
+     *
+     * const query = { q: this.query };
+     *
+     * // Sanitize and remove null values
+     * Object.keys(query).forEach((key) => {
+     * if (query[key] == null) {
+     *   }
+     * })
+     * const queryString = new URLSearchParams(query).toString()
+     * this.$axios
+     *   .$get(`v1/tags?${queryString}`)
+     *   .then((response) => {
+     *     this.Taglist = response.data.tags
+     *   })
+     *   .finally(() => {
+     *     this.isNewsLoading = false;
+     *   });
+     * },
+     */
     addCategoryPicker() {
       this.multipleCategoryCounter += 1
       this.multipleCategoryBuffer.push(this.multipleCategoryCounter)
@@ -1322,10 +1322,10 @@ export default {
       form.append('isRRP', this.item.show_rrp)
 
       /*
-      for (let i = 0; i < this.tags.length; i++) {
-        form.append('tags[]', this.tags[i]);
-      }
-      */
+       * for (let i = 0; i < this.tags.length; i++) {
+       * form.append('tags[]', this.tags[i]);
+       * }
+       */
 
       for (let i = 0; i < categoryId.length; i++) {
         form.append('categoryId[]', categoryId[i]);
@@ -1372,8 +1372,8 @@ export default {
         .then((response) => {
           this.item = response.data.item
           /*
-          this.tags = response.data.item.tags.map(x => x.id);
-          */
+           * this.tags = response.data.item.tags.map(x => x.id);
+           */
           const categoryLineages = response.data.item.categoryLineages
           this.multipleCategoryCounter = categoryLineages.length
           this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
@@ -1415,10 +1415,10 @@ export default {
       form.append('isRRP', this.item.show_rrp)
 
       /*
-      for (let i = 0; i < this.tags.length; i++) {
-        form.append('tags[]', this.tags[i]);
-      }
-      */
+       * for (let i = 0; i < this.tags.length; i++) {
+       * form.append('tags[]', this.tags[i]);
+       * }
+       */
 
       for (let i = 0; i < categoryId.length; i++) {
         form.append('categoryId[]', categoryId[i]);

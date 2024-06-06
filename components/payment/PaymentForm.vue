@@ -236,6 +236,8 @@ export default {
       showTaxInfo: true,
       gstrate: '10%',
       gstrateValue: 0.1,
+      afterDiscount: 0,
+      regularPrice: 0
     };
   },
   computed: {
@@ -366,9 +368,8 @@ export default {
             if (this.checkLesserMinimumAmount(this.minimumAmount)) {
               this.showErrorMessage = true
               this.ResponseMessage = `
-Cart Subtotal is less than $${this.minimumAmount} minimum order required
-for this code.
-`
+              Subtotal is less than $${this.minimumAmount}
+              minimum order required for this code.`
               setTimeout(() => {
                 this.showErrorMessage = false
               }, 5000);
@@ -464,6 +465,8 @@ for this code.
           total = response.calculation.totalPrice;
           this.overallTotal = total;
           this.taxAmount = response.calculation.taxAmount;
+          this.afterDiscount = response.calculation.afterDiscount;
+          this.regularPrice = response.calculation.regularPrice;
 
           this.$store.commit('cart/setSubtotal', this.price)
           this.$store.commit('cart/setTotal', this.overallTotal)

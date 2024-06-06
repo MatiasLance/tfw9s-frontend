@@ -3,13 +3,15 @@
     <div class="payment-section flex grow flex-col bg-gray-200">
 
       <div class="flex">
-        <PaymentTab
+        <!--
+          <PaymentTab
           v-if="showPaypal"
           :active="paymentMethod === 'paypal'"
           @click="setAsPaymentMethod('paypal')"
-        >
+          >
           Paypal
-        </PaymentTab>
+          </PaymentTab>
+        -->
         <PaymentTab
           v-if="showStripe"
           :active="paymentMethod === 'stripe'"
@@ -26,14 +28,16 @@
         </PaymentTab>
       </div>
 
-      <PaypalCheckout
+      <!--
+        <PaypalCheckout
         v-if="paymentMethod === 'paypal'"
         id="paypal-payment-form"
         class="payment-module p-10"
         :cart-total="overallTotal"
         :discount-code="discountcode"
         @active-step="activeStepPrev"
-      />
+        />
+      -->
 
       <StripeCheckout
         v-if="paymentMethod === 'stripe'"
@@ -168,7 +172,7 @@
 
 <script>
 import currency from 'currency.js';
-import PaypalCheckout from '~/components/PaypalCheckout.vue';
+// import PaypalCheckout from '~/components/PaypalCheckout.vue';
 import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency';
@@ -176,7 +180,7 @@ import StripeCheckout from '~/components/StripeCheckout.vue';
 
 export default {
   components: {
-    PaypalCheckout,
+    // PaypalCheckout,
     SquareCheckout,
     PaymentTab,
     StripeCheckout
@@ -193,7 +197,7 @@ export default {
       showGSTIncluded: true,
       showGSTExcluded: false,
       isGSTInclusive: true,
-      paymentMethod: 'paypal',
+      paymentMethod: 'stripe',
       isStepperLoading: false,
       minimumAmount: 500,
       originalAmount: {

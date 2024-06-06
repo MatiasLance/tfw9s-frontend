@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
+    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
             <div
                 class="
                 space-y-3
@@ -12,23 +12,23 @@
                 "
             >
                 <span
-                class="
+                  class="
                     superheadline
                     flex flex-row
                     items-center
                     pb-3
                     text-[1rem]
                     font-normal
-                "
+                  "
                 >
-                <span class="font-medium">
+                  <span class="font-medium">
                     <NuxtLink to="/">
                     <VBtn text color="white">Home</VBtn>
                     </NuxtLink>
                     <NuxtLink to="/admin">
                     <VBtn text color="white">Admin</VBtn>
                     </NuxtLink>
-                </span>
+                  </span>
                 </span>
                 <h1
                     class="flex flex-row text-3xl font-bold

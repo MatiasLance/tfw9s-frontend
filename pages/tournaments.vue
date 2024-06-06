@@ -88,159 +88,175 @@
           />
         </div>
         <span
-        v-if="activeTab == 'weekly'"
-        class="col-cpan-1 p-4 text-white"
-        data-aos="fade-up"
-        data-aos-offset="0"
-        >
-          <article
-            class="grid md:grid-cols-3 grid-cols-2 w-full gap-4 pt-2"
-          >
-            <div
-              v-for="(item, index) in filteredWeekly" :key="item.id"
-              class="relative shrink-0 snap-center
-              rounded bg-[#212121] backdrop-blur border-double
-              border-[#4cbe5c] border-2 group"
-              data-aos="zoom-in"
-              data-aos-once="true"
-              :data-aos-delay="`${index}00`"
-            >
-
-            <img
-              class="z-0 h-full w-full object-cover
-              transition"
-              :src="getMediaURL(item.media[0], 'temp')"
-              alt="Series Image"
-            />
-
-            <div
-              class="absolute top-0 right-0 z-10 rounded-bl-xl
-              bg-black p-2 pl-4 font-semibold text-white"
-            >
-              {{ DateRange(item.start, item.end) }}
-            </div>
-
-            <div
-              class="absolute bottom-0 z-10 w-full bg-black
-              bg-opacity-75 p-2 pl-4 transition"
-            >
-              <span class="w-full font-semibold text-white">
-                {{ item.name }}
-              </span>
-              <span
-                class="w-full line-clamp-3 text-sm text-white h-0
-                opacity-0 group-hover:h-16 group-hover:opacity-100
-                transform-translate text-left transition-all origin-left"
-                v-html="item.description"
-              />
-              <span
-                class="w-full line-clamp-1 text-white h-0 font-medium
-                opacity-100 group-hover:h-6 group-hover:opacity-100 text-sm
-                transform-translate text-center transition-all origin-left
-                cursor-pointer"
-                @click="ViewArticle(item.id)"
-              >See more</span>
-            </div>
-          </div>
-        </article>
-        </span>
-        <span
-          v-if="activeTab == 'tournament'"
-          class="col-cpan-1 p-4 text-white"
+          v-if="activeTab == 'weekly'"
+          class="col-span-1 p-4 text-white"
           data-aos="fade-up"
           data-aos-offset="0"
         >
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <article class="grid md:grid-cols-3 grid-cols-2 w-full gap-4 pt-2">
             <div
-              v-for="(item, index) in filteredTournament" :key="item.id"
-              class="relative col-span-1 overflow-hidden rounded-lg
-              bg-[#212121] group p-4"
+              v-for="(item, index) in filteredWeekly"
+              :key="item.id"
+              class="relative shrink-0 snap-center rounded bg-[#212121]
+              backdrop-blur border-double border-[#4cbe5c] border-2 group"
               data-aos="zoom-in"
               data-aos-once="true"
               :data-aos-delay="`${index}00`"
             >
-
-              <article class="w-full overflow-hidden rounded-md">
-                <img
-                  class=" w-full object-cover group-hover:scale-125 transition"
-                  :src="getMediaURL(item.media[0], 'temp')"
-                  alt="Series Image"
+              <img
+                class="z-0 h-full w-full object-cover transition"
+                :src="getMediaURL(item.media[0], 'temp')"
+                alt="Series Image"
+              />
+              <div class="absolute top-0 right-0 z-10 rounded-bl-xl
+                bg-black p-2 pl-4 font-semibold text-white"
+              >
+                {{ DateRange(item.start, item.end) }}
+              </div>
+              <div class="absolute bottom-0 z-10 w-full
+                bg-black bg-opacity-75 p-2 pl-4 transition"
+              >
+                <span class="w-full font-semibold text-white">
+                  {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
+                </span>
+                <span
+                  class="w-full line-clamp-3 text-sm text-white h-0
+                  opacity-0 group-hover:h-16 group-hover:opacity-100
+                  transform-translate text-left transition-all origin-left"
+                  v-html="item.description"
                 />
-              </article>
-              <div class="w-full flex flex-row pt-4">
-                <div class="flex w-5/6 flex-col px-2">
-                  <span class="w-full font-semibold text-white line-clamp-1">
-                    {{ item.name }}
-                  </span>
+                <div class="mt-2 text-center">
                   <span
-                    class="w-full text-xs font-medium
-                    text-white opacity-75"
-                  >
-                    {{ DateRange(item.start, item.end) }}
-                  </span>
-                </div>
-                <div class="flex w-1/6 items-center justify-center">
-                  <span
-                    class="rounded-md bg-[#212121] px-2 text-3xl
-                    text-white transition hover:brightness-125
-                    cursor-pointer"
+                    class="w-full line-clamp-1 text-white font-medium
+                    h-0 opacity-0 group-hover:h-6 group-hover:opacity-100
+                    text-sm transition-all cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
-                    <i class="ri-arrow-right-line"/>
+                    <span>See more</span>
+                    <span
+                      class="inline-block transition-transform transform"
+                    >
+                      <i class="ri-arrow-right-s-line align-middle"></i>
+                    </span>
                   </span>
                 </div>
               </div>
             </div>
-          </div>
+          </article>
         </span>
         <span
-        v-if="activeTab == 'coast'"
-        class="col-cpan-1 p-4 text-white"
-        data-aos="fade-up"
-        data-aos-offset="0"
+          v-if="activeTab == 'tournament'"
+          class="col-span-1 p-4 text-white"
+          data-aos="fade-up"
+          data-aos-offset="0"
         >
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <article class="grid md:grid-cols-3 grid-cols-2 w-full gap-4 pt-2">
             <div
-              v-for="(item, index) in filteredCentral" :key="item.id"
-              class="relative col-span-1 overflow-hidden rounded-lg
-              bg-[#212121] group p-4"
+              v-for="(item, index) in filteredTournament"
+              :key="item.id"
+              class="relative shrink-0 snap-center rounded bg-[#212121]
+              backdrop-blur border-double border-[#4cbe5c] border-2 group"
               data-aos="zoom-in"
               data-aos-once="true"
               :data-aos-delay="`${index}00`"
             >
-
-              <article class="w-full overflow-hidden rounded-md">
-                <img
-                  class=" w-full object-cover group-hover:scale-125 transition"
-                  :src="getMediaURL(item.media[0], 'temp')"
-                  alt="Series Image"
+              <img
+                class="z-0 h-full w-full object-cover transition"
+                :src="getMediaURL(item.media[0], 'temp')"
+                alt="Series Image"
+              />
+              <div class="absolute top-0 right-0 z-10 rounded-bl-xl
+                bg-black p-2 pl-4 font-semibold text-white"
+              >
+                {{ DateRange(item.start, item.end) }}
+              </div>
+              <div class="absolute bottom-0 z-10 w-full
+                bg-black bg-opacity-75 p-2 pl-4 transition"
+              >
+                <span class="w-full font-semibold text-white">
+                  {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
+                </span>
+                <span
+                  class="w-full line-clamp-3 text-sm text-white h-0
+                  opacity-0 group-hover:h-16 group-hover:opacity-100
+                  transform-translate text-left transition-all origin-left"
+                  v-html="item.description"
                 />
-              </article>
-              <div class="w-full flex flex-row pt-4">
-                <div class="flex w-5/6 flex-col px-2">
-                  <span class="w-full font-semibold text-white line-clamp-1">
-                    {{ item.name }}
-                  </span>
+                <div class="mt-2 text-center">
                   <span
-                    class="w-full text-xs font-medium
-                    text-white opacity-75"
-                  >
-                    {{ DateRange(item.start, item.end) }}
-                  </span>
-                </div>
-                <div class="flex w-1/6 items-center justify-center">
-                  <span
-                    class="rounded-md bg-[#212121] px-2 text-3xl
-                    text-white transition hover:brightness-125
-                    cursor-pointer"
+                    class="w-full line-clamp-1 text-white font-medium
+                    h-0 opacity-0 group-hover:h-6 group-hover:opacity-100
+                    text-sm transition-all cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
-                    <i class="ri-arrow-right-line"/>
+                    <span>See more</span>
+                    <span
+                      class="inline-block transition-transform transform"
+                    >
+                      <i class="ri-arrow-right-s-line align-middle"></i>
+                    </span>
                   </span>
                 </div>
               </div>
             </div>
-          </div>
+          </article>
+        </span>
+        <span
+          v-if="activeTab == 'coast'"
+          class="col-span-1 p-4 text-white"
+          data-aos="fade-up"
+          data-aos-offset="0"
+        >
+          <article class="grid md:grid-cols-3 grid-cols-2 w-full gap-4 pt-2">
+            <div
+              v-for="(item, index) in filteredCentral"
+              :key="item.id"
+              class="relative shrink-0 snap-center rounded bg-[#212121]
+              backdrop-blur border-double border-[#4cbe5c] border-2 group"
+              data-aos="zoom-in"
+              data-aos-once="true"
+              :data-aos-delay="`${index}00`"
+            >
+              <img
+                class="z-0 h-full w-full object-cover transition"
+                :src="getMediaURL(item.media[0], 'temp')"
+                alt="Series Image"
+              />
+              <div class="absolute top-0 right-0 z-10 rounded-bl-xl
+                bg-black p-2 pl-4 font-semibold text-white"
+              >
+                {{ DateRange(item.start, item.end) }}
+              </div>
+              <div class="absolute bottom-0 z-10 w-full
+                bg-black bg-opacity-75 p-2 pl-4 transition"
+              >
+                <span class="w-full font-semibold text-white">
+                  {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
+                </span>
+                <span
+                  class="w-full line-clamp-3 text-sm text-white h-0
+                  opacity-0 group-hover:h-16 group-hover:opacity-100
+                  transform-translate text-left transition-all origin-left"
+                  v-html="item.description"
+                />
+                <div class="mt-2 text-center">
+                  <span
+                    class="w-full line-clamp-1 text-white font-medium
+                    h-0 opacity-0 group-hover:h-6 group-hover:opacity-100
+                    text-sm transition-all cursor-pointer"
+                    @click="ViewArticle(item.id)"
+                  >
+                    <span>See more</span>
+                    <span
+                      class="inline-block transition-transform transform"
+                    >
+                      <i class="ri-arrow-right-s-line align-middle"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </article>
         </span>
       </div>
     </section>
@@ -250,10 +266,14 @@
 <script>
 import VueSlickCarousel from 'vue-slick-carousel'
 import handlesMedia from '~/mixins/shop/handlesMedia';
+import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 export default {
   components: { VueSlickCarousel },
-  mixins: [ handlesMedia ],
+  mixins: [
+    handlesMedia,
+    currencyMixin
+  ],
   data() {
     return {
       pageSEO: {
