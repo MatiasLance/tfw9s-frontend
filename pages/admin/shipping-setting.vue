@@ -1,6 +1,6 @@
 <template>
     <div>
-        <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
+        <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
             <div
                 class="
                 space-y-3
@@ -2016,7 +2016,7 @@ export default {
       this.$router.push('/admin/categories')
     },
     productsLink() {
-      this.$router.push('/admin/parts-list')
+      this.$router.push('/admin/products')
     },
     addShip() {
       this.showAddShippingSettingForm = true

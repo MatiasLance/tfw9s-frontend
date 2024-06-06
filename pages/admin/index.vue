@@ -86,19 +86,6 @@
                       </h4>
                     </div>
                   </template>
-                  <template v-else>
-                    <small
-                    class="mb-1 font-bold  uppercase text-transparent"
-                    >TOTAL</small>
-                    <div class="flex items-start text-transparent">
-                      <h4
-                        class="mr-2 text-3xl font-bold"
-                        data-aos="fade-up"
-                      >
-                        {{ panel.count }}
-                      </h4>
-                    </div>
-                  </template>
 
                   <hr class="my-4">
                   <NuxtLink
@@ -149,18 +136,32 @@ export default {
           count: 0
         },
         {
-          title: 'Add Fights',
-          icon: 'fas fa-shopping-cart',
-          route: '/admin/parts-list',
-          desc: 'See all fights',
+          title: 'Discount Codes',
+          icon: 'fas fa-dollar-sign',
+          route: '/admin/discountcodes',
+          desc: 'See all discount codes',
           count: 0
         },
         {
-          title: 'Fight Categories',
-          icon: 'fas fa-folder',
-          route: '/admin/categories',
-          desc: 'See all categories',
+          title: 'News',
+          icon: 'fas fa-cog',
+          route: '/admin/news',
+          desc: 'See all news',
           count: 0
+        },
+        {
+          title: 'Partner Sponsor',
+          icon: 'fas fa-cog',
+          route: '/admin/partner-sponsor',
+          desc: 'See all Partner Sponsor',
+          count: 0
+        },
+        {
+          title: 'Master Settings',
+          icon: 'fas fa-cog',
+          route: '/admin/master-setting',
+          desc: 'Edit',
+          count: -1
         },
         {
           title: 'Shipping Settings',
@@ -177,39 +178,11 @@ export default {
           count: -1
         },
         {
-          title: 'Discount Codes',
-          icon: 'fas fa-dollar-sign',
-          route: '/admin/discountcodes',
-          desc: 'See all discount codes',
-          count: 0
-        },
-        {
-          title: 'Master Settings',
-          icon: 'fas fa-cog',
-          route: '/admin/master-setting',
-          desc: 'Edit',
-          count: -1
-        },
-        {
           title: 'Superadmin',
           icon: 'fas fa-cog',
           route: '/superadmin',
           desc: 'Proceed',
           count: -1
-        },
-        {
-          title: 'News',
-          icon: 'fas fa-cog',
-          route: '/admin/news',
-          desc: 'See all news',
-          count: 0
-        },
-        {
-          title: 'Partner Sponsor',
-          icon: 'fas fa-cog',
-          route: '/admin/partner-sponsor',
-          desc: 'See all Partner Sponsor',
-          count: 0
         },
         {
           title: 'Code of Conduct',
@@ -261,14 +234,12 @@ export default {
       switch (this.adminTab.toUpperCase()) {
       case 'MERCH':
         return this.panels.filter(panel => {
-          return [
-            'Merch Products', 'Merch Categories', 'Discount Codes'
-          ].includes(panel.title)
+          return [ 'Merch Products', 'Merch Categories' ].includes(panel.title)
         })
       case 'MASTER':
         return this.panels.filter(panel => {
           return [
-            'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance'
+            'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls'
           ].includes(panel.title)
         })
       default:
@@ -286,9 +257,9 @@ export default {
           console.log(response);
           this.panels[0].count = response.data.data.products;
           this.panels[1].count = response.data.data.category;
-          this.panels[6].count = response.data.data.discountcode;
-          this.panels[9].count = response.data.data.news;
-          this.panels[10].count = response.data.data.partner_sponsor;
+          this.panels[2].count = response.data.data.discountcode;
+          this.panels[3].count = response.data.data.news;
+          this.panels[4].count = response.data.data.partner_sponsor;
         })
         .catch(error => {
           console.error('Error fetching total count:', error);

@@ -3,7 +3,7 @@
   <div>
     <div class="mx-auto max-w-screen-xl">
       <div class="flex flex-wrap">
-        <main class="w-full">
+        <main class="w-full px-6">
           <VueSlickCarousel
             v-bind="slickSettings"
             draggable
@@ -11,7 +11,7 @@
             >
             <div
               v-for="tab in tabs"
-              :key="tab.value" class="px-2"
+              :key="tab.value" class="px-1"
             >
               <button
                 type="button"
@@ -20,6 +20,7 @@
                 rounded-md
                 py-1.5
                 text-center
+                text-sm
                 font-semibold
                 "
                 :class="(activeTab == tab.value)
@@ -173,7 +174,7 @@ export default {
       isEventsLoading: false,
       slickSettings: {
         arrows: false,
-        slidesToShow: 9,
+        slidesToShow: 10,
         responsive: [
           {
             breakpoint: 1280,
@@ -182,7 +183,7 @@ export default {
               slidesToScroll: 4,
               initialSlide: 0,
               infinite: true,
-              arrows: false
+              arrows: true
             }
           },
           {
@@ -192,7 +193,7 @@ export default {
               slidesToScroll: 3,
               initialSlide: 0,
               infinite: true,
-              arrows: false
+              arrows: true
             }
           },
           {
@@ -202,7 +203,7 @@ export default {
               slidesToScroll: 2,
               initialSlide: 0,
               infinite: true,
-              arrows: false
+              arrows: true
             }
           },
           {
@@ -212,7 +213,7 @@ export default {
               slidesToScroll: 1,
               initialSlide: 0,
               infinite: true,
-              arrows: false
+              arrows: true
             }
           }
         ],
@@ -445,5 +446,9 @@ export default {
 
 .v-icon {
   color: white !important;
+}
+
+.slick-prev:before, .slick-next:before {
+  color: #ffffff !important;
 }
 </style>

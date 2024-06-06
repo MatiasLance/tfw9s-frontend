@@ -1,6 +1,6 @@
 <template>
     <div>
-      <BaseHeader class="bg-gradient-to-r from-brand-grey to-brand-black">
+      <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
           <div
               class="
               space-y-3
