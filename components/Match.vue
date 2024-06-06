@@ -1,18 +1,6 @@
 <template>
   <div>
     <div class="col-span-1">
-      <label for="match_time" class="mb-1 block">
-        Match Time:
-      </label>
-      <section class="mb-6">
-        <OTimepicker
-          v-model="matchData.time"
-          placeholder="Click to select"
-        >
-        </OTimepicker>
-      </section>
-    </div>
-    <div class="col-span-1">
       <label for="field" class="mb-1 block">
         Field:
       </label>
@@ -84,16 +72,6 @@ export default {
       type: Array,
       required: true,
     },
-    region: {
-      type: Number,
-      default: null,
-      required: false,
-    },
-    event: {
-      type: Number,
-      default: null,
-      required: false,
-    },
   },
   data() {
     return {
@@ -129,29 +107,13 @@ export default {
         }));
     },
     filteredFields() {
-      return this.formattedField.filter(field => {
-        return field && field.text && typeof field.text === 'string' &&
-          field.text.toLowerCase().includes(this.fieldQuery.toLowerCase()) &&
-          (this.region ? this.region === field.region : true);
-      });
+      return this.formattedField;
     },
     filteredTeam1() {
-      return this.formattedTeam.filter(team =>
-        team && team.text && typeof team.text === 'string' ?
-          team.text.toLowerCase().includes(this.team1Query.toLowerCase()) &&
-          this.matchData.team2.id !== team.value &&
-          (this.event?this.event === team.event:true):
-          false
-      );
+      return this.formattedTeam;
     },
     filteredTeam2() {
-      return this.formattedTeam.filter(team =>
-        team && team.text && typeof team.text === 'string' ?
-          team.text.toLowerCase().includes(this.team2Query.toLowerCase()) &&
-          this.matchData.team1.id !== team.value &&
-          (this.event?this.event === team.event:true):
-          false
-      );
+      return this.formattedTeam;
     },
   },
   watch: {
