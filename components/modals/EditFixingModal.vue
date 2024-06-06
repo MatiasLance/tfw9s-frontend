@@ -3,15 +3,17 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
       <VForm ref="form" v-model="valid" lazy-validation>
           <h3 class="mb-3 font-bold text-brand-black">
-              Manage Fixing
+              Edit Fixing
           </h3>
           <hr class="my-3 lg:w-[918px]"/>
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div class="col-span-2 md:col-span-1">
-              <label for="selectagegroup" class="mb-1 block">
+              <label for="selectmatchtime" class="mb-1 block">
                Match Time
               </label>
               <VSelect
+                v-model="matchTime"
+                :items="matchTimeOption"
                 label="Choose Match Time"
                 :rules="rules"
                 solo
@@ -70,7 +72,6 @@
               id="name"
               v-model="Event.name"
               label="Enter Event Title"
-              :rules="rules"
               type="text"
               solo
               />
@@ -83,7 +84,6 @@
               v-model="Event.managerId"
               :items="filteredManagers"
               label="Choose a Staff"
-              :rules="rules"
               solo
               >
                 <template #prepend-item>
@@ -101,7 +101,6 @@
             id="name"
             v-model="Event.teamcount"
             label="Enter Event Title"
-            :rules="rules"
             type="number"
             solo
             />
@@ -261,6 +260,32 @@ export default {
           team2: [],
         }
       ],
+      matchTime: null,
+      matchTimeOption: [
+        { text: '8:00', value: '8:00' },
+        { text: '8:25', value: '8:25' },
+        { text: '8:50', value: '8:50' },
+        { text: '9:15', value: '9:15' },
+        { text: '9:40', value: '9:40' },
+        { text: '10:05', value: '10:05' },
+        { text: '10:30', value: '10:30' },
+        { text: '10:55', value: '10:55' },
+        { text: '11:20', value: '11:20' },
+        { text: '11:55', value: '11:55' },
+        { text: '12:10', value: '12:10' },
+        { text: '1:00', value: '13:00' },
+        { text: '1:25', value: '13:25' },
+        { text: '2:15', value: '14:15' },
+        { text: '2:40', value: '14:40' },
+        { text: '3:05', value: '15:05' },
+        { text: '3:30', value: '15:30' },
+        { text: '3:55', value: '15:55' },
+        { text: '4:20', value: '16:20' },
+        { text: '4:45', value: '16:45' },
+        { text: '5:10', value: '17:10' },
+        { text: '5:35', value: '17:35' },
+        { text: '6:00', value: '18:00' },
+      ],
       rules: [ value => !!value || 'Required' ],
     }
   },
@@ -333,6 +358,23 @@ export default {
       },
       immediate: true,
     },
+    multipleMatch: {
+      handler(newVal, oldVal) {
+        const firstMatchTime = newVal.map(match => {
+          const matchTime = new Date(match.time);
+          return matchTime.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          }
+          );
+        })[0];
+        if (firstMatchTime) {
+          this.matchTime = firstMatchTime;
+        }
+      },
+      deep: true
+    },
   },
   methods: {
     formattedDate(dateString) {
@@ -403,21 +445,14 @@ export default {
       const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
       const formData = new FormData();
-      formData.append('datetime', event_date);
-      formData.append('name', this.Event.name);
-      formData.append('description', this.Event.description);
       formData.append('region_id', this.Event.region_id);
-      formData.append('manager_id', this.Event.managerId);
       formData.append('agegroup_id', this.Event.agegroup_id);
-      formData.append('series', this.SeriesId);
-      formData.append('teamcount', this.Event.teamcount);
+      formData.append('datetime', event_date);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
-        const matchDateTime = new Date(match.time);
-        const matchTime = matchDateTime.toLocaleTimeString('en-US', { hour12: false });
         formData.append(`matches[${i}][id]`, match.id);
-        formData.append(`matches[${i}][time]`, matchTime);
+        formData.append(`matches[${i}][time]`, this.matchTime);
         formData.append(`matches[${i}][field_id]`, match.field_id);
         formData.append(`matches[${i}][team1]`, match.team1.id);
         formData.append(`matches[${i}][team2]`, match.team2.id);

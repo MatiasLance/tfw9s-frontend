@@ -320,9 +320,6 @@ export default {
             const ageGroupName = event.agegroup.name;
             return {
               ...event,
-              // eslint-disable-next-line camelcase
-              manager_name: `${event.manager.user.first_name}
-               ${event.manager.user.last_name}`,
               date: this.formattedDate(event.event_date),
               // eslint-disable-next-line camelcase
               eventmatch: event.eventmatch.map(match => {
