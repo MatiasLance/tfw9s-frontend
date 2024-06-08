@@ -54,7 +54,7 @@
         </div>
         <div class="absolute inset-0 flex items-center justify-center">
         <img
-        src="~/assets/images/the-final-whistle-logo.png"
+        src="~/assets/images/tfw9s.png"
         class="h-30 absolute top-3 mt-3 w-20 contrast-125"
         >
         </div>

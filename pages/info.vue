@@ -110,6 +110,12 @@
               <span class="info" v-html="statement.content"/>
           </div>
         </span>
+        <span v-if="activeTab == 'faq'">
+          <FAQ />
+        </span>
+        <span v-if="activeTab == 'teamfolder'">
+          <TeamFolder />
+        </span>
       </div>
     </section>
   </div>
@@ -117,8 +123,15 @@
 
 <script>
 import VueSlickCarousel from 'vue-slick-carousel'
+import FAQ from '~/components/FAQ'
+import TeamFolder from '~/components/TeamFolder'
+
 export default {
-  components: { VueSlickCarousel },
+  components: {
+    VueSlickCarousel,
+    FAQ,
+    TeamFolder
+  },
   data() {
     return {
       pageSEO: {
@@ -130,17 +143,19 @@ export default {
         { name: 'code', Label: 'Code of Conduct' },
         { name: 'rules', Label: 'Rules' },
         { name: 'insurance', Label: 'Insurance' },
+        { name: 'faq', Label: 'FAQ' },
+        { name: 'teamfolder', Label: 'Team Folder' },
       ],
       ContentList: [],
       slickSettings: {
         arrows: true,
-        slidesToShow: 4,
+        slidesToShow: 5,
         responsive: [
           {
             breakpoint: 1280,
             settings: {
-              slidesToShow: 4,
-              slidesToScroll: 4,
+              slidesToShow: 3,
+              slidesToScroll: 3,
               initialSlide: 0,
               infinite: true,
               arrows: true
@@ -149,8 +164,8 @@ export default {
           {
             breakpoint: 768,
             settings: {
-              slidesToShow: 1,
-              slidesToScroll: 3,
+              slidesToShow: 2,
+              slidesToScroll: 2,
               initialSlide: 0,
               infinite: true,
               arrows: true

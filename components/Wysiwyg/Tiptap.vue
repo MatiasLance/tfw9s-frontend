@@ -14,7 +14,8 @@
         class="editor-content"
       />
     </div>
-  </div> </template>
+  </div>
+</template>
 
 <script>
 import { Editor, EditorContent } from '@tiptap/vue-2'
@@ -41,49 +42,54 @@ export default {
   },
   watch: {
     value(value) {
-      const isSame = this.editor.getHTML() === value
-
-      if (isSame) {
-        return
+      if (this.editor && this.editor.getHTML() !== value) {
+        this.editor.commands.setContent(value, false)
       }
-
-      this.editor.commands.setContent(value, false)
-    },
-  },
-  mounted() {
-    const defaultValue = this.value === '' ? '<p></p>' : this.value
-
-    this.editor = new Editor({
-      content: defaultValue,
-      extensions: [
-        StarterKit.configure({
-          heading: {
-            levels: [
-              1,
-              2,
-              3,
-            ]
-          }
-        }),
-        TextAlign.configure({
-          types: [ 'heading', 'paragraph' ],
-          alignments: [
-            'left', 'center', 'right', 'justify'
-          ],
-        }),
-        Underline,
-        Link,
-      ],
-      onUpdate: () => {
-        this.$emit('input', this.editor.getHTML())
-      }
-    })
-  },
-  beforeDestroy() {
-    if (this.editor) {
-      this.editor.destroy()
     }
   },
+  mounted() {
+    this.createEditor()
+  },
+  beforeDestroy() {
+    this.destroyEditor()
+  },
+  methods: {
+    createEditor() {
+      const defaultValue = this.value === '' ? '<p></p>' : this.value
+
+      this.editor = new Editor({
+        content: defaultValue,
+        extensions: [
+          StarterKit.configure({
+            heading: {
+              levels: [
+                1,
+                2,
+                3,
+              ]
+            }
+          }),
+          TextAlign.configure({
+            types: [ 'heading', 'paragraph' ],
+            alignments: [
+              'left', 'center', 'right', 'justify'
+            ],
+          }),
+          Underline,
+          Link,
+        ],
+        onUpdate: () => {
+          this.$emit('input', this.editor.getHTML())
+        }
+      })
+    },
+    destroyEditor() {
+      if (this.editor) {
+        this.editor.destroy()
+        this.editor = null
+      }
+    }
+  }
 }
 </script>
 
@@ -111,5 +117,5 @@ export default {
   color: blue !important;
   text-decoration: underline;
 }
-
 </style>
+

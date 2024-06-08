@@ -13,7 +13,7 @@
           <NuxtLink to="/">
             <span class="navbar-logo block w-full py-2">
               <img
-                src="~/assets/images/the-final-whistle-logo.png"
+                src="~/assets/images/tfw9s.png"
                 alt="logo"
                 class="header-logo contrast-125"
               />
@@ -399,7 +399,7 @@
             <NuxtLink to="/">
               <span class="navbar-logo block py-2">
                 <img
-                  src="~/assets/images/the-final-whistle-logo.png"
+                  src="~/assets/images/tfw9s.png"
                   alt="logo"
                   class="header-logo w-full"
                 />

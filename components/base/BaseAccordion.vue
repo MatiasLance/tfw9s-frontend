@@ -5,10 +5,12 @@
         @click="selected = !selected"
     >
       <div class="flex items-center justify-between">
-        <span class="text-xl font-medium">{{ accordion.title }}</span>
+        <span class="text-xl font-medium text-white">
+          {{ accordion.title }}
+        </span>
         <VIcon
             v-if="selected"
-            size="25" color="black"
+            size="25" color="white"
             class="rotate-180 transition duration-300"
         >
             mdi-chevron-down
@@ -29,7 +31,7 @@
         class="relative overflow-hidden transition-all duration-700"
       >
         <div class="py-2">
-          <p class="text-xl leading-relaxed tracking-wide text-gray-700">
+          <p class="text-xl leading-relaxed tracking-wide text-gray-300">
             {{ accordion.description }}
           </p>
         </div>
