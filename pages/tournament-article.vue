@@ -20,13 +20,12 @@
             cover
           ></VImg>
           <div class="flex items-center justify-center">
-            <VImg
+            <img
             v-if="photos.length === 0"
               class="bg-white"
-              src="http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg"
-              width="500"
+              src="~/assets/images/kidsplaying.jpg"
               cover
-            ></VImg>
+            ></img>
           </div>
         </div>
         <div
@@ -95,8 +94,7 @@
               font-semibold
               text-white
               transition
-              hover:brightness-125
-            "
+              hover:brightness-125"
             >
               Register Now
             </button>

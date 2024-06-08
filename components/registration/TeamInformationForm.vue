@@ -277,7 +277,11 @@
       <button
         type="submit"
         class="w-24 cursor-pointer bg-brand-black py-2 text-white"
-        :disabled="isLoading"
+        :class="{
+          'bg-brand-black': !isLoading && !isAgeLimitReached,
+          'bg-gray-400': isLoading || isAgeLimitReached
+        }"
+        :disabled="isLoading || isAgeLimitReached"
       >
         <span v-if="!isLoading">
           Confirm
@@ -338,6 +342,10 @@ export default {
       phoneCode: '+61',
       hasAgreedToTerms: false,
       showTermsModal: false,
+      teamLimit: [],
+      ageGroup: '',
+      teamCount: '',
+      isAgeLimitReached: false
     }
   },
   computed: {
@@ -352,8 +360,16 @@ export default {
       },
     },
   },
+  watch: {
+    'ageGroup'(newVal, oldVal) {
+      if (newVal) {
+        this.checkTeamLimit(newVal)
+      }
+    },
+  },
   created() {
     this.retrieveAgeGroups();
+    this.retrieveTeamLimits();
   },
   methods: {
     submit() {
@@ -369,6 +385,35 @@ export default {
       })
 
       return false
+    },
+    checkTeamLimit(agegroupid) {
+      const teamLimit =
+        this.teamLimit.find(limit => limit.age_groups[0].id === agegroupid);
+      if (teamLimit) {
+        this.teamCount = teamLimit.team_limit;
+        if (teamLimit.teamcount >= teamLimit.team_limit) {
+          this.isAgeLimitReached = true
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Team limit reached for this age group.',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        } else {
+          this.isAgeLimitReached = false
+        }
+      } else {
+        this.teamCount = null;
+      }
+    },
+    retrieveTeamLimits() {
+      const seriesid = this.$route.query.id;
+      this.$axios
+        .$get(`v1/teamlimit/${seriesid}`)
+        .then((response) => {
+          this.teamLimit = response.data
+        })
     },
     retrieveAgeGroups() {
       const query = {

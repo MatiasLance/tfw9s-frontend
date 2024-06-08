@@ -47,7 +47,7 @@
          </div>
          <div class="mt-3 flex items-center justify-center">
         <img
-         src="~/assets/images/the-final-whistle-logo.png"
+         src="~/assets/images/tfw9s.png"
          class="h-30 y-10 absolute top-3 mt-14 w-20"
          >
          </div>
