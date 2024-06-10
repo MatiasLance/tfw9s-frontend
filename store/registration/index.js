@@ -23,7 +23,8 @@ export const state = () => ({
   gst: 0,
   tax: 0,
   taxAmount: 0,
-  seriesType: ''
+  seriesType: '',
+  paymentIntent: ''
 })
 
 export const mutations = {
@@ -81,5 +82,8 @@ export const mutations = {
   },
   setSeriesType(state, seriesType) {
     state.seriesType = seriesType
+  },
+  setPaymentIntent(state, paymentIntent) {
+    state.paymentIntent = paymentIntent
   },
 }
