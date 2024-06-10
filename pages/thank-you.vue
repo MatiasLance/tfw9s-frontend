@@ -44,10 +44,10 @@
           indeterminate
           color="gray lighten-2"
         />
-        <div class="mt-8 text-2xl font-bold">
+        <div class="mt-8 text-2xl font-bold text-white">
           Finalizing your order...
         </div>
-        <div class="text-base text-gray-600">
+        <div class="text-base text-gray-400">
           Please do not close your browser until this is done.
         </div>
       </template>
@@ -56,10 +56,10 @@
         <VIcon size="150" color="green">
           mdi-check-circle
         </VIcon>
-        <div class="mt-8 text-2xl font-bold">
+        <div class="mt-8 text-2xl font-bold text-white">
           Order Success!
         </div>
-        <div class="text-base text-gray-600">
+        <div class="text-base text-gray-400">
           You can go now back to the merch to continue shopping
         </div>
         <div class="mt-4 flex items-center justify-center">
@@ -77,10 +77,10 @@
         <VIcon size="150" color="blue lighten-2">
           mdi-information
         </VIcon>
-        <div class="mt-8 text-2xl font-bold">
+        <div class="mt-8 text-2xl font-bold text-white">
           Order is still being processed
         </div>
-        <div class="text-base text-gray-600">
+        <div class="text-base text-gray-400">
           Please refresh this tab in a few minutes.
           Do not close this tab
         </div>
@@ -98,10 +98,10 @@
         <VIcon size="150" color="red darken-2">
           mdi-alert-circle
         </VIcon>
-        <div class="mt-8 text-2xl font-bold">
+        <div class="mt-8 text-2xl font-bold text-white">
           Your order failed
         </div>
-        <div class="text-base text-gray-600">
+        <div class="text-base text-gray-400">
           You can go back to the merch to continue shopping
           or attempt to checkout again
         </div>

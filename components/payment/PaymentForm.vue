@@ -285,6 +285,14 @@ export default {
         this.$store.commit('master/setToggleControl2', val)
       }
     },
+    paymentIntent: {
+      get() {
+        return this.$store.state.registration.paymentIntent;
+      },
+      set(v) {
+        this.$store.commit('registration/setPaymentIntent', v);
+      }
+    }
   },
   mounted() {
     this.retrieveToggleTaxControl();
@@ -429,6 +437,7 @@ export default {
         this.$store.commit('cart/setTotal', this.originalAmount.total)
         this.overallTotal = this.originalAmount.total
         this.isDiscountCodeMatch = false
+        this.initialize()
       }, 1000)
     },
     activeStepPrev(stepNo) {
@@ -436,12 +445,14 @@ export default {
     },
     initialize() {
       this.isStepperLoading = true
-      const item = this.$route.query.id;
-      const toggleControl1 = this.toggleControl1;
-      const toggleControl2 = this.toggleControl2;
-      const tax = this.tax;
+      const item = this.$route.query.id
+      const toggleControl1 = this.toggleControl1
+      const toggleControl2 = this.toggleControl2
+      const tax = this.tax
       const discounted = this.isDiscountCodeMatch
       const discountcode = this.discountcode ?? ''
+      const paymentIntent = this.paymentIntent
+      const paymentMethod = this.paymentMethod
 
       let endpoint = ''
 
@@ -457,7 +468,9 @@ export default {
           toggleControl2,
           tax,
           discounted,
-          discountcode
+          discountcode,
+          paymentIntent,
+          paymentMethod,
         })
         .then((response) => {
           this.activeStep = 2

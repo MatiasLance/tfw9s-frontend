@@ -105,6 +105,8 @@ export default {
         })
         .then((response) => {
           this.activeStep = 2;
+
+          this.$store.commit('registration/setPaymentIntent', response.paymentIntentId)
           return response.stripeToken;
         })
         .finally(() => {
