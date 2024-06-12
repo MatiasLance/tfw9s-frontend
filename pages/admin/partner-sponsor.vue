@@ -657,7 +657,6 @@ export default {
         })
         .finally(() => {
           this.isNewsLoading = false;
-          console.log(this.partnerSponsors)
         });
     },
     setPage(page) {
@@ -858,7 +857,6 @@ export default {
       this.$axios
         .$get(`v1/partnersponsors/${this.editingNo}`)
         .then((response) => {
-          console.log(response.data)
           // eslint-disable-next-line max-len, camelcase, vue/max-len
           this.sponsor.company_name = response.data.partnerSponsor.company_name;
           // eslint-disable-next-line camelcase

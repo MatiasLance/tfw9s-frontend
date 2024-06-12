@@ -282,7 +282,6 @@ export default {
         let data = []
         data = this.SeriesList.find(x => x.id === newseries);
         this.serieshint = this.seriesType(data.type) ?? '';
-        console.log('Series Data: ', data)
 
         this.EventList = data.event.map(x => {
           return { ...x, agename: x.agegroup.name??'???' }
@@ -329,7 +328,6 @@ export default {
         variant: 'info',
         queue: true,
       });
-      console.log(this.RegisterData, this.series, this.event)
     },
     retrieveSeries() {
       const query = {

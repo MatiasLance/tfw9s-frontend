@@ -109,7 +109,6 @@ export default {
         .$post('v1/regions', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
-          console.log('Success')
           this.$emit('confirm')
         })
         .catch((error) => {

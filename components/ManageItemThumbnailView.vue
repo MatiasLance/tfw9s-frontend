@@ -2,10 +2,10 @@
   <div
     class="
       group
-      flex
+      grid grid-cols-1
+      md:grid-cols-4
       w-full
-      flex-col
-      items-start
+      border
       rounded-lg
       bg-[#212121]
       transition
@@ -13,7 +13,12 @@
       hover:shadow-xl
     "
   >
-    <div class="flex w-full items-center justify-center overflow-hidden">
+    <div
+      class="flex w-full
+      items-center
+      justify-center
+      overflow-hidden"
+    >
       <img
         class="
           h-64
@@ -27,11 +32,10 @@
         :alt="name"
       />
     </div>
-
     <div
-      class="flex w-full flex-col items-start space-y-1 p-3 lg:space-y-3"
+      class="md:col-span-3 m-4 flex w-full flex-col"
     >
-      <div class="grid grid-cols-1">
+      <div class="grid grid-cols-1 my-2">
         <div
           v-for="category in categories"
           :key="category.id"
@@ -54,7 +58,7 @@
       >
         <NuxtLink :to="'/product/?id=' + uid">
           <span
-            class="
+            class="text-2xl
               font-montserrat
               whitespace-normal
               font-semibold transition duration-300
@@ -65,13 +69,12 @@
           </span>
         </NuxtLink>
       </h3>
-      <span class="w-9 border-t-2 border-white my-4"/>
-      <span v-if="!isOnSale" class="text-[18px] font-medium text-white">
+      <span v-if="!isOnSale" class="text-md font-medium text-white">
         <span>
           {{ formatCurrency(price) }}
         </span>
       </span>
-      <span v-if="isOnSale" class="text-[18px] font-medium flex">
+      <span v-if="isOnSale" class="text-md font-medium flex">
         <span v-if="isRrp"
         class="text-white opacity-75 line-through mr-2"
         >
@@ -80,6 +83,14 @@
         <span class="font-semibold text-brand-green">
            {{formatCurrency(saleprice)}}
         </span>
+      </span>
+      <span class="text-white my-4 text-justify mr-12">
+        {{ description.length > 300 ?
+          description.slice(0, 300 ) + '...' : description
+        }}
+      </span>
+      <span class="text-white my-2">
+        <span class="font-bold">{{ stock }}</span> in Stock
       </span>
       <div class="mt-4 flex flex-wrap justify-start gap-2">
         <button
@@ -92,11 +103,59 @@
             flex
             cursor-pointer
             items-center
-            text-sm hover:underline
+            text-xs md:text-sm hover:underline
             "
             @click="$emit('update', uid)"
         >
             <i class="ri-edit-line"></i> Edit
+        </button>
+        <button
+            type="button"
+            class="
+            text-white
+            hover:text-white
+            hover:decoration-white
+            mr-2
+            flex
+            cursor-pointer
+            items-center
+            text-xs md:text-sm hover:underline
+            "
+            @click="$emit('duplicate', uid)"
+        >
+            <i class="ri-file-copy-line"></i> Duplicate
+        </button>
+        <button
+            type="button"
+            class="
+            text-white
+            hover:text-white
+            hover:decoration-white
+            mr-2
+            flex
+            cursor-pointer
+            items-center
+            text-xs md:text-sm hover:underline
+            "
+            @click="$emit('addvariant', uid)"
+        >
+            <i class="ri-links-line"></i> Add Variant
+        </button>
+        <button
+            type="button"
+            class="
+            text-white
+            hover:text-white
+            hover:decoration-white
+            mr-2
+            flex
+            cursor-pointer
+            items-center
+            text-xs md:text-sm hover:underline
+            "
+            @click="$emit('showvariant', uid)"
+        >
+            <i class="ri-link"></i> Show Variants
         </button>
         <button
             type="button"
@@ -108,7 +167,7 @@
             flex
             cursor-pointer
             items-center
-            text-sm hover:underline
+            text-xs md:text-sm hover:underline
             "
             @click="$emit('delete', uid)"
         >
@@ -132,6 +191,10 @@ export default {
       required: true,
     },
     name: {
+      type: String,
+      required: true,
+    },
+    description: {
       type: String,
       required: true,
     },

@@ -147,7 +147,6 @@ export default {
         })
         .finally(() => {
           this.isGymsLoading = false;
-          console.log(this.itemList)
         });
     },
   }

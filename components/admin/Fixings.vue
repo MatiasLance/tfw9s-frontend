@@ -306,7 +306,6 @@ export default {
       this.showAddFixingModal = true
     },
     openEditFixingDialog(data) {
-      console.log('Event data: ', data)
       this.selectedFixing = data
       this.showEditFixingModal = true
     },

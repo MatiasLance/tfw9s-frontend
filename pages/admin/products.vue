@@ -44,7 +44,6 @@
               <button
                 type="button"
                 class="
-                  from-40% via-95% to-100%
                   w-full rounded-md
                   bg-gradient-to-br
                   from-[#5EE738] via-[#3e872a]
@@ -101,17 +100,7 @@
         </section>
         <section
           class="
-            xxl:grid-cols-5
-            2xxl:grid-cols-7
-            xxl:gap-x-4
-            2xxl:gap-x-5
-            xxl:gap-y-12
-            2xxl:gap-y-12
-            grid grid-cols-1
-            gap-x-4 gap-y-6
-            sm:grid-cols-2
-            md:grid-cols-3 md:gap-x-4 md:gap-y-8
-            lg:grid-cols-4 lg:gap-x-4 lg:gap-y-10
+          grid grid-cols-1 gap-4
           "
           v-bind="$attrs"
         >
@@ -121,6 +110,7 @@
             :key="product.id"
             :uid="product.id"
             :name="product.name"
+            :description="product.description"
             :price="product.price"
             :saleprice="product.saleprice"
             :categories="product.categories"
@@ -133,6 +123,9 @@
             data-aos="fade-up"
             data-aos-offset="30"
             @update="editMerchItem"
+            @duplicate="duplicateItem"
+            @addvariant="addVariant"
+            @showvariant="showVariant"
             @delete="removeMerchItem"
           />
         </section>
@@ -829,6 +822,163 @@
         </div>
       </VForm>
     </OModal>
+
+    <OModal
+      :active="showAddVariant"
+      @close="showAddVariant = false"
+    >
+      <div class="w-full rounded bg-white p-2 sm:w-[500px] sm:p-4">
+        <h3 class="text-swd-red mb-3 font-bold">
+          Add Variant
+        </h3>
+        <hr class="my-3">
+        <div
+          class="col-span-1 mb-2"
+          v-for="variant in variantList"
+          :key="variant.id"
+        >
+          <div
+          class="
+          flex flex-col
+          sm:flex-row
+          sm:space-x-2"
+          >
+            <label
+              class="
+                flex
+                w-full
+                cursor-pointer border
+                border-gray-200
+                bg-transparent p-3
+                hover:border-brand-black
+                hover:bg-slate-100
+              "
+              >
+              <span>
+                <input
+                  v-model="checkedVariants"
+                  :value="variant.color"
+                  name="variantColor"
+                  type="checkbox"
+                  class="
+                  form-checkbox
+                  h-4 w-4 bg-gray-200 text-brand-black
+                  focus:ring-brand-black"
+                />
+              </span>
+              <span class="px-2">{{ variant.color }}</span>
+            </label>
+          </div>
+        </div>
+        <hr class="my-3">
+        <div class="block lg:flex lg:flex-auto lg:justify-end">
+          <button
+            type="button"
+            class="
+              my-2
+              inline-block
+              w-full
+              border border-transparent
+              bg-brand-green
+              py-3
+              px-5
+              text-center
+              font-bold
+              text-white
+              hover:bg-green-800
+              lg:mx-4 lg:w-48
+            "
+            @click="confirmVariant(prodId)"
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            class="
+              my-2
+              inline-block
+              w-full
+              border border-transparent
+              bg-brand-red
+              py-3
+              px-5
+              text-center
+              font-bold
+              text-white
+              hover:bg-brand-dred
+              lg:mx-4 lg:w-48
+            "
+             @click="closeAddVariant"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </OModal>
+
+    <OModal
+      :active="showShowVariant"
+      @close="showShowVariant = false"
+    >
+      <div class="w-full rounded bg-white p-2 sm:w-[500px] sm:p-4">
+        <h3 class="text-swd-red mb-3 font-bold">
+          Product Variant
+        </h3>
+        <hr class="my-3">
+        <div v-if="myVariantList.length > 0">
+          <div
+            class="col-span-1 mb-2"
+            v-for="variant in myVariantList"
+            :key="variant.id"
+          >
+            <div
+              class="flex flex-col sm:flex-row sm:space-x-2"
+            >
+              <label
+                class="flex justify-between w-full border
+                border-gray-200 bg-transparent p-3
+                hover:border-brand-black hover:bg-slate-100"
+              >
+                <span class="px-2">{{ variant.color }}</span>
+                <i
+                  class="cursor-pointer ri-delete-bin-5-line
+                  hover:text-red-500"
+                  @click="removeVariant(variant.id)"
+                ></i>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <p class="my-10 text-center text-gray-500">
+            No item variants available.
+          </p>
+        </div>
+        <hr class="my-3">
+        <div class="block lg:flex lg:flex-auto lg:justify-end">
+          <button
+            type="button"
+            class="
+              my-2
+              inline-block
+              w-full
+              border border-transparent
+              bg-brand-red
+              py-3
+              px-5
+              text-center
+              font-bold
+              text-white
+              hover:bg-brand-dred
+              lg:mx-4 lg:w-48
+              "
+            @click="closeShowVariant"
+            >
+            Close
+          </button>
+        </div>
+      </div>
+    </OModal>
     <!-- showRemoveProduct modal component -->
     <OModal
       :active="showRemoveMerchItemModal"
@@ -948,18 +1098,23 @@ export default {
       imgUrlEdit: [],
       imgList: [],
       imgListEdit: [],
-      query: '',
+      query: null,
       from: 0,
       to: 0,
       totalPages: 0,
       totalItems: 0,
       newsList: [],
+      variantList: [],
+      myVariantList: [],
+      prodId: '',
       editingNo: null,
       isNewsLoading: false,
       isNewsAdded: false,
       showAddMerchItemModal: false,
       showEditMerchItemModal: false,
       showRemoveMerchItemModal: false,
+      showAddVariant: false,
+      showShowVariant: false,
       showModal: false,
       headline: '',
       content: '',
@@ -967,13 +1122,21 @@ export default {
         title: 'Discount Code Admin - Drum HQ',
         description: 'Discount Code Page',
       },
-      adminpage: { title: 'Discount Codes' }
+      adminpage: { title: 'Discount Codes' },
+      checkedVariants: [],
     };
   },
   head() {
     return { title: this.pageSEO.title };
   },
   computed: {
+    checkedVariantObjects() {
+      return this.variantList.filter(
+        variant => this.checkedVariants.includes(
+          variant.id
+        )
+      );
+    },
     categories: {
       get() {
         return this.$store.state.product.categories
@@ -1008,6 +1171,12 @@ export default {
      */
   },
   watch: {
+    query: {
+      handler(newPage) {
+        this.retrieveMerchItems();
+      },
+      immediate: true,
+    },
     totalPages() {
       if (this.page > this.totalPages) {
         this.setPage(1)
@@ -1073,6 +1242,12 @@ export default {
     },
     closeRemove() {
       this.showRemoveMerchItemModal = false;
+    },
+    closeAddVariant() {
+      this.showAddVariant = false;
+    },
+    closeShowVariant() {
+      this.showShowVariant = false;
     },
     retrieveMerchItems() {
       this.isNewsLoading = true;
@@ -1428,8 +1603,6 @@ export default {
         form.append('photo[]', this.imgListEdit[i]);
       }
 
-      console.log(this.imgListEdit)
-
       // label Data
       form.append('selected_shippingid', '0')
 
@@ -1470,6 +1643,116 @@ export default {
       setTimeout(() => {
         this.showRemoveMerchItemModal = true;
       }, 1000);
+    },
+    addVariant(index) {
+      this.editingNo = toNumber(index);
+      this.prodId = this.editingNo;
+      this.$axios.$get('v1/variant/')
+        .then((response) => {
+          this.variantList = response.data.variant;
+        });
+      setTimeout(() => {
+        this.showAddVariant = true;
+      }, 1000);
+    },
+    confirmVariant(prodId) {
+
+      const form = new FormData();
+      form.append('item_id', prodId)
+      for (let i = 0; i < this.checkedVariants.length; i++) {
+        form.append('color[]', this.checkedVariants[i]);
+      }
+      this.$axios
+        .$post('v1/variant/', form)
+        .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Merch Variant Added',
+            position: 'bottom',
+            variant: 'success',
+            queue: true,
+          });
+          this.showAddVariant = false;
+          this.checkedVariants = [];
+        })
+        .catch(() => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to add variant',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        });
+    },
+    showVariant(index) {
+      this.myVariantList = [];
+      this.editingNo = toNumber(index);
+      this.prodId = this.editingNo;
+      this.$axios.$get(`v1/variant/${this.editingNo}`)
+        .then((response) => {
+          this.myVariantList = response.data.variant;
+        });
+      setTimeout(() => {
+        this.showShowVariant = true;
+      }, 1000);
+    },
+    removeVariant(variantId) {
+      this.$axios
+        .$delete(`v1/variant/${variantId}`)
+        .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Item variant Deleted',
+            position: 'bottom',
+            variant: 'success',
+            queue: true,
+          });
+          this.$axios.$get(`v1/variant/${this.prodId}`)
+            .then((res) => {
+              if (!res.data) {
+                this.showShowVariant = false;
+              } else {
+                this.myVariantList = res.data.variant;
+              }
+            })
+            .catch((error) => {
+              console.error('Error fetching variant:', error);
+            });
+        })
+        .catch(() => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to remove item variant',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        });
+    },
+    duplicateItem(index) {
+      this.editingNo = toNumber(index);
+      this.$axios
+        .$post(`v1/items/duplicate/${this.editingNo}`)
+        .then(() => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Item duplicated',
+            position: 'bottom',
+            variant: 'success',
+            queue: true,
+          });
+          this.retrieveMerchItems();
+        })
+        .catch(() => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to duplicate item',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        })
     },
     remove(index) {
       const editObject = this.MerchItems.find(

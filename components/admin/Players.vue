@@ -438,7 +438,6 @@ export default {
       this.$axios
         .$get(`/v1/players?${queryString}`)
         .then((response) => {
-          console.log(response.data.players)
           this.Players = response.data.players.map(player => {
             return {
               ...player,

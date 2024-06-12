@@ -71,21 +71,52 @@
             </div>
           </VueSlickCarousel>
         </span>
-        <div class="grid grid-cols-3 px-4">
-          <ODatepicker
-            v-model="dateFilter"
-            placeholder="Click to select..."
-            icon="calendar"
-            class="rounded bg-white"
-            :events="EventDates"
-          >
-          </ODatepicker>
-          <OInput
+        <div class="grid grid-cols-1 md:grid-cols-3 px-4 gap-4">
+          <div class="flex flex-col">
+            <div class="flex items-center justify-between">
+              <span
+                class="text-[#555555]
+                font-bold
+                text-lg"
+                >
+                Select Date
+              </span>
+              <span
+                v-if="dateFilter"
+                class="text-red-400
+                text-xs
+                cursor-pointer
+                hover:text-sm
+                hover:text-red-500
+                "
+                @click="clearDate"
+                >
+                Clear
+              </span>
+            </div>
+            <ODatepicker
+              v-model="dateFilter"
+              placeholder="Click to select..."
+              icon="calendar"
+              class="rounded bg-white"
+              :events="EventDates"
+            >
+            </ODatepicker>
+          </div>
+          <div class="md:col-start-3 flex flex-col">
+            <span
+              class="text-[#555555]
+              font-bold
+              text-lg"
+              >
+              Search Tournaments
+            </span>
+            <OInput
             v-model="query"
             type="text"
-            class="col-start-3"
             placeholder="Search..."
           />
+          </div>
         </div>
         <span
           v-if="activeTab == 'weekly'"
@@ -502,6 +533,9 @@ export default {
             };
           });
         })
+    },
+    clearDate() {
+      this.dateFilter = null;
     },
   }
 };

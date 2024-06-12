@@ -153,7 +153,6 @@ export default {
         .$post(`v1/teamlimit/update/${this.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
-          console.log('Success')
           this.$emit('confirm')
           this.retrieveTeamLimits()
         })
@@ -170,7 +169,6 @@ export default {
         .$get(`v1/teamlimit/${this.seriesid}`)
         .then((response) => {
           this.teamLimit = response.data
-          console.log(this.teamLimit);
         })
     },
     closeDialog() {

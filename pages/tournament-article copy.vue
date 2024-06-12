@@ -247,7 +247,6 @@ export default {
           this.activeImageURL = this.getMediaURL(this.article.media[0], 'temp')
           this.photos = this.article.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
-          console.log(this.article)
         })
     },
   },
