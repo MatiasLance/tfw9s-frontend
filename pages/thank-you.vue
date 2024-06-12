@@ -184,7 +184,6 @@ export default {
             payment_method: this.paymentGateway,
           })
           .then((response) => {
-            console.log(response)
             const status = response.data.status
             if (status === 'complete') {
               this.status = 'success'

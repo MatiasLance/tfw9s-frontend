@@ -254,7 +254,6 @@ export default {
     fetchTotalCount() {
       this.$axios.get('/v1/total/')
         .then(response => {
-          console.log(response);
           this.panels[0].count = response.data.data.products;
           this.panels[1].count = response.data.data.category;
           this.panels[2].count = response.data.data.discountcode;

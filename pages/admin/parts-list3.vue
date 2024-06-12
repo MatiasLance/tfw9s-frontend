@@ -1999,7 +1999,6 @@ export default {
           this.$axios
             .$post('v1/items/', form, config)
             .then((response) => {
-              console.log(response);
               this.showAddProductModal = false;
               this.isItemAdded = true;
               this.$oruga.notification.open({
@@ -2308,12 +2307,10 @@ export default {
     },
     assignImage(elementId) {
       this.selectedElement = toNumber(elementId)
-      console.log(`Assigning image to Element# ${this.selectedElement}`)
       this.showAssignImage = true
     },
     assignColour(elementId) {
       this.selectedElement = toNumber(elementId)
-      console.log(`Assigning colour to Element# ${this.selectedElement}`)
       this.showAssignColour = true
     },
     closeAssignImageDialog() {
@@ -2341,7 +2338,6 @@ export default {
       this.showAssignColour = false
     },
     createImageToElement(imgValue) {
-      console.log(imgValue)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',
@@ -2351,7 +2347,6 @@ export default {
       });
     },
     createColourToElement(colourValue) {
-      console.log(colourValue)
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Work in progress',

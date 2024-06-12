@@ -265,7 +265,6 @@ export default {
       return event_date;
     },
     validate() {
-      console.log(this.SeriesData)
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
           duration: 5000,
@@ -325,7 +324,6 @@ export default {
         .$post(`/v1/players/${this.series.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
-          console.log('Success')
           this.$emit('confirm')
         })
         .catch((error) => {

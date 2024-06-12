@@ -583,7 +583,6 @@ export default {
         });
     },
     UpdateContent(data) {
-      console.log(this.contentData.content)
       const form = new FormData();
       form.append('type', 'Insurance')
       form.append('content', this.contentData.content)
