@@ -1,68 +1,98 @@
 <template>
-  <section class="mx-auto max-w-screen-xl gap-4 p-7">
-      <div
-      class="relative flex w-full snap-x gap-6
-      overflow-y-hidden overflow-x-scroll pb-14"
-      >
-      <NuxtLink
-        v-for="(item, index) in partnerSponsors"
-        :key="index"
-        to="/admin/partner-sponsor"
-        class="snap-center"
+  <section class="mx-auto max-w-screen-xl px-7 py-4">
+    <div v-if="partnerSponsors.length">
+      <VueSlickCarousel
+        class="flex w-full gap-6"
+        :arrows="true"
+        :infinite="true"
+        :speed="500"
+        :slidesToShow="6"
+        :slidesToScroll="1"
+        :responsive="responsiveSettings"
         data-aos="fade-up"
       >
-        <img
-          class="h-40 w-40 shrink-0 snap-center
-          overflow-hidden rounded-lg object-contain
-          brightness-50 transition duration-300
-          ease-in-out first:pl-8 last:pr-8
-          hover:scale-125 hover:brightness-100"
-          :src="getMediaURL(item.media[0])"
-          alt="Sponsor Image"
-        />
-      </NuxtLink>
-      </div>
+        <div
+          v-for="(item, index) in partnerSponsors"
+          :key="index"
+        >
+          <NuxtLink to="/admin/partner-sponsor">
+            <img
+              class="size-24 md:size-40 overflow-hidden rounded-lg
+              object-contain brightness-50 transition duration-300
+              ease-in-out hover:scale-125 hover:brightness-100"
+              :src="getMediaURL(item.media[0])"
+              alt="Sponsor Image"
+            />
+          </NuxtLink>
+        </div>
+      </VueSlickCarousel>
+    </div>
   </section>
 </template>
 
 <script>
+import VueSlickCarousel from 'vue-slick-carousel';
+import 'vue-slick-carousel/dist/vue-slick-carousel.css';
+import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css';
 import handlesMedia from '~/mixins/shop/handlesMedia';
+
 export default {
+  components: { VueSlickCarousel },
   mixins: [ handlesMedia ],
   data() {
     return {
       partnerSponsors: [],
-      items: [
-        { text: 'Partner Sponsor' },
-        { text: 'Partner Sponsor' },
-        { text: 'Partner Sponsor' },
-        { text: 'Partner Sponsor' },
-        { text: 'Partner Sponsor' },
-        { text: 'Partner Sponsor' },
-        { text: 'Partner Sponsor' },
+      responsiveSettings: [
+        {
+          breakpoint: 1280,
+          settings: {
+            slidesToShow: 6,
+            slidesToScroll: 1,
+          },
+        },
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 6,
+            slidesToScroll: 1,
+          },
+        },
+        {
+          breakpoint: 768,
+          settings: {
+            slidesToShow: 5,
+            slidesToScroll: 1,
+          },
+        },
+        {
+          breakpoint: 640,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 2,
+          },
+        },
       ],
     };
   },
   created() {
-    this.retrieveSponsors()
+    this.retrieveSponsors();
   },
   methods: {
     retrieveSponsors() {
       const query = { q: this.query };
 
-      // Sanitize and remove null values
       Object.keys(query).forEach((key) => {
         if (query[key] == null) {
-          delete query[key]
+          delete query[key];
         }
-      })
-      const queryString = new URLSearchParams(query).toString()
+      });
+      const queryString = new URLSearchParams(query).toString();
       this.$axios
         .$get(`v1/partnersponsors?${queryString}`)
         .then((response) => {
-          this.partnerSponsors = response.data.partnerSponsors
-        })
+          this.partnerSponsors = response.data.partnerSponsors;
+        });
     },
-  }
+  },
 };
 </script>

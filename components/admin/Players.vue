@@ -190,6 +190,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import AddPlayersModal from '~/components/modals/AddPlayersModal.vue';
 import EditPlayersModal from '~/components/modals/EditPlayersModal.vue';
 import DeletePlayersModal from '~/components/modals/DeletePlayersModal.vue';
@@ -274,11 +275,8 @@ export default {
     }
   },
   watch: {
-    query: {
-      handler(newPage) {
-        this.retrieveSeries();
-      },
-      immediate: true,
+    query() {
+      this.debouncedSearch();
     },
     ActiveTab: {
       handler(newPage) {
@@ -291,6 +289,11 @@ export default {
         this.setPage(1)
       }
     },
+  },
+  mounted() {
+    this.debouncedSearch = debounce(this.retrieveSeries, 800);
+    this.retrieveSeries();
+    this.page = 1 // Reset pagination
   },
   methods: {
     openAddPlayerDialog() {

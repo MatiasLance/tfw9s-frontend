@@ -110,7 +110,8 @@
                   >
                   <NuxtLink :to="'/news-article/?id='+ news.id">
                     <BaseButton
-                    class="from-40% via-95% to-100%
+                    class="
+                    from-40% via-95% to-100%
                     max-w-full rounded-lg
                     bg-gradient-to-tr
                     from-[#5EE738]
@@ -148,6 +149,7 @@
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
+import debounce from 'lodash/debounce';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
@@ -187,11 +189,8 @@ export default {
     };
   },
   watch: {
-    query: {
-      handler(newPage) {
-        this.retrieveNews();
-      },
-      immediate: true,
+    query() {
+      this.debouncedSearch();
     },
     totalPages() {
       if (this.page > this.totalPages) {
@@ -200,6 +199,7 @@ export default {
     },
   },
   mounted() {
+    this.debouncedSearch = debounce(this.retrieveNews, 800);
     this.retrieveNews();
     this.page = 1 // Reset pagination
   },

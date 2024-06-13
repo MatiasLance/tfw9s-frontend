@@ -2,15 +2,13 @@
   <!-- Footer fixed bottom-0 was removed so it won't stick in the page -->
   <footer class="w-screen bg-brand-black text-white">
     <section class="mx-auto max-w-screen-xl">
-      <div class="grid grid-cols-1 p-4 md:grid-cols-4">
-        <div
-        class="col-span-1 md:col-span-3 flex justify-start"
-        >
-          <span class="text-center text-sm md:text-left">
+      <div class="p-4 flex flex-col md:flex-row md:justify-between gap-2">
+        <div class="flex items-center justify-center">
+          <span class="text-sm">
             Copyright, All Rights Reserved TFW9's
           </span>
         </div>
-        <div class="md:justify-right col-span-1 flex justify-center">
+        <div class="flex items-center justify-center">
         <!--
           <span
           class="mr-5 transition

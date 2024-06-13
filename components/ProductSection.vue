@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
 import ItemThumbnailView from '~/components/ItemThumbnailView';
@@ -166,11 +167,8 @@ export default {
     }
   },
   watch: {
-    query: {
-      handler(newPage) {
-        this.retrieveProductsWithScroll();
-      },
-      immediate: true,
+    query() {
+      this.debouncedSearch();
     },
     totalPages() {
       if (this.page > this.totalPages) {
@@ -179,6 +177,9 @@ export default {
     },
   },
   mounted() {
+    this.debouncedSearch = debounce(this.retrieveProducts, 800);
+    this.retrieveProducts();
+    this.page = 1
     this.$nextTick(() => {
       if (localStorage.getItem('scrollTop') !== null) {
         this.scrollValue = Number.parseInt(localStorage.getItem('scrollTop'))
