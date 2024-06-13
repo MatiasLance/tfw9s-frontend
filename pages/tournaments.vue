@@ -124,7 +124,7 @@
           data-aos="fade-up"
           data-aos-offset="0"
         >
-          <article class="grid md:grid-cols-3 grid-cols-2 w-full gap-4 pt-2">
+          <article class="grid md:grid-cols-3 grid-cols-1 w-full gap-4 pt-2">
             <div
               v-for="(item, index) in filteredWeekly"
               :key="item.id"
@@ -296,6 +296,7 @@
 
 <script>
 import VueSlickCarousel from 'vue-slick-carousel'
+import debounce from 'lodash/debounce';
 import handlesMedia from '~/mixins/shop/handlesMedia';
 import currencyMixin from '~/mixins/currency/handlesCurrency'
 
@@ -411,11 +412,8 @@ export default {
     this.retrieveSeries();
   },
   watch: {
-    query: {
-      handler(newPage) {
-        this.retrieveSeries();
-      },
-      immediate: true,
+    query() {
+      this.debouncedSearch();
     },
     dateFilter: {
       handler(newDate) {
@@ -423,6 +421,11 @@ export default {
       },
       immediate: true,
     },
+  },
+  mounted() {
+    this.debouncedSearch = debounce(this.retrieveSeries, 800);
+    this.retrieveSeries();
+    this.page = 1
   },
   methods: {
     setTab(tab) {

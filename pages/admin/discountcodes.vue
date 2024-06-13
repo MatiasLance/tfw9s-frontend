@@ -44,7 +44,6 @@
               <button
                 type="button"
                 class="
-                  from-40% via-95% to-100%
                   w-full rounded-md
                   bg-gradient-to-br
                   from-[#5EE738] via-[#3e872a]
@@ -76,13 +75,18 @@
         </div>
 
         <section class="mb-8" data-aos="fade-up">
-        <div
-          class="
-            flex flex-wrap items-center justify-end
-            gap-x-2
-            md:justify-between
-          "
-        >
+          <div
+            class="
+              flex flex-wrap items-center justify-around
+              gap-x-2
+              md:justify-between
+            "
+          >
+            <span class="flex items-center">
+              <p class="text-base leading-[2.5em] text-white">
+                Showing {{ from }}-{{ to }} of {{ totalItems }} results
+              </p>
+            </span>
             <BasePagination
               :active-page="page"
               :total-pages="totalPages"
@@ -513,6 +517,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
 import logout from '~/mixins/auth/logout';
@@ -565,9 +570,11 @@ export default {
       imgUrlEdit: [],
       imgList: [],
       imgListEdit: [],
-      query: '',
+      query: null,
       from: 0,
       to: 0,
+      page: 1,
+      perPage: 12,
       totalPages: 0,
       totalItems: 0,
       newsList: [],
@@ -610,17 +617,10 @@ export default {
   head() {
     return { title: this.pageSEO.title };
   },
-  computed: {
-    page: {
-      get() {
-        return this.$store.state.shop.page;
-      },
-      set(value) {
-        this.$store.commit('shop/setPage', value);
-      },
-    },
-  },
   watch: {
+    query() {
+      this.debouncedSearch();
+    },
     totalPages() {
       if (this.page > this.totalPages) {
         this.setPage(1)
@@ -628,6 +628,7 @@ export default {
     },
   },
   mounted() {
+    this.debouncedSearch = debounce(this.retrieveNews, 800);
     this.retrieveNews();
     this.page = 1 // Reset pagination
   },
@@ -664,7 +665,9 @@ export default {
 
       const query = {
         q: this.query,
-        page: this.page
+        sort: 'a_to_z',
+        page: this.page,
+        maxDiscountPerPage: 12,
       };
 
       // Sanitize and remove null values
@@ -677,7 +680,12 @@ export default {
       this.$axios
         .$get(`v1/discountcode?${queryString}`)
         .then((response) => {
-          this.discountCodeList = response.data.discountcode
+          this.discountCodeList = response.data.discount;
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          console.log(this.totalPages);
+          this.from = response.data.from;
+          this.to = response.data.to;
         })
         .finally(() => {
           this.isNewsLoading = false;

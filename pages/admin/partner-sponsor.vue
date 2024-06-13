@@ -486,6 +486,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
 import logout from '~/mixins/auth/logout';
@@ -572,11 +573,8 @@ export default {
     },
   },
   watch: {
-    query: {
-      handler(newPage) {
-        this.retrieveSponsors();
-      },
-      immediate: true,
+    query() {
+      this.debouncedSearch();
     },
     totalPages() {
       if (this.page > this.totalPages) {
@@ -585,6 +583,7 @@ export default {
     },
   },
   mounted() {
+    this.debouncedSearch = debounce(this.retrieveSponsors, 800);
     this.retrieveSponsors();
     this.page = 1 // Reset pagination
   },

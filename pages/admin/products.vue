@@ -1041,6 +1041,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import 'remixicon/fonts/remixicon.css';
 import 'vue-croppa/dist/vue-croppa.css';
 import CategorySlider from '~/components/CategorySlider.vue';
@@ -1171,11 +1172,8 @@ export default {
      */
   },
   watch: {
-    query: {
-      handler(newPage) {
-        this.retrieveMerchItems();
-      },
-      immediate: true,
+    query() {
+      this.debouncedSearch();
     },
     totalPages() {
       if (this.page > this.totalPages) {
@@ -1184,6 +1182,7 @@ export default {
     },
   },
   mounted() {
+    this.debouncedSearch = debounce(this.retrieveMerchItems, 800);
     this.retrieveMerchItems();
     /* this.retrieveTags(); */
     this.page = 1 // Reset pagination

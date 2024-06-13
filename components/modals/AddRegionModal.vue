@@ -5,9 +5,9 @@
                 <h3 class="mb-3 font-bold text-brand-black">
                     Add Region
                 </h3>
-                <hr class="my-3 lg:w-[918px]"/>
-                <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <div class="col-span-1">
+                <hr class="my-3 lg:w-[618px]"/>
+                <div class="grid grid-cols-1 gap-2">
+                  <div class="">
                     <label for="regionname" class="mb-1 block">
                       Name:
                     </label>
