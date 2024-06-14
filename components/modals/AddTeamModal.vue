@@ -20,36 +20,111 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
-                    <label for="selectfield" class="mb-1 block">
-                      Field:
-                    </label>
-                    <VSelect
-                    v-model="TeamData.field_id"
-                    :items="filteredField"
-                    label="Choose a Field"
-                    :rules="rules"
-                    solo
-                    >
-                      <template #prepend-item>
-                        <div class="sticky-search-bar px-3">
-                          <SearchBar v-model="fieldQuery" />
-                        </div>
-                      </template>
-                    </VSelect>
+                  <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-1">
+                      <label for="selectagegroup" class="mb-1 block">
+                        Age Group:
+                      </label>
+                      <VSelect
+                        v-model="TeamData.ageGroup"
+                        :items="formattedAgeGroup"
+                        label="Choose Age Group"
+                        :rules="rules"
+                        solo
+                        >
+                      </VSelect>
+                    </div>
                   </div>
                   <div class="col-span-1">
                     <label for="selectevent" class="mb-1 block">
-                      Age Group
+                      Series:
                     </label>
                     <VSelect
-                    v-model="TeamData.agegroup_id"
-                    :items="formattedEvents"
-                    label="Choose a Age Group"
+                    v-model="TeamData.series_id"
+                    :items="formattedSeries"
+                    label="Choose Series"
                     :rules="rules"
                     solo
                     >
                     </VSelect>
+                  </div>
+                  <div class="col-span-1 md:col-span-2">
+                    <label for="teamname" class="mb-1 block">
+                      Coach Name:
+                    </label>
+                    <VTextField
+                    id="name"
+                    v-model="TeamData.coach_name"
+                    label="Enter Coach Name"
+                    :rules="rules"
+                    type="text"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="teamname" class="mb-1 block">
+                      Coach Mobile Number:
+                    </label>
+                    <VTextField
+                    id="number"
+                    v-model="TeamData.coach_mobile"
+                    label="Enter Mobile Number"
+                    :rules="rules"
+                    type="tel"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="teamname" class="mb-1 block">
+                      Coach Email:
+                    </label>
+                    <VTextField
+                    id="email"
+                    v-model="TeamData.coach_email"
+                    label="Enter Coach Email"
+                    :rules="rules"
+                    type="email"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1 md:col-span-2">
+                    <label for="teamname" class="mb-1 block">
+                      Manager Name:
+                    </label>
+                    <VTextField
+                    id="name"
+                    v-model="TeamData.manager_name"
+                    label="Enter Manager Name"
+                    :rules="rules"
+                    type="text"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="teamname" class="mb-1 block">
+                      Manager Mobile Number:
+                    </label>
+                    <VTextField
+                    id="number"
+                    v-model="TeamData.manager_mobile"
+                    label="Enter Mobile Number"
+                    :rules="rules"
+                    type="tel"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="teamname" class="mb-1 block">
+                      Manager Email:
+                    </label>
+                    <VTextField
+                    id="email"
+                    v-model="TeamData.manager_email"
+                    label="Enter Manager Email"
+                    :rules="rules"
+                    type="email"
+                    solo
+                    />
                   </div>
                   <div class="col-span-1 md:col-span-2">
                     <label for="photo" class="mb-1 block">
@@ -143,8 +218,7 @@
                         </div>
                       </div>
                     </div>
-
-                </div>
+                  </div>
                 </div>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
@@ -187,10 +261,14 @@ export default {
       type: Array,
       required: true
     },
-    event: {
+    series: {
       type: Array,
       required: true
     },
+    agegroup: {
+      type: Array,
+      required: true
+    }
   },
   data() {
     return {
@@ -211,11 +289,14 @@ export default {
       return this.field.map(field =>
         ({ text: field.name, value: field.id }));
     },
-    formattedEvents() {
-      return this.event.map(event => ({
-        text: `${event.agegroup?event.agegroup.name:''}`,
-        value: event.agegroup.id,
-        disabled: event.team.length >= event.teamcount
+    formattedAgeGroup() {
+      return this.agegroup.map(agegroup =>
+        ({ text: agegroup.name, value: agegroup.id }));
+    },
+    formattedSeries() {
+      return this.series.map(series => ({
+        text: series.name,
+        value: series.id,
       }));
     },
     filteredField() {
@@ -261,16 +342,14 @@ export default {
     addTeam() {
       const formData = new FormData();
       formData.append('name', this.TeamData.name);
-      formData.append('description', null);
-      formData.append('field_id', this.TeamData.field_id);
-      formData.append('agegroup_id', this.TeamData.agegroup_id);
-      formData.append('description', '');
-      formData.append('coach_name', '');
-      formData.append('coach_mobile', '');
-      formData.append('coach_email', '');
-      formData.append('manager_name', '');
-      formData.append('manager_mobile', '');
-      formData.append('manager_email', '');
+      formData.append('agegroup_id', this.TeamData.ageGroup);
+      formData.append('series_id', this.TeamData.series_id);
+      formData.append('coach_name', this.TeamData.coach_name);
+      formData.append('coach_mobile', this.TeamData.coach_mobile);
+      formData.append('coach_email', this.TeamData.coach_email);
+      formData.append('manager_name', this.TeamData.manager_name);
+      formData.append('manager_mobile', this.TeamData.manager_mobile);
+      formData.append('manager_email', this.TeamData.manager_email);
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'gymThumbnail.png');

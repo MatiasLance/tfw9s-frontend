@@ -7,7 +7,6 @@
             <button
             type="button"
             class="
-            from-40% via-95% to-100%
             w-full rounded-md
             bg-gradient-to-br
             from-[#5EE738] via-[#3e872a]
@@ -82,9 +81,8 @@
                 class="mr-0.5 flex-1 border-black bg-white p-1"
                 />
                 <input
-                v-model="data.fieldName"
+                v-model="data.series.name"
                 :rules="Rules"
-                placeholder="Enter Field"
                 hide-details
                 required
                 :disabled="true"
@@ -116,14 +114,16 @@
     <AddTeamModal
     :active="showAddTeamModal"
     :field="FieldList"
-    :event="EventList"
+    :series="seriesList"
+    :agegroup="ageGroupList"
     @close="closeAddTeamDialog"
     @confirm="AddTeam"
     />
     <EditTeamModal
     :active="showEditTeamModal"
     :field="FieldList"
-    :event="EventList"
+    :series="seriesList"
+    :agegroup="ageGroupList"
     :team="selectedData"
     @close="closeEditTeamDialog"
     @confirm="EditTeam"
@@ -154,10 +154,6 @@ export default {
       required: true
     },
     // eslint-disable-next-line vue/prop-name-casing
-    EventList: {
-      type: Array,
-      required: true
-    },
     getTeams: {
       type: Function,
       required: true,
@@ -175,6 +171,8 @@ export default {
       showDeleteTeamModal: false,
       Teams: [],
       Dataset: [],
+      ageGroupList: [],
+      seriesList: [],
       query: '',
       from: 0,
       to: 0,
@@ -209,6 +207,8 @@ export default {
     page: {
       handler(newPage) {
         this.retrieveTeams()
+        this.retrieveAgeGroups()
+        this.retrieveSeries()
       },
       immediate: true,
     },
@@ -314,6 +314,37 @@ export default {
           this.to = response.data.to;
         })
     },
+    retrieveAgeGroups() {
+      const query = {
+        q: this.query,
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/agegroups?${queryString}`)
+        .then((response) => {
+          this.ageGroupList= response.data.ageGroups;
+        })
+    },
+    retrieveSeries() {
+      this.$axios
+        .$get('v1/series')
+        .then((response) => {
+          this.seriesList = response.data.series.filter(series =>
+            series.type !== 'weekly');
+        })
+        .finally(() => {
+          this.showVueTable = true;
+        });
+    }
   }
 };
 </script>

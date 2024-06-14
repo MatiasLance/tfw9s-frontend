@@ -7,7 +7,6 @@
           <button
           type="button"
           class="
-          from-40% via-95% to-100%
           w-full rounded-md
           bg-gradient-to-br
           from-[#5EE738] via-[#3e872a]
@@ -46,10 +45,10 @@
           >
             <option
               v-for="option in options"
-              :key="option.value"
-              :value="option.value"
+              :key="option.id"
+              :value="option.id"
             >
-              {{ option.text }}
+              {{ option.name }}
             </option>
           </select>
         </div>
@@ -99,80 +98,85 @@
             @change="setPage"
             />
         </div>
-        <section
-        class="col-span-1 md:col-span-3 overflow-x-scroll
-        overflow-y-hidden md:overflow-x-hidden"
-        >
-          <div class="grid min-w-[640px] grid-cols-1 gap-2">
+          <section class="col-span-3">
             <div
-            v-for="(player) in Players"
-            :key="player.id"
-            class="col-span-1 p-4 text-white bg-[#212121]"
-            data-aos="fade-up" data-aos-offset="0"
+            class="grid grid-cols-1 overflow-y-hidden
+            overflow-x-scroll md:overflow-x-hidden"
             >
-              <Form class="grid grid-cols-3 gap-2 p-2">
-                <div class="col-span-2 font-semibold">
-                  {{ player.contact_firstname}}
-                </div>
-                <span class="col-span-3 line-clamp-4"
-                v-html="player.team_name"
-                />
-                <span class="col-span-3">
-                  {{ `${player.agegroup}` }}
+              <div
+              v-if="totalPages > 0"
+              class="col-span-1 flex w-[640px] pr-24 md:w-auto"
+              data-aos="flip-up"
+              >
+                <span
+                class="flex-1 text-center px-4 py-2 align-middle
+                text-[20px] font-semibold text-[#555555]"
+                >
+                Name
                 </span>
-                <div class="col-span-3 flex justify-end gap-4">
-                  <BaseButton
-                  class="
-                    max-w-full rounded-lg
-                    border border-gray-200
-                    bg-[#4cbe5c]
-                    py-2
-                    px-4
-                    text-white
-                    "
-                    @click="openEditPlayersDialog(player)"
-                  >
-                    Edit
-                  </BaseButton>
-                  <BaseButton
-                  class="
-                    max-w-full rounded-lg
-                    border border-gray-200
-                    bg-[#fb0d2b]
-                    py-2
-                    px-4
-                    text-white
-                    "
-                    @click="openDeletePlayersDialog(player)"
-                  >
-                    Delete
-                  </BaseButton>
-                </div>
-              </Form>
+                <span
+                class="flex-1 text-center px-4 py-2 align-middle
+                text-[20px] font-semibold text-[#555555]"
+                >
+                Team
+                </span>
+              </div>
+              <div
+              v-for="(data) in Players"
+              :key="data.id" class="col-span-1 mb-0.5 gap-0"
+              data-aos="flip-down" data-aos-duration="500"
+              data-aos-offset="0"  data-aos-once="true"
+              >
+              <div class="flex min-w-[640px] items-center justify-center">
+                <input
+                v-model="data.name"
+                placeholder="Enter Team"
+                hide-details
+                required
+                :disabled="true"
+                class="mr-0.5 flex-1 border-black bg-white p-1"
+                />
+                <input
+                v-model="data.team_name"
+                placeholder="Enter Field"
+                hide-details
+                required
+                :disabled="true"
+                class="mr-0.5 flex-1 border-black bg-white p-1"
+                />
+                <i
+                class="ri-pencil-fill px-4 text-xl text-white"
+                @click="openEditPlayersDialog(data)"
+                />
+                <i
+                class="ri-delete-bin-fill px-4 text-xl text-red-400"
+                @click="openDeletePlayersDialog(data)"
+                />
+              </div>
+              </div>
             </div>
-          </div>
-        </section>
-        <section
-        v-if="totalPages=== 0"
-        class="col-span-1 flex h-60 items-center
-        justify-center font-semibold
-        text-[#555555] md:col-span-3"
-        >
-        No data available
-        </section>
+          </section>
+          <section
+          v-if="totalPages=== 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          >
+          No team saved yet
+          </section>
       </div>
     </section>
   </div>
   <AddPlayersModal
   :active="showAddPlayersModal"
-  :agegroup="AgeGroupList"
+  :agegroup="ageGroupList"
   :teams="PlayersList"
   @close="closeAddPlayerDialog"
   @confirm="AddSeries"
   />
   <EditPlayersModal
   :active="showEditPlayersModal"
-  :agegroup="AgeGroupList"
+  :agegroup="ageGroupList"
   :teams="PlayersList"
   :series="selecetedData"
   @close="closeEditPlayersDialog"
@@ -180,7 +184,7 @@
   />
   <DeletePlayersModal
   :active="showDeletePlayersModal"
-  :agegroup="AgeGroupList"
+  :agegroup="ageGroupList"
   :teams="PlayersList"
   :series="selecetedData"
   @close="closeDeletePlayersDialog"
@@ -206,11 +210,6 @@ export default {
       type: Array,
       required: true
     },
-    // eslint-disable-next-line vue/prop-name-casing
-    AgeGroupList: {
-      type: Array,
-      required: true
-    },
     getSeries: {
       type: Function,
       required: true,
@@ -219,15 +218,7 @@ export default {
   data() {
     return {
       ActiveTab: null,
-      options: [
-        { text: 'All Age Group', value: null },
-        { text: 'Under 6', value: 'Under 6' },
-        { text: 'Under 7', value: 'Under 7' },
-        { text: 'Under 8', value: 'Under 8' },
-        { text: 'Under 9', value: 'Under 9' },
-        { text: 'Under 10', value: 'Under 10' },
-        { text: 'Under 11', value: 'Under 11' },
-      ],
+      options: [ { name: 'All Age Group', id: null } ],
       showAddPlayersModal: false,
       showEditPlayersModal: false,
       showDeletePlayersModal: false,
@@ -237,6 +228,7 @@ export default {
       selectedEvent: null,
       selectedYear: null,
       selectedGroup: [],
+      ageGroupList: [],
       events: [
         'Event 1',
         'Event 2',
@@ -280,7 +272,8 @@ export default {
     },
     ActiveTab: {
       handler(newPage) {
-        this.retrieveSeries();
+        this.retrievePlayers();
+        this.retrieveAgeGroups();
       },
       immediate: true,
     },
@@ -289,11 +282,20 @@ export default {
         this.setPage(1)
       }
     },
+    ageGroupList: {
+      handler(newList) {
+        this.options = [
+          { name: 'All Age Group', id: null },
+          ...newList.map(group => ({ name: group.name, id: group.id }))
+        ];
+      },
+      immediate: true,
+    }
   },
   mounted() {
-    this.debouncedSearch = debounce(this.retrieveSeries, 800);
-    this.retrieveSeries();
-    this.page = 1 // Reset pagination
+    this.debouncedSearch = debounce(this.retrievePlayers, 800);
+    this.retrievePlayers();
+    this.page = 1
   },
   methods: {
     openAddPlayerDialog() {
@@ -311,7 +313,7 @@ export default {
         queue: true
       })
       this.showAddPlayersModal = false;
-      this.retrieveSeries();
+      this.retrievePlayers();
       this.getSeries();
     },
     openEditPlayersDialog(data) {
@@ -331,7 +333,7 @@ export default {
         queue: true
       })
       this.showEditPlayersModal = false;
-      this.retrieveSeries();
+      this.retrievePlayers();
       this.getSeries();
     },
     openDeletePlayersDialog(data) {
@@ -351,7 +353,7 @@ export default {
         queue: true
       })
       this.showDeletePlayersModal = false;
-      this.retrieveSeries();
+      this.retrievePlayers();
       this.getSeries();
     },
     setTab(tab) {
@@ -419,14 +421,35 @@ export default {
       return date;
     },
     setPage() {
-      this.retrieveSeries();
+      this.retrievePlayers();
     },
-    retrieveSeries() {
+    retrieveAgeGroups() {
+      const query = {
+        q: this.query,
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/agegroups?${queryString}`)
+        .then((response) => {
+          this.ageGroupList= response.data.ageGroups;
+        })
+    },
+    retrievePlayers() {
       const query = {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
         type: this.ActiveTab,
+        agegroup: this.ActiveTab,
         maxPlayersPerPage: 10,
       };
 
@@ -444,7 +467,7 @@ export default {
           this.Players = response.data.players.map(player => {
             return {
               ...player,
-              name: `${player.contact_firstname} ${player.contact_lastname}`,
+              name: `${player.player_firstname} ${player.player_lastname}`,
             };
           });
           this.totalItems = response.data.total_items;
