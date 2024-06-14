@@ -129,7 +129,7 @@
                   <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
                       <label for="selectagegroup" class="mb-1 block">
-                        Age Group: {{ player.ageGroup }}
+                        Age Group
                       </label>
                       <VSelect
                         v-model="player.ageGroup"
@@ -190,10 +190,6 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrl: [],
       imgList: [],
-      SeriesData: {
-        name: null,
-        description: null
-      },
       SeriesList: [
         { text: 'Weekly Competitions', value: 'weekly' },
         { text: 'Tournaments', value: 'tournament' },
@@ -211,7 +207,7 @@ export default {
         firstName: '',
         lastName: '',
         teamName: '',
-        dob: '',
+        dob: new Date(),
         ageGroup: '',
         description: null,
       },
@@ -225,7 +221,7 @@ export default {
     },
     formattedAgeGroup() {
       return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.name }));
+        ({ text: agegroup.name, value: agegroup.id }));
     },
   },
   methods: {
@@ -294,10 +290,10 @@ export default {
       this.$refs.form.resetValidation()
     },
     confirm() {
-      this.addSeries()
+      this.addPlayer()
       this.closeDialog()
     },
-    addSeries() {
+    addPlayer() {
       const formData = new FormData();
       formData.append('contact_firstname', this.contact.firstName);
       formData.append('contact_lastname', this.contact.lastName);
@@ -333,7 +329,10 @@ export default {
       this.reset()
     },
     reset() {
-      this.SeriesData = []
+      this.contact = {}
+      this.phoneDigits = ''
+      this.player = {}
+      this.player.dob = new Date()
       this.imgList = []
       this.imgUrl = []
       this.showGenerateCreatedImageBtn = false

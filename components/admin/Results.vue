@@ -346,8 +346,6 @@ export default {
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
-                  time: this.reformatTime(match.match_time),
-                  matchtime: this.convertTo12HourFormat(match.match_time),
                   // eslint-disable-next-line camelcase
                   agegroup_id: ageGroupName,
                   // eslint-disable-next-line camelcase

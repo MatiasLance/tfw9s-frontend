@@ -20,31 +20,28 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
-                    <label for="selectfield" class="mb-1 block">
-                      Field:
-                    </label>
-                    <VSelect
-                    v-model="TeamData.field_id"
-                    :items="filteredField"
-                    label="Choose a Field"
-                    :rules="rules"
-                    solo
-                    >
-                      <template #prepend-item>
-                        <div class="sticky-search-bar px-3">
-                          <SearchBar v-model="fieldQuery" />
-                        </div>
-                      </template>
-                    </VSelect>
+                  <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-1">
+                      <label for="selectagegroup" class="mb-1 block">
+                        Age Group:
+                      </label>
+                      <VSelect
+                        v-model="TeamData.agegroup_id"
+                        :items="formattedAgeGroup"
+                        label="Choose Age Group"
+                        :rules="rules"
+                        solo
+                        >
+                      </VSelect>
+                    </div>
                   </div>
                   <div class="col-span-1">
                     <label for="selectevent" class="mb-1 block">
                       Series:
                     </label>
                     <VSelect
-                    v-model="TeamData.event_id"
-                    :items="formattedEvent"
+                    v-model="TeamData.series_id"
+                    :items="formattedSeries"
                     label="Choose Series"
                     :rules="rules"
                     solo
@@ -221,8 +218,7 @@
                         </div>
                       </div>
                     </div>
-
-                </div>
+                  </div>
                 </div>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
@@ -269,10 +265,14 @@ export default {
       type: Array,
       required: true
     },
-    event: {
+    series: {
       type: Array,
       required: true
     },
+    agegroup: {
+      type: Array,
+      required: true
+    }
   },
   data() {
     return {
@@ -294,12 +294,14 @@ export default {
       return this.field.map(field =>
         ({ text: field.name, value: field.id }));
     },
-    formattedEvent() {
-      return this.event.map(event => ({
-        text: `${event.name} - ${event.agegroup?event.agegroup.name:''}`,
-        value: event.id,
-        // eslint-disable-next-line max-len, vue/max-len
-        disabled: this.eventId === event.id?false:event.team.length >= event.teamcount
+    formattedAgeGroup() {
+      return this.agegroup.map(agegroup =>
+        ({ text: agegroup.name, value: agegroup.id }));
+    },
+    formattedSeries() {
+      return this.series.map(series => ({
+        text: series.name,
+        value: series.id,
       }));
     },
     filteredField() {
@@ -315,15 +317,6 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.TeamData = this.team;
-          this.eventId = this.team.event_id
-          const matchingEvent = this.formattedEvent.find(event =>
-            event.value === this.team.event_id);
-          this.TeamData.event_id = matchingEvent ?
-            matchingEvent.value : null;
-          const matchingField = this.filteredField.find(field =>
-            field.value === this.team.field_id);
-          this.TeamData.field_id = matchingField ?
-            matchingField.value : null;
           this.imgUrl = this.TeamData.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
           this.imgList = this.TeamData.media.map((x) => x.hash);
@@ -367,9 +360,8 @@ export default {
     editTeam() {
       const formData = new FormData();
       formData.append('name', this.TeamData.name);
-      formData.append('description', this.TeamData.description);
-      formData.append('field_id', this.TeamData.field_id);
-      formData.append('event_id', this.TeamData.event_id);
+      formData.append('agegroup_id', this.TeamData.agegroup_id);
+      formData.append('series_id', this.TeamData.series_id);
       formData.append('coach_name', this.TeamData.coach_name);
       formData.append('coach_mobile', this.TeamData.coach_mobile);
       formData.append('coach_email', this.TeamData.coach_email);

@@ -46,7 +46,7 @@
                         disabled
                       />
                       <VTextField
-                        v-model="SeriesData.phone_number"
+                        v-model="phoneDigits"
                         label="Phone Number"
                         :rules="rules"
                         type="text"
@@ -132,7 +132,7 @@
                       </label>
                       <VSelect
                         v-model="SeriesData.agegroup"
-                        :items="AgeGroupList"
+                        :items="formattedAgeGroup"
                         label="Choose Age Group"
                         :rules="rules"
                         solo
@@ -194,10 +194,7 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrlEdit: [],
       imgListEdit: [],
-      SeriesData: {
-        name: null,
-        description: null
-      },
+      SeriesData: {},
       AgeGroupList: [
         { text: 'Under 6', value: 'Under 6' },
         { text: 'Under 7', value: 'Under 7' },
@@ -218,6 +215,7 @@ export default {
         if (newActive) {
           this.SeriesData = this.series;
           this.selectedDate = new Date(this.SeriesData.dob);
+          this.phoneDigits = this.SeriesData.phone_number.replace(/^\+61/, '');
         }
       },
       immediate: true,
@@ -231,7 +229,7 @@ export default {
     },
     formattedAgeGroup() {
       return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.max_age }));
+        ({ text: agegroup.name, value: agegroup.id }));
     },
   },
   methods: {

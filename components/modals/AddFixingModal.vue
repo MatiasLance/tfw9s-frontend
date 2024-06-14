@@ -12,7 +12,7 @@
                Match Time
               </label>
               <VSelect
-                v-model="matchTime"
+                v-model="Event.time"
                 :items="matchTimeOption"
                 label="Choose Match Time"
                 :rules="rules"
@@ -478,6 +478,7 @@ export default {
       const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
       const formData = new FormData();
+      formData.append('time', this.Event.time);
       formData.append('region_id', this.Event.region_id);
       formData.append('agegroup_id', this.Event.agegroup_id);
       formData.append('datetime', event_date);
