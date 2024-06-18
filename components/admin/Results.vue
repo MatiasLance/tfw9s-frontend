@@ -339,6 +339,7 @@ export default {
         .then((response) => {
           const EventList = response.data.events.map(event => {
             const ageGroupName = event.agegroup.name;
+            const time = event.time;
             return {
               ...event,
               date: this.formattedDate(event.event_date),
@@ -346,6 +347,7 @@ export default {
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
+                  matchtime: time,
                   // eslint-disable-next-line camelcase
                   agegroup_id: ageGroupName,
                   // eslint-disable-next-line camelcase

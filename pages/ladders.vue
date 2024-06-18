@@ -77,8 +77,8 @@
               Event
               </span>
               <VSelect
-              v-model="selectedEvent"
-              :items="filteredEvents"
+              v-model="selectedSeries"
+              :items="formattedSeries"
               label="Select Event"
               solo
               class="md:w-80 lg:w-80"
@@ -137,9 +137,11 @@ export default {
     return {
       team: [],
       events: [],
-      AgeGroupList: [],
+      ageGroupList: [],
+      seriesList: [],
       selectedEvent: null,
       selectedAgeGroup: null,
+      selectedSeries: null,
       selectedYear: null,
       pageSEO: {
         title: 'Ladders - TFW Rugby League',
@@ -199,17 +201,31 @@ export default {
         text: `${event.name} ${this.replaceUnderWithU(event.agegroup.name)}`,
         value: event.id,
         agegroup: event.agegroup_id,
+        series: event.eventmatch.map(em => em.team1.series_id),
         date: new Date(event.event_date),
       }));
     },
     formattedAgeGroup() {
-      return this.AgeGroupList.map(agegroup =>
+      return this.ageGroupList.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
     },
+    formattedSeries() {
+      return this.seriesList.map(series =>
+        ({ text: series.name, value: series.id }));
+    },
     filteredEvents() {
-      if (this.selectedYear && this.selectedAgeGroup) {
+      if (this.selectedYear && this.selectedAgeGroup && this.selectedSeries) {
         return this.formattedEvents.filter(event => {
-          return event && event.date &&
+          return event &&
+                event.date &&
+                event.date.getFullYear() === this.selectedYear &&
+                event.agegroup === this.selectedAgeGroup &&
+                event.series.includes(this.selectedSeries);
+        });
+      } else if (this.selectedYear && this.selectedAgeGroup) {
+        return this.formattedEvents.filter(event => {
+          return event &&
+                event.date &&
                 event.date.getFullYear() === this.selectedYear &&
                 event.agegroup === this.selectedAgeGroup;
         });
@@ -246,7 +262,8 @@ export default {
               this.selectedYear = eventDate.getFullYear();
               this.selectedEvent = firstEvent.id;
               this.selectedAgeGroup = firstEvent.agegroup_id;
-              this.retrieveTeamPosition()
+              this.selectedSeries = firstEvent.eventmatch[0].team1.series_id;
+              this.retrieveTeamPosition();
             } else {
               console.error('Invalid event date format');
             }
@@ -268,12 +285,22 @@ export default {
            * this.selectedAgeGroup = null
            */
           this.selectedAgeGroup = this.formattedAgeGroup[0]?.value ?? null;
+          this.selectedSeries = this.formattedSeries[0]?.value ?? null;
           this.selectedEvent = this.filteredEvents[0]?.value ?? null;
         }
       },
       immediate: true,
     },
     selectedAgeGroup: {
+      handler(newYear) {
+        if (newYear && this.isLoaded) {
+          this.page = 1
+          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
+        }
+      },
+      immediate: true,
+    },
+    selectedSeries: {
       handler(newYear) {
         if (newYear && this.isLoaded) {
           this.page = 1
@@ -298,6 +325,7 @@ export default {
   },
   created() {
     this.retrieveAgeGroups();
+    this.retrieveSeries();
     this.retrieveEvents();
   },
   methods: {
@@ -310,7 +338,8 @@ export default {
         sort: 'points',
         page: this.page,
         maxTeamPositionsPerPage: 10,
-        event: this.selectedEvent,
+        agegroup: this.selectedAgeGroup,
+        series: this.selectedSeries,
       };
 
       Object.keys(query).forEach((key) => {
@@ -319,18 +348,18 @@ export default {
         }
       })
 
-      const queryString = new URLSearchParams(query).toString()
+      const queryString = new URLSearchParams(query).toString();
 
       this.$axios
         .$get(`v1/teampositions?${queryString}`)
         .then((response) => {
-          this.team = response.data.teamPositions.map((team, index) => {
-            return {
-              ...team,
-              team: team.team.name,
-              pos: index + 1,
-            };
-          });
+          const fteams = response.data.teamPositions.map((team, index) => ({
+            ...team,
+            team: team.team.name,
+            pos: index + 1,
+          }));
+
+          this.team = fteams;
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
@@ -378,9 +407,16 @@ export default {
       this.$axios
         .$get(`v1/agegroups?${queryString}`)
         .then((response) => {
-          this.AgeGroupList= response.data.ageGroups;
+          this.ageGroupList = response.data.ageGroups;
         })
     },
+    retrieveSeries() {
+      this.$axios
+        .$get('v1/series')
+        .then((response) => {
+          this.seriesList = response.data.series;
+        })
+    }
   }
 }
 </script>
