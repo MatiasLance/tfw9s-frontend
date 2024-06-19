@@ -39,7 +39,7 @@
           <main class="w-full px-4">
             <div class="my-6 flex flex-wrap items-center justify-between gap-4">
               <div
-                class="flex flex-wrap justify-start gap-2"
+                class="flex flex-wrap justify-start gap-8"
               >
               <button
                 type="button"
@@ -64,6 +64,29 @@
                   <span class="pr-1">Add Merch Item</span>
                 </span>
               </button>
+              <button
+                type="button"
+                class="
+                  w-full rounded-md
+                  bg-gradient-to-br
+                  from-[#5EE738] via-[#3e872a]
+                  to-[#050505] p-1.5
+                  text-center
+                  font-semibold
+                  text-white
+                  sm:w-60"
+                @click="addMerchVariant"
+              >
+                <span
+                class="
+                flex items-center
+                justify-center"
+                aria-hidden="true"
+                >
+                  <i class="ri-add-line"></i>
+                  <span class="pr-1">Add Merch Variant</span>
+                </span>
+              </button>
               </div>
               <div class="w-full sm:w-80">
               <form @submit.prevent="retrieveMerchItems">
@@ -80,6 +103,7 @@
         </div>
         <section class="mb-8" data-aos="fade-up">
         <div
+          v-if="totalPages > 0"
           class="
             flex flex-wrap items-center justify-around
             gap-x-2
@@ -129,7 +153,93 @@
             @delete="removeMerchItem"
           />
         </section>
+        <section
+          v-if="totalPages === 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          >
+          No Merch Available
+        </section>
       </div>
+      <OModal
+       :active="showAddMerchVariantModal"
+       @close="showAddMerchVariantModal = false"
+      >
+        <VForm
+          ref="form" v-model="valid" lazy-validation
+          class="p-2 md:p-4"
+        >
+          <h3
+            class="
+            mb-3
+            font-bold"
+          >
+            Add Merch Variant
+          </h3>
+          <hr class="my-3">
+          <div class="grid grid-cols-1">
+            <div class="col-span-1">
+              <label for="productname" class="mb-1 block">
+                Variant Name:
+              </label>
+              <VTextField
+              id="name"
+              v-model="variant"
+              label="Enter Variant Name"
+              :rules="rules"
+              type="text"
+              solo
+              />
+            </div>
+          </div>
+          <hr class="my-3">
+          <div class="block lg:flex lg:flex-auto lg:justify-end">
+            <button
+              type="button"
+              class="
+                my-2
+                inline-block
+                w-full
+                border border-transparent
+                bg-brand-green
+                py-3
+                px-5
+                text-center
+                font-bold
+                text-white
+                hover:bg-green-700
+                lg:mx-4 lg:w-48
+              "
+              :disabled="!valid"
+              @click="saveVariant"
+            >
+              OK
+            </button>
+            <button
+              type="button"
+              class="
+                my-2
+                inline-block
+                w-full
+                border border-transparent
+                bg-brand-red
+                py-3
+                px-5
+                text-center
+                font-bold
+                text-white
+                hover:bg-[#B1271B]
+                lg:mx-4 lg:w-48
+              "
+              @click="closeVariant"
+            >
+              Cancel
+            </button>
+          </div>
+        </VForm>
+      </OModal>
+
        <!-- showAdd modal component -->
        <OModal
        :active="showAddMerchItemModal"
@@ -140,10 +250,10 @@
         class="p-2 md:p-4"
         >
           <h3
-        class="
-        mb-3
-        font-bold"
-        >
+            class="
+            mb-3
+            font-bold"
+          >
             Add Merch Item
           </h3>
           <hr class="my-3">
@@ -832,43 +942,50 @@
           Add Variant
         </h3>
         <hr class="my-3">
-        <div
-          class="col-span-1 mb-2"
-          v-for="variant in variantList"
-          :key="variant.id"
-        >
+        <div v-if="variantList.length > 0">
           <div
-          class="
-          flex flex-col
-          sm:flex-row
-          sm:space-x-2"
+            class="col-span-1 mb-2"
+            v-for="variant in variantList"
+            :key="variant.id"
           >
-            <label
-              class="
-                flex
-                w-full
-                cursor-pointer border
-                border-gray-200
-                bg-transparent p-3
-                hover:border-brand-black
-                hover:bg-slate-100
-              "
-              >
-              <span>
-                <input
-                  v-model="checkedVariants"
-                  :value="variant.color"
-                  name="variantColor"
-                  type="checkbox"
-                  class="
-                  form-checkbox
-                  h-4 w-4 bg-gray-200 text-brand-black
-                  focus:ring-brand-black"
-                />
-              </span>
-              <span class="px-2">{{ variant.color }}</span>
-            </label>
+            <div
+            class="
+            flex flex-col
+            sm:flex-row
+            sm:space-x-2"
+            >
+              <label
+                class="
+                  flex
+                  w-full
+                  cursor-pointer border
+                  border-gray-200
+                  bg-transparent p-3
+                  hover:border-brand-black
+                  hover:bg-slate-100
+                "
+                >
+                <span>
+                  <input
+                    v-model="checkedVariants"
+                    :value="variant.name"
+                    name="variantColor"
+                    type="checkbox"
+                    class="
+                    form-checkbox
+                    h-4 w-4 bg-gray-200 text-brand-black
+                    focus:ring-brand-black"
+                  />
+                </span>
+                <span class="px-2">{{ variant.name }}</span>
+              </label>
+            </div>
           </div>
+        </div>
+        <div v-else>
+          <p class="my-10 text-center text-gray-500">
+            No variants available.
+          </p>
         </div>
         <hr class="my-3">
         <div class="block lg:flex lg:flex-auto lg:justify-end">
@@ -1105,6 +1222,7 @@ export default {
       totalPages: 0,
       totalItems: 0,
       newsList: [],
+      variant: '',
       variantList: [],
       myVariantList: [],
       prodId: '',
@@ -1112,6 +1230,7 @@ export default {
       isNewsLoading: false,
       isNewsAdded: false,
       showAddMerchItemModal: false,
+      showAddMerchVariantModal: false,
       showEditMerchItemModal: false,
       showRemoveMerchItemModal: false,
       showAddVariant: false,
@@ -1235,6 +1354,13 @@ export default {
     },
     close() {
       this.showAddMerchItemModal = false;
+    },
+    addMerchVariant() {
+      this.showAddMerchVariantModal = true;
+      this.reset()
+    },
+    closeVariant() {
+      this.showAddMerchVariantModal = false;
     },
     closeEdit() {
       this.showEditMerchItemModal = false;
@@ -1664,15 +1790,25 @@ export default {
       this.$axios
         .$post('v1/variant/', form)
         .then((response) => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Merch Variant Added',
-            position: 'bottom',
-            variant: 'success',
-            queue: true,
-          });
-          this.showAddVariant = false;
-          this.checkedVariants = [];
+          if (response.title === 'success') {
+            this.$oruga.notification.open({
+              duration: 5000,
+              message: 'Merch Variant Added',
+              position: 'bottom',
+              variant: 'success',
+              queue: true,
+            });
+            this.showAddVariant = false;
+            this.checkedVariants = [];
+          } else if (response.title === 'exists') {
+            this.$oruga.notification.open({
+              duration: 5000,
+              message: 'Merch Variant already exists',
+              position: 'bottom',
+              variant: 'warning',
+              queue: true,
+            });
+          }
         })
         .catch(() => {
           this.$oruga.notification.open({
@@ -1791,6 +1927,24 @@ export default {
       this.selectedCategory = {}
       /* this.tags = [] */
     },
+    saveVariant() {
+      const formData = new FormData();
+      formData.append('name', this.variant);
+
+      this.$axios
+        .$post('/v1/variant/itemvariant', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then(() => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Variant added',
+            position: 'bottom',
+            variant: 'success',
+            queue: true,
+          });
+          this.showAddMerchVariantModal = false;
+          this.variant = '';
+        })
+    }
   },
 };
 

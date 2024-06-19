@@ -42,7 +42,7 @@
                     v-model="managerData.mobile"
                     label="Enter Mobile Number"
                     :rules="rules"
-                    type="tel"
+                    type="number"
                     solo
                     />
                   </div>

@@ -134,7 +134,7 @@
         justify-center font-semibold
         text-[#555555] md:col-span-3"
         >
-        No event saved yet
+        No Fixings Available
         </section>
       </div>
     </section>

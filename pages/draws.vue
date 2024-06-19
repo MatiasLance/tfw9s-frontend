@@ -98,13 +98,16 @@
           class="col-span-1"
         >
         <div class="grid grid-cols-5 rounded-lg bg-[#212121] p-4">
-          <div class="col-span-5 text-xl font-medium text-white">
+          <div class="col-span-4 text-md md:text-xl font-medium text-white">
             {{ match.event_date }}
           </div>
-          <div class="col-span-5 text-lg font-medium text-slate-600">
+          <div class="col-span-4 text-sm md:text-lg font-medium text-slate-600">
             {{ match.field }}
           </div>
-          <div class="col-span-5 flex text-lg font-medium text-slate-600">
+          <div
+            class="col-span-2 flex text-lg
+            font-medium text-slate-600"
+          >
             <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
               <img
               :src="getMediaURL(match.team1.media[0])"
@@ -112,6 +115,12 @@
               class="h-full w-full object-contain"
               />
             </span>
+          </div>
+          <div></div>
+          <div
+            class="col-span-2 flex text-lg
+            font-medium text-slate-600"
+          >
             <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
               <img
               :src="getMediaURL(match.team2.media[0])"
@@ -121,19 +130,19 @@
             </span>
           </div>
           <div
-          class="col-span-2 text-right text-lg font-semibold
+          class="col-span-2 text-center text-sm md:text-lg font-semibold
           text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
           >
-          {{ match.team1.name }}
+            {{ match.team1.name }}
           </div>
           <div
           class="col-span-1 flex items-center justify-center
-          text-center text-lg font-semibold text-[#CCCCCC] lg:text-xl"
+          text-center text-sm md:text-lg font-semibold text-[#CCCCCC] lg:text-xl"
             >
             VS
           </div>
           <div
-          class="col-span-2 text-left text-lg font-semibold
+          class="col-span-2 text-center text-sm md:text-lg font-semibold
           text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
             >
             {{ match.team2.name }}
@@ -171,6 +180,7 @@
             <div class="px-4 py-2 mt-4">
             <span class="font-semibold text-[#5EE738]">
               {{ match.time }}
+              {{ parseInt(match.time) > 12 ? 'PM' : 'AM' }}
             </span>
             </div>
           </div>
@@ -184,7 +194,7 @@
           text-[#555555] md:col-span-3"
           data-aos="fade-up"
           >
-          No data available
+          No Draws
           </section>
         </div>
       </div>
@@ -477,26 +487,22 @@ export default {
           const EventList = response.data.events.map(event => {
             return {
               ...event,
-              // eslint-disable-next-line camelcase
-              manager_name: `${event.manager.user.first_name}
-               ${event.manager.user.last_name}`,
-              date: this.formattedDate(event.event_date),
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
-                  time: this.reformatTime(match.match_time),
+                  time: event.time,
                   // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
                   // eslint-disable-next-line camelcase
-                  field: match.field.name??'Unknown',
+                  field: match.field.name,
                   submit: match.submitted === 1
                 };
               })
             };
           });
-          this.MatchList = EventList.flatMap(data => {
-            return data.eventmatch;
-          });
+          this.MatchList = EventList.flatMap(data => data.eventmatch);
+          console.log(this.MatchList);
+          console.log(response.data.events);
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;

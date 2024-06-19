@@ -70,7 +70,7 @@
                     v-model="TeamData.coach_mobile"
                     label="Enter Mobile Number"
                     :rules="rules"
-                    type="tel"
+                    type="number"
                     solo
                     />
                   </div>
@@ -109,7 +109,7 @@
                     v-model="TeamData.manager_mobile"
                     label="Enter Mobile Number"
                     :rules="rules"
-                    type="tel"
+                    type="number"
                     solo
                     />
                   </div>

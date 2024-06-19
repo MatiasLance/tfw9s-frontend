@@ -174,6 +174,14 @@
               </div>
             </div>
           </article>
+          <section
+            v-if="filteredWeekly.length === 0"
+            class="col-span-1 flex h-60 items-center
+            justify-center font-semibold
+            text-[#555555] md:col-span-3"
+            >
+            No   Competitions Available
+          </section>
         </span>
         <span
           v-if="activeTab == 'tournament'"
@@ -231,6 +239,14 @@
               </div>
             </div>
           </article>
+          <section
+            v-if="filteredTournament.length === 0"
+            class="col-span-1 flex h-60 items-center
+            justify-center font-semibold
+            text-[#555555] md:col-span-3"
+            >
+            No Tournaments Available
+          </section>
         </span>
         <span
           v-if="activeTab == 'coast'"
@@ -288,6 +304,14 @@
               </div>
             </div>
           </article>
+          <section
+            v-if="filteredCentral.length === 0"
+            class="col-span-1 flex h-60 items-center
+            justify-center font-semibold
+            text-[#555555] md:col-span-3"
+            >
+            No Central Coast Available
+          </section>
         </span>
       </div>
     </section>

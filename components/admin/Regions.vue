@@ -113,7 +113,7 @@
           justify-center font-semibold
           text-[#555555] md:col-span-3"
           >
-          No region saved yet
+          No Regions Available
           </section>
         </div>
       </section>

@@ -78,7 +78,7 @@
           >
         </div>
         <div
-        v-if="showVueTable"
+        v-if="totalPages > 0"
         class="col-span-3 flex flex-wrap items-center justify-around
         gap-x-2 md:justify-between"
         data-aos="flip-up" data-aos-once="true"
@@ -157,12 +157,12 @@
             </div>
           </section>
           <section
-          v-if="totalPages=== 0"
+          v-if="totalPages === 0"
           class="col-span-1 flex h-60 items-center
           justify-center font-semibold
           text-[#555555] md:col-span-3"
           >
-          No team saved yet
+          No Players Available
           </section>
       </div>
     </section>
@@ -307,7 +307,7 @@ export default {
     AddSeries(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Player Series Added',
+        message: 'Player Added',
         position: 'bottom',
         variant: 'success',
         queue: true
@@ -347,7 +347,7 @@ export default {
     DeleteSeries(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Players Removed',
+        message: 'Player Removed',
         position: 'bottom',
         variant: 'success',
         queue: true

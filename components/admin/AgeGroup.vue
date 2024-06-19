@@ -114,7 +114,7 @@
           justify-center font-semibold
           text-[#555555] md:col-span-3"
           >
-          No age group saved yet
+          No Age Group Available
           </section>
         </div>
       </section>

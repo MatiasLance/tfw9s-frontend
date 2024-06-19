@@ -50,7 +50,7 @@
         </main>
       </div>
 
-      <section class="mb-8" data-aos="fade-up">
+      <section v-if="totalPages > 0" class="mb-8" data-aos="fade-up">
         <div
           class="
             flex flex-wrap items-center justify-around
@@ -69,6 +69,14 @@
             @change="setPage"
           />
         </div>
+      </section>
+      <section
+        v-if="totalPages === 0"
+        class="col-span-1 flex h-60 items-center
+        justify-center font-semibold
+        text-[#555555] md:col-span-3"
+        >
+        No News Available
       </section>
       <article class="mx-auto max-w-screen-xl gap-4">
           <div class="grid grid-cols-1 gap-4">
