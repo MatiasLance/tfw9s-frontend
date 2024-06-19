@@ -3,7 +3,7 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <form @submit.prevent="deletemanager">
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Delete Manager
+                    Delete Staff
                 </h3>
                 <hr class="my-3"/>
                   <p>

@@ -7,7 +7,7 @@
                 </h3>
                 <hr class="my-3"/>
                   <p>
-                    Are you sure you want to remove {{ seriesData.name }}?
+                    Are you sure you want to remove {{ seriesData.name }} ?
                   </p>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">

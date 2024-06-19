@@ -44,7 +44,6 @@
               <button
                 type="button"
                 class="
-                  from-40% via-95% to-100%
                   w-full rounded-md
                   bg-gradient-to-br
                   from-[#5EE738] via-[#3e872a]
@@ -75,7 +74,7 @@
           </main>
         </div>
 
-        <section class="mb-8" data-aos="fade-up">
+        <section  v-if="totalPages > 0" class="mb-8" data-aos="fade-up">
         <div
           class="
             flex flex-wrap items-center justify-around
@@ -94,6 +93,14 @@
               @change="setPage"
             />
           </div>
+        </section>
+        <section
+          v-if="totalPages === 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          >
+          No Partner Sponsor Available
         </section>
         <div
             class="grid grid-cols-1 gap-x-0 gap-y-6

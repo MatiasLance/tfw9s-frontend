@@ -150,7 +150,7 @@
         </div>
 
         <div
-        v-if="showVueTable"
+        v-if="totalPages > 0"
         class="col-span-1 flex flex-wrap items-center justify-around
         gap-x-2 md:col-span-3 md:justify-between"
         data-aos="flip-up" data-aos-once="true"
@@ -189,10 +189,16 @@
                   {{ DateRange(data.start, data.end) }}
                 </div>
                 <span class="col-span-3 line-clamp-4"
-                v-html="data.description"
-                />
-                <span class="col-span-3">
-                  {{ `Location: ${data.address}` }}
+                  v-html="data.description.length > 80
+                  ? data.description.substring(0, 80) + '...'
+                  : data.description"
+                >
+                </span>
+                <span class="col-span-3 line-clamp-4"
+                  v-html="data.address.length > 20
+                  ? `Location: ${data.address.substring(0, 20)}...`
+                  : `Location: ${data.address}`"
+                >
                 </span>
                 <div class="col-span-3 flex justify-end gap-4">
                   <div v-if="!data.is_paused">
@@ -270,12 +276,12 @@
           </div>
         </section>
         <section
-        v-if="totalPages=== 0"
+        v-if="totalPages === 0"
         class="col-span-1 flex h-60 items-center
         justify-center font-semibold
         text-[#555555] md:col-span-3"
         >
-        No data available
+        No Series Available
         </section>
       </div>
     </section>

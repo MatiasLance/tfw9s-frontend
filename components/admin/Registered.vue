@@ -39,7 +39,7 @@
           justify-center font-semibold
           text-[#555555] md:col-span-3"
           >
-          Nothing Registration Today
+          Nothing Registered Today
           </section>
         </div>
       </section>

@@ -3,7 +3,7 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <form @submit.prevent="deleteRegion">
                 <h3 class="mb-3 font-bold text-brand-black">
-                    Delete Region
+                    Delete Age Group
                 </h3>
                 <hr class="my-3"/>
                   <p>

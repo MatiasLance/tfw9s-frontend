@@ -121,7 +121,7 @@
           justify-center font-semibold
           text-[#555555] md:col-span-3"
           >
-          No data available
+          No Ladders
           </section>
         </div>
       </div>

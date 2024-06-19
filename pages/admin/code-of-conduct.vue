@@ -41,7 +41,6 @@
                 <button
                 type="button"
                 class="
-                from-40% via-95% to-100%
                 w-full rounded-md
                 bg-gradient-to-br
                 from-[#5EE738] via-[#3e872a]
@@ -165,7 +164,7 @@
               justify-center font-semibold
               text-[#555555] md:col-span-3"
               >
-              No content saved yet
+              No Code of Conduct Available
               </section>
             </div>
           </section>

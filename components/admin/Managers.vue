@@ -112,7 +112,7 @@
         justify-center font-semibold
         text-[#555555] md:col-span-3"
         >
-        No manager saved yet
+        No Managers Available
         </section>
       </div>
     </section>
