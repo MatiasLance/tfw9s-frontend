@@ -10,6 +10,7 @@
       label="Choose Field"
       :rules="rules"
       solo
+      :disabled="isMatchAlreadySubmitted"
       >
         <template #prepend-item>
           <div class="sticky-search-bar px-3">
@@ -28,6 +29,7 @@
       label="Choose Team 1"
       :rules="rules"
       solo
+      :disabled="isMatchAlreadySubmitted"
       >
         <template #prepend-item>
           <div class="sticky-search-bar px-3">
@@ -46,6 +48,7 @@
       label="Choose Team 2"
       :rules="rules"
       solo
+      :disabled="isMatchAlreadySubmitted"
       >
         <template #prepend-item>
           <div class="sticky-search-bar px-3">
@@ -72,6 +75,14 @@ export default {
       type: Array,
       required: true,
     },
+    series: {
+      type: String,
+      required: true,
+    },
+    agegroup: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -91,8 +102,12 @@ export default {
   },
   computed: {
     formattedTeam() {
-      return this.teamList.map(team =>
-        ({
+      return this.teamList
+        .filter(
+          team => team.agegroup_id === this.agegroup &&
+          team.series_id === this.series
+        )
+        .map(team => ({
           text: team.name,
           value: team.id,
           event: team.event_id
@@ -115,6 +130,9 @@ export default {
     filteredTeam2() {
       return this.formattedTeam;
     },
+    isMatchAlreadySubmitted() {
+      return this.match.submitted === 1;
+    }
   },
   watch: {
     matchData: {

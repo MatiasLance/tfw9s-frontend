@@ -65,7 +65,7 @@
                 text-lg font-semibold
                 text-white"
                 >
-                  {{ event.manager_name }}
+                  {{ event.series_name }}
                 </div>
                 <div
                 class="col-span-1 m-auto text-center
@@ -382,8 +382,7 @@ export default {
             return {
               ...event,
               // eslint-disable-next-line camelcase
-              manager_name: `${event.manager?.user?.first_name ?? ''}
-                  ${event.manager?.user?.last_name ?? ''}`,
+              series_name: event.series?.name ?? '',
               // eslint-disable-next-line camelcase
               region_name: event.region?.name ?? '',
               date: this.formattedDate(event.event_date),
