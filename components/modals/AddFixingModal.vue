@@ -52,6 +52,23 @@
               </VSelect>
             </div>
             <div class="col-span-2 md:col-span-1">
+              <label for="selectfield" class="mb-1 block">
+                Series:
+              </label>
+              <VSelect
+                v-model="SeriesId"
+                :items="filteredSeries"
+                label="Choose a Series"
+                solo
+            >
+              <template #prepend-item>
+                <div class="sticky-search-bar px-3">
+                  <SearchBar v-model="seriesQuery" />
+                </div>
+              </template>
+            </VSelect>
+            </div>
+            <div class="col-span-2 md:col-span-1">
               <label for="selectdate" class="mb-1 block">
                 Date:
               </label>
@@ -96,7 +113,7 @@
               >
               <!-- data Map -->
                 <div
-                class="
+                  class="
                   relative
                   h-auto
                   w-full
@@ -147,6 +164,7 @@
                         label="Choose Team 1"
                         :rules="rules"
                         solo
+                        :disabled="isTeamSelectionDisabled"
                       >
                       </VSelect>
                     </div>
@@ -162,6 +180,7 @@
                         label="Choose Team 2"
                         :rules="rules"
                         solo
+                        :disabled="isTeamSelectionDisabled"
                       >
                       </VSelect>
                     </div>
@@ -198,24 +217,6 @@
                   </div>
                 </template>
               </VSelect>
-            </div>
-            <div class="col-span-1" hidden>
-              <label for="selectfield" class="mb-1 block">
-                Series:
-              </label>
-              <VSelect
-                v-model="SeriesId"
-                :items="filteredSeries"
-                label="Choose a Series"
-
-                solo
-            >
-              <template #prepend-item>
-                <div class="sticky-search-bar px-3">
-                  <SearchBar v-model="seriesQuery" />
-                </div>
-              </template>
-            </VSelect>
             </div>
           <div class="col-span-1" hidden>
             <label for="eventname" class="mb-1 block">
@@ -384,15 +385,20 @@ export default {
       );
     },
     filteredTeamsForTeam1() {
-      const selectedTeam2Ids = this.multipleMatch.map(
-        match => match.team2).filter(id => id !== null);
-      return this.teams.filter(team => !selectedTeam2Ids.includes(team.id));
+      return this.teams.filter(team =>
+        team.agegroup_id === this.Event.agegroup_id &&
+        team.series_id === this.SeriesId
+      );
     },
     filteredTeamsForTeam2() {
-      const selectedTeam1Ids = this.multipleMatch.map(
-        match => match.team1).filter(id => id !== null);
-      return this.teams.filter(team => !selectedTeam1Ids.includes(team.id));
+      return this.teams.filter(team =>
+        team.agegroup_id === this.Event.agegroup_id &&
+        team.series_id === this.SeriesId
+      );
     },
+    isTeamSelectionDisabled() {
+      return !this.Event.agegroup_id || !this.SeriesId;
+    }
   },
   watch: {
     SeriesId: {
@@ -481,6 +487,7 @@ export default {
       formData.append('time', this.Event.time);
       formData.append('region_id', this.Event.region_id);
       formData.append('agegroup_id', this.Event.agegroup_id);
+      formData.append('series_id', this.SeriesId);
       formData.append('datetime', event_date);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {

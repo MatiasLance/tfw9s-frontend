@@ -48,8 +48,27 @@
               label="Choose Age Group"
               :rules="rules"
               solo
+              disabled
               >
               </VSelect>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+              <label for="selectfield" class="mb-1 block">
+                Series:
+              </label>
+              <VSelect
+                v-model="Event.series_id"
+                :items="filteredSeries"
+                label="Choose a Series"
+                solo
+                disabled
+              >
+              <template #prepend-item>
+                <div class="sticky-search-bar px-3">
+                  <SearchBar v-model="seriesQuery" />
+                </div>
+              </template>
+            </VSelect>
             </div>
             <div class="col-span-2 md:col-span-1">
               <label for="selectdate" class="mb-1 block">
@@ -146,7 +165,16 @@
                   border-[#CCCCCC]
                   p-4"
                 >
+                  <div
+                    v-if="matchBuffer.submitted"
+                    class="flex items-center justify-center"
+                  >
+                    <span class="text-xs text-red-400">
+                      This match is already submitted.
+                    </span>
+                  </div>
                   <button
+                    v-if="!matchBuffer.submitted"
                     type="button"
                     class="
                       absolute
@@ -165,7 +193,8 @@
                     :teamList="teams"
                     :fieldList="fields"
                     :region="Event.region_id"
-                    :event="Event.id"
+                    :series="Event.series_id"
+                    :agegroup="Event.agegroup_id"
                     @update-event="updateMatch(matchIndex, $event)"
                   />
                 </div>
@@ -341,7 +370,8 @@ export default {
             id: event.id,
             field_id: event.field_id,
             team1: event.team1,
-            team2: event.team2
+            team2: event.team2,
+            submitted: event.submitted,
           }));
         }
       },
