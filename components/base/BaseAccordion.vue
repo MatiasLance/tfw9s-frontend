@@ -31,9 +31,12 @@
         class="relative overflow-hidden transition-all duration-700"
       >
         <div class="py-2">
-          <p class="text-xl leading-relaxed tracking-wide text-gray-300">
-            {{ accordion.description }}
-          </p>
+          <div
+            class="text-xl leading-relaxed
+            tracking-wide text-gray-300"
+            v-html="accordion.description"
+          >
+          </div>
         </div>
       </div>
     </Transition>

@@ -48,7 +48,7 @@
                     >
                     </VSelect>
                   </div>
-                  <div class="col-span-1 md:col-span-2">
+                  <div class="col-span-1 md:col-span-2" hidden>
                     <label for="teamname" class="mb-1 block">
                       Coach Name:
                     </label>
@@ -56,12 +56,11 @@
                     id="name"
                     v-model="TeamData.coach_name"
                     label="Enter Coach Name"
-                    :rules="rules"
                     type="text"
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1" hidden>
                     <label for="teamname" class="mb-1 block">
                       Coach Mobile Number:
                     </label>
@@ -69,12 +68,11 @@
                     id="number"
                     v-model="TeamData.coach_mobile"
                     label="Enter Mobile Number"
-                    :rules="rules"
                     type="tel"
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1" hidden>
                     <label for="teamname" class="mb-1 block">
                       Coach Email:
                     </label>
@@ -82,12 +80,11 @@
                     id="email"
                     v-model="TeamData.coach_email"
                     label="Enter Coach Email"
-                    :rules="rules"
                     type="email"
                     solo
                     />
                   </div>
-                  <div class="col-span-1 md:col-span-2">
+                  <div class="col-span-1 md:col-span-2" hidden>
                     <label for="teamname" class="mb-1 block">
                       Manager Name:
                     </label>
@@ -95,12 +92,11 @@
                     id="name"
                     v-model="TeamData.manager_name"
                     label="Enter Manager Name"
-                    :rules="rules"
                     type="text"
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1" hidden>
                     <label for="teamname" class="mb-1 block">
                       Manager Mobile Number:
                     </label>
@@ -108,12 +104,11 @@
                     id="number"
                     v-model="TeamData.manager_mobile"
                     label="Enter Mobile Number"
-                    :rules="rules"
                     type="tel"
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1" hidden>
                     <label for="teamname" class="mb-1 block">
                       Manager Email:
                     </label>
@@ -121,12 +116,11 @@
                     id="email"
                     v-model="TeamData.manager_email"
                     label="Enter Manager Email"
-                    :rules="rules"
                     type="email"
                     solo
                     />
                   </div>
-                  <div class="col-span-1 md:col-span-2">
+                  <div class="col-span-1 md:col-span-2" hidden>
                     <label for="photo" class="mb-1 block">
                         Image upload:
                     </label>

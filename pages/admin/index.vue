@@ -205,6 +205,20 @@ export default {
           desc: 'Edit',
           count: -1
         },
+        {
+          title: 'FAQ',
+          icon: 'fas fa-cog',
+          route: '/admin/faq',
+          desc: 'Edit',
+          count: -1
+        },
+        {
+          title: 'Team Folder',
+          icon: 'fas fa-cog',
+          route: '/admin/teamfolder',
+          desc: 'Edit',
+          count: -1
+        },
       ],
       items: [
         {
@@ -239,7 +253,7 @@ export default {
       case 'MASTER':
         return this.panels.filter(panel => {
           return [
-            'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls'
+            'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder'
           ].includes(panel.title)
         })
       default:
