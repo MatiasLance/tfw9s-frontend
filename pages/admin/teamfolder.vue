@@ -1,137 +1,168 @@
-<!-- eslint-disable max-len -->
 <template>
-    <div class="min-h-screen bg-[#1A1A1B]">
-      <div class="mx-auto max-w-screen-xl px-4 py-7">
-        <div class="bg-[#1A1A1B]" data-aos="fade-up">
-          <section class="mx-auto max-w-screen-xl gap-4 p-4">
-            <div class="grid grid-cols-1 gap-4">
-              <div
-                v-if="
-                  ($store.state.auth.roles.includes('admin') ||
-                  $store.state.auth.roles.includes('superadmin'))"
-                class="col-span-1 flex items-center"
-              >
-                <button
+  <div class="h-full  bg-[#1A1A1B]">
+    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
+      <div
+        class="
+        space-y-3
+        px-6
+        text-left
+        sm:text-left
+        lg:col-span-6 lg:mt-10
+        xl:mt-10"
+        data-aos="fade-right"
+      >
+        <span
+          class="
+          superheadline
+          flex flex-row
+          items-center
+          pb-3
+          text-[1rem]
+          font-normal"
+        >
+          <span class="font-medium">
+            <NuxtLink to="/admin">
+              <VBtn text color="white">Admin</VBtn>
+            </NuxtLink>
+          </span>
+        </span>
+        <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
+          Team Folder
+        </h1>
+      </div>
+    </BaseHeader>
+
+    <div class="mx-auto max-w-screen-xl px-4 py-7">
+      <div class="-mx-4 flex flex-wrap">
+        <main class="w-full px-4">
+          <div class="my-6 flex flex-wrap items-center justify-between gap-4">
+            <div
+            class="flex flex-wrap justify-start gap-2"
+            >
+              <button
                 type="button"
                 class="
                 w-full rounded-md
                 bg-gradient-to-br
                 from-[#5EE738] via-[#3e872a]
-                to-[#050505] py-1.5
+                to-[#050505] p-1.5
                 text-center
                 font-semibold
                 text-white
-                sm:w-36"
+                sm:w-60"
                 @click="openEditContentDialog"
-                hidden
               >
-                <i class="ri-edit-2-fill"></i>
-                Edit
+                <span
+                  class="
+                  flex items-center
+                  justify-center gap-2"
+                  aria-hidden="true"
+                >
+                  <i class="ri-edit-2-fill"></i>
+                  <span class="pr-1">Edit</span>
+                </span>
               </button>
-              </div>
-
-              <section
-                class="col-span-1 overflow-x-scroll
-                overflow-y-hidden md:overflow-x-hidden text-white"
-              >
-              <h1 class=" pt-4 text-4xl font-bold">
-                {{ contentData.title }}
-              </h1>
-              <p class="py-4">
-                <span v-html="contentData.content"/>
-              </p>
-              </section>
             </div>
-          </section>
-        </div>
+          </div>
+        </main>
       </div>
-
-     <OModal
-     :active="showEditContentModal"
-     @close="closeEditContentDialog"
-     >
+      <section
+      class="col-span-1 overflow-x-scroll
+      overflow-y-hidden md:overflow-x-hidden text-white"
+      >
+      <h1 class=" pt-4 text-4xl font-bold">
+        {{ contentData.title }}
+      </h1>
+      <p class="py-4">
+        <span v-html="contentData.content"/>
+      </p>
+    </section>
+    </div>
+    <OModal
+      :active="showEditContentModal"
+      @close="closeEditContentDialog"
+    >
       <VForm
       ref="form" v-model="valid" lazy-validation
       class="p-2 md:p-4"
       >
         <h3
-      class="
-      mb-3
-      font-bold"
-      >
+          class="
+          mb-3
+          font-bold"
+          >
           Edit Content
         </h3>
-        <hr class="my-3  lg:w-[918px]"/>
-        <div class="grid grid-cols-1">
-          <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <div class="col-span-1">
-              <label for="regionname" class="mb-1 block">
-                Title:
-              </label>
-              <VTextField
-                id="name"
-                v-model="contentData.title"
-                label="Enter Title"
-                :rules="rules"
-                type="text"
-                solo
-              />
-            </div>
-          </div>
+      <hr class="my-3  lg:w-[918px]"/>
+      <div class="grid grid-cols-1">
+        <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
           <div class="col-span-1">
-            <label for="headline" class="mb-1 block">
-              Content:
+            <label for="regionname" class="mb-1 block">
+              Title:
             </label>
-            <Tiptap
-            id="content"
-            v-model="contentData.content"
+            <VTextField
+              id="name"
+              v-model="contentData.title"
+              label="Enter Title"
+              :rules="rules"
+              type="text"
+              solo
             />
           </div>
         </div>
-        <hr class="my-3  lg:w-[918px]"/>
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-700
-              lg:mx-4 lg:w-48
-            "
-            :disabled="!valid"
-            @click="validate"
-          >
-            OK
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-[#B1271B]
-              lg:mx-4 lg:w-48
-            "
-            @click="closeEditContentDialog"
-          >
-            Cancel
-          </button>
+        <div class="col-span-1">
+          <label for="headline" class="mb-1 block">
+          Content:
+          </label>
+          <Tiptap
+          id="content"
+          v-model="contentData.content"
+          />
         </div>
+      </div>
+      <hr class="my-3  lg:w-[918px]"/>
+      <div class="block lg:flex lg:flex-auto lg:justify-end">
+        <button
+          type="button"
+          class="
+          my-2
+          inline-block
+          w-full
+          border border-transparent
+          bg-brand-green
+          py-3
+          px-5
+          text-center
+          font-bold
+          text-white
+          hover:bg-green-700
+          lg:mx-4 lg:w-48"
+          :disabled="!valid"
+          @click="validate"
+        >
+          OK
+        </button>
+        <button
+          type="button"
+          class="
+          my-2
+          inline-block
+          w-full
+          border border-transparent
+          bg-brand-red
+          py-3
+          px-5
+          text-center
+          font-bold
+          text-white
+          hover:bg-[#B1271B]
+          lg:mx-4 lg:w-48
+          "
+          @click="closeEditContentDialog"
+        >
+          Cancel
+        </button>
+      </div>
       </VForm>
     </OModal>
   </div>
@@ -285,4 +316,3 @@ color: rgb(104, 104, 104) !important;
   height: 50px !important;
 }
 </style>
-

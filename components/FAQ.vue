@@ -21,7 +21,7 @@
         >
           <ul class="shadow-box">
             <BaseAccordion
-              v-for="(accordion, index) in accordions"
+              v-for="(accordion, index) in faqList"
               :key="index"
               :accordion="accordion"
             />
@@ -48,6 +48,7 @@ export default {
       pageName: 'Frequently asked questions',
       cta: 'Get online quote',
       blurb: 'Content',
+      faqList: [],
       accordions: [
         {
           title: 'How do I register my team?',
@@ -96,5 +97,21 @@ export default {
       ]
     };
   },
+  mounted() {
+    this.retrieveFaq();
+  },
+  methods: {
+    retrieveFaq() {
+      this.$axios
+        .$get('v1/faq')
+        .then((response) => {
+          this.faqList = response.data.faq
+          console.log(this.faqList);
+        })
+        .finally(() => {
+          this.isFaqLoading = false;
+        });
+    },
+  }
 }
 </script>
