@@ -2,7 +2,10 @@
 <template>
   <div class="w-screen min-h-screen bg-[#1A1A1B]">
   <div class="max-w-full overflow-hidden">
-    <HeroSection />
+    <HeroSection
+      :blurb="contentData.content"
+      :image='contentData.image'
+    />
     <Partnersponsor/>
   </div>
 </div>
@@ -24,7 +27,11 @@ export default {
         featured: false,
         review: false,
         beforeFooter: true
-      }
+      },
+      contentData: {
+        image: [],
+        content: '<p></p>'
+      },
     };
   },
   head() {
@@ -45,6 +52,20 @@ export default {
         },
       ],
     };
-  }
+  },
+  created() {
+    this.retrieveHomePageInfo()
+  },
+  methods: {
+    retrieveHomePageInfo() {
+      const id = 1;
+
+      this.$axios
+        .$get(`v1/homepageinfo/${id}`)
+        .then((response) => {
+          this.contentData.content = response.data.teamFolder.blurb
+        })
+    },
+  },
 };
 </script>

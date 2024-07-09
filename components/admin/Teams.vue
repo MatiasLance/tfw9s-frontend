@@ -61,6 +61,12 @@
                 class="flex-1 text-center px-4 py-2 align-middle
                 text-[20px] font-semibold text-[#555555]"
                 >
+                Age Group
+                </span>
+                <span
+                class="flex-1 text-center px-4 py-2 align-middle
+                text-[20px] font-semibold text-[#555555]"
+                >
                 Series
                 </span>
               </div>
@@ -75,6 +81,14 @@
                 v-model="data.name"
                 :rules="Rules"
                 placeholder="Enter Team"
+                hide-details
+                required
+                :disabled="true"
+                class="mr-0.5 flex-1 border-black bg-white p-1"
+                />
+                <input
+                v-model="data.agegroup.name"
+                :rules="Rules"
                 hide-details
                 required
                 :disabled="true"

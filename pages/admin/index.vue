@@ -219,6 +219,13 @@ export default {
           desc: 'Edit',
           count: -1
         },
+        {
+          title: 'Home Page Info',
+          icon: 'fas fa-cog',
+          route: '/admin/home-page',
+          desc: 'Edit',
+          count: -1
+        },
       ],
       items: [
         {
@@ -253,7 +260,7 @@ export default {
       case 'MASTER':
         return this.panels.filter(panel => {
           return [
-            'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder'
+            'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info'
           ].includes(panel.title)
         })
       default:

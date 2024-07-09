@@ -64,7 +64,7 @@
                   class="ri-facebook-circle-fill text-2xl"
                   />
                   <span class="ml-2 text-sm">
-                    The Final Whistle - Rugby League
+                    TFW9's (@TFW9's)
                   </span>
                 </VListItemTitle>
               </VListItem>
@@ -95,20 +95,6 @@
                   <i class="ri-mail-add-fill text-2xl"/>
                   <span class="ml-2 text-sm">
                     thefinalwhistlerl@hotmail.com
-                  </span>
-                </VListItemTitle>
-              </VListItem>
-              <VListItem>
-                <VListItemTitle
-                title="Save Number"
-                class="flex items-center brightness-75 transition
-                duration-200 hover:scale-105 hover:brightness-100
-                cursor-pointer"
-                @click="toClipboard('+1 (899) 884-3727')"
-                >
-                  <i class="ri-phone-fill text-2xl"/>
-                  <span class="ml-2 text-sm">
-                    +1 (899) 884-3727
                   </span>
                 </VListItemTitle>
               </VListItem>

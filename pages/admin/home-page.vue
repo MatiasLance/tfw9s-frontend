@@ -27,7 +27,7 @@
           </span>
         </span>
         <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-          Team Folder
+          Home Page Information
         </h1>
       </div>
     </BaseHeader>
@@ -66,17 +66,11 @@
           </div>
         </main>
       </div>
-      <section
-      class="col-span-1 overflow-x-scroll
-      overflow-y-hidden md:overflow-x-hidden text-white"
-      >
-      <h1 class=" pt-4 text-4xl font-bold">
-        {{ contentData.title }}
-      </h1>
-      <p class="py-4">
-        <span v-html="contentData.content"/>
-      </p>
-    </section>
+      <HeroSection
+        :blurb="contentData.content"
+        :image='contentData.image'
+        :isAdmin='true'
+      />
     </div>
     <OModal
       :active="showEditContentModal"
@@ -95,29 +89,19 @@
         </h3>
       <hr class="my-3  lg:w-[918px]"/>
       <div class="grid grid-cols-1">
-        <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-          <div class="col-span-1">
-            <label for="regionname" class="mb-1 block">
-              Title:
-            </label>
-            <VTextField
-              id="name"
-              v-model="contentData.title"
-              label="Enter Title"
-              :rules="rules"
-              type="text"
-              solo
-            />
-          </div>
-        </div>
         <div class="col-span-1">
           <label for="headline" class="mb-1 block">
-          Content:
+            Content:
           </label>
           <Tiptap
-          id="content"
-          v-model="contentData.content"
+            id="content"
+            v-model="contentData.content"
           />
+          <div class="col-span-1 md:col-span-2 pt-6">
+            <ImageUpload
+              @update-image="updateImage"
+            />
+          </div>
         </div>
       </div>
       <hr class="my-3  lg:w-[918px]"/>
@@ -170,15 +154,23 @@
 
 <script>
 import Tiptap from '~/components/Wysiwyg/Tiptap'
+import ImageUpload from '~/components/ImageUploadEditSolo'
+import HeroSection from '~/components/HeroSection'
+
 export default {
-  components: { Tiptap },
+  components: {
+    Tiptap,
+    ImageUpload,
+    HeroSection
+  },
   data() {
     return {
       valid: true,
       showEditContentModal: false,
       rules: [ value => !!value || 'Required' ],
+      imgList: [],
       contentData: {
-        title: '',
+        image: [],
         content: '<p></p>'
       },
       ContentList: [],
@@ -195,12 +187,15 @@ export default {
     },
     page: {
       handler(newPage) {
-        this.retrieveTeamFolder()
+        this.retrieveHomePageInfo()
       },
       immediate: true,
     },
   },
   methods: {
+    updateImage(image) {
+      this.imgList = image
+    },
     validate() {
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
@@ -236,15 +231,18 @@ export default {
     },
     updateTeamFolder() {
       const form = new FormData();
-      form.append('title', this.contentData.title)
       form.append('content', this.contentData.content)
+
+      for (let i = 0; i < this.imgList.length; i++) {
+        form.append('photo[]', this.imgList[i], 'newsThumbnail.png');
+      }
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
       this.$axios
-        .$post(`v1/teamfolder/update/${1}`, form, config)
+        .$post(`v1/homepageinfo/update/${1}`, form, config)
         .then((response) => {
           this.$oruga.notification.open({
-            message: 'Team Folder Updated',
+            message: 'Home Page Information Updated',
             variant: 'success',
             duration: 5000,
             position: 'bottom',
@@ -252,7 +250,7 @@ export default {
           });
           this.reset();
           this.showEditContentModal= false
-          this.retrieveTeamFolder();
+          this.retrieveHomePageInfo();
         })
         .catch((err) => {
           this.$oruga.notification.open({
@@ -267,14 +265,13 @@ export default {
     reset() {
       this.contentData = { content: '<p></p>' }
     },
-    retrieveTeamFolder() {
+    retrieveHomePageInfo() {
       const id = 1;
 
       this.$axios
-        .$get(`v1/teamfolder/${id}`)
+        .$get(`v1/homepageinfo/${id}`)
         .then((response) => {
-          this.contentData.title = response.data.teamFolder.title
-          this.contentData.content = response.data.teamFolder.content
+          this.contentData.content = response.data.teamFolder.blurb
         })
     },
   }
@@ -316,3 +313,4 @@ color: rgb(104, 104, 104) !important;
   height: 50px !important;
 }
 </style>
+
