@@ -30,13 +30,9 @@
                     single-line
                     label="Enter Minimum Age"
                     type="number"
-                    :min="1"
-                    :step="1"
                     :max="100"
-                    :rules="rules"
+                    :rules="ageRules"
                     solo
-                    inputmode="numeric"
-                    @keyup="handleMinAge"
                     />
                   </div>
                   <div class="col-span-1">
@@ -49,13 +45,9 @@
                     single-line
                     label="Enter Maximum Age"
                     type="number"
-                    :min="1"
-                    :step="1"
                     :max="100"
-                    :rules="rules"
-                    inputmode="numeric"
+                    :rules="ageRules"
                     solo
-                    @keyup="handleMaxAge"
                     />
                   </div>
                 </div>
@@ -104,6 +96,11 @@ export default {
         description: null
       },
       rules: [ value => !!value || 'Required' ],
+      ageRules: [
+        value => !!value || 'Required.',
+        value => (value && value <= 100) || 'Must be 100 or less.',
+        value => (value && value > 0) || 'Must be greater than 0.',
+      ],
     }
   },
 

@@ -3,8 +3,7 @@
     <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
       <div class="relative col-span-1 mb-4 w-full p-4" data-aos="fade-right">
         <h1
-        class="font-montserrat from-70%
-            via-95% to-100% mb-4
+        class="font-montserrat mb-4
             bg-gradient-to-b
             from-[#5EE738]
             via-[#3e872a]
@@ -18,13 +17,13 @@
             >
         {{ headline }}
         </h1>
-        <p class="mb-4 text-justify indent-10 text-lg text-white">
-            {{ contentblurb }}
-        </p>
-          <NuxtLink to="/tournaments">
+        <span class="text-justify indent-10 text-lg text-white"
+          v-html="contentblurb"
+        />
+          <NuxtLink to="/tournaments" v-show="!isAdmin">
           <BaseButton
             class="
-              from-40% via-95% to-100%
+              mt-4
               max-w-full rounded-lg
               border border-gray-200
               bg-gradient-to-tr
@@ -65,6 +64,23 @@
 
 <script>
 export default {
+  props: {
+    blurb: {
+      type: String,
+      required: true
+    },
+    isAdmin: {
+      type: Boolean,
+      required: false
+    },
+    // image: {
+
+    //   type: Array,
+
+    //   required: true
+
+    // }
+  },
   data() {
     return {
       showContent: {
@@ -74,8 +90,13 @@ export default {
       },
       headline: 'TFW9’s',
       cta: 'Register Now',
-      contentblurb: 'The Final Whistle is a dynamic platform dedicated to sharing uplifting stories from Junior Rugby League. Through engaging content and vibrant storytelling, it celebrates the achievements, resilience, and sportsmanship of young athletes. By amplifying these positive narratives, it aims to inspire and empower the rugby league community, fostering a culture of inclusivity and encouragement. With a focus on teamwork, perseverance, and community spirit, The Final Whistle showcases the transformative power of sport in shaping young lives.\n(Temporary Statement)',
+      contentblurb: '',
     };
+  },
+  watch: {
+    blurb(newVal) {
+      this.contentblurb = newVal;
+    }
   },
   methods: {
     test() {

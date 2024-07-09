@@ -368,7 +368,6 @@ export default {
     },
   },
   created() {
-    this.retrieveAgeGroups();
     this.retrieveTeamLimits();
   },
   methods: {
@@ -413,26 +412,11 @@ export default {
         .$get(`v1/teamlimit/${seriesid}`)
         .then((response) => {
           this.teamLimit = response.data
-        })
-    },
-    retrieveAgeGroups() {
-      const query = {
-        q: this.query,
-        page: this.page,
-      };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/agegroups?${queryString}`)
-        .then((response) => {
-          this.agegroup = response.data.ageGroups;
+          this.agegroup = response.data
+            .filter(limit => limit.is_selected === 1)
+            .map(limit => limit.age_groups)
+            .flat();
         })
     },
   }

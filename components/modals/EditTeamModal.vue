@@ -263,10 +263,6 @@ export default {
       type: Array,
       required: true
     },
-    agegroup: {
-      type: Array,
-      required: true
-    }
   },
   data() {
     return {
@@ -281,6 +277,7 @@ export default {
         description: null
       },
       rules: [ value => !!value || 'Required' ],
+      agegroup: []
     }
   },
   computed: {
@@ -318,6 +315,11 @@ export default {
       },
       immediate: true,
     },
+    'TeamData.series_id'(newVal, oldVal) {
+      if (newVal) {
+        this.retrieveTeamLimits();
+      }
+    }
   },
   methods: {
     validate() {
@@ -480,6 +482,16 @@ export default {
     },
     handleImageRemoveCreate() {
       this.showGenerateCreatedImageBtn = false;
+    },
+    retrieveTeamLimits() {
+      this.$axios
+        .$get(`v1/teamlimit/${this.TeamData.series_id}`)
+        .then((response) => {
+          this.agegroup = response.data
+            .filter(limit => limit.is_selected === 1)
+            .map(limit => limit.age_groups)
+            .flat();
+        })
     },
   }
 }

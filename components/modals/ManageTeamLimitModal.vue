@@ -1,38 +1,65 @@
 <template>
-  <OModal :active="active" @close="closeDialog" :width="'960px'">
+  <OModal :active="active" @close="closeDialog" :width="'550px'">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
       <VForm ref="form" v-model="valid" lazy-validation>
         <h3 class="mb-3 font-bold text-brand-black">
           Manage Team Limit
         </h3>
         <hr class="my-3 lg:w-[918px]" />
-        <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-          <div class="col-span-1">
-            <label for="selectagegroup" class="mb-1 block">
-              Age Group:
-            </label>
-            <VSelect
-              v-model="SeriesData.agegroup_id"
-              :items="formattedAgeGroup"
-              label="Choose Age Group"
-              :rules="rules"
-              solo
-            >
-            </VSelect>
-          </div>
-          <div class="col-span-1">
-            <label for="eventname" class="mb-1 block">
-              Team Count:
-            </label>
-            <VTextField
-              id="name"
-              v-model="SeriesData.teamcount"
-              label="Enter Event Title"
-              :rules="rules"
-              type="number"
-              solo
-            />
-          </div>
+        <div>
+          <table class="min-w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th></th>
+                <th
+                  class="px-4 py-2 border
+                  border-gray-300
+                  text-center"
+                >
+                  Age Group
+                </th>
+                <th
+                  class="px-4 py-2 border
+                  border-gray-300
+                  text-center"
+                >
+                  Team Limit
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(ageGroup, index) in formattedAgeGroup"
+                :key="index"
+                class="border cursor-pointer"
+                :class="{'border-green-500':
+                selectedAgeGroups.includes(ageGroup.value)}"
+                @click="toggleSelection(ageGroup.value)"
+              >
+                <td class="px-4 py-2 text-center">
+                  <input
+                    type="checkbox"
+                    v-model="selectedAgeGroups"
+                    :value="ageGroup.value"
+                    class="checkbox cursor-pointer"
+                  >
+                </td>
+                <td class="px-4 py-2 text-center">
+                  {{ ageGroup.text }}
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <input
+                    type="number"
+                    v-model="teamCounts[ageGroup.value]"
+                    :id="'teamcount-' + ageGroup.value"
+                    :disabled="!selectedAgeGroups.includes(ageGroup.value)"
+                    class="border border-gray-300 p-2 w-full h-full"
+                    placeholder="Enter Team Limit"
+                    @click.stop
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <hr class="my-3" />
         <div class="flex flex-col justify-end gap-2 md:flex-row">
@@ -87,7 +114,8 @@ export default {
       imgUrl: [],
       imgList: [],
       SeriesData: {},
-      teamLimit: [],
+      teamCounts: {},
+      selectedAgeGroups: [],
       rules: [ value => !!value || 'Required' ],
     }
   },
@@ -98,11 +126,6 @@ export default {
     },
   },
   watch: {
-    'SeriesData.agegroup_id'(newVal, oldVal) {
-      if (newVal) {
-        this.checkTeamLimit(newVal)
-      }
-    },
     seriesid(newVal, oldVal) {
       if (newVal) {
         this.retrieveTeamLimits();
@@ -110,6 +133,14 @@ export default {
     }
   },
   methods: {
+    toggleSelection(ageGroupId) {
+      const index = this.selectedAgeGroups.indexOf(ageGroupId);
+      if (index > -1) {
+        this.selectedAgeGroups.splice(index, 1);
+      } else {
+        this.selectedAgeGroups.push(ageGroupId);
+      }
+    },
     updateImage(image) {
       this.imgList = image
     },
@@ -147,10 +178,15 @@ export default {
     },
     editTeamLimit() {
       const formData = new FormData();
-      formData.append('teamcount', this.SeriesData.teamcount);
+      Object.keys(this.teamCounts).forEach(ageGroupId => {
+        formData.append(`teamcount[${ageGroupId}][teamcount]`,
+          this.teamCounts[ageGroupId]);
+        formData.append(`teamcount[${ageGroupId}][selected]`,
+          this.selectedAgeGroups.includes(parseInt(ageGroupId)) ? '1' : '0');
+      });
 
       this.$axios
-        .$post(`v1/teamlimit/update/${this.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .$post('v1/teamlimit/update', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
           this.$emit('confirm')
@@ -169,14 +205,32 @@ export default {
         .$get(`v1/teamlimit/${this.seriesid}`)
         .then((response) => {
           this.teamLimit = response.data
+
+          this.teamLimit.forEach(limit => {
+            const ageGroupId = limit.age_groups[0].id;
+            this.teamCounts[ageGroupId] = limit.team_limit;
+            if (limit.is_selected) {
+              if (!this.selectedAgeGroups.includes(ageGroupId)) {
+                this.selectedAgeGroups.push(ageGroupId);
+              }
+            } else {
+              const index = this.selectedAgeGroups.indexOf(ageGroupId);
+              if (index !== -1) {
+                this.selectedAgeGroups.splice(index, 1);
+              }
+            }
+          });
         })
     },
     closeDialog() {
       this.$emit('close')
       this.reset()
+      this.retrieveTeamLimits()
     },
     reset() {
       this.SeriesData = []
+      this.teamCounts = {}
+      this.selectedAgeGroups = []
     },
   }
 }
@@ -226,6 +280,42 @@ export default {
   appearance: none !important;
   border-radius: 0 !important;
   transition: border-color 0.3s !important;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem;
+}
+
+th {
+  background-color: #f9fafb;
+}
+
+tbody tr:hover {
+  background-color: #f1f5f9;
+
+  input[type="number"] {
+    background-color: #f1f5f9;
+  }
+}
+
+.border-green-500 {
+  border: 2px solid #20ab20 !important;
+}
+
+.checkbox {
+  border: 1px solid #d4d4d4 !important;
+  border-radius: 5px;
+  color: #20ab20 !important;
+}
+
+.checkbox:checked {
+  border: 1px solid #20ab20 !important;
 }
 </style>
 

@@ -15,15 +15,15 @@
           v-for="(item, index) in partnerSponsors"
           :key="index"
         >
-          <NuxtLink to="/admin/partner-sponsor">
             <img
               class="size-24 md:size-40 overflow-hidden rounded-lg
               object-contain brightness-50 transition duration-300
-              ease-in-out hover:scale-125 hover:brightness-100"
+              ease-in-out hover:scale-125 hover:brightness-100
+              cursor-pointer"
               :src="getMediaURL(item.media[0])"
               alt="Sponsor Image"
+              @click="openLink(item.hyperlink)"
             />
-          </NuxtLink>
         </div>
       </VueSlickCarousel>
     </div>
@@ -78,6 +78,9 @@ export default {
     this.retrieveSponsors();
   },
   methods: {
+    openLink(url) {
+      window.open(url, '_blank');
+    },
     retrieveSponsors() {
       const query = { q: this.query };
 

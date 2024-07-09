@@ -136,7 +136,7 @@
             >
           </div>
           <div class="w-full">
-          <div class="p-5">
+            <div class="p-5">
               <div class="mb-4 space-y-2">
               <span
               class="text-2xl selection:bg-yellow-600 selection:text-white"
@@ -194,7 +194,7 @@
                   <i class="ri-delete-bin-5-line"></i> Remove
               </button>
               </div>
-          </div>
+            </div>
           </div>
         </article>
         </div>
@@ -230,17 +230,30 @@
               solo
               />
             </div>
-              <div class="col-span-1" hidden>
-                <label for="sponsorfirst" class="mb-1 block">
-                  Firstname:
-                </label>
-                <VTextField
+            <div class="col-span-1 md:col-span-2">
+              <label for="sponsorname" class="mb-1 block">
+                Hyperlink:
+              </label>
+              <VTextField
+              id="name"
+              v-model="sponsor.link"
+              label="Enter Link"
+              :rules="rules"
+              type="url"
+              solo
+              />
+            </div>
+            <div class="col-span-1" hidden>
+              <label for="sponsorfirst" class="mb-1 block">
+                Firstname:
+              </label>
+              <VTextField
                 id="name"
                 v-model="sponsor.first_name"
                 label="Enter Firstname"
                 type="text"
                 solo
-                />
+              />
             </div>
             <div class="col-span-1" hidden>
               <label for="sponsorlast" class="mb-1 block">
@@ -340,6 +353,19 @@
             :rules="rules"
             type="text"
             solo
+            />
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <label for="sponsorname" class="mb-1 block">
+              Hyperlink:
+            </label>
+            <VTextField
+              id="name"
+              v-model="sponsor.link"
+              label="Enter Link"
+              :rules="rules"
+              type="url"
+              solo
             />
           </div>
           <div class="col-span-1" hidden>
@@ -528,6 +554,7 @@ export default {
       sponsor: {
         // eslint-disable-next-line camelcase
         company_name: '',
+        link: '',
         // eslint-disable-next-line camelcase
         first_name: '',
         // eslint-disable-next-line camelcase
@@ -823,6 +850,7 @@ export default {
     create() {
       const form = new FormData();
       form.append('company_name', this.sponsor.company_name)
+      form.append('hyperlink', this.sponsor.link)
       form.append('first_name', 'null')
       form.append('last_name', 'null')
       form.append('description', 'null')
@@ -865,6 +893,7 @@ export default {
         .then((response) => {
           // eslint-disable-next-line max-len, camelcase, vue/max-len
           this.sponsor.company_name = response.data.partnerSponsor.company_name;
+          this.sponsor.link = response.data.partnerSponsor.link;
           // eslint-disable-next-line camelcase
           this.sponsor.first_name = response.data.partnerSponsor.first_name;
           // eslint-disable-next-line camelcase
@@ -893,6 +922,7 @@ export default {
       );
       const form = new FormData();
       form.append('company_name', this.sponsor.company_name)
+      form.append('hyperlink', this.sponsor.link)
       form.append('first_name', this.sponsor.first_name)
       form.append('last_name', this.sponsor.last_name)
       form.append('description', this.sponsor.description)
