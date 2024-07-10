@@ -99,7 +99,9 @@
           />
           <div class="col-span-1 md:col-span-2 pt-6">
             <ImageUpload
-              @update-image="updateImage"
+              :imglistedit="imgListEdit"
+              :imgurledit="imgUrlEdit"
+              @update-image-edit="updateImageEdit"
             />
           </div>
         </div>
@@ -121,8 +123,7 @@
           text-white
           hover:bg-green-700
           lg:mx-4 lg:w-48"
-          :disabled="!valid"
-          @click="validate"
+          :disabled="!valid" @click="validate"
         >
           OK
         </button>
@@ -168,7 +169,8 @@ export default {
       valid: true,
       showEditContentModal: false,
       rules: [ value => !!value || 'Required' ],
-      imgList: [],
+      imgListEdit: [],
+      imgUrlEdit: [],
       contentData: {
         image: [],
         content: '<p></p>'
@@ -193,8 +195,8 @@ export default {
     },
   },
   methods: {
-    updateImage(image) {
-      this.imgList = image
+    updateImageEdit(image) {
+      this.imgListEdit = image
     },
     validate() {
       if (!this.$refs.form.validate()) {
@@ -233,8 +235,8 @@ export default {
       const form = new FormData();
       form.append('content', this.contentData.content)
 
-      for (let i = 0; i < this.imgList.length; i++) {
-        form.append('photo[]', this.imgList[i], 'newsThumbnail.png');
+      for (let i = 0; i < this.imgListEdit.length; i++) {
+        form.append('photo[]', this.imgListEdit[i], 'newsThumbnail.png');
       }
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
@@ -263,7 +265,10 @@ export default {
         });
     },
     reset() {
-      this.contentData = { content: '<p></p>' }
+      this.contentData = {
+        content: '<p></p>',
+        image: []
+      }
     },
     retrieveHomePageInfo() {
       const id = 1;
@@ -272,6 +277,11 @@ export default {
         .$get(`v1/homepageinfo/${id}`)
         .then((response) => {
           this.contentData.content = response.data.teamFolder.blurb
+          this.contentData.image = response.data.teamFolder.media
+
+          this.imgUrlEdit = this.contentData.image.map((x) =>
+            `${this.$config.baseURL}/storage/${x.path}`);
+          this.imgListEdit = this.contentData.image.map((x) => x.hash);
         })
     },
   }
