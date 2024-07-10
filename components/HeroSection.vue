@@ -47,7 +47,7 @@
         >
         <div class="mt-6">
         <img
-        src="~/assets/images/kidsplaying.jpg"
+        :src="contentimage"
         class="h-auto w-auto"
         >
         </div>
@@ -63,7 +63,10 @@
 </template>
 
 <script>
+import handlesMedia from '~/mixins/shop/handlesMedia'
+
 export default {
+  mixins: [ handlesMedia ],
   props: {
     blurb: {
       type: String,
@@ -73,13 +76,10 @@ export default {
       type: Boolean,
       required: false
     },
-    // image: {
-
-    //   type: Array,
-
-    //   required: true
-
-    // }
+    image: {
+      type: Array,
+      required: true
+    }
   },
   data() {
     return {
@@ -91,11 +91,15 @@ export default {
       headline: 'TFW9’s',
       cta: 'Register Now',
       contentblurb: '',
+      contentimage: []
     };
   },
   watch: {
     blurb(newVal) {
       this.contentblurb = newVal;
+    },
+    image(newVal) {
+      this.contentimage = this.getMediaURL(newVal[0]);
     }
   },
   methods: {

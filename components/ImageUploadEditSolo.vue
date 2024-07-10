@@ -8,8 +8,8 @@
       <div class="col-span-1">
         <Croppa
         v-model="myEditCroppa"
-        :width="320"
-        :height="320"
+        :width="420"
+        :height="280"
         :quality="5"
         placeholder="Place image here"
         :placeholder-font-size="15"
@@ -84,7 +84,7 @@
             hover:bg-brand-black
             hover:text-white
             "
-            @click="removeImage(photoIndex)"
+            @click="removeEditedImage(photoIndex)"
         >
             <div class="ri-close-fill ri-lg"></div>
         </button>

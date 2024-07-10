@@ -64,6 +64,7 @@ export default {
         .$get(`v1/homepageinfo/${id}`)
         .then((response) => {
           this.contentData.content = response.data.teamFolder.blurb
+          this.contentData.image = response.data.teamFolder.media
         })
     },
   },

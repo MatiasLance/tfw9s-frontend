@@ -4,21 +4,41 @@
     <section class="mx-auto max-w-screen-xl gap-4 p-4">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
 
-        <div class="col-span-1 flex items-center md:col-span-3">
-          <button
-          type="button"
+        <div
           class="
-          w-full rounded-md
-          bg-gradient-to-br
-          from-[#5EE738] via-[#3e872a]
-          to-[#050505] py-1.5
-          text-center
-          font-semibold
-          text-white
-          sm:w-36"
-          @click="openAddSeriesDialog"
+            col-span-1 flex flex-col
+            md:flex-row items-center
+            md:col-span-3 gap-2"
+          >
+          <button
+            type="button"
+            class="
+              w-full rounded-md
+              bg-gradient-to-br
+              from-[#5EE738] via-[#3e872a]
+              to-[#050505] py-1.5
+              text-center
+              font-semibold
+              text-white
+              sm:w-36"
+              @click="openAddSeriesDialog"
           >
             +
+          </button>
+
+          <button
+            type="button"
+            class="
+              w-full rounded-md
+              bg-gradient-to-br
+              from-[#5EE738] via-[#3e872a]
+              to-[#050505] py-1.5
+              text-center
+              text-white
+              sm:w-36"
+              @click="openEditThumbnailDialog"
+          >
+            Edit Thumbnail
           </button>
         </div>
 
@@ -308,6 +328,12 @@
   @close="closeEditSeriesDialog"
   @confirm="EditSeries"
   />
+  <EditThumbnailModal
+  :active="showEditThumbnailModal"
+  :series="selecetedData"
+  @close="closeEditThumbnailDialog"
+  @confirm="EditThumbnail"
+  />
   <DeleteSeriesModal
   :active="showDeleteSeriesModal"
   :agegroup="AgeGroupList"
@@ -324,12 +350,14 @@ import AddSeriesModal from '~/components/modals/AddSeriesModal.vue';
 import EditSeriesModal from '~/components/modals/EditSeriesModal.vue';
 import DeleteSeriesModal from '~/components/modals/DeleteSeriesModal.vue';
 import ManageTeamLimitModal from '~/components/modals/ManageTeamLimitModal.vue';
+import EditThumbnailModal from '~/components/modals/EditThumbnailModal.vue';
 export default {
   components: {
     AddSeriesModal,
     ManageTeamLimitModal,
     EditSeriesModal,
     DeleteSeriesModal,
+    EditThumbnailModal
   },
   props: {
     // eslint-disable-next-line vue/prop-name-casing
@@ -362,6 +390,7 @@ export default {
       ],
       showAddSeriesModal: false,
       showEditSeriesModal: false,
+      showEditThumbnailModal: false,
       showTeamLimitModal: false,
       showDeleteSeriesModal: false,
       selecetedData: ({}),
@@ -464,9 +493,15 @@ export default {
     openAddSeriesDialog() {
       this.showAddSeriesModal = true
     },
+    openEditThumbnailDialog() {
+      this.showEditThumbnailModal = true
+    },
     openTeamLimitDialog(data) {
       this.seriesid = data.id
       this.showTeamLimitModal = true
+    },
+    closeEditThumbnailDialog() {
+      this.showEditThumbnailModal = false
     },
     closeTeamLimitDialog() {
       this.showTeamLimitModal = false
@@ -503,6 +538,18 @@ export default {
         queue: true
       })
       this.showTeamLimitModal = false;
+      this.retrieveSeries();
+      this.getSeries();
+    },
+    EditThumbnail() {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Thumbnail Modified',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      })
+      this.showEditThumbnailModal = false;
       this.retrieveSeries();
       this.getSeries();
     },
