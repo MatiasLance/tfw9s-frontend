@@ -76,7 +76,7 @@
                     >
                       <p>Registration Fee: </p>
                       <span class="font-semibold">
-                        {{ formatCurrency(SeriesData.price) }}
+                        {{formatCurrency(SeriesData.price) }}
                       </span>
                     </label>
                     <VTextField
@@ -140,7 +140,7 @@
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
 import ImageUploadEdit from '~/components/ImageUploadEdit'
-import currencyMixin from '@/mixins/currency';
+import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 export default {
   name: 'EditSeriesModal',
@@ -183,6 +183,7 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.SeriesData = this.series;
+          this.SeriesData.price = this.series.price/100;
           this.imgUrlEdit = this.SeriesData.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
           this.imgListEdit = this.SeriesData.media.map((x) => x.hash);
@@ -274,7 +275,7 @@ export default {
       formData.append('address', this.SeriesData.address);
       formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
       formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
-      formData.append('price', this.SeriesData.price);
+      formData.append('price', this.SeriesData.price*100);
 
       for (let i = 0; i < this.imgListEdit.length; i++) {
         formData.append('photo[]', this.imgListEdit[i]);
