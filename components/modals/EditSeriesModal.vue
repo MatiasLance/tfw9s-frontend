@@ -296,6 +296,7 @@ export default {
         });
     },
     closeDialog() {
+      this.SeriesData.price = this.series.price*100
       this.$emit('close')
       this.reset()
     },
