@@ -94,3 +94,5 @@ sw.*
 
 # Image Zone Identifier
 **:Zone.Identifier
+.bun
+bun.lockb
