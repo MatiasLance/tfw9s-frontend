@@ -39,7 +39,7 @@
                 <slot :name="column.name" :data="row">
                   <template v-if="column.name === 'time'">
                     <input
-                    v-model="row['time']" type="time"
+                    v-model="row['time']" type="text"
                     :disabled="true"
                     />
                   </template>
