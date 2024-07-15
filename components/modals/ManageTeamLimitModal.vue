@@ -114,6 +114,7 @@ export default {
       imgUrl: [],
       imgList: [],
       SeriesData: {},
+      LimitId: {},
       teamCounts: {},
       selectedAgeGroups: [],
       rules: [ value => !!value || 'Required' ],
@@ -179,6 +180,8 @@ export default {
     editTeamLimit() {
       const formData = new FormData();
       Object.keys(this.teamCounts).forEach(ageGroupId => {
+        formData.append(`teamcount[${ageGroupId}][id]`,
+          this.LimitId[ageGroupId]);
         formData.append(`teamcount[${ageGroupId}][teamcount]`,
           this.teamCounts[ageGroupId]);
         formData.append(`teamcount[${ageGroupId}][selected]`,
@@ -208,6 +211,7 @@ export default {
 
           this.teamLimit.forEach(limit => {
             const ageGroupId = limit.age_groups[0].id;
+            this.LimitId[ageGroupId] = limit.id;
             this.teamCounts[ageGroupId] = limit.team_limit;
             if (limit.is_selected) {
               if (!this.selectedAgeGroups.includes(ageGroupId)) {
@@ -229,6 +233,7 @@ export default {
     },
     reset() {
       this.SeriesData = []
+      this.LimitId = {}
       this.teamCounts = {}
       this.selectedAgeGroups = []
     },
