@@ -111,7 +111,7 @@
           >
             <VueTable
             :columns="dataColumns"
-            :data="team"
+            :data="allTeamStats"
             class="border"
           />
           </section>
@@ -135,6 +135,7 @@ export default {
   components: { VueTable },
   data() {
     return {
+      allTeamStats: [],
       team: [],
       events: [],
       ageGroupList: [],
@@ -329,6 +330,53 @@ export default {
     this.retrieveEvents();
   },
   methods: {
+    getUniqueTeamIds() {
+      const teamIds = new Set();
+      this.team.forEach(event => {
+        teamIds.add(event.team_id);
+      });
+      return Array.from(teamIds);
+    },
+    calculateTeamStats(teamId) {
+      const teamStats = {
+        // eslint-disable-next-line camelcase
+        team_id: teamId,
+        win: 0,
+        loss: 0,
+        draw: 0,
+        for: 0,
+        against: 0,
+        difference: 0,
+        points: 0,
+      };
+
+      this.team.forEach(event => {
+        if (event.team_id === teamId) {
+          teamStats.team = event.team
+          teamStats.win += event.win;
+          teamStats.loss += event.loss;
+          teamStats.draw += event.draw;
+          teamStats.for += event.for;
+          teamStats.against += event.against;
+          teamStats.difference += event.difference;
+          teamStats.points += event.points;
+        }
+      });
+
+      return teamStats;
+    },
+    calculateAllTeamStats() {
+      const uniqueTeamIds = this.getUniqueTeamIds();
+      // eslint-disable-next-line max-len, vue/max-len
+      const stats = uniqueTeamIds.map(teamId => this.calculateTeamStats(teamId));
+
+      const sortedByPoints = stats.sort((a, b) => b.points - a.points);
+
+      this.allTeamStats= sortedByPoints.map((team, index) => ({
+        ...team,
+        pos: index + 1,
+      }));
+    },
     replaceUnderWithU(str) {
       return str.replace(/^Under \b/, 'U');
     },
@@ -364,6 +412,7 @@ export default {
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
+          this.calculateAllTeamStats()
         })
         .finally(() => {
           this.isLoaded = true;
