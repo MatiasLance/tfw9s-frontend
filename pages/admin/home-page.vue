@@ -236,7 +236,7 @@ export default {
       form.append('content', this.contentData.content)
 
       for (let i = 0; i < this.imgListEdit.length; i++) {
-        form.append('photo[]', this.imgListEdit[i], 'newsThumbnail.png');
+        form.append('photo[]', this.imgListEdit[i]);
       }
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };

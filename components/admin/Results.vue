@@ -131,6 +131,31 @@ export default {
         { name: 'team2_score', label: 'Points' },
         { name: 'action', label: '' },
       ],
+      matchTimeOption: [
+        { text: '8:00 AM', value: '8:00' },
+        { text: '8:25 AM', value: '8:25' },
+        { text: '8:50 AM', value: '8:50' },
+        { text: '9:15 AM', value: '9:15' },
+        { text: '9:40 AM', value: '9:40' },
+        { text: '10:05 AM', value: '10:30' },
+        { text: '10:55 AM', value: '10:55' },
+        { text: '11:20 AM', value: '11:20' },
+        { text: '11:45 AM', value: '11:55' },
+        { text: '12:10 PM', value: '12:10' },
+        { text: '12:35 PM', value: '12:35' },
+        { text: '1:00 PM', value: '13:00' },
+        { text: '1:25 PM', value: '13:25' },
+        { text: '2:15 PM', value: '14:15' },
+        { text: '2:40 PM', value: '14:40' },
+        { text: '3:05 PM', value: '15:05' },
+        { text: '3:30 PM', value: '15:30' },
+        { text: '3:55 PM', value: '15:55' },
+        { text: '4:20 PM', value: '16:20' },
+        { text: '4:45 PM', value: '16:45' },
+        { text: '5:10 PM', value: '17:10' },
+        { text: '5:35 PM', value: '17:35' },
+        { text: '6:00 PM', value: '18:00' },
+      ],
       Rules: [
         value => {
           if (value) {
@@ -230,6 +255,16 @@ export default {
       this.showManageResultModal = false;
       this.getEvents();
       this.retrieveEvents();
+    },
+    AMPMformat(time) {
+      // eslint-disable-next-line camelcase
+      const matched = this.matchTimeOption.find(data => data.value === time);
+      if (matched) {
+        return matched.text;
+      } else {
+        // If no matching field is found, return "unknown"
+        return 'Unknown';
+      }
     },
     SubmitSuccess(data) {
       this.$oruga.notification.open({
@@ -347,7 +382,7 @@ export default {
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
-                  matchtime: time,
+                  matchtime: this.AMPMformat(time),
                   // eslint-disable-next-line camelcase
                   agegroup_id: ageGroupName,
                   // eslint-disable-next-line camelcase

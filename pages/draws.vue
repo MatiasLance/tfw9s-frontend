@@ -136,8 +136,8 @@
             {{ match.team1.name }}
           </div>
           <div
-          class="col-span-1 flex items-center justify-center
-          text-center text-sm md:text-lg font-semibold text-[#CCCCCC] lg:text-xl"
+          class="col-span-1 flex items-center justify-center text-center
+          text-sm md:text-lg font-semibold text-[#CCCCCC] lg:text-xl"
             >
             VS
           </div>

@@ -84,11 +84,10 @@
            {{formatCurrency(saleprice)}}
         </span>
       </span>
-      <span class="text-white my-4 text-justify mr-12">
-        {{ description.length > 300 ?
-          description.slice(0, 300 ) + '...' : description
-        }}
-      </span>
+      <span
+      class="text-white my-4 text-justify mr-12 line-clamp-3"
+      v-html="description"
+      />
       <span class="text-white my-2">
         <span class="font-bold">{{ stock }}</span> in Stock
       </span>
