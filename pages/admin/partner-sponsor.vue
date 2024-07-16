@@ -587,10 +587,10 @@ export default {
       headline: '',
       content: '',
       pageSEO: {
-        title: 'Discount Code Admin - Drum HQ',
-        description: 'Discount Code Page',
+        title: 'Partner Sponsors - TFW Rugby League',
+        description: 'Partner Sponsors Page',
       },
-      adminpage: { title: 'Discount Codes' }
+      adminpage: { title: 'Partner Sponsors' }
     };
   },
   head() {
@@ -893,7 +893,7 @@ export default {
         .then((response) => {
           // eslint-disable-next-line max-len, camelcase, vue/max-len
           this.sponsor.company_name = response.data.partnerSponsor.company_name;
-          this.sponsor.link = response.data.partnerSponsor.link;
+          this.sponsor.link = response.data.partnerSponsor.hyperlink;
           // eslint-disable-next-line camelcase
           this.sponsor.first_name = response.data.partnerSponsor.first_name;
           // eslint-disable-next-line camelcase
@@ -1007,6 +1007,7 @@ export default {
       // eslint-disable-next-line camelcase
       this.sponsor.last_name = '';
       this.sponsor.description = '';
+      this.sponsor.link = '';
       this.imgList = []
       this.imgUrl = []
       this.imgListEdit = []

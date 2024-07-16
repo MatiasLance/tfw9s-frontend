@@ -204,6 +204,7 @@ export default {
         subtotal: 0,
         gst: 0,
         total: 0,
+        taxamount: 0,
       },
       overallTotal: 0,
       newSubTotal: 0,
@@ -293,6 +294,7 @@ export default {
     setOriginalAmount() {
       this.originalAmount.subtotal = this.subtotal
       this.originalAmount.total = this.overallTotal
+      this.originalAmount.taxamount = this.taxAmount
     },
     retrieveToggleTaxControl() {
       const id = 1;
@@ -403,6 +405,7 @@ for this code.
               this.$store.commit('cart/setSubtotal', this.originalAmount.subtotal)
               this.$store.commit('cart/setGst', this.originalAmount.gst)
               this.$store.commit('cart/setTotal', this.originalAmount.total)
+              this.$store.commit('cart/setTaxAmount', this.originalAmount.taxAmount)
               this.$oruga.notification.open({
                 message: 'Discount code is invalid. Please enter a valid code',
                 variant: 'error',
@@ -438,6 +441,7 @@ for this code.
         this.$store.commit('cart/setSubtotal', this.originalAmount.subtotal)
         this.$store.commit('cart/setGst', this.originalAmount.gst)
         this.$store.commit('cart/setTotal', this.originalAmount.total)
+        this.$store.commit('cart/setTaxAmount', this.originalAmount.taxamount)
         this.overallTotal = this.originalAmount.total
         this.isDiscountCodeMatch = false
       }, 1000)

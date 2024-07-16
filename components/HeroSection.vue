@@ -99,7 +99,7 @@ export default {
       this.contentblurb = newVal;
     },
     image(newVal) {
-      this.contentimage = this.getMediaURL(newVal[0]);
+      this.contentimage = this.getMediaURL(newVal[0], 'temp');
     }
   },
   methods: {

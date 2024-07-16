@@ -164,7 +164,7 @@ export default {
     };
   },
   head() {
-    return { title: 'Categories - Drum HQ' };
+    return { title: 'Categories - TFW Rugby League' };
   },
   computed: {
     selectedCategories: {

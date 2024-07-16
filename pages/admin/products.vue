@@ -1239,10 +1239,10 @@ export default {
       headline: '',
       content: '',
       pageSEO: {
-        title: 'Discount Code Admin - Drum HQ',
-        description: 'Discount Code Page',
+        title: 'Products - TFW Rugby League',
+        description: 'Products Page',
       },
-      adminpage: { title: 'Discount Codes' },
+      adminpage: { title: 'Products Codes' },
       checkedVariants: [],
     };
   },

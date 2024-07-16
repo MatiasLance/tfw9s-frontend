@@ -16,6 +16,7 @@
           :key="index"
         >
             <img
+              :title="item.company_name"
               class="size-24 md:size-40 overflow-hidden rounded-lg
               object-contain brightness-50 transition duration-300
               ease-in-out hover:scale-125 hover:brightness-100
