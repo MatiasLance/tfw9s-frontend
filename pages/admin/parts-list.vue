@@ -105,6 +105,7 @@
             :EventList="EventList"
             :AgeGroupList="AgeGroupList"
             :getSeries="retrieveSeries"
+            :getEvents="retrieveEvents"
             />
           </div>
           <div v-if="activeTab === 'registered'">

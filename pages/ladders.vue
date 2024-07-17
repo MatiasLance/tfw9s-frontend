@@ -85,26 +85,6 @@
               />
             </div>
           </span>
-          <div
-          v-if="totalPages > 0"
-          class="col-span-1 mb-2 flex flex-wrap items-center
-          justify-around gap-x-2 md:col-span-3 md:justify-between"
-          data-aos="flip-up"
-          >
-            <span
-            class="font-medium text-white"
-            >
-            Showing {{ from }}-{{ to }} of {{ totalItems }} items
-            </span>
-            <VPagination
-              v-model="page"
-              :length="totalPages"
-              color="success"
-              :total-visible="7"
-              class="text-white"
-              dark
-              />
-          </div>
           <section
           v-if="totalPages > 0" class="w-full"
           data-aos="fade-up" data-aos-offset="0"
@@ -385,7 +365,6 @@ export default {
         q: this.query,
         sort: 'points',
         page: this.page,
-        maxTeamPositionsPerPage: 10,
         agegroup: this.selectedAgeGroup,
         series: this.selectedSeries,
       };

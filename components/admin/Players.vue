@@ -415,11 +415,6 @@ export default {
       const year = date.getFullYear();
       return `${day}/${month}/${year.toString().slice(-2)}`;
     },
-    formattedDate(dateString) {
-      const date = new Date(dateString);
-      date.setHours(0, 0, 0, 0);
-      return date;
-    },
     setPage() {
       this.retrievePlayers();
     },

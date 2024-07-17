@@ -379,6 +379,10 @@ export default {
       type: Function,
       required: true,
     },
+    getEvents: {
+      type: Function,
+      required: true,
+    },
   },
   data() {
     return {
@@ -520,6 +524,7 @@ export default {
       this.showAddSeriesModal = false;
       this.retrieveSeries();
       this.getSeries();
+      this.getEvents();
     },
     openEditSeriesDialog(data) {
       this.selecetedData = data
@@ -540,6 +545,7 @@ export default {
       this.showTeamLimitModal = false;
       this.retrieveSeries();
       this.getSeries();
+      this.getEvents();
     },
     EditThumbnail() {
       this.$oruga.notification.open({
@@ -552,6 +558,7 @@ export default {
       this.showEditThumbnailModal = false;
       this.retrieveSeries();
       this.getSeries();
+      this.getEvents();
     },
     EditSeries(data) {
       this.$oruga.notification.open({
@@ -564,6 +571,7 @@ export default {
       this.showEditSeriesModal = false;
       this.retrieveSeries();
       this.getSeries();
+      this.getEvents();
     },
     openDeleteSeriesDialog(data) {
       this.selecetedData = data
@@ -584,6 +592,7 @@ export default {
       this.showDeleteSeriesModal = false;
       this.retrieveSeries();
       this.getSeries();
+      this.getEvents();
     },
     setTab(tab) {
       this.ActiveTab = tab
