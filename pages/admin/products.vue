@@ -1202,6 +1202,7 @@ export default {
       },
       Taglist: [],
       /* tags: [],*/
+      multipleCategoryCounter: 1,
       multipleCategoryBuffer: [ 1 ],
       categoryLineages: [],
       selectedCategory: {},
