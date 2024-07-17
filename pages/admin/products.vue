@@ -1202,6 +1202,7 @@ export default {
       },
       Taglist: [],
       /* tags: [],*/
+      multipleCategoryCounter: 1,
       multipleCategoryBuffer: [ 1 ],
       categoryLineages: [],
       selectedCategory: {},
@@ -1429,6 +1430,7 @@ export default {
     addCategoryPicker() {
       this.multipleCategoryCounter += 1
       this.multipleCategoryBuffer.push(this.multipleCategoryCounter)
+      console.log(this.multipleCategoryBuffer)
     },
     removeCategoryPicker(picker) {
       this.multipleCategoryCounter += 1
