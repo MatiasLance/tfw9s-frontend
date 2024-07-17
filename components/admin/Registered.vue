@@ -64,6 +64,7 @@
 import RegisteredVueTable from '~/components/tables/RegisteredVueTable.vue';
 import ManageResultModal from '~/components/modals/ManageResultModal.vue';
 import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
+import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 export default {
   components: {
@@ -71,6 +72,7 @@ export default {
     ManageResultModal,
     SubmitResultModal,
   },
+  mixins: [ currencyMixin ],
   props: {
     Matches: {
       type: Array,
@@ -345,7 +347,7 @@ export default {
                 phone: player.phone_number,
                 playername:
                   `${player.player_firstname} ${player.player_lastname}`,
-                price: player.registration.price,
+                price: this.formatCurrencyFromCent(player.registration.price),
                 paymentmethod: player.registration.payment_gateway,
                 transactionid: player.registration.transaction_id,
                 timestamp: this.formattedDate(
@@ -433,7 +435,7 @@ export default {
                   coachEmail: team.coach_email,
                   manager: team.manager_name,
                   managerEmail: team.manager_email,
-                  price: team.registration.price,
+                  price: this.formatCurrencyFromCent(team.registration.price),
                   paymentmethod: team.registration.payment_gateway,
                   transactionid: team.registration.transaction_id,
                   timestamp: this.formattedDate(
