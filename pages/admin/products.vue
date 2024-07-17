@@ -1430,7 +1430,6 @@ export default {
     addCategoryPicker() {
       this.multipleCategoryCounter += 1
       this.multipleCategoryBuffer.push(this.multipleCategoryCounter)
-      console.log(this.multipleCategoryBuffer)
     },
     removeCategoryPicker(picker) {
       this.multipleCategoryCounter += 1
