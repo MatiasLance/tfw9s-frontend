@@ -25,12 +25,12 @@ body{
 
 /* Scrollbar Config */
 ::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
+  width: 3px;
+  height: 3px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #1a1a1b;
+  background-color: transparent;
   border-radius: 2px;
 }
 
