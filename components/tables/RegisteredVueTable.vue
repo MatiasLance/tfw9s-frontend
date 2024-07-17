@@ -11,7 +11,7 @@
              v-for="column in columns"
              :key="column.name"
              class="bg-brand-grey-4
-             whitespace-normal
+             whitespace-nowrap
              px-4 py-2 text-center align-middle
              text-[20px] font-semibold text-[#555555]"
             >
@@ -33,8 +33,6 @@
              text-[16px] text-black"
              :class="column.name === 'action'?
              'bg-transparent':'bg-white  border p-2 px-4'"
-             @click="column.name !== 'action'&&!row.submit?
-             ManageResult(row):null"
             >
                 <slot :name="column.name" :data="row">
                   <template v-if="column.name === 'time'">
@@ -57,7 +55,6 @@
                     :class="!row.submit?
                    'from-[#5EE738] via-[#3e872a] to-[#050505]':
                    'from-[#f37570] via-[#fb0d2b] to-[#050505]'"
-                    @click="row.submit?ManageResult(row):Submit(row)"
                     dark
                     >
                     {{!row.submit?'Submit':'Edit'}}

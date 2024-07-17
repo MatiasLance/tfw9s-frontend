@@ -26,7 +26,7 @@
             />
           </section>
           <section
-          v-if="individualList.length === 0"
+          v-if="individualList.length === 0 && ActiveTab === 'weekly'"
           class="col-span-1 flex h-60 items-center
           justify-center font-semibold
           text-[#555555] md:col-span-3"
@@ -34,7 +34,7 @@
           Nothing Registration Today
           </section>
           <section
-          v-if="teamList.length === 0"
+          v-if="teamList.length === 0 && ActiveTab !== 'weekly'"
           class="col-span-1 flex h-60 items-center
           justify-center font-semibold
           text-[#555555] md:col-span-3"
@@ -64,6 +64,7 @@
 import RegisteredVueTable from '~/components/tables/RegisteredVueTable.vue';
 import ManageResultModal from '~/components/modals/ManageResultModal.vue';
 import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
+import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 export default {
   components: {
@@ -71,6 +72,7 @@ export default {
     ManageResultModal,
     SubmitResultModal,
   },
+  mixins: [ currencyMixin ],
   props: {
     Matches: {
       type: Array,
@@ -98,6 +100,7 @@ export default {
         { name: 'timestamp', label: 'Timestamp' },
         { name: 'email', label: 'Email' },
         { name: 'team', label: 'Team' },
+        { name: 'agegroup', label: 'Age Group' },
         { name: 'phone', label: 'Contact' },
         { name: 'playername', label: 'Player' },
         { name: 'price', label: 'Amount' },
@@ -108,6 +111,7 @@ export default {
       teamData: [
         { name: 'timestamp', label: 'Timestamps' },
         { name: 'team', label: 'Team' },
+        { name: 'agegroup', label: 'Age Group' },
         { name: 'coachPhone', label: 'Contact' },
         { name: 'coachEmail', label: 'Coach Email' },
         { name: 'manager', label: 'Manager' },
@@ -339,10 +343,11 @@ export default {
               eventmatch: {
                 email: player.email,
                 team: player.team_name,
+                agegroup: player.agegroup?.name ?? '',
                 phone: player.phone_number,
                 playername:
                   `${player.player_firstname} ${player.player_lastname}`,
-                price: player.registration.price,
+                price: this.formatCurrencyFromCent(player.registration.price),
                 paymentmethod: player.registration.payment_gateway,
                 transactionid: player.registration.transaction_id,
                 timestamp: this.formattedDate(
@@ -425,11 +430,12 @@ export default {
                 ...team,
                 eventmatch: {
                   team: team.name,
+                  agegroup: team.agegroup?.name ?? '',
                   coachPhone: team.coach_mobile,
                   coachEmail: team.coach_email,
                   manager: team.manager_name,
                   managerEmail: team.manager_email,
-                  price: team.registration.price,
+                  price: this.formatCurrencyFromCent(team.registration.price),
                   paymentmethod: team.registration.payment_gateway,
                   transactionid: team.registration.transaction_id,
                   timestamp: this.formattedDate(

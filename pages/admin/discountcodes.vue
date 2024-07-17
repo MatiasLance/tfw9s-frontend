@@ -691,7 +691,6 @@ export default {
           this.discountCodeList = response.data.discount;
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
-          console.log(this.totalPages);
           this.from = response.data.from;
           this.to = response.data.to;
         })
