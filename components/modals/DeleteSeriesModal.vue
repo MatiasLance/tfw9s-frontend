@@ -1,3 +1,5 @@
+<!-- eslint-disable vue/max-len -->
+<!-- eslint-disable max-len -->
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
@@ -7,8 +9,14 @@
                 </h3>
                 <hr class="my-3"/>
                   <p>
-                    Are you sure you want to remove {{ seriesData.name }} ?
+                    Are you sure you want to remove
+                    <strong>
+                      {{ seriesData.name }}
+                    </strong> ?
                   </p>
+                  <i class="text-red-500">
+                    Deleting {{ seriesData.name }} will remove all related Teams and Fixings.
+                  </i>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn

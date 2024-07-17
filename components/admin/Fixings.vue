@@ -51,7 +51,7 @@
             class="col-span-1 mb-0.5 gap-0 border-2 border-gray-500"
             data-aos="fade-up" data-aos-offset="0"
             >
-              <Form class="grid grid-cols-3 gap-2 p-2">
+              <Form class="grid grid-cols-6 gap-2 p-2">
                 <div
                 class="col-span-1 m-auto flex
                 items-center text-lg font-semibold
@@ -61,22 +61,29 @@
                   {{ calendarDate(event.date) }}
                 </div>
                 <div
-                class="col-span-1 m-auto text-center
+                class="col-span-2 m-auto text-center
                 text-lg font-semibold
                 text-white"
                 >
                   {{ event.series_name }}
                 </div>
                 <div
-                class="col-span-1 m-auto text-center
+                class="col-span-2 m-auto text-center
                 text-lg font-semibold
                 text-white"
                 >
                   {{ event.region_name }}
                 </div>
                 <div
+                class="col-span-1 m-auto text-center
+                text-lg font-semibold
+                text-white"
+                >
+                  {{ event.agegroup_name }}
+                </div>
+                <div
                 v-if="event.eventmatch.length > 0"
-                class="col-span-3"
+                class="col-span-6"
                 >
                   <CustomVueTable
                   v-if="showCustomVueTable"
@@ -86,7 +93,7 @@
                 </div>
                 <div
                 v-if="event.eventmatch.length === 0"
-                class="col-span-3"
+                class="col-span-6"
                 >
                 <span
                 class="flex h-32 w-full items-center
@@ -96,7 +103,7 @@
                 No match saved yet
                 </span>
                 </div>
-                <div class="col-span-3 flex justify-end gap-4">
+                <div class="col-span-6 flex justify-end gap-4">
                   <BaseButton
                   class="
                     max-w-full rounded-lg
@@ -235,6 +242,7 @@ export default {
         { name: 'matchtime', label: 'Time' },
         { name: 'team1', label: 'Team 1' },
         { name: 'team2', label: 'Team 2' },
+        { name: 'field', label: 'Field' },
       ],
       matchTimeOption: [
         { text: '8:00 AM', value: '8:00' },
@@ -242,14 +250,16 @@ export default {
         { text: '8:50 AM', value: '8:50' },
         { text: '9:15 AM', value: '9:15' },
         { text: '9:40 AM', value: '9:40' },
-        { text: '10:05 AM', value: '10:30' },
+        { text: '10:05 AM', value: '10:05' },
+        { text: '10:30 AM', value: '10:30' },
         { text: '10:55 AM', value: '10:55' },
         { text: '11:20 AM', value: '11:20' },
-        { text: '11:45 AM', value: '11:55' },
+        { text: '11:45 AM', value: '11:45' },
         { text: '12:10 PM', value: '12:10' },
         { text: '12:35 PM', value: '12:35' },
         { text: '1:00 PM', value: '13:00' },
         { text: '1:25 PM', value: '13:25' },
+        { text: '1:50 PM', value: '13:50' },
         { text: '2:15 PM', value: '14:15' },
         { text: '2:40 PM', value: '14:40' },
         { text: '3:05 PM', value: '15:05' },
@@ -420,11 +430,15 @@ export default {
               series_name: event.series?.name ?? '',
               // eslint-disable-next-line camelcase
               region_name: event.region?.name ?? '',
+              // eslint-disable-next-line camelcase
+              agegroup_name: event.agegroup?.name ?? '',
               date: this.formattedDate(event.event_date),
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
                   matchtime: this.AMPMformat(event.time),
+                  // eslint-disable-next-line camelcase
+                  field: match.field?.name ?? 'Unknown',
                 };
               })
             };

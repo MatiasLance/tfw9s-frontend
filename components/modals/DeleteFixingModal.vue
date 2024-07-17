@@ -9,6 +9,9 @@
                   <p>
                     Are you sure you want to delete this Fixing?
                   </p>
+                  <i class="text-red-500">
+                    Deleting this Fixing will also remove all related Matches.
+                  </i>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
