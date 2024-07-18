@@ -78,6 +78,10 @@ export default {
       type: Array,
       required: true
     },
+    SeriesList: {
+      type: Array,
+      required: true
+    },
     getEvents: {
       type: Function,
       required: true,
@@ -98,11 +102,11 @@ export default {
       selectedData: [],
       individualData: [
         { name: 'timestamp', label: 'Timestamp' },
-        { name: 'email', label: 'Email' },
-        { name: 'team', label: 'Team' },
         { name: 'agegroup', label: 'Age Group' },
         { name: 'phone', label: 'Contact' },
         { name: 'playername', label: 'Player' },
+        { name: 'email', label: 'Email' },
+        { name: 'team', label: 'Team' },
         { name: 'price', label: 'Amount' },
         { name: 'paymentmethod', label: 'Method' },
         { name: 'transactionid', label: 'Transaction' },
@@ -110,6 +114,7 @@ export default {
       ],
       teamData: [
         { name: 'timestamp', label: 'Timestamps' },
+        { name: 'series', label: 'Series' },
         { name: 'team', label: 'Team' },
         { name: 'agegroup', label: 'Age Group' },
         { name: 'coachPhone', label: 'Contact' },
@@ -162,7 +167,11 @@ export default {
           match.submit === this.submit :
           false
       );
-    }
+    },
+    formattedSeries() {
+      return this.SeriesList.map(series =>
+        ({ text: series.name, value: series.id }));
+    },
   },
   watch: {
     dateFilter: {
@@ -174,6 +183,16 @@ export default {
     },
   },
   methods: {
+    seriesFormat(id) {
+      // eslint-disable-next-line camelcase
+      const matched = this.formattedSeries.find(data => data.value === id);
+      if (matched) {
+        return matched.text;
+      } else {
+        // If no matching field is found, return "unknown"
+        return 'Unknown';
+      }
+    },
     convertTo12HourFormat(timeString) {
       const [ hour, minute ] = timeString.split(':');
       const period = hour >= 12 ? 'PM' : 'AM';
@@ -343,6 +362,7 @@ export default {
               eventmatch: {
                 email: player.email,
                 team: player.team_name,
+                series: this.seriesFormat(player.series_id),
                 agegroup: player.agegroup?.name ?? '',
                 phone: player.phone_number,
                 playername:
@@ -430,6 +450,7 @@ export default {
                 ...team,
                 eventmatch: {
                   team: team.name,
+                  series: this.seriesFormat(team.series_id),
                   agegroup: team.agegroup?.name ?? '',
                   coachPhone: team.coach_mobile,
                   coachEmail: team.coach_email,

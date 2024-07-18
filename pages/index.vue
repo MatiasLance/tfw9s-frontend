@@ -36,7 +36,7 @@ export default {
   },
   head() {
     return {
-      title: 'Home - TFW Rugby League',
+      title: 'Home - TFW9s',
       meta: [
         {
           hid: 'description',

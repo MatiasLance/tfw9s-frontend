@@ -38,10 +38,10 @@
     <section class="mx-auto max-w-screen-xl gap-4 p-7">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
         <div class="col-span-3 p-2"  data-aos="fade-up">
-          <span class="grid grid-cols-1 gap-2 md:grid-cols-3">
+          <span class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-6">
             <div class="col-span-1">
               <span
-              class="hidden w-full py-2 align-middle text-[20px]
+              class="hidden w-full align-middle text-[20px]
               font-semibold text-[#555555] md:block"
               >
               Event Year
@@ -56,7 +56,7 @@
             </div>
             <div class="col-span-1">
               <span
-              class="hidden w-full py-2 align-middle text-[20px]
+              class="hidden w-full align-middle text-[20px]
               font-semibold text-[#555555] md:block"
               >
               Age Group
@@ -69,9 +69,9 @@
               class="w-full"
               />
             </div>
-            <div class="col-span-1">
+            <div class="col-span-1 md:col-span-2">
               <span
-              class="hidden w-full py-2 align-middle text-[20px]
+              class="hidden w-full align-middle text-[20px]
               font-semibold text-[#555555] md:block"
               >
               Event
@@ -81,12 +81,25 @@
               :items="formattedSeries"
               label="Select Event"
               solo
-              class="md:w-80 lg:w-80"
+              />
+            </div>
+            <div class="col-span-1 md:col-span-2">
+              <span
+              class="hidden w-full align-middle text-[20px]
+              font-semibold text-[#555555] md:block"
+              >
+              Match Round
+              </span>
+              <VSelect
+              v-model="selectedRound"
+              :items="filteredRound"
+              label="Select Round"
+              solo
               />
             </div>
           </span>
           <section
-          v-if="totalPages > 0" class="w-full"
+          v-if="allTeamStats.length > 0" class="w-full"
           data-aos="fade-up" data-aos-offset="0"
           >
             <VueTable
@@ -96,12 +109,12 @@
           />
           </section>
           <section
-          v-if="totalPages=== 0"
+          v-if="allTeamStats.length === 0"
           class="col-span-1 flex h-60 items-center
           justify-center font-semibold
           text-[#555555] md:col-span-3"
           >
-          No Ladders
+          No Data Recorded
           </section>
         </div>
       </div>
@@ -123,11 +136,30 @@ export default {
       selectedEvent: null,
       selectedAgeGroup: null,
       selectedSeries: null,
+      selectedRound: null,
       selectedYear: null,
       pageSEO: {
-        title: 'Ladders - TFW Rugby League',
+        title: 'Ladders - TFW9s',
         description: ''
       },
+      matchRoundOption: [
+        { text: 'Overall Standings', value: null },
+        { text: 'Round', value: 'round' },
+        { text: 'Semi', value: 'semi' },
+        { text: 'Final', value: 'final' },
+        { text: 'Pool A Round', value: 'pool_a_round' },
+        { text: 'Pool B Round', value: 'pool_b_round' },
+        { text: 'Pool C Round', value: 'pool_c_round' },
+        { text: 'Pool D Round', value: 'pool_d_round' },
+        { text: 'Pool A Semi', value: 'pool_a_semi' },
+        { text: 'Pool B Semi', value: 'pool_b_semi' },
+        { text: 'Pool C Semi', value: 'pool_c_semi' },
+        { text: 'Pool D Semi', value: 'pool_d_semi' },
+        { text: 'Pool A Grand Final', value: 'pool_a_grand_final' },
+        { text: 'Pool B Grand Final', value: 'pool_b_grand_final' },
+        { text: 'Pool C Grand Final', value: 'pool_c_grand_final' },
+        { text: 'Pool D Grand Final', value: 'pool_d_grand_final' },
+      ],
       eventYears: [
         '2020',
         '2021',
@@ -145,6 +177,7 @@ export default {
       dataColumns: [
         { name: 'pos', label: 'Pos' },
         { name: 'team', label: 'Team' },
+        { name: 'played', label: 'Played' },
         { name: 'win', label: 'Win' },
         { name: 'loss', label: 'Loss' },
         { name: 'draw', label: 'Draw' },
@@ -214,6 +247,29 @@ export default {
         return this.formattedEvents;
       }
     },
+    filteredRound() {
+      if (this.team.length > 0) {
+        const rounds = this.team.map(team => team.round);
+        const uniqueRounds = [ ...new Set(rounds) ];
+
+        uniqueRounds.splice(0, 0, null);
+
+        const formattedRounds = this.matchRoundOption.filter(option =>
+          uniqueRounds.includes(option.value));
+        return formattedRounds;
+      } else {
+        return this.matchRoundOption[0];
+      }
+    },
+    filteredTeamsByRound() {
+      if (this.selectedRound) {
+        return this.team.filter(team => {
+          return team.event.round === this.selectedRound;
+        });
+      } else {
+        return this.team;
+      }
+    },
     formattedYears() {
       const years = this.events.map(event => {
         const eventDate = new Date(event.event_date);
@@ -241,7 +297,6 @@ export default {
             const eventDate = new Date(firstEvent.event_date);
             if (!isNaN(eventDate)) {
               this.selectedYear = eventDate.getFullYear();
-              this.selectedEvent = firstEvent.id;
               this.selectedAgeGroup = firstEvent.agegroup_id;
               this.selectedSeries = firstEvent.eventmatch[0].team1.series_id;
               this.retrieveTeamPosition();
@@ -267,7 +322,7 @@ export default {
            */
           this.selectedAgeGroup = this.formattedAgeGroup[0]?.value ?? null;
           this.selectedSeries = this.formattedSeries[0]?.value ?? null;
-          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
+          this.selectedRound = null;
         }
       },
       immediate: true,
@@ -276,7 +331,8 @@ export default {
       handler(newYear) {
         if (newYear && this.isLoaded) {
           this.page = 1
-          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
+          this.selectedRound = null;
+          this.retrieveTeamPosition();
         }
       },
       immediate: true,
@@ -285,21 +341,15 @@ export default {
       handler(newYear) {
         if (newYear && this.isLoaded) {
           this.page = 1
-          this.selectedEvent = this.filteredEvents[0]?.value ?? null;
+          this.retrieveTeamPosition();
+          this.selectedRound = null;
         }
       },
       immediate: true,
     },
-    selectedEvent: {
-      handler(newEvent) {
-        if (newEvent && this.isLoaded) {
-          this.page = 1
-          // this.query = null
-          this.retrieveTeamPosition();
-        } else if (this.isLoaded) {
-          this.team = []
-          this.totalPages = 0
-        }
+    selectedRound: {
+      handler(newYear) {
+        this.calculateAllTeamStats()
       },
       immediate: true,
     },
@@ -312,7 +362,7 @@ export default {
   methods: {
     getUniqueTeamIds() {
       const teamIds = new Set();
-      this.team.forEach(event => {
+      this.filteredTeamsByRound.forEach(event => {
         teamIds.add(event.team_id);
       });
       return Array.from(teamIds);
@@ -321,6 +371,7 @@ export default {
       const teamStats = {
         // eslint-disable-next-line camelcase
         team_id: teamId,
+        played: 0,
         win: 0,
         loss: 0,
         draw: 0,
@@ -330,9 +381,10 @@ export default {
         points: 0,
       };
 
-      this.team.forEach(event => {
+      this.filteredTeamsByRound.forEach(event => {
         if (event.team_id === teamId) {
-          teamStats.team = event.team
+          teamStats.team = event.team;
+          teamStats.played += (event.win + event.loss + event.draw);
           teamStats.win += event.win;
           teamStats.loss += event.loss;
           teamStats.draw += event.draw;
@@ -383,6 +435,7 @@ export default {
           const fteams = response.data.teamPositions.map((team, index) => ({
             ...team,
             team: team.team.name,
+            round: team.event.round??null,
             pos: index + 1,
           }));
 
@@ -395,6 +448,7 @@ export default {
         })
         .finally(() => {
           this.isLoaded = true;
+          console.log(this.team)
         });
     },
     retrieveEvents() {

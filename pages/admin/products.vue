@@ -1240,7 +1240,7 @@ export default {
       headline: '',
       content: '',
       pageSEO: {
-        title: 'Products - TFW Rugby League',
+        title: 'Products - TFW9s',
         description: 'Products Page',
       },
       adminpage: { title: 'Products Codes' },

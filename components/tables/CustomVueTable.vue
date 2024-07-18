@@ -11,7 +11,7 @@
              v-for="column in columns"
              :key="column.name"
              class="bg-brand-grey-4
-             whitespace-normal
+             whitespace-nowrap
              px-4 py-2 text-center align-middle
              text-[20px] font-semibold text-[#555555]"
             >

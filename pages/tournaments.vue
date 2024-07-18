@@ -333,7 +333,7 @@ export default {
   data() {
     return {
       pageSEO: {
-        title: 'Registration - TFW Rugby League',
+        title: 'Registration - TFW9s',
         description: ''
       },
       activeTab: 'weekly',

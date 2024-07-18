@@ -101,6 +101,9 @@
           <div class="col-span-4 text-md md:text-xl font-medium text-white">
             {{ match.event_date }}
           </div>
+          <div class="col-span-4 text-sm md:text-lg font-medium text-slate-400">
+            {{ match.round }}
+          </div>
           <div class="col-span-4 text-sm md:text-lg font-medium text-slate-600">
             {{ match.field }}
           </div>
@@ -209,9 +212,26 @@ export default {
   data() {
     return {
       pageSEO: {
-        title: 'Draws - TFW Rugby League',
+        title: 'Draws - TFW9s',
         description: ''
       },
+      matchRoundOption: [
+        { text: 'Round', value: 'round' },
+        { text: 'Semi', value: 'semi' },
+        { text: 'Final', value: 'final' },
+        { text: 'Pool A Round', value: 'pool_a_round' },
+        { text: 'Pool B Round', value: 'pool_b_round' },
+        { text: 'Pool C Round', value: 'pool_c_round' },
+        { text: 'Pool D Round', value: 'pool_d_round' },
+        { text: 'Pool A Semi', value: 'pool_a_semi' },
+        { text: 'Pool B Semi', value: 'pool_b_semi' },
+        { text: 'Pool C Semi', value: 'pool_c_semi' },
+        { text: 'Pool D Semi', value: 'pool_d_semi' },
+        { text: 'Pool A Grand Final', value: 'pool_a_grand_final' },
+        { text: 'Pool B Grand Final', value: 'pool_b_grand_final' },
+        { text: 'Pool C Grand Final', value: 'pool_c_grand_final' },
+        { text: 'Pool D Grand Final', value: 'pool_d_grand_final' },
+      ],
       selectedRegion: null,
       selectedAgeGroup: null,
       selectedYear: null,
@@ -352,6 +372,16 @@ export default {
     this.retrieveEvents();
   },
   methods: {
+    roundFormat(round) {
+      // eslint-disable-next-line camelcase
+      const matched = this.matchRoundOption.find(data => data.value === round);
+      if (matched) {
+        return matched.text;
+      } else {
+        // If no matching field is found, return "unknown"
+        return 'Unknown';
+      }
+    },
     replaceUnderWithU(str) {
       return str.replace(/^Under \b/, 'U');
     },
@@ -491,6 +521,7 @@ export default {
                 return {
                   ...match,
                   time: event.time,
+                  round: this.roundFormat(event.round),
                   // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
                   // eslint-disable-next-line camelcase

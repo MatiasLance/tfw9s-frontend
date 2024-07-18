@@ -135,7 +135,7 @@ export default {
   data() {
     return {
       pageSEO: {
-        title: 'Info - TFW Rugby League',
+        title: 'Info - TFW9s',
         description: ''
       },
       activeTab: 'code',
