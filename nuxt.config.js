@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'TFW Rugby League',
+    title: 'TFW9s',
     htmlAttrs: {
       lang: 'en',
     },

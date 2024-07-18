@@ -124,10 +124,11 @@ export default {
         { name: 'event_date', label: 'Date' },
         { name: 'matchtime', label: 'Time' },
         { name: 'agegroup_id', label: 'Age Group' },
+        { name: 'round', label: 'Match Round' },
         { name: 'field', label: 'Field' },
-        { name: 'team1', label: 'Team' },
+        { name: 'team1', label: 'Team 1' },
         { name: 'team1_score', label: 'Points' },
-        { name: 'team2', label: 'Team' },
+        { name: 'team2', label: 'Team 2' },
         { name: 'team2_score', label: 'Points' },
         { name: 'action', label: '' },
       ],
@@ -157,6 +158,23 @@ export default {
         { text: '5:10 PM', value: '17:10' },
         { text: '5:35 PM', value: '17:35' },
         { text: '6:00 PM', value: '18:00' },
+      ],
+      matchRoundOption: [
+        { text: 'Round', value: 'round' },
+        { text: 'Semi', value: 'semi' },
+        { text: 'Final', value: 'final' },
+        { text: 'Pool A Round', value: 'pool_a_round' },
+        { text: 'Pool B Round', value: 'pool_b_round' },
+        { text: 'Pool C Round', value: 'pool_c_round' },
+        { text: 'Pool D Round', value: 'pool_d_round' },
+        { text: 'Pool A Semi', value: 'pool_a_semi' },
+        { text: 'Pool B Semi', value: 'pool_b_semi' },
+        { text: 'Pool C Semi', value: 'pool_c_semi' },
+        { text: 'Pool D Semi', value: 'pool_d_semi' },
+        { text: 'Pool A Grand Final', value: 'pool_a_grand_final' },
+        { text: 'Pool B Grand Final', value: 'pool_b_grand_final' },
+        { text: 'Pool C Grand Final', value: 'pool_c_grand_final' },
+        { text: 'Pool D Grand Final', value: 'pool_d_grand_final' },
       ],
       Rules: [
         value => {
@@ -261,6 +279,16 @@ export default {
     AMPMformat(time) {
       // eslint-disable-next-line camelcase
       const matched = this.matchTimeOption.find(data => data.value === time);
+      if (matched) {
+        return matched.text;
+      } else {
+        // If no matching field is found, return "unknown"
+        return 'Unknown';
+      }
+    },
+    roundFormat(round) {
+      // eslint-disable-next-line camelcase
+      const matched = this.matchRoundOption.find(data => data.value === round);
       if (matched) {
         return matched.text;
       } else {
@@ -385,6 +413,7 @@ export default {
                 return {
                   ...match,
                   matchtime: this.AMPMformat(time),
+                  round: this.roundFormat(event.round),
                   // eslint-disable-next-line camelcase
                   agegroup_id: ageGroupName,
                   // eslint-disable-next-line camelcase

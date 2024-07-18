@@ -7,8 +7,8 @@
       <!-- Insert myEditCroppa here -->
       <Croppa
           v-model="myEditCroppa"
-          :width="320"
-          :height="320"
+        :width="420"
+        :height="280"
           :quality="5"
           placeholder="Place image here"
           :placeholder-font-size="15"

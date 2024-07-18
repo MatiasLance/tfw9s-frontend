@@ -111,6 +111,7 @@
           <div v-if="activeTab === 'registered'">
             <Registered
             :Matches="MatchList"
+            :SeriesList="SeriesList"
             :getEvents="retrieveEvents"
             />
           </div>

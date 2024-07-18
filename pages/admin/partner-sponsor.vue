@@ -587,7 +587,7 @@ export default {
       headline: '',
       content: '',
       pageSEO: {
-        title: 'Partner Sponsors - TFW Rugby League',
+        title: 'Partner Sponsors - TFW9s',
         description: 'Partner Sponsors Page',
       },
       adminpage: { title: 'Partner Sponsors' }

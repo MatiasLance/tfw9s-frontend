@@ -119,7 +119,6 @@
                   <NuxtLink :to="'/news-article/?id='+ news.id">
                     <BaseButton
                     class="
-                    from-40% via-95% to-100%
                     max-w-full rounded-lg
                     bg-gradient-to-tr
                     from-[#5EE738]

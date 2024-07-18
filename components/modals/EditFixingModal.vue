@@ -83,6 +83,19 @@
               :rules="rules"
               />
             </div>
+            <div class="col-span-2 md:col-span-1">
+              <label for="selectagegroup" class="mb-1 block">
+               Match Round
+              </label>
+              <VSelect
+                v-model="Event.round"
+                :items="matchRoundOption"
+                label="Choose Match Round"
+                :rules="rules"
+                solo
+              >
+              </VSelect>
+            </div>
             <div class="col-span-1 md:col-span-2" hidden>
               <label for="eventname" class="mb-1 block">
                 Title:
@@ -317,6 +330,23 @@ export default {
         { text: '5:35 PM', value: '17:35' },
         { text: '6:00 PM', value: '18:00' },
       ],
+      matchRoundOption: [
+        { text: 'Round', value: 'round' },
+        { text: 'Semi', value: 'semi' },
+        { text: 'Final', value: 'final' },
+        { text: 'Pool A Round', value: 'pool_a_round' },
+        { text: 'Pool B Round', value: 'pool_b_round' },
+        { text: 'Pool C Round', value: 'pool_c_round' },
+        { text: 'Pool D Round', value: 'pool_d_round' },
+        { text: 'Pool A Semi', value: 'pool_a_semi' },
+        { text: 'Pool B Semi', value: 'pool_b_semi' },
+        { text: 'Pool C Semi', value: 'pool_c_semi' },
+        { text: 'Pool D Semi', value: 'pool_d_semi' },
+        { text: 'Pool A Grand Final', value: 'pool_a_grand_final' },
+        { text: 'Pool B Grand Final', value: 'pool_b_grand_final' },
+        { text: 'Pool C Grand Final', value: 'pool_c_grand_final' },
+        { text: 'Pool D Grand Final', value: 'pool_d_grand_final' },
+      ],
       rules: [ value => !!value || 'Required' ],
     }
   },
@@ -477,6 +507,7 @@ export default {
 
       const formData = new FormData();
       formData.append('time', this.Event.time);
+      formData.append('round', this.Event.round);
       formData.append('region_id', this.Event.region_id);
       formData.append('agegroup_id', this.Event.agegroup_id);
       formData.append('datetime', event_date);

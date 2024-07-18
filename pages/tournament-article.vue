@@ -3,7 +3,7 @@
     <div class="">
       <div
         class="p-10
-        h-screen
+        h-auto
         w-screen
         grid
         grid-cols-1
@@ -11,18 +11,42 @@
         md:grid-cols-6"
       >
         <div class="md:col-span-4">
-          <VImg
-            v-for="(photo, i) in photos"
-            :key="i"
-            :src="photo"
-            class="bg-white"
-            width="800"
-            cover
-          ></VImg>
+          <div v-if="photos.length !== 0" class="grid grid-cols-3 gap-4">
+            <div id="img-container" class="col-span-3">
+              <InnerImageZoom
+                :src="activeImageURL"
+                :zoom-src="activeImageURL"
+                zoom-type="hover"
+              />
+            </div>
+            <div class="col-span-3">
+              <template v-if="photos.length > 1">
+                <VueSlickCarousel v-bind="imageCarouselSettings">
+                  <div
+                    v-for="photo in photos"
+                    :key="photo.id"
+                  >
+                    <a
+                      :href="`${$config.baseURL}/storage/${photo.path}`"
+                      class="mx-1 inline-block
+                      border border-gray-200 p-1 py-2
+                      px-1 text-center hover:border-brand-green"
+                      @click.prevent="setActiveMedia(photo)"
+                    >
+                      <img
+                        class="h-12 w-16"
+                        :src="getMediaURL(photo)"
+                        :alt="`Product thumbnail - ${photo.id}`"
+                      >
+                    </a>
+                  </div>
+                </VueSlickCarousel>
+              </template>
+            </div>
+          </div>
           <div class="flex items-center justify-center">
             <img
             v-if="photos.length === 0"
-              class="bg-white"
               src="~/assets/images/kidsplaying.jpg"
               cover
             ></img>
@@ -77,9 +101,6 @@
             <button
               type="button"
               class="
-              from-40%
-              via-95%
-              to-100%
               col-span-1 inline-block
               w-[250px] select-none rounded-lg
               border
@@ -135,14 +156,16 @@
 import 'remixicon/fonts/remixicon.css';
 import currency from 'currency.js';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css';
+import InnerImageZoom from 'vue-inner-image-zoom';
+import VueSlickCarousel from 'vue-slick-carousel';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
 import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 const slickSettings = {
   arrows: true,
-  slidesToShow: 4,
-  slidesToScroll: 4,
+  slidesToShow: 8,
+  slidesToScroll: 5,
   initialSlide: 0,
   speed: 500,
   swipe: true,
@@ -153,7 +176,7 @@ const slickSettings = {
     {
       breakpoint: 1024,
       settings: {
-        slidesToShow: 3,
+        slidesToShow: 5,
         slidesToScroll: 3,
         infinite: true
       }
@@ -161,7 +184,7 @@ const slickSettings = {
     {
       breakpoint: 600,
       settings: {
-        slidesToShow: 2,
+        slidesToShow: 4,
         slidesToScroll: 2,
         initialSlide: 2
       }
@@ -169,7 +192,7 @@ const slickSettings = {
     {
       breakpoint: 480,
       settings: {
-        slidesToShow: 1,
+        slidesToShow: 3,
         slidesToScroll: 1
       }
     }
@@ -183,6 +206,10 @@ export default {
     handlesMedia,
     handlesCoordinates,
   ],
+  components: {
+    InnerImageZoom,
+    VueSlickCarousel,
+  },
   data() {
     return {
       isSelected: '',
@@ -293,6 +320,9 @@ export default {
     this.retrieveSeries(this.$route.query.id);
   },
   methods: {
+    setActiveMedia(path) {
+      this.activeImageURL = this.getMediaURL(path)
+    },
     formattedDate(dateString) {
       const date = new Date(dateString);
       date.setHours(0, 0, 0, 0);
@@ -346,8 +376,9 @@ export default {
         .$get(`v1/series/${Id}`)
         .then((response) => {
           this.article = response.data.series
-          this.photos = this.article.media.map((x) =>
-            `${this.$config.baseURL}/storage/${x.path}`);
+          this.activeImageURL = this.getMediaURL(this.article.media[0])
+          this.photos = this.article.media
+          console.log(this.photos)
           this.calculatePriceAggregates()
         })
 
@@ -463,5 +494,9 @@ export default {
   background: #1a1d18;
   color: #ffffff;
   border: 1px solid transparent;
+}
+img{
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
 }
 </style>

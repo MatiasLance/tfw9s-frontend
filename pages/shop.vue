@@ -60,7 +60,7 @@ export default {
   data() {
     return {
       pageSEO: {
-        title: 'Merch - TFW Rugby League',
+        title: 'Merch - TFW9s',
         description: ''
       },
       showComponent: false,

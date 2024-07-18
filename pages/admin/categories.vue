@@ -164,7 +164,7 @@ export default {
     };
   },
   head() {
-    return { title: 'Categories - TFW Rugby League' };
+    return { title: 'Categories - TFW9s' };
   },
   computed: {
     selectedCategories: {
