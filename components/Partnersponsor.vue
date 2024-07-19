@@ -8,6 +8,8 @@
         :speed="500"
         :slidesToShow="6"
         :slidesToScroll="1"
+        :autoplay="true"
+        :autoplaySpeed="3000"
         :responsive="responsiveSettings"
         data-aos="fade-up"
       >
@@ -19,7 +21,8 @@
               :title="item.company_name"
               class="size-24 md:size-40 overflow-hidden rounded-lg
               object-contain brightness-50 transition duration-300
-              ease-in-out hover:scale-125 hover:brightness-100
+              scale-90
+              ease-in-out hover:scale-100 hover:brightness-100
               cursor-pointer"
               :src="getMediaURL(item.media[0])"
               alt="Sponsor Image"

@@ -124,7 +124,10 @@
           data-aos="fade-up"
           data-aos-offset="0"
         >
-          <article class="grid md:grid-cols-3 grid-cols-1 w-full gap-4 pt-2">
+        <article
+          class="grid w-full grid-cols-1
+          gap-4 pt-2 md:grid-cols-2 lg:grid-cols-3"
+          >
             <div
               v-for="(item, index) in filteredWeekly"
               :key="item.id"
@@ -163,7 +166,9 @@
                     text-sm transition-all cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
-                    <span>See more</span>
+                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
+                      See more
+                    </span>
                     <span
                       class="inline-block transition-transform transform"
                     >
@@ -189,7 +194,10 @@
           data-aos="fade-up"
           data-aos-offset="0"
         >
-          <article class="grid md:grid-cols-3 grid-cols-2 w-full gap-4 pt-2">
+        <article
+          class="grid w-full grid-cols-1
+          gap-4 pt-2 md:grid-cols-2 lg:grid-cols-3"
+          >
             <div
               v-for="(item, index) in filteredTournament"
               :key="item.id"
@@ -228,7 +236,9 @@
                     text-sm transition-all cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
-                    <span>See more</span>
+                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
+                      See more
+                    </span>
                     <span
                       class="inline-block transition-transform transform"
                     >
@@ -254,7 +264,10 @@
           data-aos="fade-up"
           data-aos-offset="0"
         >
-          <article class="grid md:grid-cols-3 grid-cols-2 w-full gap-4 pt-2">
+          <article
+          class="grid w-full grid-cols-1
+          gap-4 pt-2 md:grid-cols-2 lg:grid-cols-3"
+          >
             <div
               v-for="(item, index) in filteredCentral"
               :key="item.id"
@@ -293,7 +306,9 @@
                     text-sm transition-all cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
-                    <span>See more</span>
+                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
+                      See more
+                    </span>
                     <span
                       class="inline-block transition-transform transform"
                     >
@@ -346,12 +361,13 @@ export default {
       slickSettings: {
         arrows: false,
         slidesToShow: 4,
+        slidesToScroll: 1,
         responsive: [
           {
             breakpoint: 1280,
             settings: {
-              slidesToShow: 4,
-              slidesToScroll: 4,
+              slidesToShow: 3,
+              slidesToScroll: 1,
               initialSlide: 0,
               infinite: true,
               arrows: true
@@ -361,7 +377,7 @@ export default {
             breakpoint: 768,
             settings: {
               slidesToShow: 2,
-              slidesToScroll: 3,
+              slidesToScroll: 1,
               initialSlide: 0,
               infinite: true,
               arrows: true

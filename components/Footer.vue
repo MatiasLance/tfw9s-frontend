@@ -3,10 +3,19 @@
   <footer class="w-screen bg-brand-black text-white">
     <section class="mx-auto max-w-screen-xl">
       <div class="p-4 flex flex-col md:flex-row md:justify-between gap-2">
-        <div class="flex items-center justify-center">
-          <span class="text-sm">
-            Copyright, All Rights Reserved TFW9's
+        <div class="flex flex-col items-center justify-left">
+          <span class="text-sm text-left">
+            © TFW9's 2024. All Rights Reserved.
           </span>
+          <p class="text-xs text-left">
+            Built by:{{ ' ' }}
+            <span class="font-semibold cursor-pointer transition
+            duration-300 ease-in-out hover:text-[#5EE738]"
+              @click="openLink('https://pageone247.com/')"
+            >
+              PageOne247
+            </span>
+          </p>
         </div>
         <div class="flex items-center justify-center">
         <!--

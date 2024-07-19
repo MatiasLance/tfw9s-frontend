@@ -48,7 +48,7 @@
             >
               <div
               v-if="totalPages > 0"
-              class="col-span-1 flex w-[640px] pr-24 md:w-auto"
+              class="col-span-1 flex min-w-[960px] pr-24 md:w-auto"
               data-aos="flip-up"
               >
                 <span
@@ -76,7 +76,7 @@
               data-aos="flip-down" data-aos-duration="500"
               data-aos-offset="0"  data-aos-once="true"
               >
-              <div class="flex min-w-[640px] items-center justify-center">
+              <div class="flex min-w-[960px] items-center justify-center">
                 <input
                 v-model="data.name"
                 :rules="Rules"

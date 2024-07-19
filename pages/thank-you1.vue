@@ -36,7 +36,7 @@
       </div>
     </BaseHeader>
 
-    <div class="flex flex-col items-center justify-center py-24 px-48">
+    <div class="flex flex-col items-center justify-center py-20 px-8">
       <template v-if="status === 'loading'">
         <VProgressCircular
           size="125"
