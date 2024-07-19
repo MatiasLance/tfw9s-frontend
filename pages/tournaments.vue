@@ -166,7 +166,9 @@
                     text-sm transition-all cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
-                    <span>See more</span>
+                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
+                      See more
+                    </span>
                     <span
                       class="inline-block transition-transform transform"
                     >
@@ -234,7 +236,9 @@
                     text-sm transition-all cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
-                    <span>See more</span>
+                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
+                      See more
+                    </span>
                     <span
                       class="inline-block transition-transform transform"
                     >
@@ -302,7 +306,9 @@
                     text-sm transition-all cursor-pointer"
                     @click="ViewArticle(item.id)"
                   >
-                    <span>See more</span>
+                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
+                      See more
+                    </span>
                     <span
                       class="inline-block transition-transform transform"
                     >
