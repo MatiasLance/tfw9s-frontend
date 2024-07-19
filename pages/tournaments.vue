@@ -355,12 +355,13 @@ export default {
       slickSettings: {
         arrows: false,
         slidesToShow: 4,
+        slidesToScroll: 1,
         responsive: [
           {
             breakpoint: 1280,
             settings: {
-              slidesToShow: 4,
-              slidesToScroll: 4,
+              slidesToShow: 3,
+              slidesToScroll: 1,
               initialSlide: 0,
               infinite: true,
               arrows: true
@@ -370,7 +371,7 @@ export default {
             breakpoint: 768,
             settings: {
               slidesToShow: 2,
-              slidesToScroll: 3,
+              slidesToScroll: 1,
               initialSlide: 0,
               infinite: true,
               arrows: true
