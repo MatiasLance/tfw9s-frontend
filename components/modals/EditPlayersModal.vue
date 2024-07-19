@@ -214,6 +214,7 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.SeriesData = this.series;
+          this.SeriesData.agegroup = this.series.agegroup_id??null
           this.selectedDate = new Date(this.SeriesData.dob);
           this.phoneDigits = this.SeriesData.phone_number.replace(/^\+61/, '');
         }
