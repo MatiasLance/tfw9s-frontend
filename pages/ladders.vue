@@ -49,7 +49,7 @@
               <VSelect
               v-model="selectedYear"
               :items="formattedYears"
-              placeholder="Select Event Year"
+              placeholder="Event Year"
               solo
               class="w-full"
               />
@@ -64,7 +64,7 @@
               <VSelect
               v-model="selectedAgeGroup"
               :items="formattedAgeGroup"
-              placeholder="Select Age Group"
+              placeholder="Age Group"
               solo
               class="w-full"
               />
@@ -93,7 +93,7 @@
               <VSelect
               v-model="selectedRound"
               :items="filteredRound"
-              label="Select Round"
+              label="Match Round"
               solo
               />
             </div>
