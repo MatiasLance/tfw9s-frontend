@@ -17,7 +17,8 @@
             >
         {{ headline }}
         </h1>
-        <span class="text-justify indent-10 text-lg text-white"
+        <span
+        class="text-justify indent-10 text-sm text-white md:text-lg"
           v-html="contentblurb"
         />
           <NuxtLink to="/tournaments" v-show="!isAdmin">

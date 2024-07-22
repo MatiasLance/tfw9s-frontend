@@ -88,7 +88,7 @@
             v-html="article.description"
           />
         </article>
-        <div class="mb-4 flex w-full justify-center">
+        <div v-if="!article.pause" class="mb-4 flex w-full justify-center">
           <NuxtLink
             :to="{
               path: '/register/?id=' + article.id,
@@ -120,6 +120,13 @@
               Register Now
             </button>
           </NuxtLink>
+        </div>
+        <div
+        v-if="article.pause"
+        class="mb-4 flex w-full justify-center text-lg
+        font-semibold text-red-400"
+        >
+          Event Unavailable
         </div>
         <div class="mb-4 flex w-full justify-center">
           <NuxtLink :to="'/tournaments'">
@@ -376,9 +383,9 @@ export default {
         .$get(`v1/series/${Id}`)
         .then((response) => {
           this.article = response.data.series
+          this.article.pause = parseInt(this.article.is_paused) === 1;
           this.activeImageURL = this.getMediaURL(this.article.media[0])
           this.photos = this.article.media
-          console.log(this.photos)
           this.calculatePriceAggregates()
         })
 
