@@ -11,6 +11,25 @@
             solo
             class="col-span-1"
           />
+          <div
+          class="col-span-1 md:col-span-3 flex flex-wrap items-center
+          justify-around gap-x-2 md:justify-between"
+          data-aos="flip-up" data-aos-once="true"
+          >
+            <span
+            class="font-medium text-white"
+            >
+            Showing {{ from }}-{{ to }} of {{ totalItems }} items
+            </span>
+            <VPagination
+              v-model="page"
+              :length="totalPages"
+              color="success"
+              :total-visible="7"
+              class="text-white"
+              dark
+              />
+          </div>
           <section
           v-if="showCustomVueTable"
           data-aos="fade-up"
@@ -156,6 +175,36 @@ export default {
       totalItems: 0,
     };
   },
+  watch: {
+    dateFilter: {
+      handler(newDate) {
+        this.retrieveIndividual();
+        this.retrieveTeam();
+      },
+      immediate: true,
+    },
+    ActiveTab: {
+      handler(newtab) {
+        if (newtab === 'weekly') {
+          this.retrieveIndividual()
+        } else {
+          this.retrieveTeam()
+        }
+        this.page = 1
+      },
+      immediate: true,
+    },
+    page: {
+      handler(newPage) {
+        if (this.ActiveTab === 'weekly') {
+          this.retrieveIndividual()
+        } else {
+          this.retrieveTeam()
+        }
+      },
+      immediate: true,
+    },
+  },
   computed: {
     EventDates() {
       return this.Matches.map(event =>
@@ -171,15 +220,6 @@ export default {
     formattedSeries() {
       return this.SeriesList.map(series =>
         ({ text: series.name, value: series.id }));
-    },
-  },
-  watch: {
-    dateFilter: {
-      handler(newDate) {
-        this.retrieveIndividual();
-        this.retrieveTeam();
-      },
-      immediate: true,
     },
   },
   methods: {
@@ -299,10 +339,21 @@ export default {
     },
     formattedDate(dateString) {
       const date = new Date(dateString);
+
       const month = date.getMonth() + 1;
       const day = date.getDate();
       const year = date.getFullYear();
-      return `${day}/${month}/${year.toString().slice(-2)}`;
+
+      let hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours || 12; // the hour '0' should be '12'
+
+      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+      // eslint-disable-next-line max-len, vue/max-len
+      return `${day}/${month}/${year.toString().slice(-2)} ${hours}:${formattedMinutes} ${ampm}`;
     },
     retrieveIndividual() {
       let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
@@ -343,6 +394,7 @@ export default {
         page: this.page,
         // eslint-disable-next-line camelcase
         eventDate: event_date,
+        maxPlayersPerPage: 10,
         submit: this.submit,
       };
 
@@ -428,9 +480,11 @@ export default {
         q: this.query,
         sort: 'latest',
         page: this.page,
+        seriestype: this.ActiveTab,
         // eslint-disable-next-line camelcase
         eventDate: event_date,
         submit: this.submit,
+        maxTeamsPerPage: 10,
       };
 
       Object.keys(query).forEach((key) => {

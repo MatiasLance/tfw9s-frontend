@@ -103,6 +103,7 @@ export default {
       activeStep: 1,
       isStepperLoading: false,
       seriestype: '',
+      pause: false,
       seeries: null,
       price: null,
     };
@@ -154,7 +155,10 @@ export default {
       this.$axios
         .$get(`v1/series/${this.id}`)
         .then((response) => {
-          this.seriestype = response.data.series.type
+          const SeriesData = response.data.series
+          this.seriestype = SeriesData.type
+          this.pause = parseInt(SeriesData.is_paused) === 1
+          console.log(SeriesData)
         })
     },
     retrieveToggleTaxControl() {
@@ -185,10 +189,30 @@ export default {
     toPayStep(registrationInformation) {
       this.registrationInformation = registrationInformation;
       this.isStepperLoading = true;
-      setTimeout(() => {
-        this.activeStep = 2;
-        this.isStepperLoading = false;
-      }, 3000);
+      this.id = this.$route.query.id;
+
+      this.$axios
+        .$get(`v1/series/${this.id}`)
+        .then((response) => {
+          const SeriesData = response.data.series
+          const pause = parseInt(SeriesData.is_paused) === 1
+          if (pause) {
+            this.$oruga.notification.open({
+              message: 'Event Unavailable',
+              variant: 'danger',
+              duration: 5000,
+              position: 'bottom',
+              queue: true,
+            });
+            this.isStepperLoading = false;
+          } else {
+            setTimeout(() => {
+              this.activeStep = 2;
+              this.isStepperLoading = false;
+            }, 3000);
+            console.log(this.pause)
+          }
+        })
     },
     async checkStatus() {
       const clientSecret = this.$route.query.payment_intent_client_secret;
