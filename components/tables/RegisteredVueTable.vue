@@ -15,7 +15,7 @@
              px-4 py-2 text-center align-middle
              text-[20px] font-semibold text-[#555555]"
             >
-              {{ column.label }}
+              {{ column.name !=  'id' ? column.label:'' }}
             </th>
           </tr>
         </thead>
@@ -43,22 +43,26 @@
                   </template>
                   <template v-if="column.name === 'action'">
                     <VBtn
-                    class="from-40% via-95% to-100%
+                    class="
                     ml-2
                     rounded-lg
-                    bg-gradient-to-tr
                     py-2
                     px-4
                     text-xs
-                    font-medium
+                    font-semibold
                     text-white"
-                    :class="!row.submit?
-                   'from-[#5EE738] via-[#3e872a] to-[#050505]':
-                   'from-[#f37570] via-[#fb0d2b] to-[#050505]'"
+                    :color="row.action?'success':'error'"
                     dark
+                    @click="Manage(row)"
                     >
-                    {{!row.submit?'Submit':'Edit'}}
+                    {{ row.action?'Restore':'Refund' }}
                   </VBtn>
+                  </template>
+                  <template v-else-if="column.name === 'id'">
+                    {{ '' }}
+                  </template>
+                  <template v-else-if="column.name === 'amount'">
+                    {{ formatCurrencyFromCent(row.amount) }}
                   </template>
                   <template v-else-if="column.name === 'team1'">
                       {{ row.team1.name }}
@@ -78,8 +82,10 @@
  </template>
 
 <script>
+import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 export default {
+  mixins: [ currencyMixin ],
   props: {
     columns: {
       type: Array,
@@ -91,8 +97,8 @@ export default {
     },
   },
   methods: {
-    ManageResult(data) {
-      this.$emit('match-data', data);
+    Manage(data) {
+      this.$emit('transaction-data', data);
     },
     Submit(data) {
       this.$emit('submit-data', data)

@@ -11,6 +11,18 @@
             solo
             class="col-span-1"
           />
+          <div class="col-span-1 md:col-span-2"></div>
+          <div
+          class="col-span-1 flex items-center justify-end lg:justify-center"
+          >
+            <label class="font-semibold text-[#555555]">
+              Show Refunded
+              <input
+              id="submitted" v-model="trashed"
+              type="checkbox"
+              />
+            </label>
+          </div>
           <div
           class="col-span-1 md:col-span-3 flex flex-wrap items-center
           justify-around gap-x-2 md:justify-between"
@@ -39,9 +51,7 @@
             <RegisteredVueTable
             :columns="ActiveTab === 'weekly' ? individualData : teamData"
             :data="ActiveTab === 'weekly' ? individualList : teamList"
-            @match-data="openManageResultDialog"
-            @submit-data="openSubmitResultDialog"
-            @edit-data="openManageResultDialog"
+             @transaction-data="openManageRefundDialog"
             />
           </section>
           <section
@@ -63,33 +73,26 @@
         </div>
       </section>
     </div>
-    <ManageResultModal
-    :active="showManageResultModal"
-    :match="selectedMatch"
-    @close="closeManageResultDialog"
-    @confirm="ManageResult"
-    />
-    <SubmitResultModal
-    :active="showSubmitResultModal"
-    :match="selectedMatch"
-    @close="closeSubmitResultDialog"
-    @confirm="SubmitSuccess"
-    @error="SubmitError"
+    <ManageRefundModal
+    :active="showManageRefundModal"
+    :transaction="selectedData"
+    :trashed="trashed"
+    :seriesType="ActiveTab"
+    @close="closeManageRefundDialog"
+    @confirm="ManageRefund"
     />
   </div>
 </template>
 
 <script>
 import RegisteredVueTable from '~/components/tables/RegisteredVueTable.vue';
-import ManageResultModal from '~/components/modals/ManageResultModal.vue';
-import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
+import ManageRefundModal from '~/components/modals/ManageRefundModal.vue';
 import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 export default {
   components: {
     RegisteredVueTable,
-    ManageResultModal,
-    SubmitResultModal,
+    ManageRefundModal,
   },
   mixins: [ currencyMixin ],
   props: {
@@ -108,30 +111,31 @@ export default {
   },
   data() {
     return {
+      trashed: false,
       dateFilter: null,
       submit: false,
       showCustomVueTable: false,
-      showManageResultModal: false,
-      showSubmitResultModal: false,
-      showModifyResultModal: false,
-      selectedMatch: ({}),
+      showManageRefundModal: false,
+      selectedData: ({}),
       individualList: [],
       teamList: [],
       Data: [],
-      selectedData: [],
       individualData: [
+        { name: 'id', label: 'id' },
         { name: 'timestamp', label: 'Timestamp' },
         { name: 'agegroup', label: 'Age Group' },
         { name: 'phone', label: 'Contact' },
         { name: 'playername', label: 'Player' },
         { name: 'email', label: 'Email' },
         { name: 'team', label: 'Team' },
-        { name: 'price', label: 'Amount' },
+        { name: 'amount', label: 'Amount' },
         { name: 'paymentmethod', label: 'Method' },
         { name: 'transactionid', label: 'Transaction' },
         { name: 'updated', label: 'Updated' },
+        { name: 'action', label: 'Action' },
       ],
       teamData: [
+        { name: 'id', label: 'id' },
         { name: 'timestamp', label: 'Timestamps' },
         { name: 'series', label: 'Series' },
         { name: 'team', label: 'Team' },
@@ -140,10 +144,11 @@ export default {
         { name: 'coachEmail', label: 'Coach Email' },
         { name: 'manager', label: 'Manager' },
         { name: 'managerEmail', label: 'Manager Email' },
-        { name: 'price', label: 'Price' },
+        { name: 'amount', label: 'Amount' },
         { name: 'paymentmethod', label: 'Method' },
         { name: 'transactionid', label: 'Transaction' },
         { name: 'updated', label: 'Updated' },
+        { name: 'action', label: 'Action' },
       ],
       ActiveTab: 'weekly',
       SeriesTabs: [
@@ -176,6 +181,17 @@ export default {
     };
   },
   watch: {
+    trashed: {
+      handler(newtab) {
+        if (this.ActiveTab === 'weekly') {
+          this.retrieveIndividual()
+        } else {
+          this.retrieveTeam()
+        }
+        this.page = 1
+      },
+      immediate: true,
+    },
     dateFilter: {
       handler(newDate) {
         this.retrieveIndividual();
@@ -239,43 +255,16 @@ export default {
       const formattedHour = (hour % 12) || 12; // Convert 0 to 12
       return `${formattedHour}:${minute} ${period}`;
     },
-    openManageResultDialog(data) {
-      this.selectedMatch = data
-      this.showManageResultModal = true
+    openManageRefundDialog(data) {
+      console.log(data);
+      this.selectedData = data
+      this.showManageRefundModal = true
     },
-    openSubmitResultDialog(data) {
-      if (data.team1_score === 0 && data.team2_score ===0) {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Please add a score before proceeding.',
-          position: 'bottom',
-          variant: 'info',
-          queue: true
-        })
-        this.selectedMatch = data
-        this.showManageResultModal = true
-      } else {
-        this.selectedMatch = data
-        this.showSubmitResultModal = true
-      }
+    closeManageRefundDialog(data) {
+      this.selectedData = ({})
+      this.showManageRefundModal = false
     },
-    openModifyResultDialog(data) {
-      this.selectedMatch = data
-      this.showModifyResultModal = true
-    },
-    closeManageResultDialog(data) {
-      this.selectedMatch = ({})
-      this.showManageResultModal = false
-    },
-    closeSubmitResultDialog(data) {
-      this.selectedMatch = ({})
-      this.showSubmitResultModal = false
-    },
-    closeModifyResultDialog(data) {
-      this.selectedMatch = ({})
-      this.showModifyResultModal = false
-    },
-    ManageResult(data) {
+    ManageRefund(data) {
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Score Updated',
@@ -283,36 +272,25 @@ export default {
         variant: 'success',
         queue: true
       })
-      this.showManageResultModal = false;
+      this.showManageRefundModal = false;
       this.getEvents();
       this.retrieveIndividual();
       this.retrieveTeam();
     },
-    SubmitSuccess(data) {
+    ManageSuccess(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Result Submitted',
+        message: 'Refund Submitted',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
-      this.showSubmitResultModal = false
+      this.showManageRefundModal = false
       this.getEvents();
       this.retrieveIndividual();
       this.retrieveTeam();
     },
-    ModifyResult(data) {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Result Updated',
-        position: 'bottom',
-        variant: 'success',
-        queue: true
-      })
-      this.showModifyResultModal = false;
-      // this.retrieveIndividual();
-    },
-    SubmitError(data) {
+    ManageError(data) {
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Submission Fail',
@@ -320,7 +298,7 @@ export default {
         variant: 'danger',
         queue: true
       })
-      this.showSubmitResultModal = false
+      this.showManageRefundModal = false
       this.retrieveIndividual();
       this.retrieveTeam();
     },
@@ -404,14 +382,17 @@ export default {
         }
       })
 
+      const endpoint = this.trashed?'players/trashed':'players';
+
       const queryString = new URLSearchParams(query).toString()
       this.$axios
-        .$get(`v1/players?${queryString}`)
+        .$get(`v1/${endpoint}?${queryString}`)
         .then((response) => {
           const EventList = response.data.players.map(player => {
             return {
               ...player,
-              eventmatch: {
+              itemdata: {
+                id: player.id,
                 email: player.email,
                 team: player.team_name,
                 series: this.seriesFormat(player.series_id),
@@ -419,7 +400,7 @@ export default {
                 phone: player.phone_number,
                 playername:
                   `${player.player_firstname} ${player.player_lastname}`,
-                price: this.formatCurrencyFromCent(player.registration.price),
+                amount: player.registration.price,
                 paymentmethod: player.registration.payment_gateway,
                 transactionid: player.registration.transaction_id,
                 timestamp: this.formattedDate(
@@ -428,11 +409,12 @@ export default {
                 updated: this.formattedDate(
                   player.registration.updated_at
                 ),
+                action: this.trashed,
               }
             };
           });
           this.individualList = EventList.flatMap(data => {
-            return data.eventmatch;
+            return data.itemdata;
           });
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
@@ -492,17 +474,19 @@ export default {
           delete query[key]
         }
       })
+      const endpoint = this.trashed?'teams/trashed':'teams';
 
       const queryString = new URLSearchParams(query).toString()
       this.$axios
-        .$get(`v1/teams?${queryString}`)
+        .$get(`v1/${endpoint}?${queryString}`)
         .then((response) => {
           const EventList = response.data.teams
             .filter(team => team.registration_id !== null)
             .map(team => {
               return {
                 ...team,
-                eventmatch: {
+                itemdata: {
+                  id: team.id,
                   team: team.name,
                   series: this.seriesFormat(team.series_id),
                   agegroup: team.agegroup?.name ?? '',
@@ -510,7 +494,7 @@ export default {
                   coachEmail: team.coach_email,
                   manager: team.manager_name,
                   managerEmail: team.manager_email,
-                  price: this.formatCurrencyFromCent(team.registration.price),
+                  amount: team.registration.price,
                   paymentmethod: team.registration.payment_gateway,
                   transactionid: team.registration.transaction_id,
                   timestamp: this.formattedDate(
@@ -519,11 +503,12 @@ export default {
                   updated: this.formattedDate(
                     team.registration.updated_at
                   ),
+                  action: this.trashed,
                 }
               };
             });
           this.teamList = EventList.flatMap(data => {
-            return data.eventmatch;
+            return data.itemdata;
           });
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
