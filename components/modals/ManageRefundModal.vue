@@ -3,7 +3,7 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
                 <h3 class="mb-3 font-bold text-brand-black">
-                    {{ trashed?'Cancel Refund':'Refund Payment'}}
+                    {{ trashed?'Refund Details':'Refund Payment'}}
                 </h3>
                 <hr class="my-3 lg:w-[618px]"/>
                 <div class="grid grid-cols-2 gap-2">
@@ -26,7 +26,7 @@
                     v-model="transactionData.playername"
                     label="Transaction ID"
                     :rules="rules"
-                    :disabled="true"
+                    :readonly="true"
                     type="text"
                     solo
                     />
@@ -36,7 +36,7 @@
                     v-model="transactionData.team"
                     label="Transaction ID"
                     :rules="rules"
-                    :disabled="true"
+                    :readonly="true"
                     type="text"
                     solo
                     />
@@ -47,10 +47,24 @@
                     </label>
                     <VTextField
                     id="name"
-                    v-model="transactionData.transactionid"
+                    v-model="transactionid"
                     label="Transaction ID"
                     :rules="rules"
-                    :disabled="true"
+                    :readonly="true"
+                    type="text"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1">
+                    <label for="transactionname" class="mb-1 block">
+                      Age Group:
+                    </label>
+                    <VTextField
+                    id="name"
+                    v-model="transactionData.agegroup"
+                    label="Amount"
+                    :rules="rules"
+                    :readonly="true"
                     type="text"
                     solo
                     />
@@ -62,10 +76,10 @@
                     </label>
                     <VTextField
                     id="name"
-                    v-model="transactionData.amount"
+                    v-model="amount"
                     label="Amount"
                     :rules="rules"
-                    :disabled="true"
+                    :readonly="true"
                     type="text"
                     solo
                     />
@@ -74,21 +88,32 @@
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
+                  v-if="!refunding && !trashed"
                   depressed
                   color="success"
                   class="custom-btn w-full md:w-[185px] lg:w-[185px]"
                   :disabled="!valid"
                   @click="validate"
                   >
-                    {{ trashed?'Restore':'Refund' }}
+                    {{ trashed?'Show':'Refund' }}
                   </VBtn>
                   <VBtn
+                  v-if="refunding"
+                  depressed
+                  color="error"
+                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+                  @click="cancelRef = true"
+                  >
+                    Cancel ({{ timerCount }})
+                  </VBtn>
+                  <VBtn
+                  v-if="!refunding"
                   depressed
                   color="error"
                   class="custom-btn w-full md:w-[185px] lg:w-[185px]"
                   @click="closeDialog"
                   >
-                    Cancel
+                    Close
                   </VBtn>
                 </div>
             </VForm>
@@ -124,7 +149,12 @@ export default {
   },
   data() {
     return {
+      amount: 0,
       valid: true,
+      timerCount: 0,
+      cancelRef: false,
+      refunding: false,
+      transactionid: '',
       transactionData: {
         name: null,
         description: null,
@@ -137,9 +167,22 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.transactionData = this.transaction;
+          this.amount = this.formatCurrencyFromCent(this.transaction.amount)
+          // eslint-disable-next-line max-len, vue/max-len
+          this.transactionid = this.trashed?this.transactionData.refundid:this.transactionData.transactionid
         }
       },
       immediate: true,
+    },
+    timerCount: {
+      handler(value) {
+        if (value > 0) {
+          setTimeout(() => {
+            this.timerCount--;
+          }, 1000);
+        }
+      },
+      immediate: true
     },
   },
   methods: {
@@ -163,14 +206,47 @@ export default {
         });
         return false;
       } else {
-        this.confirmRegion();
-        return true;
+        this.timerCount = 10
+        this.cancelRef = false;
+        this.refunding = true
+        const countdown = () => {
+          if (this.cancelRef) {
+            this.timerCount = 0;
+            this.cancelRef = false;
+            this.refunding = false;
+            return false;
+          }
+
+          const intervalId = setInterval(() => {
+            if (this.cancelRef) {
+              clearInterval(intervalId);
+              this.timerCount = 0;
+              this.cancelRef = false;
+              this.refunding = false;
+              return false;
+            }
+
+            if (this.timerCount > 0) {
+              // eslint-disable-next-line no-unused-expressions
+              this.timerCount - 1;
+            } else {
+              clearInterval(intervalId);
+              this.confirmRequest();
+              this.timerCount = 0;
+              this.cancelRef = false;
+              this.refunding = false;
+              return true;
+            }
+          }, 1000);
+        }
+        // Start the countdown
+        countdown();
       }
     },
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    confirmRegion() {
+    confirmRequest() {
       this.handleSubmit()
       this.closeDialog()
     },
@@ -183,12 +259,14 @@ export default {
           this.reset();
           this.$emit('confirm')
         })
-        .catch((error) => {
-          if (error.response && error.response.status === 403) {
-            this.$router.push('/unauthorized');
-          } else {
-            console.error('Error:', error);
-          }
+        .catch(() => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to refund',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
         });
     },
     closeDialog() {
@@ -197,6 +275,9 @@ export default {
     },
     reset() {
       this.transactionData = []
+      this.timerCount = 0;
+      this.cancelRef = this.timerCount > 0;
+      this.refunding = false;
     },
   }
 }
