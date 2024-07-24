@@ -1,5 +1,5 @@
 <template>
-    <div class="block w-full overflow-x-auto">
+    <div class="block w-full overflow-x-auto table-container">
       <table
       class="w-full table-auto border-collapse
       items-center bg-transparent"
@@ -99,12 +99,50 @@ export default {
       required: true
     },
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.initDragScroll();
+    });
+  },
   methods: {
     Manage(data) {
       this.$emit('transaction-data', data);
     },
     Delete(data) {
       this.$emit('delete-data', data)
+    },
+    initDragScroll() {
+      const container = document.querySelector('.table-container')
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+
+      container.addEventListener('mousedown', (e) => {
+        isDown = true;
+        container.classList.add('active');
+        startX = e.pageX - container.offsetLeft;
+        scrollLeft = container.scrollLeft;
+      });
+
+      container.addEventListener('mouseleave', () => {
+        isDown = false;
+        container.classList.remove('active');
+      });
+
+      container.addEventListener('mouseup', () => {
+        isDown = false;
+        container.classList.remove('active');
+      });
+
+      container.addEventListener('mousemove', (e) => {
+        if (!isDown) {
+          return;
+        }
+        e.preventDefault();
+        const x = e.pageX - container.offsetLeft;
+        const walk = (x - startX) * 1;
+        container.scrollLeft = scrollLeft - walk;
+      });
     },
   }
 }
@@ -113,5 +151,18 @@ export default {
 <style scoped>
 .v-btn {
   text-transform:none !important;
+}
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  cursor: grab;
+	user-select: none;
+}
+table {
+  width: 100%;
+  min-width: 600px;
+}
+.table-container:active {
+  cursor: grabbing;
 }
 </style>
