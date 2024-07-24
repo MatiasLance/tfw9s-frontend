@@ -8,7 +8,8 @@
           data-aos-offset="0"
           data-aos-once="true"
           >
-          <div class="col-span-1 md:col-span-2"></div>
+          <div class="col-span-1"></div>
+          <div class="col-span-1"/>
           <VSelect
             v-model="ActiveTab"
             :items="SeriesTabs"
