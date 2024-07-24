@@ -2,7 +2,12 @@
   <div>
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-4">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div
+          class="grid grid-cols-1 gap-4 md:grid-cols-3"
+          data-aos="fade-up"
+          data-aos-offset="0"
+          data-aos-once="true"
+          >
           <div class="col-span-1 md:col-span-2"></div>
           <VSelect
             v-model="ActiveTab"
@@ -43,20 +48,19 @@
               />
           </div>
           <section
-          v-if="showCustomVueTable"
-          data-aos="fade-up"
-          data-aos-offset="0"
+          v-if="showCustomVueTable && totalPages > 0"
           class="col-span-1 md:col-span-3"
           >
             <RegisteredVueTable
             :columns="ActiveTab === 'weekly' ? individualData : teamData"
             :data="ActiveTab === 'weekly' ? individualList : teamList"
              @transaction-data="openManageRefundDialog"
+             @delete-data="openDeleteRegisterationDialog"
             />
           </section>
           <section
           v-if="individualList.length === 0 && ActiveTab === 'weekly'"
-          class="col-span-1 flex h-60 items-center
+          class="col-span-1 flex h-20 items-center
           justify-center font-semibold
           text-[#555555] md:col-span-3"
           >
@@ -64,7 +68,7 @@
           </section>
           <section
           v-if="teamList.length === 0 && ActiveTab !== 'weekly'"
-          class="col-span-1 flex h-60 items-center
+          class="col-span-1 flex h-20 items-center
           justify-center font-semibold
           text-[#555555] md:col-span-3"
           >
@@ -81,18 +85,27 @@
     @close="closeManageRefundDialog"
     @confirm="ManageRefund"
     />
+    <DeleteRegistrationModal
+    :active="showDeleteRegistrationModal"
+    :transaction="selectedData"
+    :seriesType="ActiveTab"
+    @close="closeDeleteRegistrationDialog"
+    @confirm="DeleteRegistration"
+    />
   </div>
 </template>
 
 <script>
 import RegisteredVueTable from '~/components/tables/RegisteredVueTable.vue';
 import ManageRefundModal from '~/components/modals/ManageRefundModal.vue';
+import DeleteRegistrationModal from '~/components/modals/DeleteRegistrationModal.vue';
 import currencyMixin from '~/mixins/currency/handlesCurrency'
 
 export default {
   components: {
     RegisteredVueTable,
     ManageRefundModal,
+    DeleteRegistrationModal,
   },
   mixins: [ currencyMixin ],
   props: {
@@ -104,10 +117,6 @@ export default {
       type: Array,
       required: true
     },
-    getEvents: {
-      type: Function,
-      required: true,
-    },
   },
   data() {
     return {
@@ -116,6 +125,7 @@ export default {
       submit: false,
       showCustomVueTable: false,
       showManageRefundModal: false,
+      showDeleteRegistrationModal: false,
       selectedData: ({}),
       individualList: [],
       teamList: [],
@@ -182,13 +192,45 @@ export default {
   },
   watch: {
     trashed: {
-      handler(newtab) {
+      handler(istrashed) {
         if (this.ActiveTab === 'weekly') {
-          this.retrieveIndividual()
+          this.retrieveIndividual();
         } else {
-          this.retrieveTeam()
+          this.retrieveTeam();
         }
-        this.page = 1
+        this.page = 1;
+
+        if (this.trashed) {
+          // Replace 'transactionid' with 'refundid'
+          this.teamData = this.teamData.map(item => {
+            if (item.name === 'transactionid') {
+              return { ...item, name: 'refundid' };
+            }
+            return item;
+          });
+
+          this.individualData = this.individualData.map(item => {
+            if (item.name === 'transactionid') {
+              return { ...item, name: 'refundid' };
+            }
+            return item;
+          });
+        } else {
+          // Replace 'refundid' back with 'transactionid'
+          this.teamData = this.teamData.map(item => {
+            if (item.name === 'refundid') {
+              return { ...item, name: 'transactionid' };
+            }
+            return item;
+          });
+
+          this.individualData = this.individualData.map(item => {
+            if (item.name === 'refundid') {
+              return { ...item, name: 'transactionid' };
+            }
+            return item;
+          });
+        }
       },
       immediate: true,
     },
@@ -256,64 +298,48 @@ export default {
       return `${formattedHour}:${minute} ${period}`;
     },
     openManageRefundDialog(data) {
-      console.log(data);
       this.selectedData = data
       this.showManageRefundModal = true
+    },
+    openDeleteRegisterationDialog(data) {
+      this.selectedData = data
+      this.showDeleteRegistrationModal = true
     },
     closeManageRefundDialog(data) {
       this.selectedData = ({})
       this.showManageRefundModal = false
     },
+    closeDeleteRegistrationDialog(data) {
+      this.selectedData = ({})
+      this.showDeleteRegistrationModal = false
+    },
     ManageRefund(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Score Updated',
+        message: 'Refunded Successfully',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
       this.showManageRefundModal = false;
-      this.getEvents();
-      this.retrieveIndividual();
-      this.retrieveTeam();
+      if (this.ActiveTab === 'weekly') {
+        this.retrieveIndividual();
+      } else {
+        this.retrieveTeam();
+      }
+
     },
-    ManageSuccess(data) {
+    DeleteRegistration(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Refund Submitted',
+        message: 'Unregistered Successfully',
         position: 'bottom',
         variant: 'success',
         queue: true
       })
-      this.showManageRefundModal = false
-      this.getEvents();
+      this.showDeleteRegistrationModal = false;
       this.retrieveIndividual();
       this.retrieveTeam();
-    },
-    ManageError(data) {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Submission Fail',
-        position: 'bottom',
-        variant: 'danger',
-        queue: true
-      })
-      this.showManageRefundModal = false
-      this.retrieveIndividual();
-      this.retrieveTeam();
-    },
-    getCurrentDate() {
-      const currentDate = new Date();
-      return new Date(currentDate.getFullYear(),
-        currentDate.getMonth(), currentDate.getDate());
-    },
-    reformatTime(timeString) {
-      const [
-        hours,
-        minutes
-      ] = timeString.split(':');
-      const formattedTime = `${hours}:${minutes}`;
-      return formattedTime;
     },
     formattedDate(dateString) {
       const date = new Date(dateString);
@@ -403,6 +429,7 @@ export default {
                 amount: player.registration.price,
                 paymentmethod: player.registration.payment_gateway,
                 transactionid: player.registration.transaction_id,
+                refundid: player.registration.refund_id,
                 timestamp: this.formattedDate(
                   player.registration.created_at
                 ),
@@ -497,6 +524,7 @@ export default {
                   amount: team.registration.price,
                   paymentmethod: team.registration.payment_gateway,
                   transactionid: team.registration.transaction_id,
+                  refundid: team.registration.refund_id,
                   timestamp: this.formattedDate(
                     team.registration.created_at
                   ),

@@ -42,21 +42,24 @@
                     />
                   </template>
                   <template v-if="column.name === 'action'">
-                    <VBtn
-                    class="
-                    ml-2
-                    rounded-lg
-                    py-2
-                    px-4
-                    text-xs
-                    font-semibold
-                    text-white"
-                    :color="row.action?'success':'error'"
-                    dark
-                    @click="Manage(row)"
-                    >
-                    {{ row.action?'Restore':'Refund' }}
-                  </VBtn>
+                  <i
+                  v-if="!row.action"
+                  title="Refund Transaction"
+                  class="ri-refund-fill text-3xl text-green-400"
+                  @click="Manage(row)"
+                  />
+                  <i
+                  title="Delete Registration"
+                  v-if="!row.action"
+                  class="ri-delete-bin-fill text-3xl text-red-400"
+                   @click="Delete(row)"
+                  />
+                  <i
+                  title="Refund Details"
+                  v-if="row.action"
+                  class="ri-information-fill text-3xl text-blue-300"
+                  @click="Manage(row)"
+                  />
                   </template>
                   <template v-else-if="column.name === 'id'">
                     {{ '' }}
@@ -100,8 +103,8 @@ export default {
     Manage(data) {
       this.$emit('transaction-data', data);
     },
-    Submit(data) {
-      this.$emit('submit-data', data)
+    Delete(data) {
+      this.$emit('delete-data', data)
     },
   }
 }

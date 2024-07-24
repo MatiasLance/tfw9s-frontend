@@ -118,7 +118,7 @@
             </span>
           </NuxtLink>
           <NuxtLink
-          v-if="
+          v-else-if="
           ($store.state.auth.roles.includes('admin') ||
           $store.state.auth.roles.includes('superadmin'))
           && $route.path !== '/admin'" to="/admin"
@@ -131,7 +131,7 @@
             </span>
           </NuxtLink>
           <NuxtLink
-          v-if="
+          v-else-if="
           $store.state.auth.roles.includes('manager')
           && $route.path !== '/manage'" to="/manage"
           >
@@ -143,8 +143,17 @@
             </span>
           </NuxtLink>
           <span
-          v-if="$store.state.auth.user !== null &&
+          v-else-if="$store.state.auth.user !== null &&
           ($route.path === '/admin' || $route.path === '/manage')"
+          class="z-10 px-5 text-white transition
+          duration-300 ease-in-out hover:text-[#5EE738]
+          cursor-pointer"
+          @click="logout"
+          >
+            Logout
+          </span>
+          <span
+          v-else
           class="z-10 px-5 text-white transition
           duration-300 ease-in-out hover:text-[#5EE738]
           cursor-pointer"
