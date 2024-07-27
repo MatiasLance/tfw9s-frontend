@@ -102,6 +102,7 @@ export default {
           discountcode: this.discountCode
         })
         .then((response) => {
+          this.$store.commit('shop/setPaymentIntent', response.paymentIntentId)
           this.activeStep = 2;
           return response.stripeToken;
         })

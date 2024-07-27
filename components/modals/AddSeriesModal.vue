@@ -14,7 +14,7 @@
                     <VTextField
                     id="title"
                     v-model="SeriesData.name"
-                    label="Enter Team Name"
+                    label="Enter Event Name"
                     :rules="rules"
                     type="text"
                     solo

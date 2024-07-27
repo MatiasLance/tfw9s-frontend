@@ -401,6 +401,7 @@ export default {
         eventDate: event_date,
         maxPlayersPerPage: 10,
         submit: this.submit,
+        isRegistered: true,
       };
 
       Object.keys(query).forEach((key) => {
@@ -429,7 +430,7 @@ export default {
                   `${player.player_firstname} ${player.player_lastname}`,
                 amount: player.registration.price,
                 paymentmethod: player.registration.payment_gateway,
-                transactionid: player.registration.transaction_id,
+                transactionid: player.registration.transaction_id??null,
                 refundid: player.registration.refund_id,
                 timestamp: this.formattedDate(
                   player.registration.created_at
@@ -495,6 +496,7 @@ export default {
         eventDate: event_date,
         submit: this.submit,
         maxTeamsPerPage: 10,
+        isRegistered: true,
       };
 
       Object.keys(query).forEach((key) => {
@@ -509,7 +511,6 @@ export default {
         .$get(`v1/${endpoint}?${queryString}`)
         .then((response) => {
           const EventList = response.data.teams
-            .filter(team => team.registration_id !== null)
             .map(team => {
               return {
                 ...team,
@@ -524,7 +525,7 @@ export default {
                   managerEmail: team.manager_email,
                   amount: team.registration.price,
                   paymentmethod: team.registration.payment_gateway,
-                  transactionid: team.registration.transaction_id,
+                  transactionid: team.registration.transaction_id??null,
                   refundid: team.registration.refund_id,
                   timestamp: this.formattedDate(
                     team.registration.created_at

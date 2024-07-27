@@ -88,7 +88,7 @@
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
-                  v-if="!refunding && !trashed"
+                  v-if="!refunding && !trashed && transactionData.transactionid"
                   depressed
                   color="success"
                   class="custom-btn w-full md:w-[185px] lg:w-[185px]"

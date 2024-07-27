@@ -4,6 +4,7 @@ export const state = () => ({
   page: 1,
   selectedCategory: null,
   categories: [],
+  paymentIntent: null,
 })
 
 export const mutations = {
@@ -21,5 +22,8 @@ export const mutations = {
   },
   setCategories(state, categories) {
     state.categories = categories
+  },
+  setPaymentIntent(state, paymentIntent) {
+    state.paymentIntent = paymentIntent
   },
 }

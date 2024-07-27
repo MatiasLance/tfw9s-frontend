@@ -281,6 +281,14 @@ export default {
         this.$store.commit('master/setToggleControl2', val)
       }
     },
+    paymentIntent: {
+      get() {
+        return this.$store.state.shop.paymentIntent;
+      },
+      set(v) {
+        this.$store.commit('shop/setPaymentIntent', v);
+      }
+    }
   },
   mounted() {
     this.retrieveToggleTaxControl();
@@ -388,7 +396,6 @@ for this code.
                   this.overallTotal = this.newSubTotal.add(gstAmount).value;
                 }
                 this.$store.commit('cart/setSubtotal', this.newSubTotal)
-                this.$store.commit('cart/setTotal', this.overallTotal)
                 this.$oruga.notification.open({
                   message: response.message,
                   variant: 'success',
@@ -444,9 +451,16 @@ for this code.
         this.$store.commit('cart/setTaxAmount', this.originalAmount.taxamount)
         this.overallTotal = this.originalAmount.total
         this.isDiscountCodeMatch = false
+        this.initialize()
       }, 1000)
     },
     activeStepPrev(stepNo) {
+      this.$store.commit('cart/setSubtotal', this.originalAmount.subtotal)
+      this.$store.commit('cart/setGst', this.originalAmount.gst)
+      this.$store.commit('cart/setTotal', this.originalAmount.total)
+      this.$store.commit('cart/setTaxAmount', this.originalAmount.taxamount)
+      this.overallTotal = this.originalAmount.total
+      this.isDiscountCodeMatch = false
       this.$emit('active-step', stepNo)
     },
     initialize() {
@@ -455,15 +469,17 @@ for this code.
       const metadata = this.shippingInformation
       const discounted = this.isDiscountCodeMatch
       const discountcode = this.discountcode ?? ''
+      const paymentIntent = this.paymentIntent
       // eslint-disable-next-line camelcase
       const payment_method = this.paymentMethod
+      console.log(this.discountcode)
       this.$axios
         .$post('v1/orders/calculation', {
           items,
           metadata,
           // eslint-disable-next-line camelcase
           payment_method,
-          // todo: pass discounted and discountcode entered ?
+          paymentIntent,
           discounted,
           discountcode
         })
@@ -473,30 +489,25 @@ for this code.
             response.shippingCalculation.totalShipping = 0
           }
           this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
-          this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct)
-          this.newSubTotal = (this.subtotal + (this.shipping));
+          this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct/100)
+          this.$store.commit('cart/setTaxAmount', response.shippingCalculation.taxAmount/100)
+          const productcost = response.shippingCalculation.totalProduct/100
+          const shippingcost = response.shippingCalculation.totalShipping/100
+          const taxamount = response.shippingCalculation.taxAmount/100;
+          this.newSubTotal = (productcost + shippingcost);
           let total = 0
-          let taxamount = 0
           if (this.toggleControl1) {
-            total = currency(this.newSubTotal, { fromCents: false })
+            total = currency(productcost, { fromCents: false })
               .multiply(1 + this.tax / 100)
               .value;
-            taxamount = currency(total, { fromCents: false })
-              .multiply(this.tax)
-              .divide(100)
-              .value
             this.taxAmount = taxamount;
           } else {
-            total = this.newSubTotal
+            total = productcost
             if (this.shipping > 0) {
-              taxamount = currency(total, { fromCents: false })
-                .multiply(this.tax)
-                .divide(100)
-                .value
               this.taxAmount = taxamount;
             }
           }
-          this.overallTotal = total;
+          this.overallTotal = total + shippingcost;
         })
         .finally(() => {
           this.isStepperLoading = false
