@@ -355,7 +355,7 @@ export default {
     },
     checkLesserMinimumAmount(minAmount) {
       const isLesserThanMinimumAmount = (
-        this.price < minAmount)
+        this.price/100 < minAmount)
       return isLesserThanMinimumAmount;
     },
     applyDiscount() {
