@@ -401,6 +401,7 @@ export default {
         eventDate: event_date,
         maxPlayersPerPage: 10,
         submit: this.submit,
+        isRegistered: true,
       };
 
       Object.keys(query).forEach((key) => {
@@ -495,6 +496,7 @@ export default {
         eventDate: event_date,
         submit: this.submit,
         maxTeamsPerPage: 10,
+        isRegistered: true,
       };
 
       Object.keys(query).forEach((key) => {
@@ -509,7 +511,6 @@ export default {
         .$get(`v1/${endpoint}?${queryString}`)
         .then((response) => {
           const EventList = response.data.teams
-            .filter(team => team.registration_id !== null)
             .map(team => {
               return {
                 ...team,
