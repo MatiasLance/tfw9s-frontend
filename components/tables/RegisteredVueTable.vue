@@ -67,6 +67,9 @@
                   <template v-else-if="column.name === 'amount'">
                     {{ formatCurrencyFromCent(row.amount) }}
                   </template>
+                  <template v-else-if="column.name === 'refund'">
+                    {{ formatCurrencyFromCent(row.refund) }}
+                  </template>
                   <template v-else-if="column.name === 'team1'">
                       {{ row.team1.name }}
                   </template>

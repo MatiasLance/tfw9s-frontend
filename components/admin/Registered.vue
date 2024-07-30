@@ -49,7 +49,7 @@
               />
           </div>
           <section
-          v-if="showCustomVueTable && totalPages > 0"
+          v-if="primaryRetrievalComplete && totalPages > 0"
           class="col-span-1 md:col-span-3"
           >
             <RegisteredVueTable
@@ -124,7 +124,7 @@ export default {
       trashed: false,
       dateFilter: null,
       submit: false,
-      showCustomVueTable: false,
+      primaryRetrievalComplete: false,
       showManageRefundModal: false,
       showDeleteRegistrationModal: false,
       selectedData: ({}),
@@ -194,12 +194,14 @@ export default {
   watch: {
     trashed: {
       handler(istrashed) {
-        if (this.ActiveTab === 'weekly') {
-          this.retrieveIndividual();
-        } else {
-          this.retrieveTeam();
+        if (this.primaryRetrievalComplete) {
+          if (this.ActiveTab === 'weekly') {
+            this.retrieveIndividual();
+          } else {
+            this.retrieveTeam();
+          }
+          this.page = 1;
         }
-        this.page = 1;
 
         if (this.trashed) {
           // Replace 'transactionid' with 'refundid'
@@ -213,6 +215,20 @@ export default {
           this.individualData = this.individualData.map(item => {
             if (item.name === 'transactionid') {
               return { ...item, name: 'refundid' };
+            }
+            return item;
+          });
+
+          this.teamData = this.teamData.map(item => {
+            if (item.name === 'amount') {
+              return { ...item, name: 'refund' };
+            }
+            return item;
+          });
+
+          this.individualData = this.individualData.map(item => {
+            if (item.name === 'amount') {
+              return { ...item, name: 'refund' };
             }
             return item;
           });
@@ -231,14 +247,21 @@ export default {
             }
             return item;
           });
+
+          this.teamData = this.teamData.map(item => {
+            if (item.name === 'refund') {
+              return { ...item, name: 'amount' };
+            }
+            return item;
+          });
+
+          this.individualData = this.individualData.map(item => {
+            if (item.name === 'refund') {
+              return { ...item, name: 'amount' };
+            }
+            return item;
+          });
         }
-      },
-      immediate: true,
-    },
-    dateFilter: {
-      handler(newDate) {
-        this.retrieveIndividual();
-        this.retrieveTeam();
       },
       immediate: true,
     },
@@ -255,10 +278,12 @@ export default {
     },
     page: {
       handler(newPage) {
-        if (this.ActiveTab === 'weekly') {
-          this.retrieveIndividual()
-        } else {
-          this.retrieveTeam()
+        if (this.primaryRetrievalComplete) {
+          if (this.ActiveTab === 'weekly') {
+            this.retrieveIndividual()
+          } else {
+            this.retrieveTeam()
+          }
         }
       },
       immediate: true,
@@ -429,6 +454,7 @@ export default {
                 playername:
                   `${player.player_firstname} ${player.player_lastname}`,
                 amount: player.registration.price,
+                refund: player.registration.refund,
                 paymentmethod: player.registration.payment_gateway,
                 transactionid: player.registration.transaction_id??null,
                 refundid: player.registration.refund_id,
@@ -451,7 +477,7 @@ export default {
           this.to = response.data.to;
         })
         .finally(() => {
-          this.showCustomVueTable = true;
+          this.primaryRetrievalComplete = true;
         });
     },
     retrieveTeam() {
@@ -524,6 +550,7 @@ export default {
                   manager: team.manager_name,
                   managerEmail: team.manager_email,
                   amount: team.registration.price,
+                  refund: team.registration.refund,
                   paymentmethod: team.registration.payment_gateway,
                   transactionid: team.registration.transaction_id??null,
                   refundid: team.registration.refund_id,
@@ -546,7 +573,7 @@ export default {
           this.to = response.data.to;
         })
         .finally(() => {
-          this.showCustomVueTable = true;
+          this.primaryRetrievalComplete = true;
         });
     },
   }
