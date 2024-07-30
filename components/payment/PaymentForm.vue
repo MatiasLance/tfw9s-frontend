@@ -137,16 +137,21 @@
           </div>
         </form>
       </div>
-      <ul class="px-2">
-        <li v-if="isDiscountCodeMatch" class="mb-1 flex justify-between">
-          <span>Subtotal
-            <span class="font-bold">
-              ({{ discountRate * 100 }}% discount applied):
-            </span>
-          </span>
-          <span>{{ formatCurrencyFromCent(price) }}</span>
+      <ul v-if="isLoading" class="px-2">
+        <li class="mb-1 flex justify-center">
+          <VProgressCircular
+          size="125"
+          width="15"
+          indeterminate
+          color="gray lighten-2"
+        />
         </li>
-        <li v-else class="mb-1 flex justify-between">
+      </ul>
+      <ul
+      v-if="!isLoading"
+      class="px-2"
+      >
+        <li class="mb-1 flex justify-between">
           <span>Subtotal:</span>
           <span>{{ formatCurrencyFromCent(price) }}</span>
         </li>
@@ -155,15 +160,25 @@
           <span v-if="showGSTIncluded" class="pl-2">GST Inclusive</span>
           <span v-if="showGSTExcluded" class="pl-2">GST Exclusive</span>
         </li>
-        <li class="mt-3 flex justify-between border-t pt-3">
+        <li class="mb-1 flex justify-between">
+          <span>Tax Amount:</span>
+          <span>{{ formatCurrencyFromCent(taxAmount) }}</span>
+        </li>
+        <li v-if="isDiscountCodeMatch"
+        class="mb-1 flex justify-center border-t pt-3"
+        >
+            <span class="font-bold">
+              ({{ discountRate * 100 }}% discount applied)
+            </span>
+        </li>
+        <li
+        class="mt-3 flex justify-between"
+        :class="!isDiscountCodeMatch?'border-t pt-3':''"
+        >
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
             {{ formatCurrencyFromCent(overallTotal) }}
           </span>
-        </li>
-        <li class="mb-1 flex justify-between text-xs font-light">
-          <span>( Tax Amount:</span>
-          <span>{{ formatCurrencyFromCent(taxAmount) + ' )' }}</span>
         </li>
       </ul>
     </article>
@@ -209,7 +224,7 @@ export default {
       showGSTExcluded: false,
       isGSTInclusive: true,
       paymentMethod: 'stripe',
-      isStepperLoading: false,
+      isLoading: false,
       minimumAmount: 500,
       originalAmount: {
         subtotal: 0,
@@ -444,7 +459,7 @@ export default {
       this.$emit('active-step', stepNo)
     },
     initialize() {
-      this.isStepperLoading = true
+      this.isLoading = true
       const item = this.$route.query.id
       const toggleControl1 = this.toggleControl1
       const toggleControl2 = this.toggleControl2
@@ -485,7 +500,7 @@ export default {
           this.$store.commit('cart/setTotal', this.overallTotal)
         })
         .finally(() => {
-          this.isStepperLoading = false
+          this.isLoading = false
         })
         .catch((err) => {
           console.log(err.message)

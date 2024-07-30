@@ -38,7 +38,7 @@
             </div>
           </div>
         </div>
-        <div class="summary entry-summary col-span-6 p-[1rem]">
+        <div class="summary entry-summary col-span-6 md:p-[1rem]">
           <header class="relative mb-[2em]">
             <div>
               <span
@@ -62,7 +62,7 @@
                 </span>
               </span>
             </div>
-            <h2 class="text-[2.5em] font-bold">
+            <h2 class="text-2xl md:text-4xl font-bold">
               <span class="font-montserrat relative block text-inherit">
                 {{ product.name }}
               </span>
@@ -80,7 +80,7 @@
             "
           >
           <!-- todo: add Sale Price (if there is) and slash the RRP (price) -->
-          <span class="amount">
+          <span class="amount text-2xl md:text-4xl">
               <span v-if="!product.is_on_sale">
                 <span>
                   {{ formatCurrency(product.price) }}
@@ -88,7 +88,8 @@
               </span>
               <span v-if="product.is_on_sale" class="flex">
                 <span v-if="product.show_rrp"
-                class="font-medium text-white opacity-75 line-through mr-8"
+                class="font-medium text-white opacity-75
+                line-through mr-4 md:mr-8"
                 >
                   {{formatCurrency(product.price)}}
                 </span>

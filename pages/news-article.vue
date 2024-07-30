@@ -48,7 +48,7 @@
         class="article-context font-semibold col-span-12 p-[1rem]
         mx-auto max-w-screen-xl w-full"
         >
-          <span class="text-3xl">
+          <span class="text-2xl md:text-3xl">
             {{article.headline}}
           </span>
           <p class="text-lg text-brand-slate">

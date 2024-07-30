@@ -98,7 +98,7 @@
               >
                 <h3
                   class="
-                  grid text-2xl font-semibold
+                  grid text-xl sm:text-2xl font-semibold
                   text-white sm:grid-cols-1"
                 >
                   {{ news.headline }}

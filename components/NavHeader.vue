@@ -467,12 +467,6 @@ export default {
           to: '/news',
           text: 'News',
         },
-        /*
-         * {
-         *   to: '/bar-tv',
-         *   text: 'Bar TV  ',
-         * },
-         */
         {
           to: '/draws',
           text: 'Draws',

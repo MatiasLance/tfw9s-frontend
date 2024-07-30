@@ -73,7 +73,7 @@
       <h1 class=" pt-4 text-4xl font-bold">
         {{ contentData.title }}
       </h1>
-      <p class="py-4">
+      <p class="py-4 link">
         <span v-html="contentData.content"/>
       </p>
     </section>

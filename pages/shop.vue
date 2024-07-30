@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-full bg-[#1A1A1B] pt-8">
     <!-- CONTENT -->
-    <section class="mx-auto max-w-screen-xl gap-4 p-7 py-12">
+    <section class="mx-auto max-w-screen-xl gap-4 sm:p-7 sm:py-12">
       <div class="container max-w-6xl">
         <!-- Categories Slider -->
         <div

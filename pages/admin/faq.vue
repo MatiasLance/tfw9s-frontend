@@ -133,7 +133,7 @@
                     </p>
 
                     <p
-                      class="my-4 text-white line-clamp-3"
+                      class="my-4 text-white line-clamp-3 link"
                       v-html="faq.description"
                     ></p>
 

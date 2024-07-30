@@ -148,6 +148,11 @@ textarea:focus {
   background-color: transparent !important;
 }
 
+.link a{
+  color: #5EE738 !important;
+  overflow-wrap: break-word;
+}
+
 /* textarea{
   background: transparent !important;
 } */

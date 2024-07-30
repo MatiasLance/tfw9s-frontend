@@ -201,7 +201,7 @@
             class="col-span-1 p-4 text-white bg-[#212121]"
             data-aos="fade-up" data-aos-offset="0"
             >
-              <Form class="grid grid-cols-3 gap-2 p-2">
+              <Form class="w-full grid grid-cols-3 gap-2 p-2">
                 <div class="col-span-2 font-semibold">
                   {{ data.name}}
                 </div>

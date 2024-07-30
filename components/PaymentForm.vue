@@ -134,17 +134,20 @@
           </div>
         </form>
       </div>
-      <ul class="px-2">
-        <li v-if="isDiscountCodeMatch" class="mb-1 flex justify-between">
-          <span>Subtotal
-            <span class="font-bold">
-              ({{ discountRate * 100 }}% discount applied):</span>
-          </span>
-          <span>{{ formatCurrency(subtotal) }}</span>
+      <ul v-if="isLoading" class="px-2">
+        <li class="mb-1 flex justify-center">
+          <VProgressCircular
+          size="125"
+          width="15"
+          indeterminate
+          color="gray lighten-2"
+        />
         </li>
-        <li v-else class="mb-1 flex justify-between">
+      </ul>
+      <ul v-if="!isLoading" class="px-2">
+        <li class="mb-1 flex justify-between">
           <span>Subtotal:</span>
-          <span>{{ formatCurrency(subtotal) }}</span>
+          <span>{{ formatCurrency(originalAmount.subtotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
           <span>Shipping:</span>
@@ -155,15 +158,25 @@
           <span v-if="showGSTIncluded" class="pl-2">GST Inclusive</span>
           <span v-if="showGSTExcluded" class="pl-2">GST Exclusive</span>
         </li>
-        <li class="mt-3 flex justify-between border-t pt-3">
+        <li class="mb-1 flex justify-between">
+          <span>Tax Amount:</span>
+          <span>{{ formatCurrency(taxAmount) }}</span>
+        </li>
+        <li v-if="isDiscountCodeMatch"
+        class="mb-1 flex justify-center border-t pt-3"
+        >
+            <span class="font-bold">
+              ({{ discountRate * 100 }}% discount applied)
+            </span>
+        </li>
+        <li
+        class="mt-3 flex justify-between"
+        :class="!isDiscountCodeMatch?'border-t pt-3':''"
+        >
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
             {{ formatCurrency(overallTotal) }}
           </span>
-        </li>
-        <li class="mb-1 flex justify-between text-xs font-light">
-          <span>( Tax Amount:</span>
-          <span>{{ formatCurrency(taxAmount) + ' )' }}</span>
         </li>
       </ul>
     </article>
@@ -198,7 +211,7 @@ export default {
       showGSTExcluded: false,
       isGSTInclusive: true,
       paymentMethod: 'stripe',
-      isStepperLoading: false,
+      isLoading: false,
       minimumAmount: 500,
       originalAmount: {
         subtotal: 0,
@@ -302,6 +315,7 @@ export default {
     setOriginalAmount() {
       this.originalAmount.subtotal = this.subtotal
       this.originalAmount.total = this.overallTotal
+      this.taxAmount = this.subtotal * (this.tax/100);
       this.originalAmount.taxamount = this.taxAmount
     },
     retrieveToggleTaxControl() {
@@ -464,7 +478,7 @@ for this code.
       this.$emit('active-step', stepNo)
     },
     initialize() {
-      this.isStepperLoading = true
+      this.isLoading = true
       const items = this.$store.state.cart.cart
       const metadata = this.shippingInformation
       const discounted = this.isDiscountCodeMatch
@@ -489,28 +503,14 @@ for this code.
             response.shippingCalculation.totalShipping = 0
           }
           this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
-          this.$store.commit('cart/setTotal', response.shippingCalculation.totalProduct/100)
-          this.$store.commit('cart/setTaxAmount', response.shippingCalculation.taxAmount/100)
-          const productcost = response.shippingCalculation.totalProduct/100
+          this.$store.commit('cart/setTotal', response.OverallTotal/100)
+          const productcost = response.OverallTotal/100
           const shippingcost = response.shippingCalculation.totalShipping/100
-          const taxamount = response.shippingCalculation.taxAmount/100;
           this.newSubTotal = (productcost + shippingcost);
-          let total = 0
-          if (this.toggleControl1) {
-            total = currency(productcost, { fromCents: false })
-              .multiply(1 + this.tax / 100)
-              .value;
-            this.taxAmount = taxamount;
-          } else {
-            total = productcost
-            if (this.shipping > 0) {
-              this.taxAmount = taxamount;
-            }
-          }
-          this.overallTotal = total + shippingcost;
+          this.overallTotal = productcost;
         })
         .finally(() => {
-          this.isStepperLoading = false
+          this.isLoading = false
         })
         .catch((err) => {
           console.log(err.message)
