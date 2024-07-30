@@ -3,43 +3,45 @@
   <div>
     <div class="mx-auto max-w-screen-xl">
       <div class="flex flex-wrap">
-        <main class="w-full px-6">
-          <VueSlickCarousel
-            v-bind="slickSettings"
-            draggable
-            focusOnSelect
-            >
-            <div
-              v-for="tab in tabs"
-              :key="tab.value" class="px-1"
-            >
-              <button
-                type="button"
-                class="
-                w-full
-                rounded-md
-                py-1.5
-                text-center
-                text-sm
-                font-semibold
-                "
-                :class="(activeTab == tab.value)
-                ? `from-40% via-95% to-100%
-                    bg-gradient-to-br
-                    from-[#5EE738]
-                    via-[#3e872a]
-                    to-[#050505]
-                    text-white`
-                :
-                'bg-[#212121] text-[#555555]'"
-                data-aos="flip-right"
-                data-aos-offset="0"
-                @click="setActiveTab(tab.value)"
+        <main class="w-full px-2">
+          <section class="px-6">
+            <VueSlickCarousel
+              v-bind="slickSettings"
+              draggable
+              focusOnSelect
               >
-                {{ tab.label }}
-              </button>
-            </div>
-          </VueSlickCarousel>
+              <div
+                v-for="tab in tabs"
+                :key="tab.value" class="px-1"
+              >
+                <button
+                  type="button"
+                  class="
+                  w-full
+                  rounded-md
+                  py-1.5
+                  text-center
+                  text-sm
+                  font-semibold
+                  "
+                  :class="(activeTab == tab.value)
+                  ? `from-40% via-95% to-100%
+                      bg-gradient-to-br
+                      from-[#5EE738]
+                      via-[#3e872a]
+                      to-[#050505]
+                      text-white`
+                  :
+                  'bg-[#212121] text-[#555555]'"
+                  data-aos="flip-right"
+                  data-aos-offset="0"
+                  @click="setActiveTab(tab.value)"
+                >
+                  {{ tab.label }}
+                </button>
+              </div>
+            </VueSlickCarousel>
+          </section>
           <div v-if="activeTab === 'regions'">
             <Regions
             :getRegions="retrieveRegions"
@@ -93,12 +95,6 @@
             :getEvents="retrieveEvents"
             />
           </div>
-          <div v-if="activeTab === 'ladders'">
-            <Ladders
-            :TeamList="TeamList"
-            :EventList="EventList"
-            />
-          </div>
           <div v-if="activeTab === 'series'">
             <Series
             :TeamList="TeamList"
@@ -138,7 +134,6 @@ import Teams from '~/components/admin/Teams.vue';
 import Managers from '~/components/admin/Managers.vue';
 import Fixings from '~/components/admin/Fixings.vue';
 import Results from '~/components/admin/Results.vue';
-import Ladders from '~/components/admin/Ladders.vue';
 import Series from '~/components/admin/Series.vue';
 import Players from '~/components/admin/Players.vue';
 import Registered from '~/components/admin/Registered.vue';
@@ -153,7 +148,6 @@ export default {
     Managers,
     Fixings,
     Results,
-    Ladders,
     Series,
     Players,
     Registered,

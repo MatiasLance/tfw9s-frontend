@@ -1,5 +1,5 @@
 <template>
-  <section class="mx-auto max-w-screen-xl gap-4 p-7">
+  <section class="mx-auto max-w-screen-xl gap-4 p-4 sm:p-8">
     <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
       <div class="relative col-span-1 mb-4 w-full p-4" data-aos="fade-right">
         <h1

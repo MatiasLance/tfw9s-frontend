@@ -35,7 +35,7 @@
         </h1>
       </div>
     </BaseHeader>
-    <section class="mx-auto max-w-screen-xl gap-4 p-4">
+    <section class="mx-auto max-w-screen-xl gap-4">
       <div class="mb-4 w-full">
         <VTabs
           v-model="adminTab"
@@ -54,7 +54,7 @@
           </VTab>
         </VTabs>
       </div>
-      <div class="grid grid-cols-1 gap-4 pt-6">
+      <div class="grid grid-cols-1 gap-4 pt-2">
         <div v-if="adminTab.toUpperCase() === 'EVENTS'">
           <PartsList />
         </div>
@@ -90,7 +90,7 @@
                   <hr class="my-4">
                   <NuxtLink
                     :to="panel.route"
-                    class="hover:text-brand-black"
+                    class="text-brand-black hover:text-brand-black"
                   >
                     <template v-if="panel.desc === 'Edit'">
                       <i

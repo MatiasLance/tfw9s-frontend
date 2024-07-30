@@ -93,7 +93,7 @@
                           <ActiveChip />
                         </span>
                       </div>
-                      <span class="col-span-3 indent-8 line-clamp-4"
+                      <span class="col-span-3 indent-8 line-clamp-4 link"
                       v-html="content.content"
                       />
                       <div class="col-span-3 flex justify-end gap-4">
@@ -468,15 +468,6 @@ export default {
       } else {
         return false;
       }
-    },
-    Invalid() {
-      this.$oruga.notification.open({
-        message: 'Please Fill Content Field',
-        variant: 'danger',
-        duration: 5000,
-        position: 'bottom',
-        queue: true,
-      });
     },
     setPage() {
       this.retrieveGuidelines();

@@ -19,7 +19,7 @@
           data-aos-delay="300"
           class="col-span-12 mt-8 w-full px-4 sm:px-6 lg:col-span-6"
         >
-          <ul class="shadow-box">
+          <ul class="shadow-box link">
             <BaseAccordion
               v-for="(accordion, index) in faqList"
               :key="index"

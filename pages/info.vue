@@ -273,6 +273,11 @@ export default {
 .info h3,
 .info p {
   font-size: revert !important;
+  overflow-wrap: break-word;
+}
+
+.info a{
+  color: #5EE738 !important;
 }
 
 .info ul,

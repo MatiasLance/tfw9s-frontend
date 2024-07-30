@@ -60,7 +60,7 @@
             v-model="phoneCode"
             name="phoneCode"
             class="
-              w-24
+              w-1/6
               appearance-none
               border border-gray-200
               bg-gray-100
@@ -77,7 +77,7 @@
             v-model="coach.phoneDigits"
             name="coachesPhoneDigits"
             class="
-              flex-1
+              w-5/6
               appearance-none
               border border-gray-200
               bg-gray-100
@@ -169,7 +169,7 @@
             v-model="phoneCode"
             name="phoneCode"
             class="
-              w-24
+              w-1/6
               appearance-none
               border border-gray-200
               bg-gray-100
@@ -186,7 +186,7 @@
             v-model="manager.phoneDigits"
             name="managerPhoneDigits"
             class="
-              flex-1
+              w-5/6
               appearance-none
               border border-gray-200
               bg-gray-100

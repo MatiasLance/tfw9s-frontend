@@ -1,8 +1,11 @@
 <template>
-  <div class="flex min-h-screen items-center bg-[#1A1A1B] text-white">
+  <div class="flex w-screen min-h-screen items-center bg-[#1A1A1B] text-white">
     <div class="">
       <div
-        class="p-10
+        class="
+        p-2
+        sm:p-6
+        md:p-10
         h-auto
         w-screen
         grid

@@ -115,8 +115,6 @@
                 inline-block
                 w-full
                 select-none
-                border border-transparent
-                from-40% via-95% to-100%
                 bg-gradient-to-tr
                 from-[#5EE738]
                 via-[#3e872a]
@@ -143,7 +141,6 @@
                     w-full
                     select-none
                     border border-transparent
-                    from-40% via-95% to-100%
                     bg-gradient-to-tr
                     from-[#5EE738]
                     via-[#3e872a]
@@ -385,7 +382,7 @@ export default {
         .value;
       // gst inclusive
       const inclusiveValue = currency(subtotal, { fromCents: false })
-        .divide(1 + this.taxrateValue)
+        .multiply(this.taxrateValue)
         .value;
 
       this.subtotal = subtotal;
@@ -394,7 +391,7 @@ export default {
       this.total = total;
 
       this.taxAmount = this.toggleControl2 ?
-        this.total - inclusiveValue :
+        inclusiveValue :
         this.total - this.subtotal
       this.$store.commit('cart/setTaxAmount', this.taxAmount);
       this.$store.commit('cart/setTotal', total);

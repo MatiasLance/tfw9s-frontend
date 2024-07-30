@@ -51,7 +51,7 @@
             class="col-span-1 mb-0.5 gap-0 border-2 border-gray-500"
             data-aos="fade-up" data-aos-offset="0"
             >
-              <Form class="grid grid-cols-6 gap-2 p-2">
+              <Form class="w-full grid grid-cols-6 gap-2 p-2">
                 <div
                 class="col-span-1 m-auto flex
                 items-center text-lg font-semibold
@@ -320,20 +320,6 @@ export default {
         // If no matching field is found, return "unknown"
         return 'Unknown';
       }
-    },
-    convertTo12HourFormat(timeString) {
-      const [ hour, minute ] = timeString.split(':');
-      const period = hour >= 12 ? 'PM' : 'AM';
-      const formattedHour = (hour % 12) || 12; // Convert 0 to 12
-      return `${formattedHour}:${minute} ${period}`;
-    },
-    reformatTime(timeString) {
-      const [
-        hours,
-        minutes
-      ] = timeString.split(':');
-      const formattedTime = `${hours}:${minutes}`;
-      return formattedTime;
     },
     formattedDate(dateString) {
       const date = new Date(dateString);
