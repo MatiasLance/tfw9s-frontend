@@ -117,7 +117,7 @@
                 </li>
                 <li
                   v-if="more.length > 0"
-                  class="group submenu-item relative hover:bg-yellow-400"
+                  class="group submenu-item relative hover:bg-black-400"
                 >
                   <span
                     class="
@@ -222,7 +222,7 @@
                 lg:block
                 lg:w-full
                 lg:max-w-full
-                lg:bg-brand-yellow/60
+                lg:bg-brand-black/60
                 lg:py-0
                 lg:px-4
                 lg:shadow-none

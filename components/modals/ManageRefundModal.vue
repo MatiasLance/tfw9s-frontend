@@ -1,3 +1,5 @@
+<!-- eslint-disable vue/max-len -->
+<!-- eslint-disable max-len -->
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
@@ -43,7 +45,7 @@
                   </div>
                   <div class="col-span-2">
                     <label for="transactionname" class="mb-1 block">
-                      Transaction ID:
+                      {{trashed?'Refund':'Transaction'}} ID:
                     </label>
                     <VTextField
                     id="name"
@@ -98,6 +100,14 @@
                     />
                   </div>
                 </div>
+                <div v-if="trashed" class="col-span-2">
+                  <span class="flex justify-center font-semibold text-medium text-green-500">
+                    Payment Refunded
+                  </span>
+                  <span class="flex justify-center text-sm text-green-500">
+                    It may take a few days for the money to reach the customer's bank account.
+                  </span>
+                  </div>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
@@ -284,7 +294,8 @@ export default {
           this.reset();
           this.$emit('confirm')
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log(error)
           this.$oruga.notification.open({
             duration: 5000,
             message: 'Failed to refund',
@@ -300,6 +311,9 @@ export default {
     },
     reset() {
       this.transactionData.amount = this.transaction.amount*100
+      if (typeof this.transactionData.refund === 'string' && this.transactionData.refund.includes('$')) {
+        this.transactionData.refund = parseInt(this.transactionData.refund.replace(/[$,]/g, '')) * 100;
+      }
       this.Amount = null;
       this.transactionData = []
       this.timerCount = 0;

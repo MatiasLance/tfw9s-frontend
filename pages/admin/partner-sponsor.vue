@@ -139,7 +139,7 @@
             <div class="p-5">
               <div class="mb-4 space-y-2">
               <span
-              class="text-2xl selection:bg-yellow-600 selection:text-white"
+              class="text-2xl selection:bg-black-600 selection:text-white"
               >
                 <span
                 class="

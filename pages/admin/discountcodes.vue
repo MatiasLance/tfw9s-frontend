@@ -849,6 +849,9 @@ export default {
       return Number.parseFloat(x/100).toFixed(2)
     },
     create() {
+      if (!this.validateDiscountRate()) {
+        return false
+      }
       if (!this.isCreateNewsFormEmpty()) {
         const decimalRate = this.toDecimal(this.discount.rate)
         const discountcode = {
@@ -958,6 +961,9 @@ export default {
         });
     },
     edit(index) {
+      if (!this.validateDiscountRate()) {
+        return false
+      }
       const editObject = this.discountCodeList.find(
         (itemNews) => itemNews.id === this.editingNo
       );
@@ -1060,6 +1066,30 @@ export default {
         typeof this.discount.description === 'undefined'
       );
     },
+    validateDiscountRate() {
+      const discountRate = parseInt(this.discount.rate);
+      if (discountRate > 99) {
+        this.$oruga.notification.open({
+          message: 'Maximum Discount rate is 99',
+          variant: 'info',
+          duration: 5000,
+          position: 'bottom',
+          queue: true,
+        });
+        return false;
+      }
+      if (discountRate <= 0) {
+        this.$oruga.notification.open({
+          message: 'Minimum Discount rate is 1',
+          variant: 'info',
+          duration: 5000,
+          position: 'bottom',
+          queue: true,
+        });
+        return false;
+      }
+      return true;
+    }
   },
 };
 

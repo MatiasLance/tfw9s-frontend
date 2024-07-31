@@ -2,7 +2,7 @@
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
       <VForm ref="form" v-model="valid" lazy-validation>
-          <h3 class="mb-3 font-bold text-brand-black">
+          <h3 class="text-brand-black mb-3 font-bold">
               Edit Fixing
           </h3>
           <hr class="my-3 lg:w-[918px]"/>
@@ -143,11 +143,11 @@
               <button
                 type="button"
                 class="
-                  flex
-                  items-center
-                  justify-center
-                  border border-solid border-brand-black
+                  border-brand-black
                   bg-brand-black
+                  flex
+                  items-center justify-center border
+                  border-solid
                   px-4
                   py-2
                   text-white
@@ -190,12 +190,12 @@
                     v-if="!matchBuffer.submitted"
                     type="button"
                     class="
-                      absolute
-                      right-2
-                      top-2
-                      h-6 w-6
                       text-brand-black
-                      hover:bg-brand-black hover:text-white
+                      hover:bg-brand-black
+                      absolute
+                      right-2 top-2
+                      h-6
+                      w-6 hover:text-white
                     "
                     @click="removeMatch(matchIndex)"
                   >

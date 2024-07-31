@@ -158,7 +158,6 @@ export default {
           const SeriesData = response.data.series
           this.seriestype = SeriesData.type
           this.pause = parseInt(SeriesData.is_paused) === 1
-          console.log(SeriesData)
         })
     },
     retrieveToggleTaxControl() {
@@ -210,7 +209,6 @@ export default {
               this.activeStep = 2;
               this.isStepperLoading = false;
             }, 3000);
-            console.log(this.pause)
           }
         })
     },

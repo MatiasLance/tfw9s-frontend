@@ -424,7 +424,7 @@ export default {
   computed: {
     EventDates() {
       return this.SeriesList.map(event =>
-        ({ date: new Date(event.start), type: event.submit?'danger':'success' }));
+        ({ date: new Date(event.start), type: this.eventDot(event.type) }));
     },
     filteredWeekly() {
       return this.SeriesList.filter(x =>
@@ -468,6 +468,15 @@ export default {
     this.page = 1
   },
   methods: {
+    eventDot(type) {
+      if (type === 'weekly') {
+        return 'success'
+      } else if (type === 'tournament') {
+        return 'warning'
+      } else {
+        return 'danger'
+      }
+    },
     setTab(tab) {
       this.activeTab = tab;
     },
