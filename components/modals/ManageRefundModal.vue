@@ -62,22 +62,35 @@
                     <VTextField
                     id="name"
                     v-model="transactionData.agegroup"
-                    label="Amount"
+                    label="Age Group"
                     :rules="rules"
                     :readonly="true"
                     type="text"
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
+                  <div v-if="!trashed" class="col-span-1">
                     <label for="transactionname" class="mb-1 block">
                       Amount:
-                      {{ formatCurrencyFromCent(transactionData.amount) }}
                     </label>
                     <VTextField
                     id="name"
-                    v-model="amount"
-                    label="Amount"
+                    v-model="Amount"
+                    label="Refund Amount"
+                    prefix="$"
+                    :rules="amountRules"
+                    type="number"
+                    solo
+                    />
+                  </div>
+                  <div v-if="trashed" class="col-span-1">
+                    <label for="transactionname" class="mb-1 block">
+                      Amount:
+                    </label>
+                    <VTextField
+                    id="name"
+                    v-model="transactionData.refund"
+                    label="Refund Amount"
                     :rules="rules"
                     :readonly="true"
                     type="text"
@@ -149,7 +162,7 @@ export default {
   },
   data() {
     return {
-      amount: 0,
+      Amount: null,
       valid: true,
       timerCount: 0,
       cancelRef: false,
@@ -160,6 +173,12 @@ export default {
         description: null,
       },
       rules: [ value => !!value || 'Required' ],
+      amountRules: [
+        value => !!value || 'Required.',
+        // eslint-disable-next-line max-len, vue/max-len
+        value => (value && value <= this.transactionData.amount) || `Refund amount must be ${this.formatCurrency(this.transactionData.amount)} or less.`,
+        value => (value && value > 0) || 'Refund amount must be greater than 0.',
+      ],
     }
   },
   watch: {
@@ -167,7 +186,9 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.transactionData = this.transaction;
-          this.amount = this.formatCurrencyFromCent(this.transaction.amount)
+          this.transactionData.amount = this.transaction.amount/100;
+          // eslint-disable-next-line max-len, vue/max-len
+          this.transactionData.refund = this.formatCurrencyFromCent(this.transaction.refund);
           // eslint-disable-next-line max-len, vue/max-len
           this.transactionid = this.trashed?this.transactionData.refundid:this.transactionData.transactionid
         }
@@ -247,14 +268,18 @@ export default {
       this.$refs.form.resetValidation()
     },
     confirmRequest() {
-      this.handleSubmit()
-      this.closeDialog()
+      if (this.Amount > 0) {
+        this.handleSubmit()
+        this.closeDialog()
+      }
     },
     handleSubmit() {
       const endpoint = this.seriesType === 'weekly'? 'players':'teams'
       const type = this.trashed?'cancelref':'refund'
+      const formData = new FormData();
+      formData.append('amount', parseInt(this.Amount*100));
       this.$axios
-        .$post(`v1/${endpoint}/${type}/${this.transaction.id}`)
+        .$post(`v1/${endpoint}/${type}/${this.transaction.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
           this.$emit('confirm')
@@ -270,10 +295,12 @@ export default {
         });
     },
     closeDialog() {
-      this.$emit('close')
       this.reset()
+      this.$emit('close')
     },
     reset() {
+      this.transactionData.amount = this.transaction.amount*100
+      this.Amount = null;
       this.transactionData = []
       this.timerCount = 0;
       this.cancelRef = this.timerCount > 0;
