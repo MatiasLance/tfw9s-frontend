@@ -3,21 +3,21 @@
         <VueSlickCarousel class="mb-4" v-bind="slickSettings">
             <div class="my-auto">
         <img
-    src="~/assets/images/products/brand_item_placeholder_thumbnail.png"
+    src="~/assets/images/tfw9s.png"
     alt="logo"
     class="w-full"
         />
     </div>
     <div class="my-auto">
         <img
-    src="~/assets/images/products/brand_item_placeholder_thumbnail.png"
+    src="~/assets/images/tfw9s.png"
     alt="logo"
     class="w-full"
         />
     </div>
     <div class="my-auto">
         <img
-    src="~/assets/images/products/brand_item_placeholder_thumbnail.png"
+    src="~/assets/images/tfw9s.png"
     alt="logo"
     class="w-full"
         />

@@ -2,7 +2,7 @@
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
-                <h3 class="mb-3 font-bold text-brand-black">
+                <h3 class="text-brand-black mb-3 font-bold">
                     Edit Field
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>

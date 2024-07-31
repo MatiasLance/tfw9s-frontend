@@ -6,17 +6,17 @@
           <div class="flex flex-col">
             <div class="flex items-center justify-between">
               <span
-                class="text-[#555555]
+                class="text-lg
                 font-bold
-                text-lg"
+                text-[#555555]"
                 >
                 Select Date
               </span>
               <span
                 v-if="dateFilter"
-                class="text-red-400
+                class="cursor-pointer
                 text-xs
-                cursor-pointer
+                text-red-400
                 hover:text-sm
                 hover:text-red-500
                 "
@@ -99,6 +99,7 @@ export default {
     SubmitResultModal,
   },
   props: {
+    // eslint-disable-next-line vue/prop-name-casing
     Matches: {
       type: Array,
       required: true

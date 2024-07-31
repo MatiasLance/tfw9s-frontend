@@ -151,10 +151,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.bgImageShop {
-  background-image: url('~/assets/images/shop.jpg');
-  background-position: 50% -298.006px;
-}
-</style>

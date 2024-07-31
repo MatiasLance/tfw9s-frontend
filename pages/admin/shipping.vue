@@ -22,7 +22,7 @@
               @click="toggle"
             >
               <img
-                src="~/assets/images/avatars/avatar.jpg"
+                src="~/assets/images/tfw9s.png"
                 width="32"
                 height="32"
                 class="h-10 w-10 rounded-full"
@@ -57,7 +57,7 @@
             <div class="shrink-0">
               <img
                 class="h-10 w-10 rounded-full"
-                src="~/assets/images/avatars/avatar.jpg"
+                src="~/assets/images/tfw9s.png"
                 alt
               />
             </div>

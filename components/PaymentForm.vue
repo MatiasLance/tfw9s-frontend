@@ -486,7 +486,6 @@ for this code.
       const paymentIntent = this.paymentIntent
       // eslint-disable-next-line camelcase
       const payment_method = this.paymentMethod
-      console.log(this.discountcode)
       this.$axios
         .$post('v1/orders/calculation', {
           items,

@@ -106,7 +106,6 @@ export default {
         .$get('v1/faq')
         .then((response) => {
           this.faqList = response.data.faq
-          console.log(this.faqList);
         })
         .finally(() => {
           this.isFaqLoading = false;

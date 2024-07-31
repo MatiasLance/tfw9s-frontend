@@ -532,8 +532,6 @@ export default {
             };
           });
           this.MatchList = EventList.flatMap(data => data.eventmatch);
-          console.log(this.MatchList);
-          console.log(response.data.events);
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;

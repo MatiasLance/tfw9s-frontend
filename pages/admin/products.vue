@@ -1201,7 +1201,7 @@ export default {
         description: '',
       },
       Taglist: [],
-      /* tags: [],*/
+      tags: [],
       multipleCategoryCounter: 1,
       multipleCategoryBuffer: [ 1 ],
       categoryLineages: [],
@@ -1274,22 +1274,20 @@ export default {
         this.$store.commit('shop/setPage', value);
       },
     },
-    /*
-     * formattedTags() {
-     * return this.Taglist.map(cat =>
-     *   ({
-     *     text: cat.name,
-     *     value: cat.id,
-     *   }));
-     * },
-     * filteredTags() {
-     * return this.formattedTags.filter(cat =>
-     *   cat && cat.text && typeof cat.text === 'string' ?
-     *     cat.text.toLowerCase().includes(this.tagQuery.toLowerCase()):
-     *     false
-     * );
-     * },
-     */
+    formattedTags() {
+      return this.Taglist.map(cat =>
+        ({
+          text: cat.name,
+          value: cat.id,
+        }));
+    },
+    filteredTags() {
+      return this.formattedTags.filter(cat =>
+        cat && cat.text && typeof cat.text === 'string' ?
+          cat.text.toLowerCase().includes(this.tagQuery.toLowerCase()):
+          false
+      )
+    },
   },
   watch: {
     query() {

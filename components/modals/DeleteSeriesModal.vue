@@ -4,7 +4,7 @@
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <form @submit.prevent="deleteSeries">
-                <h3 class="mb-3 font-bold text-brand-black">
+                <h3 class="text-brand-black mb-3 font-bold">
                     Delete Series
                 </h3>
                 <hr class="my-3"/>

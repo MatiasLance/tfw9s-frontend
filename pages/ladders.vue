@@ -448,7 +448,6 @@ export default {
         })
         .finally(() => {
           this.isLoaded = true;
-          console.log(this.team)
         });
     },
     retrieveEvents() {
