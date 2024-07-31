@@ -45,7 +45,7 @@
                   </template>
                   <template v-if="column.name === 'action'">
                     <VBtn
-                    class="from-40% via-95% to-100%
+                    class="
                     ml-2
                     rounded-lg
                     bg-gradient-to-tr

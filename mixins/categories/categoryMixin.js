@@ -59,7 +59,7 @@ export default {
               ]
             },
             {
-              id: 12,
+              id: 10,
               name: 'Coupe',
               children: [
                 {

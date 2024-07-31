@@ -235,7 +235,7 @@ export default {
       from: 0,
       to: 0,
       page: 1,
-      perPage: 12,
+      perPage: 10,
       totalPages: 0,
       totalItems: 0,
       dataColumns: [

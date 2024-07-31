@@ -119,7 +119,6 @@
           <button
             class="
               focus:shadow-outline
-              from-40% via-95% to-100%
               bg-gradient-to-tr
               from-[#5EE738]
               via-[#3e872a]

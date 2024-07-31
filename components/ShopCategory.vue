@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     selectedClass() {
-      return this.selected ? 'text-white from-40% via-95% to-100% bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505]' : 'bg-[#212121] text-[#555555]'
+      return this.selected ? 'text-white  bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505]' : 'bg-[#212121] text-[#555555]'
     },
   },
 }

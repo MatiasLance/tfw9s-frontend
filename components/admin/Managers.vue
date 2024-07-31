@@ -161,7 +161,7 @@ export default {
       from: 0,
       to: 0,
       page: 1,
-      perPage: 12,
+      perPage: 10,
       totalPages: 0,
       totalItems: 0,
       Rules: [
@@ -280,7 +280,7 @@ export default {
         q: this.query,
         sort: 'latest',
         page: this.page,
-        maxManagersPerPage: 12,
+        maxManagersPerPage: 10,
       };
 
       Object.keys(query).forEach((key) => {

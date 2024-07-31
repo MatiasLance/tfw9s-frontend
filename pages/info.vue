@@ -56,7 +56,7 @@
                 font-semibold
                 "
                 :class="(activeTab == tab.name)
-                ? `from-40% via-95% to-100%
+                ? `
                     bg-gradient-to-br
                     from-[#5EE738]
                     via-[#3e872a]
