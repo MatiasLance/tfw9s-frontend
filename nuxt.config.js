@@ -187,6 +187,7 @@ export default {
       plugins: {
         tailwindcss: {},
         autoprefixer: {},
+        ...(process.env.ENVIRONMENT === 'production' ? { cssnano: {} } : {})
       }
     }
   },
