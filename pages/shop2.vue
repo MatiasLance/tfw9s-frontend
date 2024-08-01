@@ -66,7 +66,7 @@
             </span>
 
             <BaseButton
-            class="from-40% via-95% to-100%
+            class="
             w-full rounded-lg
             bg-gradient-to-tr
             from-[#5EE738]
@@ -105,7 +105,7 @@ export default {
       from: 0,
       to: 0,
       page: 1,
-      perPage: 12,
+      perPage: 10,
       totalPages: 0,
       totalItems: 0,
     }
@@ -125,7 +125,7 @@ export default {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
-        maxItemsPerPage: 12,
+        maxItemsPerPage: 10,
       };
 
       Object.keys(query).forEach((key) => {

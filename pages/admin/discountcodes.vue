@@ -582,7 +582,7 @@ export default {
       from: 0,
       to: 0,
       page: 1,
-      perPage: 12,
+      perPage: 10,
       totalPages: 0,
       totalItems: 0,
       newsList: [],
@@ -675,7 +675,7 @@ export default {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
-        maxDiscountPerPage: 12,
+        maxDiscountPerPage: 10,
       };
 
       // Sanitize and remove null values

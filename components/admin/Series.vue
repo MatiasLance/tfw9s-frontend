@@ -64,7 +64,7 @@
           font-semibold
           "
           :class="(ActiveTab == 'weekly')
-          ? `from-40% via-95% to-100%
+          ? `
           bg-gradient-to-br
           from-[#5EE738]
           via-[#3e872a]
@@ -88,7 +88,7 @@
           font-semibold
           "
           :class="(ActiveTab == 'tournament')
-          ? `from-40% via-95% to-100%
+          ? `
           bg-gradient-to-br
           from-[#5EE738]
           via-[#3e872a]
@@ -112,7 +112,7 @@
           font-semibold
           "
           :class="(ActiveTab == 'coast')
-          ? `from-40% via-95% to-100%
+          ? `
           bg-gradient-to-br
           from-[#5EE738]
           via-[#3e872a]

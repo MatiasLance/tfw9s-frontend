@@ -166,7 +166,7 @@ export default {
       from: 0,
       to: 0,
       page: 1,
-      perPage: 12,
+      perPage: 10,
       totalPages: 0,
       totalItems: 0,
       Rules: [
@@ -266,7 +266,7 @@ export default {
       const query = {
         q: this.query,
         page: this.page,
-        maxAgeGroupsPerPage: 12,
+        maxAgeGroupsPerPage: 10,
       };
 
       Object.keys(query).forEach((key) => {
