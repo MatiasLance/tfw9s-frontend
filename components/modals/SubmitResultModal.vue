@@ -1,34 +1,36 @@
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-            <form @submit.prevent="SubmitResult">
-                <h3 class="mb-3 font-bold text-brand-black">
-                    Submit Result
-                </h3>
-                <hr class="my-3"/>
-                  <p>
-                    Are you sure you want to submit this result?
-                  </p>
-                <hr class="my-3"/>
-                <div class="flex flex-col justify-end gap-2 md:flex-row">
-                  <VBtn
-                  depressed
-                  color="success"
-                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-                  type="submit"
-                  >
-                    OK
-                  </VBtn>
-                  <VBtn
-                    depressed
-                    color="error"
-                    class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-                    @click="closeDialog"
-                  >
-                    Close
-                  </VBtn>
-                </div>
-            </form>
+      <VForm lazy-validation>
+        <h3 class="mb-3 font-bold text-brand-black">
+            Submit Result
+        </h3>
+        <hr class="my-3"/>
+          <p>
+            Are you sure you want to submit this result?
+          </p>
+        <hr class="my-3"/>
+        <div class="flex flex-col justify-end gap-2 md:flex-row">
+          <VBtn
+          depressed
+          color="success"
+          class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+          :loading="processing"
+          :disabled="processing"
+          @click="SubmitResult"
+          >
+            OK
+          </VBtn>
+          <VBtn
+            depressed
+            color="error"
+            class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+            @click="closeDialog"
+          >
+            Close
+          </VBtn>
+        </div>
+      </VForm>
         </div>
   </OModal>
 </template>
@@ -52,6 +54,7 @@ export default {
   data() {
     return {
       matchData: { name: '' },
+      processing: false,
       rules: [ value => !!value || 'Required' ],
     }
   },
@@ -68,12 +71,14 @@ export default {
 
   methods: {
     SubmitResult() {
+      this.processing = true
       const formData = new FormData();
       formData.append('team1_score', this.matchData.team1_score);
       formData.append('team2_score', this.matchData.team2_score);
       this.$axios
         .$post(`v1/eventmatches/${this.matchData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
+          this.processing = false
           this.$emit('confirm')
         })
         .catch((error) => {
