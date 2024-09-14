@@ -40,7 +40,8 @@
                   depressed
                   color="success"
                   class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-                  :disabled="!valid"
+                  :loading="processing"
+                  :disabled="!valid || processing"
                   @click="validate"
                   >
                     Save
@@ -77,6 +78,7 @@ export default {
   },
   data() {
     return {
+      processing: false,
       regionQuery: '',
       valid: true,
       MatchData: {
@@ -110,6 +112,7 @@ export default {
         });
         return false;
       } else {
+        this.processing = true;
         this.confirmResult();
         return true;
       }
@@ -119,7 +122,6 @@ export default {
     },
     confirmResult() {
       this.SaveResult()
-      this.closeDialog()
     },
     SaveResult() {
       const formData = new FormData();
@@ -128,7 +130,9 @@ export default {
       this.$axios
         .$post(`v1/eventmatches/update/${this.MatchData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
+          this.processing = false;
           this.reset();
+          this.closeDialog()
           this.$emit('confirm')
         })
         .catch((error) => {

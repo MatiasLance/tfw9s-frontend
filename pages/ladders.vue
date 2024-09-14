@@ -402,9 +402,17 @@ export default {
       // eslint-disable-next-line max-len, vue/max-len
       const stats = uniqueTeamIds.map(teamId => this.calculateTeamStats(teamId));
 
-      const sortedByPoints = stats.sort((a, b) => b.points - a.points);
+      const sortedData = stats.sort((a, b) => {
+        if (b.points === a.points) {
+          if (b.difference === a.difference) {
+            return a.team.localeCompare(b.team);
+          }
+          return b.difference - a.difference;
+        }
+        return b.points - a.points;
+      });
 
-      this.allTeamStats= sortedByPoints.map((team, index) => ({
+      this.allTeamStats= sortedData.map((team, index) => ({
         ...team,
         pos: index + 1,
       }));
