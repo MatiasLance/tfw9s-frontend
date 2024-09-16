@@ -2,8 +2,8 @@
 <div>
   <div class="bg-[#1A1A1B]" data-aos="fade-up">
     <section class="mx-auto max-w-screen-xl gap-4 p-4">
-      <div class="grid grid-cols-1 gap-4">
-        <div class="col-span-1 flex items-center">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="col-span-1 flex items-center justify-between">
           <button
           type="button"
           class="
@@ -20,10 +20,37 @@
           +
         </button>
         </div>
+        <div class="col-span-1"></div>
+        <form
+        @submit.prevent="retrieveEvents"
+       class="col-span-1 flex items-end justify-between"
+       >
+         <input
+         id="query"
+         v-model="query"
+         placeholder="Search..."
+         :rules="rules"
+         type="text"
+         class="flex-1 h-9 rounded-l"
+         solo
+         />
+         <button
+         type="submit"
+         class="h-9 px-4 rounded-r
+         text-xl font-semibold text-white
+         bg-gradient-to-tr
+         from-[#5EE738]
+         via-[#3e872a]
+         to-[#050505]"
+         >
+         <i class="ri-search-line"/>
+         </button>
+       </form>
         <div
         v-if="totalPages > 0"
         class="col-span-1 flex flex-wrap items-center
-        justify-around gap-x-2 md:justify-between"
+        justify-around gap-x-2 md:justify-between
+        lg:col-span-3"
         data-aos="flip-up" data-aos-once="true"
         >
           <span
@@ -41,7 +68,7 @@
             />
         </div>
         <section
-        class="col-span-1 overflow-y-hidden
+        class="col-span-1 overflow-y-hidden lg:col-span-3
         overflow-x-scroll md:overflow-x-hidden"
         >
           <div class="grid min-w-[640px] grid-cols-1 gap-2">
@@ -138,8 +165,8 @@
         <section
         v-if="totalPages=== 0"
         class="col-span-1 flex h-60 items-center
-        justify-center font-semibold
-        text-[#555555] md:col-span-3"
+        justify-center font-semibold lg:col-span-3
+        text-[#555555]"
         >
         No Fixings Available
         </section>
