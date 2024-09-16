@@ -34,11 +34,37 @@
             >
             </ODatepicker>
           </div>
-          <div class="col-span-1"></div>
-          <div
-          class="col-span-1 flex items-center justify-end lg:justify-center"
+          <form
+           @submit.prevent="retrieveEvents"
+          class="col-span-1 flex items-end justify-between"
           >
-            <label class="font-semibold text-[#555555]">
+            <input
+            id="query"
+            v-model="query"
+            placeholder="Search..."
+            :rules="rules"
+            type="text"
+            class="flex-1 h-9 rounded-l"
+            solo
+            />
+            <button
+            type="submit"
+            class="h-9 px-4 rounded-r
+            text-xl font-semibold text-white
+            bg-gradient-to-tr
+            from-[#5EE738]
+            via-[#3e872a]
+            to-[#050505]"
+            >
+            <i class="ri-search-line"/>
+            </button>
+          </form>
+          <div
+          class="col-span-1 flex items-end justify-end lg:justify-center"
+          >
+            <label
+            class="font-semibold text-[#555555] h-9 flex items-center gap-2"
+            >
               Show Submitted
               <input
               id="submitted" v-model="submit"
@@ -111,7 +137,8 @@ export default {
   },
   data() {
     return {
-      dateFilter: null,
+      query: null,
+      dateFilter: new Date(),
       submit: false,
       showCustomVueTable: false,
       showManageResultModal: false,
@@ -124,6 +151,7 @@ export default {
       dataColumns: [
         { name: 'event_date', label: 'Date' },
         { name: 'matchtime', label: 'Time' },
+        { name: 'series', label: 'Series' },
         { name: 'agegroup_id', label: 'Age Group' },
         { name: 'round', label: 'Match Round' },
         { name: 'field', label: 'Field' },
@@ -413,6 +441,7 @@ export default {
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
+                  series: event.series.name??'Unknown',
                   matchtime: this.AMPMformat(time),
                   round: this.roundFormat(event.round),
                   // eslint-disable-next-line camelcase
