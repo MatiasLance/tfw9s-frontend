@@ -73,9 +73,24 @@
             </label>
           </div>
           <section
-          v-if="showCustomVueTable"
-          data-aos="fade-up"
-          data-aos-offset="0"
+          class="
+          col-span-1
+          flex h-60
+          items-center
+          justify-center
+          md:col-span-3"
+          v-if="isLoading"
+          >
+            <VProgressCircular
+              :size="200"
+              :width="15"
+              color="green"
+              indeterminate
+            >
+            </VProgressCircular>
+          </section>
+          <section
+          v-else
           class="col-span-1 md:col-span-3"
           >
             <CustomVueTable
@@ -227,6 +242,7 @@ export default {
       perPage: 10,
       totalPages: 1,
       totalItems: 0,
+      isLoading: false
     };
   },
   computed: {
@@ -351,7 +367,7 @@ export default {
     SubmitError(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Submission Fail',
+        message: 'The result has already been submitted.',
         position: 'bottom',
         variant: 'danger',
         queue: true
@@ -380,6 +396,7 @@ export default {
       return `${day}/${month}/${year.toString().slice(-2)}`;
     },
     retrieveEvents() {
+      this.isLoading = true
       let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
       let eventMonth = this.dateFilter ?
         (this.dateFilter.getUTCMonth() + 1) : null;
@@ -466,6 +483,7 @@ export default {
         })
         .finally(() => {
           this.showCustomVueTable = true;
+          this.isLoading = false
         });
     },
     clearDate() {

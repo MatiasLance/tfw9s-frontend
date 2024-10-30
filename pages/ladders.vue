@@ -99,7 +99,20 @@
             </div>
           </span>
           <section
-          v-if="allTeamStats.length > 0" class="w-full"
+          v-if="isLoading"
+          class="text-center"
+          >
+            <VProgressCircular
+              :size="200"
+              :width="15"
+              color="green"
+              indeterminate
+            >
+            </VProgressCircular>
+          </section>
+          <section
+          v-else
+          class="w-full"
           data-aos="fade-up" data-aos-offset="0"
           >
             <VueTable
@@ -187,6 +200,7 @@ export default {
         { name: 'points', label: 'Points' },
       ],
       isLoaded: false,
+      isLoading: false,
       matches: [],
       data: [],
       from: 0,
@@ -194,7 +208,7 @@ export default {
       page: 1,
       perPage: 10,
       totalPages: 0,
-      totalItems: 0,
+      totalItems: 0
     }
   },
   head() {
@@ -314,7 +328,9 @@ export default {
     },
     selectedYear: {
       handler(newYear) {
+        this.isLoading = true
         if (newYear && this.isLoaded) {
+          this.isLoading = false
           this.page = 1
           /*
            * this.selectedEvent = null
@@ -329,7 +345,9 @@ export default {
     },
     selectedAgeGroup: {
       handler(newYear) {
+        this.isLoading = true
         if (newYear && this.isLoaded) {
+          this.isLoading = false
           this.page = 1
           this.selectedRound = null;
           this.retrieveTeamPosition();
@@ -339,7 +357,9 @@ export default {
     },
     selectedSeries: {
       handler(newYear) {
+        this.isLoading = true
         if (newYear && this.isLoaded) {
+          this.isLoading = false
           this.page = 1
           this.retrieveTeamPosition();
           this.selectedRound = null;
@@ -421,6 +441,7 @@ export default {
       return str.replace(/^Under \b/, 'U');
     },
     retrieveTeamPosition() {
+      this.isLoading = true
       const query = {
         q: this.query,
         sort: 'points',
@@ -456,6 +477,7 @@ export default {
         })
         .finally(() => {
           this.isLoaded = true;
+          this.isLoading = false
         });
     },
     retrieveEvents() {
