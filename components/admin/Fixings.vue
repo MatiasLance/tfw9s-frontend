@@ -112,7 +112,7 @@
                 v-if="event.eventmatch.length > 0"
                 class="col-span-6"
                 >
-                  <CustomVueTable
+                  <FixingCustomTable
                   v-if="showCustomVueTable"
                   :columns="dataColumns"
                   :data="event.eventmatch"
@@ -206,13 +206,13 @@
 </template>
 
 <script>
-import CustomVueTable from '~/components/tables/CustomVueTable.vue';
+import FixingCustomTable from '~/components/tables/FixingCustomTable.vue';
 import AddFixingModal from '~/components/modals/AddFixingModal.vue';
 import EditFixingModal from '~/components/modals/EditFixingModal.vue';
 import DeleteFixingModal from '~/components/modals/DeleteFixingModal.vue';
 export default {
   components: {
-    CustomVueTable,
+    FixingCustomTable,
     AddFixingModal,
     EditFixingModal,
     DeleteFixingModal,
