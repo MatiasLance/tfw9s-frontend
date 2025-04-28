@@ -202,6 +202,16 @@ export default {
         { text: '5:10 PM', value: '17:10' },
         { text: '5:35 PM', value: '17:35' },
         { text: '6:00 PM', value: '18:00' },
+        { text: '6:25 PM', value: '18:25' },
+        { text: '6:50 PM', value: '18:50' },
+        { text: '7:15 PM', value: '19:15' },
+        { text: '7:40 PM', value: '19:40' },
+        { text: '8:05 PM', value: '20:05' },
+        { text: '8:30 PM', value: '20:30' },
+        { text: '8:55 PM', value: '20:55' },
+        { text: '9:20 PM', value: '21:20' },
+        { text: '9:45 PM', value: '21:45' },
+        { text: '10:00 PM', value: '22:00' },
       ],
       matchRoundOption: [
         { text: 'Round', value: 'round' },
@@ -251,12 +261,33 @@ export default {
         ({ date: new Date(event.date), type: event.submit?'danger':'success' }));
     },
     filteredMatches() {
-      return this.MatchList.filter(match =>
+      // First filter the matches based on the submit status
+      const filtered = this.MatchList.filter(match =>
         match && typeof match.submit === 'boolean' ?
           match.submit === this.submit :
           false
       );
+
+      // Then sort by time (convert time to comparable format)
+      return filtered.sort((a, b) => {
+        // Convert time strings to minutes since midnight for comparison
+        const timeToMinutes = (timeStr) => {
+          const [ time, period ] = timeStr.split(' ');
+          const [ hours, minutes ] = time.split(':').map(Number);
+          let total = hours * 60 + minutes;
+          if (period === 'PM' && hours !== 12) {
+            total += 12 * 60;
+          }
+          if (period === 'AM' && hours === 12) {
+            total -= 12 * 60;
+          }
+          return total;
+        };
+
+        return timeToMinutes(a.matchtime) - timeToMinutes(b.matchtime);
+      });
     }
+
   },
   watch: {
     dateFilter: {

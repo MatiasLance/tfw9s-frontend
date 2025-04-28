@@ -48,6 +48,19 @@
                     >
                     </VSelect>
                   </div>
+                  <div class="col-span-1">
+                    <label for="region" class="mb-1 block">
+                      Region:
+                    </label>
+                    <VSelect
+                    v-model="TeamData.region_id"
+                    :items="formattedRegions"
+                    label="Choose Region"
+                    :rules="rules"
+                    solo
+                    >
+                    </VSelect>
+                  </div>
                   <div class="col-span-1 md:col-span-2" hidden>
                     <label for="teamname" class="mb-1 block">
                       Coach Name:
@@ -259,6 +272,11 @@ export default {
       type: Array,
       required: true
     },
+    regions: {
+      type: Array,
+      required: true,
+      default: () => []
+    },
   },
   data() {
     return {
@@ -290,6 +308,36 @@ export default {
         value: series.id,
       }));
     },
+    formattedRegions() {
+      try {
+        // Check if regions exists and is an array
+        if (!Array.isArray(this.regions)) {
+          console.error('Regions is not an array:', this.regions);
+          return [];
+        }
+        const regionsData = this.regions.map(item => {
+          // Add null checks for region properties
+          if (item.id && item.name) {
+            return {
+              text: item.name,
+              value: item.id
+            };
+          }
+          if (item.data && item.data.id && item.data.name) {
+            return {
+              text: item.data.name,
+              value: item.data.id
+            };
+          }
+          return null;
+        }).filter(Boolean); // Remove any null entries
+        console.log('Formatted regions:', regionsData);
+        return regionsData;
+      } catch (error) {
+        console.error('Error formatting regions:', error);
+        return [];
+      }
+    },
     filteredField() {
       return this.formattedField.filter(field =>
         field && field.text && typeof field.text === 'string' ?
@@ -302,6 +350,12 @@ export default {
     'TeamData.series_id'(newVal, oldVal) {
       if (newVal) {
         this.retrieveTeamLimits();
+      }
+    },
+    regions: {
+      immediate: true,
+      handler(newVal) {
+        console.log('Regions prop changed:', newVal);
       }
     }
   },
@@ -342,6 +396,7 @@ export default {
       formData.append('name', this.TeamData.name);
       formData.append('agegroup_id', this.TeamData.ageGroup);
       formData.append('series_id', this.TeamData.series_id);
+      formData.append('region_id', this.TeamData.region_id);
       formData.append('coach_name', this.TeamData.coach_name);
       formData.append('coach_mobile', this.TeamData.coach_mobile);
       formData.append('coach_email', this.TeamData.coach_email);
@@ -357,7 +412,7 @@ export default {
         .$post('v1/teams', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
-          this.$emit('confirm')
+          this.$emit('confirm', response); // ✅ send back the API response
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {
@@ -516,4 +571,3 @@ color: rgb(104, 104, 104) !important;
   height: 50px !important;
 }
 </style>
-

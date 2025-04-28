@@ -69,6 +69,12 @@
                 >
                 Series
                 </span>
+                <span
+                class="flex-1 text-center px-4 py-2 align-middle
+                text-[20px] font-semibold text-[#555555]"
+                >
+                Region
+                </span>
               </div>
               <div
               v-for="(data) in Teams"
@@ -130,6 +136,7 @@
     :field="FieldList"
     :series="seriesList"
     :agegroup="ageGroupList"
+    :regions="regionList"
     @close="closeAddTeamDialog"
     @confirm="AddTeam"
     />
@@ -187,6 +194,7 @@ export default {
       Dataset: [],
       ageGroupList: [],
       seriesList: [],
+      regionList: [],
       query: '',
       from: 0,
       to: 0,
@@ -223,6 +231,8 @@ export default {
         this.retrieveTeams()
         this.retrieveAgeGroups()
         this.retrieveSeries()
+        this.retrieveRegions()
+
       },
       immediate: true,
     },
@@ -327,6 +337,9 @@ export default {
           this.from = response.data.from;
           this.to = response.data.to;
         })
+        .then(() => {
+          this.retrieveRegions(); // Fetch regions after teams are loaded
+        })
     },
     retrieveAgeGroups() {
       const query = {
@@ -358,9 +371,33 @@ export default {
         .finally(() => {
           this.showVueTable = true;
         });
+    },
+    retrieveRegions() {
+      this.$axios
+        .$get('v1/regions')
+        .then((response) => {
+          console.log('Regions API response:', response); // Debug log
+          // Handle different possible response structures
+          if (response.data && Array.isArray(response.data)) {
+            this.regionList = response.data;
+          } else if (Array.isArray(response)) {
+            this.regionList = response;
+          } else if (response.data && response.data.regions) {
+            // <-- fixed here
+            this.regionList = response.data.regions;
+          } else {
+            console.error('Unexpected regions response format:', response);
+            this.regionList = []; // Fallback to empty array
+          }
+          console.log('Processed regionList:', this.regionList); // Debug log
+        })
+        .catch(error => {
+          console.error('Error fetching regions:', error);
+          this.regionList = []; // Fallback to empty array on error
+        });
     }
   }
-};
+}
 </script>
 
 <style scoped>
