@@ -47,26 +47,17 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1 mb-6">
+                  <div class="col-span-1 md:col-span-2">
                     <label for="selectdate" class="mb-1 block">
-                      Start Date:
+                      Event Dates:
                     </label>
                     <ODatepicker
-                    v-model="SeriesData.start"
-                    label="Click to select..."
-                    icon="calendar"
-                    :rules="rules"
-                    />
-                  </div>
-                  <div class="col-span-1 mb-6">
-                    <label for="selectdate" class="mb-1 block">
-                      End Date:
-                    </label>
-                    <ODatepicker
-                    v-model="SeriesData.end"
-                    label="Click to select..."
-                    icon="calendar"
-                    :rules="rules"
+                      v-model="dateRange"
+                      range
+                      :rules="rules"
+                      label="Click to select start date, then end date"
+                      icon="calendar"
+                      @input="handleDateRangeChange"
                     />
                   </div>
                   <div class="col-span-1">
@@ -160,9 +151,15 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrl: [],
       imgList: [],
+      dateRange: [],
       SeriesData: {
         name: null,
-        description: null
+        description: null,
+        start: null,
+        end: null,
+        type: null,
+        address: null,
+        price: null
       },
       SeriesList: [
         { text: 'Weekly Competitions', value: 'weekly' },
@@ -170,6 +167,7 @@ export default {
         { text: 'Central Coast', value: 'coast' },
       ],
       rules: [ value => !!value || 'Required' ],
+      dateRules: [ value => (value && value.length === 2) || 'Please select both start and end dates' ]
     }
   },
   computed: {
@@ -179,34 +177,61 @@ export default {
     },
   },
   methods: {
+    handleDateRangeChange(newDates) {
+      if (newDates && newDates.length === 2) {
+        const [ startDate, endDate ] = newDates;
+        try {
+          const sDate = new Date(startDate);
+          const eDate = new Date(endDate);
+
+          if (isNaN(sDate.getTime()) || isNaN(eDate.getTime())) {
+            throw new TypeError('Invalid date values');
+          }
+
+          if (sDate > eDate) {
+            this.$oruga.notification.open({
+              message: 'End date must be after start date',
+              variant: 'danger',
+              duration: 5000,
+              position: 'bottom',
+              queue: true,
+            });
+            this.SeriesData.start = null;
+            this.SeriesData.end = null;
+            this.dateRange = [];
+            return;
+          }
+
+          this.SeriesData.start = sDate;
+          this.SeriesData.end = eDate;
+          this.dateRange = newDates;
+        } catch (error) {
+          console.error('Date handling error:', error);
+          this.SeriesData.start = null;
+          this.SeriesData.end = null;
+          this.dateRange = [];
+        }
+      } else {
+        this.SeriesData.start = null;
+        this.SeriesData.end = null;
+      }
+    },
     updateImage(image) {
       this.imgList = image
     },
     DatePickerToSQL(datestring) {
-      let eventYear = datestring.getUTCFullYear();
-      let eventMonth = datestring.getUTCMonth() + 1;
-      let eventDay = datestring.getUTCDate(); // Get day
-
-      // Increment the day by 1
-      eventDay++;
-
-      // Get the last day of the current month
-      const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
-
-      if (eventDay > lastDayOfMonth) {
-        eventDay = 1;
-        eventMonth++;
-
-        if (eventMonth === 13) {
-          eventMonth = 1;
-          eventYear++;
-        }
+      if (!datestring ||
+          !(datestring instanceof Date) ||
+          isNaN(datestring.getTime())) {
+        console.error('Invalid date:', datestring);
+        return null;
       }
-      const eventMonthStr = eventMonth.toString().padStart(2, '0');
-      const eventDayStr = eventDay.toString().padStart(2, '0');
-      const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
-      return event_date;
+      const year = datestring.getUTCFullYear();
+      const month = String(datestring.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(datestring.getUTCDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
     },
     validate() {
       if (!this.$refs.form.validate()) {
@@ -218,15 +243,20 @@ export default {
           queue: true,
         });
         return false;
-      } else if (!this.SeriesData.start && !this.SeriesData.end) {
+      }
+
+      if (!this.dateRange || this.dateRange.length !== 2) {
         this.$oruga.notification.open({
           duration: 5000,
-          message: 'Please select for start and end dates.',
+          message: 'Please select both start and end dates.',
           position: 'bottom',
           variant: 'danger',
           queue: true,
         });
-      } else if (this.SeriesData.description === '<p></p>') {
+        return false;
+      }
+
+      if (this.SeriesData.description === '<p></p>') {
         this.$oruga.notification.open({
           duration: 5000,
           message: 'Description should not be empty',
@@ -235,11 +265,12 @@ export default {
           queue: true,
         });
         return false;
-      } else {
-        this.confirm();
-        return true;
       }
+
+      this.confirm();
+      return true;
     },
+
     resetValidation() {
       this.$refs.form.resetValidation()
     },
@@ -248,13 +279,27 @@ export default {
       this.closeDialog()
     },
     addSeries() {
+      const startDate = this.DatePickerToSQL(this.SeriesData.start);
+      const endDate = this.DatePickerToSQL(this.SeriesData.end);
+      // Check if date conversion was successful
+      if (!startDate || !endDate) {
+        this.$oruga.notification.open({
+          message: 'Invalid date format - please reselect dates',
+          variant: 'danger',
+          duration: 5000,
+          position: 'bottom',
+          queue: true,
+        });
+        return;
+      }
+
       const formData = new FormData();
       formData.append('type', this.SeriesData.type);
       formData.append('name', this.SeriesData.name);
       formData.append('description', this.SeriesData.description);
       formData.append('address', this.SeriesData.address);
-      formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
-      formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
+      formData.append('start', startDate);
+      formData.append('end', endDate);
       formData.append('price', this.currencyToCents(this.SeriesData.price));
 
       for (let i = 0; i < this.imgList.length; i++) {
@@ -265,14 +310,32 @@ export default {
         .$post('v1/series', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
-          this.$emit('confirm')
+          this.$emit('confirm', response.data); // Pass the response data to parent
+          this.$oruga.notification.open({
+            message: 'Series added successfully!',
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
         })
         .catch((error) => {
-          if (error.response && error.response.status === 403) {
-            this.$router.push('/unauthorized');
-          } else {
-            console.error('Error:', error);
+          let errorMessage = 'Failed to add series';
+          if (error.response) {
+            if (error.response.status === 403) {
+              this.$router.push('/unauthorized');
+              return;
+            }
+            errorMessage = error.response.data?.message || errorMessage;
           }
+          this.$oruga.notification.open({
+            message: errorMessage,
+            variant: 'danger',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          console.error('API Error:', error);
         });
     },
     closeDialog() {
@@ -280,10 +343,19 @@ export default {
       this.reset()
     },
     reset() {
-      this.SeriesData = []
-      this.imgList = []
-      this.imgUrl = []
-      this.showGenerateCreatedImageBtn = false
+      this.SeriesData = {
+        name: null,
+        description: null,
+        type: null,
+        address: null,
+        start: null,
+        end: null,
+        price: null
+      };
+      this.dateRange = [];
+      this.imgList = [];
+      this.imgUrl = [];
+      this.showGenerateCreatedImageBtn = false;
     },
     handleCroppaFileSizeExceed(file) {
       this.$oruga.notification.open({
@@ -425,4 +497,3 @@ color: rgb(104, 104, 104) !important;
   transition: border-color 0.3s !important;
 }
 </style>
-

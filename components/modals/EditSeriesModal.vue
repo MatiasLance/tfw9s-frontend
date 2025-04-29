@@ -47,26 +47,16 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1 mb-6">
-                    <label for="selectdate" class="mb-1 block">
-                      Start Date:
+                  <div class="col-span-1 md:col-span-2">
+                    <label for="daterange" class="mb-1 block">
+                      Date Range:
                     </label>
                     <ODatepicker
-                    v-model="SeriesData.start"
-                    label="Click to select..."
-                    icon="calendar"
-                    :rules="rules"
-                    />
-                  </div>
-                  <div class="col-span-1 mb-6">
-                    <label for="selectdate" class="mb-1 block">
-                      End Date:
-                    </label>
-                    <ODatepicker
-                    v-model="SeriesData.end"
-                    label="Click to select..."
-                    icon="calendar"
-                    :rules="rules"
+                      v-model="selectedDateRange"
+                      range
+                      :rules="rules"
+                      label="Click to select start date, then end date"
+                      icon="calendar"
                     />
                   </div>
                   <div class="col-span-1">
@@ -163,12 +153,19 @@ export default {
   data() {
     return {
       valid: true,
+      selectedDateRange: [],
       showGenerateCreatedImageBtn: false,
       imgUrlEdit: [],
       imgListEdit: [],
       SeriesData: {
         name: null,
-        description: null
+        description: null,
+        start: null,
+        end: null,
+        price: null,
+        address: null,
+        type: null,
+        media: [],
       },
       SeriesList: [
         { text: 'Weekly Competitions', value: 'weekly' },
@@ -184,6 +181,10 @@ export default {
         if (newActive) {
           this.SeriesData = this.series;
           this.SeriesData.price = this.series.price/100;
+          this.selectedDateRange = [
+            new Date(this.SeriesData.start),
+            new Date(this.SeriesData.end)
+          ];
           this.imgUrlEdit = this.SeriesData.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
           this.imgListEdit = this.SeriesData.media.map((x) => x.hash);
@@ -203,30 +204,14 @@ export default {
       this.imgListEdit = image
     },
     DatePickerToSQL(datestring) {
-      let eventYear = datestring.getUTCFullYear();
-      let eventMonth = datestring.getUTCMonth() + 1;
-      let eventDay = datestring.getUTCDate(); // Get day
+      const adjustedDate = new Date(datestring);
+      adjustedDate.setDate(adjustedDate.getDate() + 1);
 
-      // Increment the day by 1
-      eventDay++;
+      const year = adjustedDate.getFullYear();
+      const month = String(adjustedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(adjustedDate.getDate()).padStart(2, '0');
 
-      // Get the last day of the current month
-      const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
-
-      if (eventDay > lastDayOfMonth) {
-        eventDay = 1;
-        eventMonth++;
-
-        if (eventMonth === 13) {
-          eventMonth = 1;
-          eventYear++;
-        }
-      }
-      const eventMonthStr = eventMonth.toString().padStart(2, '0');
-      const eventDayStr = eventDay.toString().padStart(2, '0');
-      const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
-
-      return event_date;
+      return `${year}-${month}-${day}`;
     },
     validate() {
       if (!this.$refs.form.validate()) {

@@ -514,17 +514,29 @@ export default {
       this.showAddSeriesModal = false
     },
     AddSeries(data) {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Tournament Series Added',
-        position: 'bottom',
-        variant: 'success',
-        queue: true
+      this.retrieveSeries().then(() => {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Successfully Added',
+          position: 'bottom',
+          variant: 'success',
+          queue: true
+        });
+        this.showAddSeriesModal = false;
+        this.retrieveSeries();
+        this.getSeries();
+        this.getEvents();
       })
-      this.showAddSeriesModal = false;
-      this.retrieveSeries();
-      this.getSeries();
-      this.getEvents();
+        .catch(error => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Failed to refresh series list',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true
+          });
+          console.error('Refresh error:', error);
+        });
     },
     openEditSeriesDialog(data) {
       this.selecetedData = data
@@ -680,7 +692,7 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
 
-      this.$axios
+      return this.$axios
         .$get(`v1/series?${queryString}`)
         .then((response) => {
           this.Data = response.data.series.map(event => {

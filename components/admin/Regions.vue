@@ -3,7 +3,33 @@
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-4">
         <div class="grid grid-cols-1 gap-4">
-          <div class="col-span-1 flex items-center">
+          <div class="col-span-1 flex items-center gap-2">
+            <button
+              type="button"
+              class="
+                rounded-md
+                bg-[#2E2E30]
+                px-4 py-1.5
+                text-center
+                font-semibold
+                text-white
+              "
+            >
+              Matching
+            </button>
+            <button
+              type="button"
+              class="
+                rounded-md
+                bg-[#2E2E30]
+                px-4 py-1.5
+                text-center
+                font-semibold
+                text-white
+              "
+            >
+              Teams
+            </button>
             <button
             type="button"
             class="

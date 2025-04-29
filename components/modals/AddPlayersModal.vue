@@ -477,4 +477,3 @@ color: rgb(104, 104, 104) !important;
   transition: border-color 0.3s !important;
 }
 </style>
-

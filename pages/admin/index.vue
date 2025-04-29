@@ -52,6 +52,9 @@
           <VTab href="#master">
             Master
           </VTab>
+          <VTab href="#draws">
+            Draws
+          </VTab>
         </VTabs>
       </div>
       <div class="grid grid-cols-1 gap-4 pt-2">
@@ -226,6 +229,13 @@ export default {
           desc: 'Edit',
           count: -1
         },
+        {
+          title: 'Draws',
+          icon: 'fas fa-ticket-alt',
+          route: '/admin/draws',
+          desc: 'Manage draws',
+          count: 0
+        },
       ],
       items: [
         {
@@ -263,6 +273,10 @@ export default {
             'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info'
           ].includes(panel.title)
         })
+      case 'DRAWS':
+        return this.panels.filter(panel => {
+          return [ 'Draws' ].includes(panel.title)
+        })
       default:
         return []
       }
@@ -280,6 +294,7 @@ export default {
           this.panels[2].count = response.data.data.discountcode;
           this.panels[3].count = response.data.data.news;
           this.panels[4].count = response.data.data.partner_sponsor;
+          this.panels.find(p => p.title === 'Draws').count = response.data.data.draws || 0;
         })
         .catch(error => {
           console.error('Error fetching total count:', error);
