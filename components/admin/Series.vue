@@ -220,6 +220,15 @@
                   : `Location: ${data.address}`"
                 >
                 </span>
+                <span
+                  v-if="ActiveTab === 'weekly'"
+                  class="col-span-3 line-clamp-4"
+                  v-html="data.age_group?.name
+                    ? data.age_group.name.length > 20
+                      ? `Age Group: ${data.age_group.name.substring(0, 20)}...`
+                      : `Age Group: ${data.age_group.name}`
+                    : ''"
+                />
                 <div class="col-span-3 flex justify-end gap-4">
                   <div v-if="!data.is_paused">
                     <BaseButton
@@ -514,29 +523,17 @@ export default {
       this.showAddSeriesModal = false
     },
     AddSeries(data) {
-      this.retrieveSeries().then(() => {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Successfully Added',
-          position: 'bottom',
-          variant: 'success',
-          queue: true
-        });
-        this.showAddSeriesModal = false;
-        this.retrieveSeries();
-        this.getSeries();
-        this.getEvents();
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Tournament Series Added',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
       })
-        .catch(error => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to refresh series list',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true
-          });
-          console.error('Refresh error:', error);
-        });
+      this.showAddSeriesModal = false;
+      this.retrieveSeries();
+      this.getSeries();
+      this.getEvents();
     },
     openEditSeriesDialog(data) {
       this.selecetedData = data
@@ -692,7 +689,7 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
 
-      return this.$axios
+      this.$axios
         .$get(`v1/series?${queryString}`)
         .then((response) => {
           this.Data = response.data.series.map(event => {
