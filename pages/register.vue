@@ -148,17 +148,29 @@ export default {
     this.price = this.$route.query.price
   },
   methods: {
-    retrieveSeries() {
-
+    async retrieveSeries() {
       this.id = this.$route.query.id;
 
-      this.$axios
-        .$get(`v1/series/${this.id}`)
-        .then((response) => {
-          const SeriesData = response.data.series
-          this.seriestype = SeriesData.type
-          this.pause = parseInt(SeriesData.is_paused) === 1
-        })
+      try {
+        const response = await this.$axios.$get(`v1/series/${this.id}`);
+        const seriesData = response.data.series;
+        
+        this.seriestype = seriesData.type;
+        this.pause = parseInt(seriesData.is_paused) === 1;
+        this.series = seriesData;
+        this.price = this.$route.query.price;
+
+        // Check registration limits based on age group
+        this.checkRegistrationLimits(seriesData);
+      } catch (error) {
+        this.$oruga.notification.open({
+          message: error.message,
+          duration: 5000,
+          variant: 'danger',
+          queue: true,
+          position: 'bottom'
+        });
+      }
     },
     retrieveToggleTaxControl() {
       const id = 1;
@@ -240,6 +252,30 @@ export default {
         this.showMessage('Something went wrong.');
         break;
       }
+    },
+    checkRegistrationLimits(seriesData) {
+      let maxAllowed;
+      
+      if (seriesData.name.includes("6") || seriesData.min_age <= 6) {
+        maxAllowed = 12;
+      } else if (seriesData.name.includes("10") || seriesData.min_age <= 10) {
+        maxAllowed = 15;
+      } else {
+        maxAllowed = seriesData.max_registration || Infinity;
+      }
+
+      if (seriesData.max_registration >= maxAllowed) {
+        this.$router.push({
+          path: '/registration-limit',
+          query: {
+            seriesName: seriesData.name,
+            maxRegistrations: maxAllowed,
+            ageGroup: seriesData.name
+          }
+        });
+        return false;
+      }
+      return true;
     },
   },
 };

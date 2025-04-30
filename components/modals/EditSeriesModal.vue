@@ -80,6 +80,56 @@
                       solo
                     />
                   </div>
+                  <div class="col-span-1">
+                    <label for="teamname" class="mb-1 block">
+                      Coach Email:
+                    </label>
+                    <VTextField
+                    id="coach_email"
+                    v-model="SeriesData.coach_email"
+                    label="Coach Email"
+                    :rules="rules"
+                    type="text"
+                    solo
+                    />
+                  </div>
+                  <div v-if="showAgeGroup" class="mb-4">
+                    <div class="mb-4">
+                      <label class="mb-1 block"> Age Group* </label>
+                        <div class="relative">
+                          <select
+                            v-model="SeriesData.ageGroup"
+                            name="agegroup"
+                            class="
+                            w-full appearance-none border
+                            border-gray-200 bg-gray-100
+                            py-2 px-3 hover:border-gray-400
+                            focus:border-gray-400 focus:outline-none"
+                            required
+                          >
+                            <option :value="null" disabled hidden>
+                              Age Group
+                            </option>
+                            <option
+                              v-for="group in agegroup"
+                              :key="group.id" :value="group.id"
+                            >
+                              {{ group.name }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!SeriesData.ageGroup"
+                            class="
+                            absolute inset-y-0 left-0
+                            flex items-center pl-3
+                            pointer-events-none text-gray-500
+                            "
+                          >
+                            Age Group
+                          </div>
+                      </div>
+                    </div>
+                  </div>
                   <div class="col-span-1 md:col-span-2">
                     <label for="teamdescription" class="mb-1 block">
                       Description:
@@ -179,15 +229,20 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.SeriesData = this.series;
-          this.SeriesData.price = this.series.price/100;
-          this.selectedDateRange = [
+          if (newActive) {
+            this.SeriesData = this.series;
+            this.SeriesData.ageGroup = Number(this.series.agegroup_id) ?? null;
+
+            this.SeriesData.price = this.series.price / 100;
+            this.selectedDateRange = [
             new Date(this.SeriesData.start),
             new Date(this.SeriesData.end)
           ];
           this.imgUrlEdit = this.SeriesData.media.map((x) =>
-            `${this.$config.baseURL}/storage/${x.path}`);
-          this.imgListEdit = this.SeriesData.media.map((x) => x.hash);
+              `${this.$config.baseURL}/storage/${x.path}`
+            );
+            this.imgListEdit = this.SeriesData.media.map((x) => x.hash);
+          }
         }
       },
       immediate: true,
@@ -197,6 +252,9 @@ export default {
     formattedAgeGroup() {
       return this.agegroup.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
+    },
+    showAgeGroup() {
+      return this.SeriesData.type === 'weekly';
     },
   },
   methods: {
@@ -261,6 +319,11 @@ export default {
       formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
       formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
       formData.append('price', this.SeriesData.price*100);
+      formData.append('coach_email', this.SeriesData.coach_email);
+
+      if (this.showAgeGroup && this.SeriesData.ageGroup) {
+        formData.append('agegroup_id', parseInt(this.SeriesData.ageGroup) || null);
+      }
 
       for (let i = 0; i < this.imgListEdit.length; i++) {
         formData.append('photo[]', this.imgListEdit[i]);

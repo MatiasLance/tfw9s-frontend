@@ -73,6 +73,9 @@
             {{ DateRange(formattedDate(article.start),
               formattedDate(article.end)) }}
           </p>
+          <p class="text-base md:text-lg text-brand-slate">
+           Age: {{ article.ageGroup.name || '' }}
+          </p>
         </div>
         <div
           class="article-context font-bold px-[1rem]
@@ -91,7 +94,9 @@
             v-html="article.description"
           />
         </article>
-        <div v-if="!article.pause" class="mb-4 flex w-full justify-center">
+        <div v-if="!article.pause && article.type !== 'weekly'"
+          class="mb-4 flex w-full justify-center"
+        >
           <NuxtLink
             :to="{
               path: '/register/?id=' + article.id,
@@ -237,8 +242,11 @@ export default {
         start: new Date(),
         end: new Date(),
         price: 0,
-        // eslint-disable-next-line camelcase
-        updated_at: null,
+        ageGroup: {
+          id: 0,
+          name: '',
+        },
+        updatedAt: null
       },
       activeImageURL: '',
       photos: [],
@@ -385,13 +393,23 @@ export default {
       this.$axios
         .$get(`v1/series/${Id}`)
         .then((response) => {
-          this.article = response.data.series
-          this.article.pause = parseInt(this.article.is_paused) === 1;
-          this.activeImageURL = this.getMediaURL(this.article.media[0])
-          this.photos = this.article.media
-          this.calculatePriceAggregates()
-        })
+          const series = response.data.series;
 
+          this.article = {
+            ...series,
+            ageGroup: {
+              id: series.age_group?.id || 0,
+              name: series.age_group?.name || '',
+            },
+          };
+          this.article.pause = parseInt(series.is_paused) === 1;
+          this.activeImageURL = this.getMediaURL(series.media[0]);
+          this.photos = series.media;
+          this.calculatePriceAggregates();
+        })
+        .catch((error) => {
+          console.error('Error fetching series:', error);
+        });
     },
     calculatePriceAggregates() {
       const itemCostData = {

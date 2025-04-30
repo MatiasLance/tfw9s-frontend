@@ -150,9 +150,14 @@
               <div class="absolute bottom-0 z-10 w-full
                 bg-black bg-opacity-75 p-2 pl-4 transition"
               >
-                <span class="w-full font-semibold text-white">
+              <div class="flex flex-col">
+                <span class="font-semibold text-white">
                   {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
                 </span>
+                <span class="font-semibold text-white">
+                  Age: {{ item.age_group.name }}
+                </span>
+              </div>
                 <span
                   class="w-full line-clamp-3 text-sm text-white h-0
                   opacity-0 group-hover:h-16 group-hover:opacity-100
@@ -220,9 +225,11 @@
               <div class="absolute bottom-0 z-10 w-full
                 bg-black bg-opacity-75 p-2 pl-4 transition"
               >
-                <span class="w-full font-semibold text-white">
-                  {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
-                </span>
+                <div class="flex flex-col">
+                  <span class="font-semibold text-white">
+                    {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
+                  </span>
+                </div>
                 <span
                   class="w-full line-clamp-3 text-sm text-white h-0
                   opacity-0 group-hover:h-16 group-hover:opacity-100
@@ -290,9 +297,11 @@
               <div class="absolute bottom-0 z-10 w-full
                 bg-black bg-opacity-75 p-2 pl-4 transition"
               >
-                <span class="w-full font-semibold text-white">
-                  {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
-                </span>
+                <div class="flex flex-col">
+                  <span class="font-semibold text-white">
+                    {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
+                  </span>
+                </div>
                 <span
                   class="w-full line-clamp-3 text-sm text-white h-0
                   opacity-0 group-hover:h-16 group-hover:opacity-100
@@ -481,6 +490,7 @@ export default {
       this.activeTab = tab;
     },
     ViewArticle(id) {
+      console.log(id);
       this.$router.push(`/tournament-article/?id=${id}`);
     },
     formattedDate(dateString) {
