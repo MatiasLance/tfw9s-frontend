@@ -36,7 +36,7 @@
         </div>
       </BaseHeader>
   
-      <div class="my-24 mx-auto max-w-screen-xl bg-gray-200 p-8 text-center">
+      <div class="my-24 mx-auto max-w-screen-xl bg-[#1A1A1B] p-8 text-center">
         <div class="bg-white p-8 rounded-lg shadow-lg">
           <h2 class="text-2xl font-bold mb-4">Registration Full</h2>
           <p class="mb-4">
@@ -45,7 +45,7 @@
           </p>
           <p class="mb-6">Please check back later or contact us for more information.</p>
           <NuxtLink to="/">
-            <VBtn color="primary">Return to Home</VBtn>
+            <VBtn color="black" dark>Return to Home</VBtn>
           </NuxtLink>
         </div>
       </div>

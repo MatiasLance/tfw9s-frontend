@@ -135,7 +135,7 @@
     :active="showAddTeamModal"
     :field="FieldList"
     :series="seriesList"
-    :agegroup="ageGroupList"
+    :agegroups="ageGroupList"
     :regions="regionList"
     @close="closeAddTeamDialog"
     @confirm="AddTeam"
@@ -144,7 +144,7 @@
     :active="showEditTeamModal"
     :field="FieldList"
     :series="seriesList"
-    :agegroup="ageGroupList"
+    :agegroups="ageGroupList"
     :team="selectedData"
     @close="closeEditTeamDialog"
     @confirm="EditTeam"
@@ -365,8 +365,7 @@ export default {
       this.$axios
         .$get('v1/series')
         .then((response) => {
-          this.seriesList = response.data.series.filter(series =>
-            series.type !== 'weekly');
+          this.seriesList = response.data.series;
         })
         .finally(() => {
           this.showVueTable = true;

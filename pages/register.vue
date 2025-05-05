@@ -160,8 +160,20 @@ export default {
         this.series = seriesData;
         this.price = this.$route.query.price;
 
-        // Check registration limits based on age group
-        this.checkRegistrationLimits(seriesData);
+        const maxAge = seriesData.age_group?.max_age;
+        const currentRegistrations = seriesData.max_registration || 0;
+        
+        if (this.checkRegistrationLimits(seriesData) === false) {
+          return;
+        }
+
+        if (maxAge <= 9 && currentRegistrations <= 11) {
+          return;
+        }
+        if (currentRegistrations <= 14) {
+          return;
+        }
+
       } catch (error) {
         this.$oruga.notification.open({
           message: error.message,
@@ -254,29 +266,24 @@ export default {
       }
     },
     checkRegistrationLimits(seriesData) {
-      let maxAllowed;
+      const maxAge = seriesData.age_group?.max_age;
+      const currentRegistrations = seriesData.max_registration || 0;
       
-      if (seriesData.name.includes("6") || seriesData.min_age <= 6) {
-        maxAllowed = 12;
-      } else if (seriesData.name.includes("10") || seriesData.min_age <= 10) {
-        maxAllowed = 15;
-      } else {
-        maxAllowed = seriesData.max_registration || Infinity;
-      }
+      const maxAllowed = maxAge <= 9 ? 12 : 15;
 
-      if (seriesData.max_registration >= maxAllowed) {
+      if (currentRegistrations >= maxAllowed) {
         this.$router.push({
           path: '/registration-limit',
           query: {
             seriesName: seriesData.name,
             maxRegistrations: maxAllowed,
-            ageGroup: seriesData.name
+            ageGroup: maxAge <= 9
           }
         });
         return false;
       }
       return true;
-    },
+    }
   },
 };
 </script>
