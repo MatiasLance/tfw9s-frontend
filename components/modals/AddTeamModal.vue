@@ -61,6 +61,20 @@
                     >
                     </VSelect>
                   </div>
+                  <div class="col-span-1">
+                    <label for="selectevent" class="mb-1 block">
+                      Tournament Type:
+                    </label>
+                    <VSelect
+                      v-model="TeamData.type"
+                      :items="formattedSeriesType"
+                      item-text="name"
+                      item-value="value"
+                      label="Choose Series"
+                      :rules="rules"
+                      solo
+                    />
+                  </div>
                   <div class="col-span-1 md:col-span-2" hidden>
                     <label for="teamname" class="mb-1 block">
                       Coach Name:
@@ -277,6 +291,10 @@ export default {
       required: true,
       default: () => []
     },
+    agegroups: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -299,14 +317,43 @@ export default {
         ({ text: field.name, value: field.id }));
     },
     formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
+      if (this.TeamData.type === 'weekly') {
+        const selectedSeries = this.series.find(
+          s => s.id === this.TeamData.series_id
+        );
+
+        if (selectedSeries?.age_group?.id) {
+          const match = this.agegroups.find(
+            a => a.id === selectedSeries.age_group.id
+          );
+          return match
+            ? [{ text: match.name, value: match.id }]
+            : [];
+        }
+
+        return [];
+      }
+      return this.agegroup.map(agegroup => ({
+        text: agegroup.name,
+        value: agegroup.id
+      }));
+    },
+    formattedSeriesType() {
+      return [
+        { value: 'cost', name: 'Coast Tournament' },
+        { value: 'tournament', name: 'Tournament' },
+        { value: 'weekly', name: 'Weekly Tournament' }
+      ];
     },
     formattedSeries() {
-      return this.series.map(series => ({
-        text: series.name,
-        value: series.id,
-      }));
+      if (!this.TeamData.type) return [];
+
+      return this.series
+        .filter(series => series.type === this.TeamData.type)
+        .map(series => ({
+          text: series.name,
+          value: series.id,
+        }));
     },
     formattedRegions() {
       try {
@@ -330,8 +377,7 @@ export default {
             };
           }
           return null;
-        }).filter(Boolean); // Remove any null entries
-        console.log('Formatted regions:', regionsData);
+        }).filter(Boolean);
         return regionsData;
       } catch (error) {
         console.error('Error formatting regions:', error);
@@ -397,6 +443,7 @@ export default {
       formData.append('agegroup_id', this.TeamData.ageGroup);
       formData.append('series_id', this.TeamData.series_id);
       formData.append('region_id', this.TeamData.region_id);
+      formData.append('type', this.TeamData.type);
       formData.append('coach_name', this.TeamData.coach_name);
       formData.append('coach_mobile', this.TeamData.coach_mobile);
       formData.append('coach_email', this.TeamData.coach_email);
