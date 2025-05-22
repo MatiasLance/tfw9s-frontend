@@ -10,7 +10,7 @@
 
     <div class="grid gap-x-3 lg:grid-cols-2">
       <div class="mb-4">
-        <label class="mb-1 block"> Parent's First Name* </label>
+        <label class="mb-1 block"> Contact First Name* </label>
         <input
           v-model="contact.firstName"
           name="contactfirstname"
@@ -31,7 +31,7 @@
       </div>
 
       <div class="mb-4">
-        <label class="mb-1 block"> Parent's Last Name* </label>
+        <label class="mb-1 block"> Contact Last Name* </label>
         <input
           v-model="contact.lastName"
           name="contactlastname"
@@ -54,7 +54,7 @@
 
     <div class="grid gap-x-3 lg:grid-cols-2">
       <div class="mb-4">
-        <label class="mb-1 block"> Parent's Phone Number* </label>
+        <label class="mb-1 block"> Contact Phone Number* </label>
         <div class="flex w-full">
           <input
             v-model="phoneCode"
@@ -94,7 +94,7 @@
       </div>
 
       <div class="mb-4">
-        <label class="mb-1 block"> Parent's Email* </label>
+        <label class="mb-1 block"> Contact Email* </label>
         <input
           v-model="contact.email"
           name="email"

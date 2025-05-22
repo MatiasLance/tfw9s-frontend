@@ -236,7 +236,10 @@ export default {
         const [ startDate, endDate ] = newDates;
         try {
           const sDate = new Date(startDate);
+          sDate.setHours(12, 0, 0, 0);
+      
           const eDate = new Date(endDate);
+          eDate.setHours(12, 0, 0, 0);
 
           if (isNaN(sDate.getTime()) || isNaN(eDate.getTime())) {
             throw new TypeError('Invalid date values');
@@ -258,7 +261,7 @@ export default {
 
           this.SeriesData.start = sDate;
           this.SeriesData.end = eDate;
-          this.dateRange = newDates;
+          this.dateRange = [sDate, eDate];
         } catch (error) {
           console.error('Date handling error:', error);
           this.SeriesData.start = null;
@@ -281,9 +284,9 @@ export default {
         return null;
       }
 
-      const year = datestring.getUTCFullYear();
-      const month = String(datestring.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(datestring.getUTCDate()).padStart(2, '0');
+      const year = datestring.getFullYear();
+      const month = String(datestring.getMonth() + 1).padStart(2, '0');
+      const day = String(datestring.getDate()).padStart(2, '0');
 
       return `${year}-${month}-${day}`;
     },

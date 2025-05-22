@@ -98,58 +98,73 @@
             @change="setPage"
             />
         </div>
-<section class="col-span-3">
-  <div class="overflow-x-auto">
-  <div class="inline-block min-w-full text-center">
-
-      <div 
-        v-if="totalPages > 0"
-        class="flex min-w-[1200px] pr-24 md:w-auto"
-        data-aos="flip-up"
->
-  <span
-    class="flex-1 text-center px-4 py-2 align-middle
-    text-[20px] font-semibold text-[#555555]   "
-  >
-    Contact Name
-  </span>
-  <span
-    class="flex-1 text-center px-4 py-2 align-middle
-    text-[20px] font-semibold text-[#555555]   "
-  >
-    Phone Number
-  </span>
-  <span
-    class="flex-1 text-center px-4 py-2 align-middle
-    text-[20px] font-semibold text-[#555555]  "
-  >
-    Email
-  </span>
-  <span
-    class="flex-1 text-center px-4 py-2 align-middle
-    text-[20px] font-semibold text-[#555555]  "
-  >
-    Player Name
-  </span>
-  <span
-    class="flex-1 text-center px-4 py-2 align-middle
-    text-[20px] font-semibold text-[#555555] "
-  >
-    Team
-  </span>
-  <span
-    class="flex-1 text-center px-4 py-2 align-middle
-    text-[20px] font-semibold text-[#555555] "
-  >
-    Date of Birth
-  </span>
-  <span 
-    class="flex-1 text-center px-4 py-2 align-middle
-    text-[20px] font-semibold text-[#555555] "
-  >
-    Age Group
-  </span>
-</div>
+          <section class="col-span-3">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+              <!-- Table with horizontal scroll -->
+              <div class="inline-block min-w-full text-center">
+                <!-- Table headers -->
+                <div 
+                  v-if="totalPages > 0"
+                  class="min-w-[1200px] flex items-center"
+                data-aos="flip-up"
+              >
+                <th
+                scope="col"
+                class="flex-1 text-center px-4 py-2 align-middle
+  text-[20px] font-semibold text-[#555555]
+  border border-gray-300 bg-gray-100 rounded-md"
+                >
+                Contact Name
+              </th>
+                <th
+                scope="col"
+                class="flex-1 text-center px-4 py-2 align-middle
+  text-[20px] font-semibold text-[#555555]
+  border border-gray-300 bg-gray-100 rounded-md"
+                >
+                Phone Number
+                </th>
+                <th
+                scope="col"
+                class="flex-1 text-center px-4 py-2 align-middle
+  text-[20px] font-semibold text-[#555555]
+  border border-gray-300 bg-gray-100 rounded-md"
+                >
+                Email
+              </th>
+                <th
+                scope="col"
+                class="flex-1 text-center px-4 py-2 align-middle
+  text-[20px] font-semibold text-[#555555]
+  border border-gray-300 bg-gray-100 rounded-md"
+                >
+                Player Name
+                </th>
+                <th
+                scope="col"
+                class="flex-1 text-center px-4 py-2 align-middle
+  text-[20px] font-semibold text-[#555555]
+  border border-gray-300 bg-gray-100 rounded-md"
+                >
+                Team
+                </th>
+                <th
+                scope="col"
+                class="flex-1 text-center px-4 py-2 align-middle
+  text-[20px] font-semibold text-[#555555]
+  border border-gray-300 bg-gray-100 rounded-md"
+                >
+                Date of Birth
+                </th>
+                <th
+                scope="col"
+                class="flex-1 text-center px-4 py-2 align-middle
+  text-[20px] font-semibold text-[#555555]
+  border border-gray-300 bg-gray-100 rounded-md"
+                >
+                Age Group
+                </th>
+              </div>
               <div
               v-for="(data) in Players"
               :key="data.id" class="col-span-1 mb-0.5 gap-0"

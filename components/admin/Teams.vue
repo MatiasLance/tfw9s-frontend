@@ -108,6 +108,15 @@
                 :disabled="true"
                 class="mr-0.5 flex-1 border-black bg-white p-1"
                 />
+                <input
+                :value="getRegionName(data.region_id)"
+                @input="handleRegionInput(data, $event)"
+                :rules="Rules"
+                hide-details
+                required
+                readonly
+                class="mr-0.5 flex-1 border-black bg-white p-1"
+                />
                 <i
                 class="ri-pencil-fill px-4 text-xl text-white"
                 @click="openEditTeamDialog(data)"
@@ -115,8 +124,7 @@
                 <i
                 class="ri-delete-bin-fill px-4 text-xl text-red-400"
                 @click="openDeleteTeamDialog(data)"
-                />
-              </div>
+                />              </div>
               </div>
             </div>
           </section>
@@ -135,7 +143,7 @@
     :active="showAddTeamModal"
     :field="FieldList"
     :series="seriesList"
-    :agegroups="ageGroupList"
+    :agegroup="ageGroupList"
     :regions="regionList"
     @close="closeAddTeamDialog"
     @confirm="AddTeam"
@@ -144,7 +152,8 @@
     :active="showEditTeamModal"
     :field="FieldList"
     :series="seriesList"
-    :agegroups="ageGroupList"
+    :agegroup="ageGroupList"
+    :regions="regionList"
     :team="selectedData"
     @close="closeEditTeamDialog"
     @confirm="EditTeam"
@@ -220,6 +229,12 @@ export default {
       ],
     };
   },
+  mounted() {
+    this.retrieveTeams();
+    this.retrieveAgeGroups();
+    this.retrieveSeries();
+    this.retrieveRegions();
+  },
   watch: {
     totalPages() {
       if (this.page > this.totalPages) {
@@ -267,19 +282,30 @@ export default {
       this.selectedData = ({});
       this.showDeleteTeamModal = false
     },
-    AddTeam() {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Team Added',
-        position: 'bottom',
-        variant: 'success',
-        queue: true
-      })
-      this.showAddTeamModal = false;
-      this.retrieveTeams();
-      this.getTeams();
-      this.getEvents();
-    },
+AddTeam(response) {
+  console.log('AddTeam response:', response); // Debug log
+  
+  this.$oruga.notification.open({
+    duration: 5000,
+    message: response?.message || 'Team Added',
+    position: 'bottom',
+    variant: 'success',
+    queue: true
+  });
+  
+  this.showAddTeamModal = false;
+  
+  // Force refresh all data
+  Promise.all([
+    this.retrieveTeams(),
+    this.retrieveAgeGroups(),
+    this.retrieveSeries(),
+    this.retrieveRegions()
+  ]).then(() => {
+    this.getTeams();
+    this.getEvents();
+  });
+},
     EditTeam() {
       this.$oruga.notification.open({
         duration: 5000,
@@ -306,40 +332,61 @@ export default {
       this.getTeams();
       this.getEvents();
     },
-    retrieveTeams() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-        maxTeamsPerPage: 10,
+async retrieveTeams() {
+  try {
+    // First ensure regions are loaded
+    if (this.regionList.length === 0) {
+      await this.retrieveRegions();
+    }
+
+    const query = {
+      q: this.query,
+      sort: 'a_to_z',
+      page: this.page,
+      maxTeamsPerPage: 10,
+    };
+
+    const queryString = new URLSearchParams(query).toString();
+
+    const response = await this.$axios.$get(`v1/teams?${queryString}`);
+    
+    // Process team data with proper relationships
+    this.Teams = response.data.teams.map(team => {
+      // Find age group
+      const ageGroup = this.ageGroupList.find(ag => ag.id === team.agegroup_id) || {};
+      
+      // Find series
+      const series = this.seriesList.find(s => s.id === team.series_id) || {};
+      
+      return {
+        ...team,
+        name: team.name,
+        agegroup: {
+          name: ageGroup.name || '',
+          id: team.agegroup_id
+        },
+        series: {
+          name: series.name || '',
+          id: team.series_id
+        },
+        region_id: team.region_id
       };
+    });
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
+    this.totalItems = response.data.total_items;
+    this.totalPages = response.data.last_page;
+    this.from = response.data.from;
+    this.to = response.data.to;
+    
+    console.log('Processed Teams:', this.Teams); // Debug log
+  } catch (error) {
+    console.error('Error retrieving teams:', error);
+  }
+},
 
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/teams?${queryString}`)
-        .then((response) => {
-          this.Teams = response.data.teams.map(team => {
-            return {
-              ...team,
-              fieldName: team.field && team.field.name ? team.field.name : '',
-              eventName: `${team.event && team.event.name ? team.event.name : ''} - ${team.event && team.event.agegroup ? team.event.agegroup.name:''}`,
-            };
-          });
-          this.totalItems = response.data.total_items;
-          this.totalPages = response.data.last_page;
-          this.from = response.data.from;
-          this.to = response.data.to;
-        })
-        .then(() => {
-          this.retrieveRegions(); // Fetch regions after teams are loaded
-        })
+    getRegionName(regionId) {
+      const region = this.regionList.find(r => r.id === regionId);
+      return region ? region.name : '';
     },
     retrieveAgeGroups() {
       const query = {
@@ -365,7 +412,8 @@ export default {
       this.$axios
         .$get('v1/series')
         .then((response) => {
-          this.seriesList = response.data.series;
+          this.seriesList = response.data.series.filter(series =>
+            series.type !== 'weekly');
         })
         .finally(() => {
           this.showVueTable = true;
@@ -377,13 +425,13 @@ export default {
         .then((response) => {
           console.log('Regions API response:', response); // Debug log
           // Handle different possible response structures
-          if (response.data && Array.isArray(response.data)) {
+          if (response.data && response.data.regions) {
+            this.regionList = response.data.regions;
+          } else if (Array.isArray(response.data)) {
             this.regionList = response.data;
           } else if (Array.isArray(response)) {
-            this.regionList = response;
-          } else if (response.data && response.data.regions) {
             // <-- fixed here
-            this.regionList = response.data.regions;
+            this.regionList = response;
           } else {
             console.error('Unexpected regions response format:', response);
             this.regionList = []; // Fallback to empty array

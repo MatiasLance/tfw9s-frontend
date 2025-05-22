@@ -95,26 +95,26 @@ export default {
         endpoint = '/v1/tournament/team/checkout'
       }
 
-      const clientSecret = await this.$axios
-        .$post(endpoint, {
+      try {
+        const response = await this.$axios.$post(endpoint, {
           item: this.$route.query.id,
           // eslint-disable-next-line camelcase
           payment_method: 'stripe',
           metadata,
           discountcode: this.discountCode
-        })
-        .then((response) => {
-          this.activeStep = 2;
-
-          this.$store.commit('registration/setPaymentIntent', response.paymentIntentId)
-          return response.stripeToken;
-        })
-        .finally(() => {
-          this.isStepperLoading = false;
         });
 
-      this.loadStripe(clientSecret);
+        this.activeStep = 2;
+        this.$store.commit('registration/setPaymentIntent', response.paymentIntentId);
+        this.loadStripe(response.stripeToken);
+      } catch (error) {
+        console.error('Checkout initialization failed:', error.response || error);
+        this.showMessage('Payment initialization failed.');
+      } finally {
+        this.isStepperLoading = false;
+      }
     },
+
     loadStripe(clientSecret) {
       const appearance = {
         theme: 'stripe',
@@ -138,24 +138,34 @@ export default {
       paymentElement.mount('#payment-element');
     },
     async handleSubmit() {
-      this.setLoading(true);
-      const { error } = await this.$stripe.confirmPayment({
-        elements,
-        confirmParams: {
+      try {
+        const { error } = await this.$stripe.confirmPayment({
+          elements,
           // eslint-disable-next-line camelcase
-          return_url:
-          `${this.$config.baseURL}/thank-you1?seriesType=${this.seriestype}`
-        },
-      });
+          confirmParams: {
+          // eslint-disable-next-line camelcase
+            return_url:
+              `${this.$config.baseURL}/thank-you1?seriesType=${
+                this.seriestype}`,
+          },
+        });
 
-      if (error.type === 'card_error' || error.type === 'validation_error') {
-        this.showMessage(error.message);
-      } else {
-        this.showMessage('An unexpected error occurred.');
+        if (error) {
+          console.error('Stripe confirmPayment error:', error);
+          if (error.type === 'card_error' || error.type === 'validation_error') {
+            this.showMessage(error.message);
+          } else {
+            this.showMessage('An unexpected error occurred.');
+          }
+        }
+      } catch (e) {
+        console.error('Confirm payment crashed:', e);
+        this.showMessage('Something went wrong during payment.');
+      } finally {
+        this.setLoading(false);
       }
-
-      this.setLoading(false);
     },
+
     setLoading(isLoading) {
       if (isLoading) {
         // Disable the button and show a spinner

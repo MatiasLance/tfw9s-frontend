@@ -48,6 +48,19 @@
                     >
                     </VSelect>
                   </div>
+                  <div class="col-span-1">
+                    <label for="region" class="mb-1 block">
+                      Region:
+                    </label>
+                    <VSelect
+                    v-model="TeamData.region_id"
+                    :items="formattedRegions"
+                    label="Choose Region"
+                    :rules="rules"
+                    solo
+                    >
+                    </VSelect>
+                  </div>
                   <div class="col-span-1 md:col-span-2" hidden>
                     <label for="teamname" class="mb-1 block">
                       Coach Name:
@@ -263,6 +276,10 @@ export default {
       type: Array,
       required: true
     },
+    regions: {
+      type: Array,
+      required: true
+    },
   },
   data() {
     return {
@@ -295,6 +312,33 @@ export default {
         value: series.id,
       }));
     },
+    formattedRegions() {
+      try {
+        if (!Array.isArray(this.regions)) {
+          console.error('Regions is not an array:', this.regions);
+          return [];
+        }
+        const regionsData = this.regions.map(item => {
+          if (item.id && item.name) {
+            return {
+              text: item.name,
+              value: item.id
+            };
+          }
+          if (item.data && item.data.id && item.data.name) {
+            return {
+              text: item.data.name,
+              value: item.data.id
+            };
+          }
+          return null;
+        }).filter(Boolean);
+        return regionsData;
+      } catch (error) {
+        console.error('Error formatting regions:', error);
+        return [];
+      }
+    },
     filteredField() {
       return this.formattedField.filter(field =>
         field && field.text && typeof field.text === 'string' ?
@@ -307,7 +351,10 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.TeamData = this.team;
+          this.TeamData = {
+            ...this.team,
+            region_id: this.team.region?.id || null // Initialize region_id
+          };
           this.imgUrl = this.TeamData.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
           this.imgList = this.TeamData.media.map((x) => x.hash);
@@ -358,6 +405,7 @@ export default {
       formData.append('name', this.TeamData.name);
       formData.append('agegroup_id', this.TeamData.agegroup_id);
       formData.append('series_id', this.TeamData.series_id);
+      formData.append('region_id', this.TeamData.region_id);
       formData.append('coach_name', this.TeamData.coach_name);
       formData.append('coach_mobile', this.TeamData.coach_mobile);
       formData.append('coach_email', this.TeamData.coach_email);

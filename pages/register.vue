@@ -432,4 +432,3 @@ button#stripeSubmit:disabled {
   border: 1px solid transparent;
 }
 </style>
-

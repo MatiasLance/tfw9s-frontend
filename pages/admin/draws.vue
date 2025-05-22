@@ -1,41 +1,6 @@
 <template>
   <div class="w-screen min-h-screen bg-[#1A1A1B]">
-    <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
-    >
-      <div
-        class="
-          col-span-12
-          text-center
-          lg:space-y-3
-          lg:text-left
-          lg:col-span-6
-          xl:mt-10"
-          data-aos="fade-right"
-      >
-        <span
-          class="
-            superheadline
-            flex flex-row
-            items-center
-            text-[1rem]
-            font-normal
-            text-white
-          "
-        >
-          <span class="font-medium">
-            <NuxtLink to="/">
-              <VBtn text color="white">Home</VBtn>
-            </NuxtLink>
-          </span>
-        </span>
-        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Draws
-        </h1>
-      </div>
-    </BaseHeader>
-    <section class="mx-auto max-w-screen-xl gap-4 p-7">
+    <section class="mx-auto max-w-screen-xl gap-4 p-7 ml-5">
       <div class="grid grid-cols-3 gap-2">
         <div class="col-span-3 p-2" data-aos="fade-up">
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -56,18 +21,18 @@
       />
     </div>
 
-    <!-- Age Group -->
+    <!-- Fields -->
     <div>
       <span
         class="hidden w-full py-2 align-middle text-[20px]
         font-semibold text-[#555555] md:block"
       >
-        Age Group
+        Field
       </span>
       <VSelect
-        v-model="selectedAgeGroup"
-        :items="formattedAgeGroup"
-        placeholder="Select Age Group"
+        v-model="selectedField"
+        :items="formattedFields"
+        placeholder="Select Field"
         solo
         class="w-full"
       />
@@ -295,7 +260,7 @@ export default {
       selectedRegion: null,
       selectedAgeGroup: null,
       selectedYear: null,
-      AgeGroupList: [],
+      FieldList: [],
       EventList: [],
       MatchList: [],
       isLoaded: false,
@@ -316,9 +281,9 @@ export default {
         date: new Date(event.event_date),
       }));
     },
-    formattedAgeGroup() {
-      return this.AgeGroupList.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
+    formattedFields() {
+      return this.FieldList.map(field =>
+        ({ text: field.name, value: field.id }));
     },
     filteredEvents() {
       if (this.selectedYear && this.selectedAgeGroup) {
@@ -375,7 +340,7 @@ export default {
             if (!isNaN(eventDate)) {
               this.selectedYear = eventDate.getFullYear();
               this.selectedRegion = firstEvent.region_id;
-              this.selectedAgeGroup = firstEvent.agegroup_id;
+              this.selectedField = firstEvent.field_id;
               this.retrieveEventMatch()
             } else {
               console.error('Invalid event date format');
@@ -397,17 +362,16 @@ export default {
            * this.selectedRegion = null
            * this.selectedAgeGroup = null
            */
-          this.selectedAgeGroup = this.formattedAgeGroup[0]?.value ?? null;
+          this.selectedField = this.formattedFields[0]?.value ?? null;
           this.selectedRegion = this.formattedRegions[0]?.value ?? null;
         }
       },
       immediate: true,
     },
-    selectedAgeGroup: {
-      handler(newYear) {
-        if (newYear && this.isLoaded) {
+    selectedField: {
+      handler(newField) {
+        if (newField && this.isLoaded) {
           this.page = 1
-          this.selectedRegion = null;
           this.retrieveEventMatch()
         }
       },
@@ -428,7 +392,7 @@ export default {
     },
   },
   created() {
-    this.retrieveAgeGroups();
+     this.retrieveFields();
     this.retrieveEvents();
   },
   methods: {
@@ -547,7 +511,7 @@ export default {
           this.retrieveEventMatch();
         });
     },
-    retrieveAgeGroups() {
+    retrieveFields() {
       const query = {
         q: this.query,
         page: this.page,
