@@ -234,11 +234,14 @@ export default {
             this.SeriesData.ageGroup = Number(this.series.agegroup_id) ?? null;
 
             this.SeriesData.price = this.series.price / 100;
-            this.selectedDateRange = [
-            new Date(this.SeriesData.start),
-            new Date(this.SeriesData.end)
-          ];
-          this.imgUrlEdit = this.SeriesData.media.map((x) =>
+
+            const startDate = new Date(this.series.start);
+            const endDate = new Date(this.series.end);
+
+            startDate.setHours(12, 0, 0, 0);
+            endDate.setHours(12, 0, 0, 0);
+            this.selectedDateRange = [startDate, endDate];
+            this.imgUrlEdit = this.SeriesData.media.map((x) =>
               `${this.$config.baseURL}/storage/${x.path}`
             );
             this.imgListEdit = this.SeriesData.media.map((x) => x.hash);
@@ -247,6 +250,24 @@ export default {
       },
       immediate: true,
     },
+    selectedDateRange: {
+      handler(newRange) {
+        if (newRange && newRange.length === 2) {
+          const [startDate, endDate] = newRange;
+
+          // Create new Date objects to avoid reference issues
+          const sDate = new Date(startDate);
+          const eDate = new Date(endDate);
+
+          // Set time to noon to avoid timezone issues
+          sDate.setHours(12, 0, 0, 0);
+          eDate.setHours(12, 0, 0, 0);
+
+          this.SeriesData.start = sDate;
+          this.SeriesData.end = eDate;
+        }
+      }
+    }
   },
   computed: {
     formattedAgeGroup() {
@@ -262,12 +283,15 @@ export default {
       this.imgListEdit = image
     },
     DatePickerToSQL(datestring) {
-      const adjustedDate = new Date(datestring);
-      adjustedDate.setDate(adjustedDate.getDate() + 1);
+      if (!datestring || !(datestring instanceof Date) || isNaN(datestring.getTime())) {
+        console.error('Invalid date:', datestring);
+        return null;
+      }
 
-      const year = adjustedDate.getFullYear();
-      const month = String(adjustedDate.getMonth() + 1).padStart(2, '0');
-      const day = String(adjustedDate.getDate()).padStart(2, '0');
+      // Create date in local timezone to avoid timezone issues
+      const year = datestring.getFullYear();
+      const month = String(datestring.getMonth() + 1).padStart(2, '0');
+      const day = String(datestring.getDate()).padStart(2, '0');
 
       return `${year}-${month}-${day}`;
     },

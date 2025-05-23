@@ -26,7 +26,7 @@
                         Age Group:
                       </label>
                       <VSelect
-                        v-model="TeamData.ageGroup"
+                        v-model="TeamData.agegroup_id"
                         :items="formattedAgeGroup"
                         label="Choose Age Group"
                         :rules="rules"
@@ -60,20 +60,6 @@
                     solo
                     >
                     </VSelect>
-                  </div>
-                  <div class="col-span-1">
-                    <label for="selectevent" class="mb-1 block">
-                      Tournament Type:
-                    </label>
-                    <VSelect
-                      v-model="TeamData.type"
-                      :items="formattedSeriesType"
-                      item-text="name"
-                      item-value="value"
-                      label="Choose Series"
-                      :rules="rules"
-                      solo
-                    />
                   </div>
                   <div class="col-span-1 md:col-span-2" hidden>
                     <label for="teamname" class="mb-1 block">
@@ -282,6 +268,11 @@ export default {
       type: Array,
       required: true
     },
+    ageGroup: {
+      type: Array,
+      required: true,
+      default: () => []
+    },
     series: {
       type: Array,
       required: true
@@ -290,10 +281,6 @@ export default {
       type: Array,
       required: true,
       default: () => []
-    },
-    agegroups: {
-      type: Array,
-      required: true,
     },
   },
   data() {
@@ -304,8 +291,17 @@ export default {
       imgUrl: [],
       imgList: [],
       TeamData: {
-        name: null,
-        description: null
+      name: null,
+      agegroup_id: null,
+      series_id: null,
+      region_id: null,
+      coach_name: null,
+      coach_mobile: null,
+      coach_email: null,
+      manager_name: null,
+      manager_mobile: null,
+      manager_email: null,
+      type: 'default'
       },
       rules: [ value => !!value || 'Required' ],
       agegroup: []
@@ -317,43 +313,14 @@ export default {
         ({ text: field.name, value: field.id }));
     },
     formattedAgeGroup() {
-      if (this.TeamData.type === 'weekly') {
-        const selectedSeries = this.series.find(
-          s => s.id === this.TeamData.series_id
-        );
-
-        if (selectedSeries?.age_group?.id) {
-          const match = this.agegroups.find(
-            a => a.id === selectedSeries.age_group.id
-          );
-          return match
-            ? [{ text: match.name, value: match.id }]
-            : [];
-        }
-
-        return [];
-      }
-      return this.agegroup.map(agegroup => ({
-        text: agegroup.name,
-        value: agegroup.id
-      }));
-    },
-    formattedSeriesType() {
-      return [
-        { value: 'cost', name: 'Coast Tournament' },
-        { value: 'tournament', name: 'Tournament' },
-        { value: 'weekly', name: 'Weekly Tournament' }
-      ];
+      return this.agegroup.map(agegroup =>
+        ({ text: agegroup.name, value: parseInt (agegroup.id) }));
     },
     formattedSeries() {
-      if (!this.TeamData.type) return [];
-
-      return this.series
-        .filter(series => series.type === this.TeamData.type)
-        .map(series => ({
-          text: series.name,
-          value: series.id,
-        }));
+      return this.series.map(series => ({
+        text: series.name,
+        value: series.id,
+      }));
     },
     formattedRegions() {
       try {
@@ -377,7 +344,8 @@ export default {
             };
           }
           return null;
-        }).filter(Boolean);
+        }).filter(Boolean); // Remove any null entries
+        console.log('Formatted regions:', regionsData);
         return regionsData;
       } catch (error) {
         console.error('Error formatting regions:', error);
@@ -440,16 +408,16 @@ export default {
     addTeam() {
       const formData = new FormData();
       formData.append('name', this.TeamData.name);
-      formData.append('agegroup_id', this.TeamData.ageGroup);
+      formData.append('agegroup_id', parseInt(this.TeamData.agegroup_id));
       formData.append('series_id', this.TeamData.series_id);
       formData.append('region_id', this.TeamData.region_id);
-      formData.append('type', this.TeamData.type);
       formData.append('coach_name', this.TeamData.coach_name);
       formData.append('coach_mobile', this.TeamData.coach_mobile);
       formData.append('coach_email', this.TeamData.coach_email);
       formData.append('manager_name', this.TeamData.manager_name);
       formData.append('manager_mobile', this.TeamData.manager_mobile);
       formData.append('manager_email', this.TeamData.manager_email);
+      formData.append('type', this.TeamData.type || 'default');
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'gymThumbnail.png');
@@ -466,6 +434,10 @@ export default {
             this.$router.push('/unauthorized');
           } else {
             console.error('Error:', error);
+            this.$emit('confirm', {
+              success: false,
+              message: error.response?.data?.message || 'Failed to add team'
+            });
           }
         });
     },

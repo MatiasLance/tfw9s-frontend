@@ -427,14 +427,6 @@ export default {
       this.retrieveEvents();
       this.getEvents();
     },
-    retrieveRegions() {
-      // Temporary hardcoded data - replace API call
-      this.regionList = [
-        { id: 1, name: 'Region 1' },
-        { id: 2, name: 'Region 2' }
-      ];
-      console.log('Using hardcoded regions:', this.regionList);
-    },
     retrieveEvents() {
       const query = {
         q: this.query,

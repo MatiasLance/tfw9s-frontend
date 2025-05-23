@@ -395,6 +395,11 @@ export default {
   },
   data() {
     return {
+      showAddSeriesModal: false,
+      Data: [],
+      page: 1,
+      itemsPerPage: 5,
+      totalPages: 0,
       ActiveTab: 'weekly',
       SeriesTabs: [
         { text: 'Weekly Competitions', value: 'weekly' },
@@ -521,6 +526,10 @@ export default {
     },
     closeAddSeriesDialog() {
       this.showAddSeriesModal = false
+    },
+    AddSeries(seriesData) {
+      this.Data.unshift(seriesData);
+      this.closeAddSeriesDialog();
     },
     AddSeries(data) {
       this.$oruga.notification.open({
@@ -652,8 +661,14 @@ export default {
       const endsuffix = suffixes[suffix2 >= 11 &&
       suffix2 <= 13 ? 0 : enddate % 10];
 
-      // eslint-disable-next-line max-len, vue/max-len, no-return-assign
-      return `${startmonth === endmonth? startmonth:endmonth} ${startdate}${startsuffix} -  ${startmonth !== endmonth? endmonth:''} ${enddate}${endsuffix} ${startyear === endyear? startyear: endyear}`;
+          // eslint-disable-next-line max-len, vue/max-len, no-return-assign
+      if (startmonth === endmonth && startyear === endyear) {
+        return `${startmonth} ${startdate}${startsuffix} - ${enddate}${endsuffix}, ${startyear}`;
+      } else if (startyear === endyear) {
+        return `${startmonth} ${startdate}${startsuffix} - ${endmonth} ${enddate}${endsuffix}, ${startyear}`;
+      } else {
+        return `${startmonth} ${startdate}${startsuffix}, ${startyear} - ${endmonth} ${enddate}${endsuffix}, ${endyear}`;
+      }
     },
     calendarDate(date) {
       const month = date.getMonth() + 1;

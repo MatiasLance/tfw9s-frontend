@@ -125,7 +125,7 @@
             {{ match.event_date }}
           </div>
           <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
-            {{ match.round }}
+            {{ match.time }}
           </div>
           <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
             {{ match.field }}

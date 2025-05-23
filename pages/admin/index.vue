@@ -61,14 +61,14 @@
         <div v-if="adminTab.toUpperCase() === 'EVENTS'">
           <PartsList />
         </div>
+        <div v-if="adminTab.toUpperCase() === 'DRAWS'">        <DrawsComponent />
+        </div>
         <div
-            class="mb-5 grid gap-6 md:grid-cols-2
-            lg:grid-cols-3 xl:grid-cols-3"
+          v-else
+          class="mb-5 grid gap-6 md:grid-cols-2
+          lg:grid-cols-3 xl:grid-cols-3"
         >
-            <div
-              v-for="(panel, key) in filteredPanels"
-              :key="key"
-            >
+      <div v-for="(panel, key) in filteredPanels" :key="key">
               <article
                 class="rounded border border-gray-200 bg-white shadow-sm"
               >
@@ -107,9 +107,9 @@
                     </template>
                     {{ panel.desc }}
                   </NuxtLink>
-                  </div>
-              </article>
-            </div>
+                </div>
+            </article>
+          </div>
         </div>
       </div>
     </section>
@@ -118,8 +118,9 @@
 
 <script>
 import PartsList from './parts-list.vue';
+import DrawsComponent from './draws.vue';
 export default {
-  components: { PartsList },
+  components: { PartsList, DrawsComponent },
   data() {
     return {
       adminTab: 'events',
@@ -228,13 +229,6 @@ export default {
           route: '/admin/home-page',
           desc: 'Edit',
           count: -1
-        },
-        {
-          title: 'Draws',
-          icon: 'fas fa-ticket-alt',
-          route: '/admin/draws',
-          desc: 'Manage draws',
-          count: 0
         },
       ],
       items: [
