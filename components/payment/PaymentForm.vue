@@ -234,7 +234,7 @@ export default {
       overallTotal: 0,
       newSubTotal: 0,
       showPaypal: true,
-      showSquare: false,
+      showSquare: true,
       showStripe: true,
       showDiscountCodeForm: true,
       discountcode: null,
