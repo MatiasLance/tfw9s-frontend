@@ -120,9 +120,10 @@
                       Date of Birth *
                     </label>
                     <ODatepicker
-                    :value="selectedDate"
+                    v-model="selectedDate"
                     icon="calendar"
                     :rules="rules"
+                    :formatter="dateFormatter"
                     />
                   </div>
                   <div class="col-span-2 md:col-span-1">
@@ -196,12 +197,12 @@ export default {
       imgListEdit: [],
       SeriesData: {},
       AgeGroupList: [
-        { text: 'Under 6', value: 'Under 6' },
-        { text: 'Under 7', value: 'Under 7' },
-        { text: 'Under 8', value: 'Under 8' },
-        { text: 'Under 9', value: 'Under 9' },
-        { text: 'Under 10', value: 'Under 10' },
-        { text: 'Under 11', value: 'Under 11' },
+        { text: 'U6', value: 'U6' },
+        { text: 'U7', value: 'U7' },
+        { text: 'U8', value: 'U8' },
+        { text: 'U9', value: 'U9' },
+        { text: 'U10', value: 'U10' },
+        { text: 'U11', value: 'U11' },
       ],
       rules: [ value => !!value || 'Required' ],
       phoneCode: '+61',
@@ -216,11 +217,17 @@ export default {
           this.SeriesData = this.series;
           this.SeriesData.agegroup = this.series.agegroup_id??null
           this.selectedDate = new Date(this.SeriesData.dob);
+          this.selectedDate = this.series.dob ? new Date(this.series.dob) : null;
           this.phoneDigits = this.SeriesData.phone_number.replace(/^\+61/, '');
         }
       },
       immediate: true,
     },
+      selectedDate(newDate) {
+    if (newDate && this.active) {
+      this.SeriesData.dob = this.DatePickerToSQL(newDate);
+    }
+  },
   },
   computed: {
     phoneNumber: {
@@ -232,37 +239,32 @@ export default {
       return this.agegroup.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
     },
+      formattedDisplayDate() {
+    if (!this.selectedDate) return '';
+    const d = new Date(this.selectedDate);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  },
   },
   methods: {
     updateImageEdit(image) {
       this.imgListEdit = image
     },
-    DatePickerToSQL(datestring) {
-      let eventYear = datestring.getUTCFullYear();
-      let eventMonth = datestring.getUTCMonth() + 1;
-      let eventDay = datestring.getUTCDate(); // Get day
-
-      // Increment the day by 1
-      eventDay++;
-
-      // Get the last day of the current month
-      const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
-
-      if (eventDay > lastDayOfMonth) {
-        eventDay = 1;
-        eventMonth++;
-
-        if (eventMonth === 13) {
-          eventMonth = 1;
-          eventYear++;
-        }
-      }
-      const eventMonthStr = eventMonth.toString().padStart(2, '0');
-      const eventDayStr = eventDay.toString().padStart(2, '0');
-      const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
-
-      return event_date;
-    },
+DatePickerToSQL(datestring) {
+  if (!datestring) return '';
+  
+  // Create a new Date object (handles both Date objects and strings)
+  const d = new Date(datestring);
+  
+  // Format the date components
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
+},
     validate() {
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
@@ -303,6 +305,7 @@ export default {
       this.closeDialog()
     },
     editSeries() {
+     this.SeriesData.phone_number = this.phoneNumber;
       const formData = new FormData();
       formData.append('contact_firstname', this.SeriesData.contact_firstname);
       formData.append('contact_lastname', this.SeriesData.contact_lastname);
@@ -339,6 +342,7 @@ export default {
     },
     reset() {
       this.SeriesData = []
+      this.selectedDate = null;
       this.imgList = []
       this.imgUrl = []
       this.showGenerateCreatedImageBtn = false

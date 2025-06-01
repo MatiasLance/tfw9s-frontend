@@ -10,7 +10,7 @@
 
     <div class="grid gap-x-3 lg:grid-cols-2">
       <div class="mb-4">
-        <label class="mb-1 block"> Contact First Name* </label>
+        <label class="mb-1 block"> Parent Name* </label>
         <input
           v-model="contact.firstName"
           name="contactfirstname"
@@ -31,7 +31,7 @@
       </div>
 
       <div class="mb-4">
-        <label class="mb-1 block"> Contact Last Name* </label>
+        <label class="mb-1 block"> Parent Name* </label>
         <input
           v-model="contact.lastName"
           name="contactlastname"
@@ -54,7 +54,7 @@
 
     <div class="grid gap-x-3 lg:grid-cols-2">
       <div class="mb-4">
-        <label class="mb-1 block"> Contact Phone Number* </label>
+        <label class="mb-1 block"> Parent Phone Number* </label>
         <div class="flex w-full">
           <input
             v-model="phoneCode"
@@ -94,7 +94,7 @@
       </div>
 
       <div class="mb-4">
-        <label class="mb-1 block"> Contact Email* </label>
+        <label class="mb-1 block"> Parent Email* </label>
         <input
           v-model="contact.email"
           name="email"
@@ -252,6 +252,12 @@
             </div>
         </div>
       </div>
+          <div class="mb-4 col-span-1">
+        <ImageUpload
+          @update-image="updateImage"
+          v-model="photo"
+        />
+      </div>
     </div>
 
     <div class="flex w-full flex-wrap items-center justify-between gap-x-2">
@@ -325,11 +331,14 @@
 <script>
 import Modal from '~/components/Modal';
 import TermsSection from '~/components/TermsSection';
+import ImageUpload from '~/components/ImageUpload';
+
 
 export default {
   components: {
     Modal,
     TermsSection,
+    ImageUpload,
   },
   props: {
     isLoading: {
@@ -361,6 +370,8 @@ export default {
       phoneCode: '+61',
       hasAgreedToTerms: false,
       showTermsModal: false,
+      imgList: [],
+      photo: null,
     }
   },
   computed: {
@@ -395,10 +406,28 @@ export default {
         dob: this.player.dob,
         ageGroup: this.player.ageGroup,
         price: this.price,
+        photo: this.photo
       })
 
       return false
     },
+    updateImage(image) {
+  if (image && image.length > 0) {
+    this.photo = image[0]; // Store the first image
+    this.imgList = image;  // Keep the array for other purposes if needed
+  } else {
+    this.photo = null;
+    this.imgList = [];
+  }
+},
+  handleFileChange(event) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      this.$emit('update-image', Array.from(files)); // Emit array of files
+    } else {
+      this.$emit('update-image', []);
+    }
+  },
     retrieveAgeGroups() {
       const query = {
         q: this.query,

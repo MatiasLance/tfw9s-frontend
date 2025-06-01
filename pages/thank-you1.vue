@@ -71,6 +71,16 @@
             </span>
           </NuxtLink>
         </div>
+<!--         <div class="mt-4 flex items-center justify-center">
+          <NuxtLink to="/card">
+            <span
+            @click="viewIdCard"
+            class="mx-2 cursor-pointer bg-brand-green px-4 py-2 text-black"
+          >
+            View Your Player ID Card
+            </span>
+          </NuxtLink>
+        </div> -->
       </template>
 
       <template v-else-if="status === 'processing'">
@@ -147,7 +157,23 @@ export default {
       status: 'loading',
       transactionId: null,
       paymentGateway: null,
-      bannerText: 'Verifying Order'
+      bannerText: 'Verifying Order',
+      registrationId: null,
+      registrationType: null,
+      playerData: null
+    }
+  },
+  computed: {
+    playerCardLink() {
+      if (!this.registrationId || !this.registrationType) return '';
+      
+      const payload = {
+        target: this.registrationId,
+        type: this.registrationType
+      };
+      
+      const encryptedToken = btoa(JSON.stringify(payload));
+      return `/manage-registration/?key=${encryptedToken}`;
     }
   },
   mounted() {
@@ -166,6 +192,10 @@ export default {
     } else {
       this.status = 'failed'
       this.bannerText = 'Could not find transaction'
+    }
+
+    if (this.$route.query.seriesType) {
+      this.registrationType = this.$route.query.seriesType === 'weekly' ? 'individual' : 'team'
     }
 
     this.$nextTick(() => {
@@ -198,6 +228,7 @@ export default {
               this.status = 'success'
               this.bannerText = 'Thank you'
               this.$store.dispatch('cart/clearCart')
+              this.generateTransactionURL(this.transactionId);
             } else if (status === 'processing') {
               this.status = 'processing'
               this.bannerText = 'Order is being processed'
@@ -217,6 +248,35 @@ export default {
         this.bannerText = 'Order failed'
       }
     },
+        viewIdCard() {
+      if (!this.registrationId || !this.registrationType) {
+        console.error('Registration data not available')
+        return
+      }
+      
+      // Create the encrypted key payload
+      const payload = {
+        target: this.registrationId,
+        type: this.registrationType
+      }
+      
+      // Encrypt the payload and redirect
+      const encryptedKey = btoa(JSON.stringify(payload));
+      this.$router.push(`/card/?key=${encryptedKey}`)
+    },
+    generateTransactionURL(key) {
+      const formData = new FormData();
+      formData.append('type', this.$route.query.seriesType);
+      formData.append('transaction', this.transactionId);
+      this.$axios
+        .$post('v1/transaction/generate', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then((response) => {
+          const url = response.data.url
+          console.log('Transaction URL:', url)
+          
+        })
+    },
+
   },
 }
 </script>

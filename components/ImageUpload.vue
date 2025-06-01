@@ -2,7 +2,7 @@
   <div>
     <div class="col-span-4 mb-4 w-full">
       <label for="photo" class="mb-1 block">
-        Image upload:
+        Image Upload*
       </label>
       <!-- Insert myCroppa here -->
       <Croppa

@@ -1,197 +1,197 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B]">
-    <section class="mx-auto max-w-screen-xl gap-4 p-7 ml-5">
+  <div class="w-screen min-h-screen bg-[#1A1A1B] -ml-8">
+
+    <section class="mx-auto max-w-screen-xl gap-4 p-7">
       <div class="grid grid-cols-3 gap-2">
         <div class="col-span-3 p-2" data-aos="fade-up">
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-    <!-- Event Year -->
-    <div>
-      <span
-        class="hidden w-full py-2 align-middle text-[20px]
-        font-semibold text-[#555555] md:block"
-      >
-        Event Year
-      </span>
-      <VSelect
-        v-model="selectedYear"
-        :items="formattedYears"
-        placeholder="Select Event Year"
-        solo
-        class="w-full"
-      />
-    </div>
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <!-- Event Year -->
+            <div>
+              <span
+                class="hidden w-full py-2 align-middle text-[20px]
+                font-semibold text-[#555555] md:block"
+              >
+                Event Year
+              </span>
+              <VSelect
+                v-model="selectedYear"
+                :items="formattedYears"
+                placeholder="Select Event Year"
+                solo
+                class="w-full"
+              />
+            </div>
 
-    <!-- Fields -->
-    <div>
-      <span
-        class="hidden w-full py-2 align-middle text-[20px]
-        font-semibold text-[#555555] md:block"
-      >
-        Field
-      </span>
-      <VSelect
-        v-model="selectedField"
-        :items="formattedFields"
-        placeholder="Select Field"
-        solo
-        class="w-full"
-      />
-    </div>
+            <div>
+              <span
+                class="hidden w-full py-2 align-middle text-[20px]
+                font-semibold text-[#555555] md:block"
+              >
+                Field
+              </span>
+              <VSelect
+                v-model="selectedField"
+                :items="formattedFields"
+                placeholder="Select Field"
+                solo
+                class="w-full"
+              />
+            </div>
 
-    <!-- Region -->
-    <div>
-      <span
-        class="hidden w-full py-2 align-middle text-[20px]
-        font-semibold text-[#555555] md:block"
-      >
-        Region
-      </span>
-      <VSelect
-        v-model="selectedRegion"
-        :items="formattedRegions"
-        placeholder="Select Region"
-        solo
-        class="w-full"
-      />
-    </div>
+            <!-- Region -->
+            <div>
+              <span
+                class="hidden w-full py-2 align-middle text-[20px]
+                font-semibold text-[#555555] md:block"
+              >
+                Region
+              </span>
+              <VSelect
+                v-model="selectedRegion"
+                :items="formattedRegions"
+                placeholder="Select Region"
+                solo
+                class="w-full"
+              />
+            </div>
 
-    <!-- Team Name -->
-    <div>
-      <span
-        class="hidden w-full py-2 h-10 align-middle text-[20px]
-        font-semibold text-[#555555] md:block"
-      >
-        Type Team Name
-      </span>
-      <VTextField
-  v-model="searchTeamName"
-  placeholder="Type Team Name"
-  solo
-  class="w-full"
-  :hide-details="false"
-/>
-
-    </div>
-  </div>
+            <!-- Team Name -->
+            <div>
+              <span
+                class="hidden w-full py-2 align-middle text-[20px]
+                font-semibold text-[#555555] md:block"
+              >
+                Teams
+              </span>
+              <VTextField
+                v-model="searchTeamName"
+                placeholder="Type Team Name"
+                solo
+                class="w-full"
+                :hide-details="false"
+                clearable
+                @click:clear="searchTeamName = ''"
+              />
+            </div>
+          </div>
         </div>
         <div class="col-span-3">
           <section
-          v-if="totalPages > 0"
-          class="grid w-full grid-cols-1 md:grid-cols-2 gap-2"
+            v-if="totalPages > 0"
+            class="grid w-full grid-cols-1 md:grid-cols-2 gap-2"
           >
-          <div
-          v-for="(match) in MatchList"
-          :key="match.id" data-aos="fade-up"
-          data-aos-offset="0"
-          class="col-span-1"
-        >
-        <div class="grid grid-cols-5 rounded-lg bg-[#212121] p-4">
-          <div class="col-span-4 text-md md:text-xl font-medium text-white">
-            {{ match.event_date }}
-          </div>
-          <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
-            {{ match.round }}
-          </div>
-          <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
-            {{ match.field }}
-          </div>
-          <div
-            class="col-span-2 flex text-lg
-            font-medium text-slate-600"
-          >
-            <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
-              <img
-              :src="getMediaURL(match.team1.media[0])"
-              alt="Team 1 logo"
-              class="h-full w-full object-contain"
-              />
-            </span>
-          </div>
-          <div></div>
-          <div
-            class="col-span-2 flex text-lg
-            font-medium text-slate-600"
-          >
-            <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
-              <img
-              :src="getMediaURL(match.team2.media[0])"
-              alt="Team 2 logo"
-              class="h-full w-full object-contain"
-              />
-            </span>
-          </div>
-          <div
-          class="col-span-2 text-center text-sm md:text-lg font-semibold
-          text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
-          >
-            {{ match.team1.name }}
-          </div>
-          <div
-          class="col-span-1 flex items-center justify-center text-center
-          text-sm md:text-lg font-semibold text-[#CCCCCC] lg:text-xl"
+            <div
+              v-for="(match) in filteredMatchList"
+              :key="match.id" data-aos="fade-up"
+              data-aos-offset="0"
+              class="col-span-1"
             >
-            VS
-          </div>
-          <div
-          class="col-span-2 text-center text-sm md:text-lg font-semibold
-          text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
-            >
-            {{ match.team2.name }}
-          </div>
-          <div v-if="match.submit"
-          class="col-span-5 text-2xl text-white font-semibold
-          flex justify-center pt-2 relative"
-          >
-            <div class="absolute bg-red-500 text-sm rounded px-2">
-              Final Score
+              <div class="grid grid-cols-5 rounded-lg bg-[#212121] p-4">
+                <div class="col-span-4 text-md md:text-xl font-medium text-white">
+                  {{ match.event_date }}
+                </div>
+                <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
+                  {{ match.time }}
+                </div>
+                <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
+                  {{ match.field.name }}
+                </div>
+                <div
+                  class="col-span-2 flex text-lg
+                  font-medium text-slate-600"
+                >
+                  <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
+                    <img
+                    :src="getMediaURL(match.team1.media[0])"
+                    alt="Team 1 logo"
+                    class="h-full w-full object-contain"
+                    />
+                  </span>
+                </div>
+                <div></div>
+                <div
+                  class="col-span-2 flex text-lg
+                  font-medium text-slate-600"
+                >
+                  <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
+                    <img
+                    :src="getMediaURL(match.team2.media[0])"
+                    alt="Team 2 logo"
+                    class="h-full w-full object-contain"
+                    />
+                  </span>
+                </div>
+                <div
+                class="col-span-2 text-center text-sm md:text-lg font-semibold
+                text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
+                >
+                  {{ match.team1.name }}
+                </div>
+                <div
+                class="col-span-1 flex items-center justify-center text-center
+                text-sm md:text-lg font-semibold text-[#CCCCCC] lg:text-xl"
+                  >
+                  VS
+                </div>
+                <div
+                class="col-span-2 text-center text-sm md:text-lg font-semibold
+                text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
+                  >
+                  {{ match.team2.name }}
+                </div>
+                <div v-if="match.submit"
+                class="col-span-5 text-2xl text-white font-semibold
+                flex justify-center pt-2 relative"
+                >
+                  <div class="absolute bg-red-500 text-sm rounded px-2">
+                    Final Score
+                  </div>
+                  <div class="bg-[#1A1A1B] px-4 py-2 mt-8 rounded">
+                  <span
+                  :class="(parseInt(match.team1_score) >= parseInt(match.team2_score))
+                  ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
+                  >
+                    {{ doubleDigitFormat(match.team1_score) }}
+                  </span>
+                  :
+                  <span
+                  :class="(parseInt(match.team1_score) <= parseInt(match.team2_score))
+                  ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
+                  >
+                    {{ doubleDigitFormat(match.team2_score) }}
+                  </span>
+                  </div>
+                </div>
+                <div v-if="!match.submit"
+                class="col-span-5 text-2xl text-white font-semibold
+                flex justify-center pt-4 pb-2 relative"
+                >
+                  <div class="absolute bg-green-600 text-sm rounded px-2">
+                    Upcoming
+                  </div>
+                  <div class="px-4 py-2 mt-4">
+                  <span class="font-semibold text-[#5EE738]">
+                    {{ match.time }}
+                  </span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="bg-[#1A1A1B] px-4 py-2 mt-8 rounded">
-            <span
-            :class="(parseInt(match.team1_score) >= parseInt(match.team2_score))
-            ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
-            >
-              {{ doubleDigitFormat(match.team1_score) }}
-            </span>
-            :
-            <span
-            :class="(parseInt(match.team1_score) <= parseInt(match.team2_score))
-            ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
-            >
-              {{ doubleDigitFormat(match.team2_score) }}
-            </span>
-            </div>
-          </div>
-          <div v-if="!match.submit"
-          class="col-span-5 text-2xl text-white font-semibold
-          flex justify-center pt-4 pb-2 relative"
-          >
-            <div class="absolute bg-green-600 text-sm rounded px-2">
-              Upcoming
-            </div>
-            <div class="px-4 py-2 mt-4">
-            <span class="font-semibold text-[#5EE738]">
-              {{ match.time }}
-            </span>
-            </div>
-          </div>
-        </div>
-        </div>
           </section>
           <section
-          v-if="totalPages=== 0"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
-          data-aos="fade-up"
+            v-if="filteredMatchList.length === 0"
+            class="col-span-1 flex h-60 items-center
+            justify-center font-semibold
+            text-[#555555] md:col-span-3"
+            data-aos="fade-up"
           >
-          No Draws
+            No Draws
           </section>
         </div>
       </div>
     </section>
   </div>
 </template>
-
 <script>
 import handlesMedia from '~/mixins/shop/handlesMedia';
 export default {
@@ -202,6 +202,7 @@ export default {
         title: 'Draws - TFW9s',
         description: ''
       },
+      searchTeamName: '',
       matchRoundOption: [
         { text: 'Round', value: 'round' },
         { text: 'Semi', value: 'semi' },
@@ -258,7 +259,7 @@ export default {
         { text: '10:00 PM', value: '22:00' },
       ],
       selectedRegion: null,
-      selectedAgeGroup: null,
+      selectedField: null,
       selectedYear: null,
       FieldList: [],
       EventList: [],
@@ -281,21 +282,45 @@ export default {
         date: new Date(event.event_date),
       }));
     },
-    formattedFields() {
-      return this.FieldList.map(field =>
-        ({ text: field.name, value: field.id }));
-    },
-    filteredEvents() {
-      if (this.selectedYear && this.selectedAgeGroup) {
-        return this.formattedEvents.filter(event => {
-          return event && event.date &&
-                event.date.getFullYear() === this.selectedYear &&
-                event.agegroup === this.selectedAgeGroup;
-        });
-      } else {
-        return this.formattedEvents;
-      }
-    },
+formattedFields() {
+  // First get all unique fields from the FieldList
+  const allFields = this.FieldList
+    .filter(field => field && field.id && field.name) // Filter out invalid fields
+    .map(field => ({
+      id: field.id,
+      name: field.name
+    }));
+
+  // Then get fields from events (as fallback)
+  const eventFields = this.EventList
+    .map(event => event.field)
+    .filter(field => field && field.id && field.name) // Filter out null/undefined fields
+    .map(field => ({
+      id: field.id,
+      name: field.name
+    }));
+
+  // Combine both sources and remove duplicates by id
+  const combinedFields = [...allFields, ...eventFields];
+  const uniqueFieldsMap = new Map();
+  
+  combinedFields.forEach(field => {
+    if (!uniqueFieldsMap.has(field.id)) {
+      uniqueFieldsMap.set(field.id, field);
+    }
+  });
+
+  const uniqueFields = Array.from(uniqueFieldsMap.values());
+
+  // Sort alphabetically by name
+  uniqueFields.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Format for v-select
+  return uniqueFields.map(field => ({
+    text: field.name,
+    value: field.id
+  }));
+},
     formattedYears() {
       const years = this.EventList.map(event => {
         const eventDate = new Date(event.event_date);
@@ -329,6 +354,28 @@ export default {
       });
       return formattedRegions;
     },
+filteredMatchList() {
+  let filteredMatches = this.MatchList;
+  
+  // Filter by team name if search term exists
+  if (this.searchTeamName.trim()) {
+    const searchTerm = this.searchTeamName.toLowerCase().trim();
+    filteredMatches = filteredMatches.filter(match => {
+      const team1Name = match.team1?.name?.toLowerCase() || '';
+      const team2Name = match.team2?.name?.toLowerCase() || '';
+      return team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
+    });
+  }
+  
+  // Filter by selected field if one is selected
+  if (this.selectedField) {
+    filteredMatches = filteredMatches.filter(match => {
+      return match.field && match.field.id === this.selectedField;
+    });
+  }
+  
+  return filteredMatches;
+}
   },
   watch: {
     EventList: {
@@ -340,7 +387,7 @@ export default {
             if (!isNaN(eventDate)) {
               this.selectedYear = eventDate.getFullYear();
               this.selectedRegion = firstEvent.region_id;
-              this.selectedField = firstEvent.field_id;
+              this.selectedField  = firstEvent.field_id;
               this.retrieveEventMatch()
             } else {
               console.error('Invalid event date format');
@@ -358,21 +405,9 @@ export default {
       handler(newYear) {
         if (newYear && this.isLoaded) {
           this.page = 1
-          /*
-           * this.selectedRegion = null
-           * this.selectedAgeGroup = null
-           */
-          this.selectedField = this.formattedFields[0]?.value ?? null;
-          this.selectedRegion = this.formattedRegions[0]?.value ?? null;
-        }
-      },
-      immediate: true,
-    },
-    selectedField: {
-      handler(newField) {
-        if (newField && this.isLoaded) {
-          this.page = 1
-          this.retrieveEventMatch()
+          this.selectedRegion = null;
+          this.selectedField = null;
+          this.retrieveEventMatch();
         }
       },
       immediate: true,
@@ -390,9 +425,23 @@ export default {
       },
       immediate: true,
     },
+    selectedField: {
+  handler(newField) {
+    if (newField && this.isLoaded) {
+      this.page = 1;
+      this.retrieveEventMatch();
+    }
   },
+  immediate: true,
+},
+      searchTeamName(newVal) {
+    if (newVal) {
+      this.page = 1;
+    }
+  }
+},
   created() {
-     this.retrieveFields();
+    this.retrieveFields();
     this.retrieveEvents();
   },
   methods: {
@@ -526,16 +575,16 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/agegroups?${queryString}`)
+        .$get(`v1/fields?${queryString}`)
         .then((response) => {
-          this.AgeGroupList= response.data.ageGroups;
+          this.FieldList = response.data.fields;
         })
     },
     retrieveEventMatch() {
       const query = {
         sort: 'latest',
         region: this.selectedRegion,
-        agegroup: this.selectedAgeGroup,
+        field_id: this.selectedField,
         year: this.selectedYear,
       };
 
@@ -548,23 +597,24 @@ export default {
       this.$axios
         .$get(`v1/events?${queryString}`)
         .then((response) => {
-          const EventList = response.data.events.map(event => {
-            return {
-              ...event,
-              eventmatch: event.eventmatch.map(match => {
-                return {
-                  ...match,
-                  time: this.AMPMformat(event.time),
-                  round: this.roundFormat(event.round),
-                  // eslint-disable-next-line camelcase
-                  event_date: this.formattedDate(event.event_date),
-                  // eslint-disable-next-line camelcase
-                  field: match.field.name,
-                  submit: match.submitted === 1
-                };
-              })
-            };
-          });
+    const EventList = response.data.events.map(event => {
+      return {
+        ...event,
+        eventmatch: event.eventmatch.map(match => {
+          return {
+            ...match,
+            time: this.AMPMformat(event.time),
+            round: this.roundFormat(event.round),
+            event_date: this.formattedDate(event.event_date),
+            field: {
+              id: match.field?.id || null,
+              name: match.field?.name || 'Unknown Field'
+            },
+            submit: match.submitted === 1
+          };
+        })
+      };
+    });
           this.MatchList = EventList.flatMap(data => data.eventmatch);
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;

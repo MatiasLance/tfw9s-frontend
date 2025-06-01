@@ -183,9 +183,16 @@ export default {
       type: Array,
       required: true
     },
+    initialRegionId: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
+            form: {
+        region_id: this.initialRegionId || '',
+      },
       valid: true,
       showGenerateCreatedImageBtn: false,
       imgUrl: [],

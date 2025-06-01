@@ -42,24 +42,29 @@
                     />
                   </template>
                   <template v-if="column.name === 'action'">
-                  <i
-                  v-if="!row.action"
-                  title="Refund Transaction"
-                  class="ri-refund-fill text-3xl text-green-400"
-                  @click="Manage(row)"
-                  />
-                  <i
-                  title="Delete Registration"
-                  v-if="!row.action"
-                  class="ri-delete-bin-fill text-3xl text-red-400"
-                   @click="Delete(row)"
-                  />
-                  <i
-                  title="Refund Details"
-                  v-if="row.action"
-                  class="ri-information-fill text-3xl text-blue-300"
-                  @click="Manage(row)"
-                  />
+                    <i
+                      title="View Transaction"
+                      class="ri-eye-fill text-3xl text-blue-400"
+                      @click="View(row)"
+                    />
+                    <i
+                      v-if="!row.action"
+                      title="Refund Transaction"
+                      class="ri-refund-fill text-3xl text-green-400"
+                      @click="Manage(row)"
+                    />
+                    <i
+                      title="Delete Registration"
+                      v-if="!row.action"
+                      class="ri-delete-bin-fill text-3xl text-red-400"
+                      @click="Delete(row)"
+                    />
+                    <i
+                      title="Refund Details"
+                      v-if="row.action"
+                      class="ri-information-fill text-3xl text-blue-300"
+                      @click="Manage(row)"
+                    />
                   </template>
                   <template v-else-if="column.name === 'id'">
                     {{ '' }}
@@ -108,6 +113,14 @@ export default {
     });
   },
   methods: {
+    View(row) {
+      this.$emit('view', {
+    itemdata: row,
+    player_firstname: row.playername?.split(' ')[0] || '',
+    player_lastname: row.playername?.split(' ')[1] || '',
+  });
+},
+
     Manage(data) {
       this.$emit('transaction-data', data);
     },

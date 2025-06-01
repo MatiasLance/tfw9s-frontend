@@ -1,7 +1,7 @@
 <template>
   <div class="col-span-1 md:col-span-2">
     <label for="photo" class="mb-1 block">
-        Image upload:
+        Image Upload*
     </label>
     <!-- Insert myCroppa here -->
     <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
