@@ -3,7 +3,7 @@
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-4">
         <div class="grid grid-cols-1 gap-4">
-          <div class="col-span-1 flex items-center">
+          <div class="col-span-1 flex items-center flex items-center gap-4">
             <button
             type="button"
             class="
@@ -19,7 +19,32 @@
           >
             +
           </button>
-          </div>
+   <div class="flex items-center gap-2 ml-auto">
+    
+        <select
+    id="series-select"
+    v-model="selectedSeries"
+    @change="retrieveTeams"
+    class="rounded-md px-3 py-1 bg-white text-black shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-transparent"
+  >
+    <option :value="null">All Series</option>
+    <option v-for="series in seriesList" :key="series.id" :value="series.id">
+      {{ series.name }}
+    </option>
+  </select>
+    <select
+      id="region-select"
+      v-model="selectedRegion"
+      @change="retrieveTeams"
+      class="rounded-md px-3 py-1 bg-white text-black shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-transparent"
+    >
+      <option :value="null">All Regions</option>
+      <option v-for="region in regionList" :key="region.id" :value="region.id">
+        {{ region.name }}
+      </option>
+    </select>
+  </div>
+</div>
           <div
           v-if="totalPages > 0"
           class="col-span-1 flex flex-wrap items-center
@@ -178,12 +203,10 @@ export default {
     DeleteTeamModal
   },
   props: {
-    // eslint-disable-next-line vue/prop-name-casing
     FieldList: {
       type: Array,
       required: true
     },
-    // eslint-disable-next-line vue/prop-name-casing
     getTeams: {
       type: Function,
       required: true,
@@ -199,6 +222,8 @@ export default {
       showAddTeamModal: false,
       showEditTeamModal: false,
       showDeleteTeamModal: false,
+      selectedRegion: null,
+      selectedSeries: null,
       Teams: [],
       Dataset: [],
       ageGroupList: [],
@@ -240,6 +265,14 @@ export default {
       if (this.page > this.totalPages) {
         this.setPage(1)
       }
+    },
+    selectedRegion(newVal) {
+      this.page = 1;
+      this.retrieveTeams();
+    },
+    selectedSeries(newVal) {
+    this.page = 1;
+    this.retrieveTeams();
     },
     page: {
       handler(newPage) {
@@ -283,7 +316,7 @@ export default {
       this.showDeleteTeamModal = false
     },
 AddTeam(response) {
-  console.log('AddTeam response:', response); // Debug log
+  console.log('AddTeam response:', response);
   
   this.$oruga.notification.open({
     duration: 5000,
@@ -295,7 +328,6 @@ AddTeam(response) {
   
   this.showAddTeamModal = false;
   
-  // Force refresh all data
   Promise.all([
     this.retrieveTeams(),
     this.retrieveAgeGroups(),
@@ -332,30 +364,35 @@ AddTeam(response) {
       this.getTeams();
       this.getEvents();
     },
-  async retrieveTeams() {
+async retrieveTeams() {
   try {
-    // First ensure regions are loaded
     if (this.regionList.length === 0) {
       await this.retrieveRegions();
     }
 
-    const query = {
-      q: this.query,
-      sort: 'a_to_z',
-      page: this.page,
-      maxTeamsPerPage: 10,
-    };
+const queryData = {
+  q: this.query,
+  sort: 'a_to_z',
+  page: this.page,
+  region: this.selectedRegion,
+  seriestype: this.selectedSeries,
+  maxTeamsPerPage: 10,
+  
+};
 
-    const queryString = new URLSearchParams(query).toString();
+    Object.keys(queryData).forEach((key) => {
+        if (queryData[key] == null) {
+          delete queryData[key]
+        }
+      })
+ 
+    const queryString = new URLSearchParams(queryData).toString();
 
     const response = await this.$axios.$get(`v1/teams?${queryString}`);
     
-    // Process team data with proper relationships
     this.Teams = response.data.teams.map(team => {
-      // Find age group
       const ageGroup = this.ageGroupList.find(ag => ag.id === team.agegroup_id) || {};
       
-      // Find series
       const series = this.seriesList.find(s => s.id === team.series_id) || {};
       
       return {
@@ -378,36 +415,40 @@ AddTeam(response) {
     this.from = response.data.from;
     this.to = response.data.to;
     
-    console.log('Processed Teams:', this.Teams); // Debug log
+    console.log('Processed Teams:', this.Teams);
   } catch (error) {
     console.error('Error retrieving teams:', error);
   }
 },
 
-    getRegionName(regionId) {
+  getRegionName(regionId) {
       const region = this.regionList.find(r => r.id === regionId);
-      return region ? region.name : '';
+      return region ? region.name : 'Unknown';
     },
-    retrieveAgeGroups() {
-      const query = {
-        q: this.query,
-        page: this.page,
-      };
+retrieveAgeGroups() {
+  const query = {
+    q: this.query,
+    page: this.page,
+  };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
+  Object.keys(query).forEach((key) => {
+    if (query[key] == null) {
+      delete query[key]
+    }
+  })
 
-      const queryString = new URLSearchParams(query).toString()
+  const queryString = new URLSearchParams(query).toString()
 
-      this.$axios
-        .$get(`v1/agegroups?${queryString}`)
-        .then((response) => {
-          this.ageGroupList= response.data.ageGroups;
-        })
-    },
+  return this.$axios
+    .$get(`v1/agegroups?${queryString}`)
+    .then((response) => {
+      this.ageGroupList = response.data.ageGroups;
+    })
+    .catch(error => {
+      console.error('Error retrieving age groups:', error);
+      this.ageGroupList = []; 
+    });
+},
     retrieveSeries() {
       this.$axios
         .$get('v1/series')
@@ -419,29 +460,15 @@ AddTeam(response) {
           this.showVueTable = true;
         });
     },
-    retrieveRegions() {
-      this.$axios
-        .$get('v1/regions')
-        .then((response) => {
-          console.log('Regions API response:', response); // Debug log
-          // Handle different possible response structures
-          if (response.data && response.data.regions) {
-            this.regionList = response.data.regions;
-          } else if (Array.isArray(response.data)) {
-            this.regionList = response.data;
-          } else if (Array.isArray(response)) {
-            this.regionList = response;
-          } else {
-            console.error('Unexpected regions response format:', response);
-            this.regionList = [];
-          }
-          console.log('Processed regionList:', this.regionList);
-        })
-        .catch(error => {
-          console.error('Error fetching regions:', error);
-          this.regionList = [];
-        });
-    }
+async retrieveRegions() {
+  try {
+    const response = await this.$axios.$get('v1/regions');
+    console.log('Retrieved regions:', response.data.regions);
+    this.regionList = response.data.regions;
+  } catch (error) {
+    console.error('Failed to retrieve regions:', error);
+  }
+}
   }
 }
 </script>

@@ -51,38 +51,72 @@ export default {
   },
   data() {
     return {
-      teamData: { name: '' },
+      teamData: { name: '', id: null },
       rules: [ value => !!value || 'Required' ],
+      isLoading: false
     }
   },
   watch: {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.teamData = this.team;
-        }
+          this.teamData = {
+            name: this.team?.name || '',
+            id: this.team?.id || null
+          };
+      }
       },
       immediate: true,
     },
   },
 
   methods: {
-    deleteTeam() {
-      this.$axios
-        .$delete(`/v1/teams/${this.team.id}`)
-        .catch(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to remove manager',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true,
-          });
+    async deleteTeam() {
+      if (!this.teamData.id) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Invalid team data',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
         });
-      this.$emit('confirm')
+        return;
+      }
+
+      this.isLoading = true;
+      
+      try {
+        await this.$axios.$delete(`/v1/teams/${this.teamData.id}`);
+        this.$emit('confirm');
+        
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Team successfully deleted',
+          position: 'bottom',
+          variant: 'success',
+          queue: true,
+        });
+      } catch (error) {
+        console.error('Delete team error:', error);
+        
+        let errorMessage = 'Failed to delete team';
+        if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+        
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: errorMessage,
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+      } finally {
+        this.isLoading = false;
+      }
     },
     closeDialog() {
-      this.$emit('close')
+      this.$emit('close');
     },
   }
 }

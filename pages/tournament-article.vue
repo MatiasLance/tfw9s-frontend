@@ -52,7 +52,7 @@
             v-if="photos.length === 0"
               src="~/assets/images/kidsplaying.jpg"
               cover
-            ></img>
+            />
           </div>
         </div>
         <div
@@ -94,7 +94,7 @@
             v-html="article.description"
           />
         </article>
-        <div v-if="!article.pause && article.type !== 'weekly'"
+        <div v-if="!article.pause"
           class="mb-4 flex w-full justify-center"
         >
           <NuxtLink

@@ -268,10 +268,11 @@ export default {
       default: () => ({}),
     },
     // eslint-disable-next-line vue/prop-name-casing
-    field: {
-      type: Array,
-      required: true
-    },
+  field: {
+    type: Array,
+    required: false, // Change to false if the field is optional
+    default: () => [] // Provide empty array as default
+  },
     series: {
       type: Array,
       required: true

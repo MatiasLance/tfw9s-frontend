@@ -49,35 +49,41 @@
               />
           </div>
           <section
-          v-if="primaryRetrievalComplete && totalPages > 0"
-          class="col-span-1 md:col-span-3"
+            v-if="primaryRetrievalComplete && totalPages > 0"
+            class="col-span-1 md:col-span-3"
           >
             <RegisteredVueTable
-            :columns="ActiveTab === 'weekly' ? individualData : teamData"
-            :data="ActiveTab === 'weekly' ? individualList : teamList"
-             @transaction-data="openManageRefundDialog"
-             @delete-data="openDeleteRegisterationDialog"
+              :columns="ActiveTab === 'weekly' ? individualData : teamData"
+              :data="ActiveTab === 'weekly' ? individualList : teamList"
+              @view="openViewRegistered"
+              @transaction-data="openManageRefundDialog"
+              @delete-data="openDeleteRegisterationDialog"
             />
           </section>
           <section
-          v-if="individualList.length === 0 && ActiveTab === 'weekly'"
-          class="col-span-1 flex h-20 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
+            v-if="individualList.length === 0 && ActiveTab === 'weekly'"
+            class="col-span-1 flex h-20 items-center
+            justify-center font-semibold
+            text-[#555555] md:col-span-3"
           >
           Nothing Registration Today
           </section>
           <section
-          v-if="teamList.length === 0 && ActiveTab !== 'weekly'"
-          class="col-span-1 flex h-20 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
+            v-if="teamList.length === 0 && ActiveTab !== 'weekly'"
+            class="col-span-1 flex h-20 items-center
+            justify-center font-semibold
+            text-[#555555] md:col-span-3"
           >
           Nothing Registered Today
           </section>
         </div>
       </section>
     </div>
+    <ViewRegisteredModal 
+      :active="showViewRegisteredModal"
+      :player="selectedPlayer"
+      @close="closeViewModal"
+    />
     <ManageRefundModal
     :active="showManageRefundModal"
     :transaction="selectedData"
@@ -98,6 +104,7 @@
 
 <script>
 import RegisteredVueTable from '~/components/tables/RegisteredVueTable.vue';
+import ViewRegisteredModal from '~/components/modals/ViewRegisteredModal.vue';
 import ManageRefundModal from '~/components/modals/ManageRefundModal.vue';
 import DeleteRegistrationModal from '~/components/modals/DeleteRegistrationModal.vue';
 import currencyMixin from '~/mixins/currency/handlesCurrency'
@@ -105,6 +112,7 @@ import currencyMixin from '~/mixins/currency/handlesCurrency'
 export default {
   components: {
     RegisteredVueTable,
+    ViewRegisteredModal,
     ManageRefundModal,
     DeleteRegistrationModal,
   },
@@ -125,8 +133,10 @@ export default {
       dateFilter: null,
       submit: false,
       primaryRetrievalComplete: false,
+      showViewRegisteredModal: false,
       showManageRefundModal: false,
       showDeleteRegistrationModal: false,
+      selectedPlayer: null,
       selectedData: ({}),
       individualList: [],
       teamList: [],
@@ -138,6 +148,7 @@ export default {
         { name: 'phone', label: 'Contact' },
         { name: 'playername', label: 'Player' },
         { name: 'email', label: 'Email' },
+        { name: 'dob', label: 'Birth Date' },
         { name: 'team', label: 'Team' },
         { name: 'amount', label: 'Amount' },
         { name: 'paymentmethod', label: 'Method' },
@@ -308,21 +319,32 @@ export default {
   },
   methods: {
     seriesFormat(id) {
-      // eslint-disable-next-line camelcase
       const matched = this.formattedSeries.find(data => data.value === id);
       if (matched) {
         return matched.text;
       } else {
-        // If no matching field is found, return "unknown"
+
         return 'Unknown';
       }
     },
     convertTo12HourFormat(timeString) {
       const [ hour, minute ] = timeString.split(':');
       const period = hour >= 12 ? 'PM' : 'AM';
-      const formattedHour = (hour % 12) || 12; // Convert 0 to 12
+      const formattedHour = (hour % 12) || 12;
       return `${formattedHour}:${minute} ${period}`;
     },
+    openViewRegistered(player) {
+    console.log('Player data being passed to modal:', player);
+    this.selectedPlayer = {
+    ...player,
+    ...player.itemdata,
+        player_firstname: player.player_firstname || player.itemdata.playername?.split(' ')[0] || '',
+    player_lastname: player.player_lastname || player.itemdata.playername?.split(' ')[1] || '',
+    dob: player.dob || player.itemdata.dob,
+    photo: player.itemdata.photo
+  };
+    this.showViewRegisteredModal = true;
+  },
     openManageRefundDialog(data) {
       this.selectedData = data
       this.showManageRefundModal = true
@@ -338,6 +360,16 @@ export default {
     closeDeleteRegistrationDialog(data) {
       this.selectedData = ({})
       this.showDeleteRegistrationModal = false
+    },
+    closeViewModal() {
+    this.showViewRegisteredModal = false;
+    this.selectedPlayer = null;
+    },
+    View() {
+      this.showViewRegisteredModal = false;
+      if (this.ActiveTab) {
+        this.showViewRegisteredModal = true
+      }
     },
     ManageRefund(data) {
       this.$oruga.notification.open({
@@ -442,12 +474,16 @@ export default {
         .$get(`v1/${endpoint}?${queryString}`)
         .then((response) => {
           const EventList = response.data.players.map(player => {
+          const photoUrl = player.media?.length > 0 
+          ? this.getImageUrl(player.media[0].path)
+          : null;
             return {
               ...player,
               itemdata: {
                 id: player.id,
                 email: player.email,
                 team: player.team_name,
+                dob: this.formatDob(player.dob),
                 series: this.seriesFormat(player.series_id),
                 agegroup: player.agegroup?.name ?? '',
                 phone: player.phone_number,
@@ -465,6 +501,7 @@ export default {
                   player.registration.updated_at
                 ),
                 action: this.trashed,
+                photo: photoUrl
               }
             };
           });
@@ -480,6 +517,28 @@ export default {
           this.primaryRetrievalComplete = true;
         });
     },
+formatDob(dobString) {
+  if (!dobString) return '';
+  
+  // If already in DD/MM/YYYY format, return as-is
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dobString)) {
+    return dobString;
+  }
+  
+  // Handle ISO format (YYYY-MM-DD)
+  const parts = dobString.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  
+  // Fallback to original if format is unexpected
+  return dobString;
+},
+getImageUrl(path) {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${process.env.APP_URL || window.location.origin}/storage/${path}`;
+},
     retrieveTeam() {
       let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
       let eventMonth = this.dateFilter ?

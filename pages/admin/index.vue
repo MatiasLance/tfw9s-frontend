@@ -118,7 +118,7 @@
 
 <script>
 import PartsList from './parts-list.vue';
-import DrawsComponent from './draws.vue';
+import DrawsComponent from './draws-admin.vue';
 export default {
   components: { PartsList, DrawsComponent },
   data() {

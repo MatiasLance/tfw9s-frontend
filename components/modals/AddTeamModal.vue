@@ -263,12 +263,15 @@ export default {
       type: Boolean,
       required: true
     },
-    // eslint-disable-next-line vue/prop-name-casing
+    fromRegion: {
+      type: Boolean,
+      default: false
+    },
     field: {
       type: Array,
       required: true
     },
-    ageGroup: {
+    agegroup: {
       type: Array,
       required: true,
       default: () => []
@@ -282,6 +285,10 @@ export default {
       required: true,
       default: () => []
     },
+    initialRegionId: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
@@ -294,7 +301,7 @@ export default {
       name: null,
       agegroup_id: null,
       series_id: null,
-      region_id: null,
+      region_id: this.initialRegionId || null,
       coach_name: null,
       coach_mobile: null,
       coach_email: null,
@@ -312,16 +319,27 @@ export default {
       return this.field.map(field =>
         ({ text: field.name, value: field.id }));
     },
-    formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: parseInt (agegroup.id) }));
-    },
-    formattedSeries() {
-      return this.series.map(series => ({
-        text: series.name,
-        value: series.id,
-      }));
-    },
+formattedAgeGroup() {
+  if (!Array.isArray(this.agegroup)) return [];
+  return this.agegroup.map(agegroup => 
+    ({ text: agegroup?.name || '', value: parseInt(agegroup?.id || 0) }));
+},
+formattedSeries() {
+  console.log('Raw series prop:', this.series); // Debug log
+  
+  // Handle cases where series might be nested in a data property
+  const rawSeries = this.series?.data?.series || this.series;
+  
+  if (!Array.isArray(rawSeries)) {
+    console.error('Series data is not an array:', rawSeries);
+    return [];
+  }
+  
+  return rawSeries.map(series => ({
+    text: series.name,
+    value: series.id,
+  }));
+},
     formattedRegions() {
       try {
         // Check if regions exists and is an array
@@ -407,16 +425,23 @@ export default {
     },
     addTeam() {
       const formData = new FormData();
+        const coachData = {
+    name: this.TeamData.coach_name,
+    mobile: this.TeamData.coach_mobile,
+    email: this.TeamData.coach_email
+  };
+
+  const managerData = {
+    name: this.TeamData.manager_name,
+    mobile: this.TeamData.manager_mobile,
+    email: this.TeamData.manager_email
+  };
       formData.append('name', this.TeamData.name);
       formData.append('agegroup_id', parseInt(this.TeamData.agegroup_id));
       formData.append('series_id', this.TeamData.series_id);
       formData.append('region_id', this.TeamData.region_id);
-      formData.append('coach_name', this.TeamData.coach_name);
-      formData.append('coach_mobile', this.TeamData.coach_mobile);
-      formData.append('coach_email', this.TeamData.coach_email);
-      formData.append('manager_name', this.TeamData.manager_name);
-      formData.append('manager_mobile', this.TeamData.manager_mobile);
-      formData.append('manager_email', this.TeamData.manager_email);
+      formData.append('coach', JSON.stringify(coachData));
+      formData.append('manager', JSON.stringify(managerData));
       formData.append('type', this.TeamData.type || 'default');
 
       for (let i = 0; i < this.imgList.length; i++) {
@@ -551,7 +576,12 @@ export default {
             .flat();
         })
     },
+  },
+  mounted() {
+  if (this.fromRegion && this.initialRegionId) {
+    this.TeamData.region_id = this.initialRegionId;
   }
+}
 }
 </script>
 
