@@ -13,17 +13,13 @@ module.exports = {
     "jsconfig.json",
   ],
   parser: "vue-eslint-parser",
-  parserOptions: {
-    parser: '@babel/eslint-parser',
-    requireConfigFile: false
-  },
   extends: [
     'eslint:recommended',
     '@nuxtjs',
     'plugin:tailwindcss/recommended',
     'plugin:vue/base',
-    // 'plugin:vue/essential',
-    // 'plugin:vue/strongly-recommended',
+    'plugin:vue/essential',
+    'plugin:vue/strongly-recommended',
     'plugin:vue/recommended',
     'plugin:nuxt/recommended',
     'prettier'
@@ -56,10 +52,6 @@ module.exports = {
         "before": true,
         "after": true,
       }
-    ],
-    "block-spacing": [
-      "error",
-      "always"
     ],
     "brace-style": [
       "error",
@@ -94,15 +86,6 @@ module.exports = {
         "after": true
       }
     ],
-    "comma-style": [
-      "error",
-      "last"
-    ],
-    "curly": [
-      "error",
-      "all"
-    ],
-    "default-case-last": "error",
     "func-call-spacing": [
       "error",
       "never"
@@ -129,9 +112,9 @@ module.exports = {
     "max-len": [
       "error",
       {
-        "code": 80,
+        "code": 100,
         "tabWidth": 2,
-        "comments": 80,
+        "comments": 100,
         "ignorePattern": "",
         "ignoreComments": false,
         "ignoreTrailingComments": false,
@@ -141,59 +124,6 @@ module.exports = {
         "ignoreRegExpLiterals": true,
       }
     ],
-    "multiline-comment-style": [
-      "error",
-      "starred-block"
-    ],
-    "newline-per-chained-call": [
-      "error",
-      {
-        "ignoreChainWithDepth": 2,
-      }
-    ],
-    "no-alert": "warn",
-    "no-empty-function": "error",
-    "no-duplicate-imports": "error",
-    "no-floating-decimal": "error",
-    "no-multi-spaces": [
-      "error",
-      {
-        "ignoreEOLComments": true,
-      }
-    ],
-    "no-multiple-empty-lines": [
-      "error",
-      {
-        "max": 1,
-        "maxEOF": 1,
-        "maxBOF": 0,
-      }
-    ],
-    "no-self-compare": "error",
-    "no-shadow": [
-      "error",
-      {
-        "allow": [
-          "state"
-        ]
-      }
-    ],
-    "no-trailing-spaces": "error",
-    "no-template-curly-in-string": "warn",
-    "no-throw-literal": "error",
-    "no-undef-init": "error",
-    "no-undefined": "error",
-    "no-underscore-dangle": [
-      "error",
-      {
-        "enforceInMethodNames": false
-      }
-    ],
-    "no-unused-expressions": "error",
-    "no-useless-concat": "error",
-    "no-useless-constructor": "error",
-    "no-useless-return": "error",
-    "no-whitespace-before-property": "error",
     "no-var": "error",
     "object-curly-newline": [
       "error",
@@ -232,73 +162,22 @@ module.exports = {
       "error",
       "after"
     ],
-    "prefer-const": "error",
-    "prefer-template": "error",
-    "quotes": [
-      "error",
-      "single"
-    ],
     "quote-props": [
       "error",
       "consistent"
-    ],
-    "semi-spacing": [
-      "error",
-      {
-        "before": false,
-        "after": true,
-      }
-    ],
-    "semi-style": [
-      "error",
-      "last"
-    ],
-    "spaced-comment": [
-      "error",
-      "always"
-    ],
-    "space-before-blocks": [
-      "error",
-      "always",
-    ],
-    "space-before-function-paren": [
-      "error",
-      "never",
     ],
     "space-in-parens": [
       "error",
       "never"
     ],
-    "switch-colon-spacing": "error",
     "template-curly-spacing": [
       "error",
       "never"
     ],
-    "yoda": "error",
 
     // Vue Eslint Plugin 
 
-    // Essentials
-    "vue/multi-word-component-names": [
-      "off",
-      {
-        "ignores": [
-          "index"
-        ]
-      }
-    ],
-
     // Strongly Recommended
-    "vue/component-definition-name-casing": [
-      "off",
-    ],
-    "vue/html-closing-bracket-newline": [
-      "error",
-      {
-        "singleline": "never",
-        "multiline": "always",
-      }
-    ],
     "vue/singleline-html-element-content-newline": [
       "error",
       {
@@ -324,15 +203,12 @@ module.exports = {
       "PascalCase",
       {
         "registeredComponentsOnly": false,
-        "ignores": [
-          "index"
-        ]
       }
     ],
-    "vue/component-options-name-casing": [
-      "error",
-      "PascalCase"
-    ],
+    // "vue/component-options-name-casing": [
+    //   "error",
+    //   "PascalCase"
+    // ],
     "vue/custom-event-name-casing": [
       "error",
       "kebab-case",
@@ -370,7 +246,7 @@ module.exports = {
     "vue/no-static-inline-styles": [
       "warn",
       {
-        "allowBinding": false,
+        "allowBinding": true,
       }
     ],
     "vue/no-unused-properties": [ "error" ],
@@ -432,10 +308,10 @@ module.exports = {
     "vue/max-len": [
       "error",
       {
-        "code": 80,
-        "template": 80,
+        "code": 100,
+        "template": 100,
         "tabWidth": 2,
-        "comments": 80,
+        "comments": 100,
         "ignorePattern": "",
         "ignoreComments": false,
         "ignoreTrailingComments": false,
@@ -455,7 +331,7 @@ module.exports = {
         "skipStrings": true
       }
     ],
-    "vue/no-loss-of-precision": "error", // eslint-plugin-vue v8.0.0
+    // "vue/no-loss-of-precision": "error", // eslint-plugin-vue v8.0.0
     "vue/no-sparse-arrays": "error",
     "vue/object-curly-newline": [
       "error",
@@ -486,14 +362,14 @@ module.exports = {
       }
     ],
     "vue/object-property-newline": "error",
-    "vue/object-shorthand": [ // eslint-plugin-vue v8.4.0
-      "error",
-      "always"
-    ],
-    "vue/quote-props": [ // eslint-plugin-vue v8.4.0
-      "error",
-      "consistent"
-    ],
+    // "vue/object-shorthand": [ // eslint-plugin-vue v8.4.0
+    //   "error",
+    //   "always"
+    // ],
+    // "vue/quote-props": [ // eslint-plugin-vue v8.4.0
+    //   "error",
+    //   "consistent"
+    // ],
     "vue/space-in-parens": [
       "error",
       "never"
