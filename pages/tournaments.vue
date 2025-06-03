@@ -1,8 +1,8 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+  <div class="min-h-screen w-screen bg-[#1A1A1B]">
     <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    class="from-brand-green to-brand-black mx-auto
+    max-w-screen-xl gap-4 bg-gradient-to-r lg:px-8"
     >
       <div
         class="
@@ -71,21 +71,21 @@
             </div>
           </VueSlickCarousel>
         </span>
-        <div class="grid grid-cols-1 md:grid-cols-3 px-4 gap-4">
+        <div class="grid grid-cols-1 gap-4 px-4 md:grid-cols-3">
           <div class="flex flex-col">
             <div class="flex items-center justify-between">
               <span
-                class="text-[#555555]
+                class="text-lg
                 font-bold
-                text-lg"
+                text-[#555555]"
                 >
                 Select Date
               </span>
               <span
                 v-if="dateFilter"
-                class="text-red-400
+                class="cursor-pointer
                 text-xs
-                cursor-pointer
+                text-red-400
                 hover:text-sm
                 hover:text-red-500
                 "
@@ -103,11 +103,11 @@
             >
             </ODatepicker>
           </div>
-          <div class="md:col-start-3 flex flex-col">
+          <div class="flex flex-col md:col-start-3">
             <span
-              class="text-[#555555]
+              class="text-lg
               font-bold
-              text-lg"
+              text-[#555555]"
               >
               Search Tournaments
             </span>
@@ -131,8 +131,8 @@
             <div
               v-for="(item, index) in filteredWeekly"
               :key="item.id"
-              class="relative shrink-0 snap-center rounded bg-[#212121]
-              backdrop-blur border-double border-[#4cbe5c] border-2 group"
+              class="group relative shrink-0 snap-center rounded
+              border-2 border-double border-[#4cbe5c] bg-[#212121] backdrop-blur"
               data-aos="zoom-in"
               data-aos-once="true"
               :data-aos-delay="`${index}00`"
@@ -142,7 +142,7 @@
                 :src="getMediaURL(item.media[0], 'temp')"
                 alt="Series Image"
               />
-              <div class="absolute top-0 right-0 z-10 rounded-bl-xl
+              <div class="absolute right-0 top-0 z-10 rounded-bl-xl
                 bg-black p-2 pl-4 font-semibold text-white"
               >
                 {{ DateRange(item.start, item.end) }}
@@ -159,23 +159,23 @@
                 </span>
               </div>
                 <span
-                  class="w-full line-clamp-3 text-sm text-white h-0
-                  opacity-0 group-hover:h-16 group-hover:opacity-100
-                  transform-translate text-left transition-all origin-left"
+                  class="transform-translate line-clamp-3 h-0 w-full origin-left
+                  text-left text-sm text-white
+                  opacity-0 transition-all group-hover:h-16 group-hover:opacity-100"
                   v-html="item.description"
                 />
                 <div class="mt-2 text-center">
                   <span
-                    class="w-full line-clamp-1 text-white font-medium
-                    h-0 opacity-0 group-hover:h-6 group-hover:opacity-100
-                    text-sm transition-all cursor-pointer"
+                    class="line-clamp-1 h-0 w-full cursor-pointer
+                    text-sm font-medium text-white opacity-0
+                    transition-all group-hover:h-6 group-hover:opacity-100"
                     @click="ViewArticle(item.id)"
                   >
                     <span class="duration-300 ease-in-out hover:text-[#5EE738]">
                       See more
                     </span>
                     <span
-                      class="inline-block transition-transform transform"
+                      class="inline-block transform transition-transform"
                     >
                       <i class="ri-arrow-right-s-line align-middle"></i>
                     </span>
@@ -206,8 +206,8 @@
             <div
               v-for="(item, index) in filteredTournament"
               :key="item.id"
-              class="relative shrink-0 snap-center rounded bg-[#212121]
-              backdrop-blur border-double border-[#4cbe5c] border-2 group"
+              class="group relative shrink-0 snap-center rounded
+              border-2 border-double border-[#4cbe5c] bg-[#212121] backdrop-blur"
               data-aos="zoom-in"
               data-aos-once="true"
               :data-aos-delay="`${index}00`"
@@ -217,7 +217,7 @@
                 :src="getMediaURL(item.media[0], 'temp')"
                 alt="Series Image"
               />
-              <div class="absolute top-0 right-0 z-10 rounded-bl-xl
+              <div class="absolute right-0 top-0 z-10 rounded-bl-xl
                 bg-black p-2 pl-4 font-semibold text-white"
               >
                 {{ DateRange(item.start, item.end) }}
@@ -231,23 +231,23 @@
                   </span>
                 </div>
                 <span
-                  class="w-full line-clamp-3 text-sm text-white h-0
-                  opacity-0 group-hover:h-16 group-hover:opacity-100
-                  transform-translate text-left transition-all origin-left"
+                  class="transform-translate line-clamp-3 h-0 w-full origin-left
+                  text-left text-sm text-white
+                  opacity-0 transition-all group-hover:h-16 group-hover:opacity-100"
                   v-html="item.description"
                 />
                 <div class="mt-2 text-center">
                   <span
-                    class="w-full line-clamp-1 text-white font-medium
-                    h-0 opacity-0 group-hover:h-6 group-hover:opacity-100
-                    text-sm transition-all cursor-pointer"
+                    class="line-clamp-1 h-0 w-full cursor-pointer
+                    text-sm font-medium text-white opacity-0
+                    transition-all group-hover:h-6 group-hover:opacity-100"
                     @click="ViewArticle(item.id)"
                   >
                     <span class="duration-300 ease-in-out hover:text-[#5EE738]">
                       See more
                     </span>
                     <span
-                      class="inline-block transition-transform transform"
+                      class="inline-block transform transition-transform"
                     >
                       <i class="ri-arrow-right-s-line align-middle"></i>
                     </span>
@@ -278,8 +278,8 @@
             <div
               v-for="(item, index) in filteredCentral"
               :key="item.id"
-              class="relative shrink-0 snap-center rounded bg-[#212121]
-              backdrop-blur border-double border-[#4cbe5c] border-2 group"
+              class="group relative shrink-0 snap-center rounded
+              border-2 border-double border-[#4cbe5c] bg-[#212121] backdrop-blur"
               data-aos="zoom-in"
               data-aos-once="true"
               :data-aos-delay="`${index}00`"
@@ -289,7 +289,7 @@
                 :src="getMediaURL(item.media[0], 'temp')"
                 alt="Series Image"
               />
-              <div class="absolute top-0 right-0 z-10 rounded-bl-xl
+              <div class="absolute right-0 top-0 z-10 rounded-bl-xl
                 bg-black p-2 pl-4 font-semibold text-white"
               >
                 {{ DateRange(item.start, item.end) }}
@@ -303,23 +303,23 @@
                   </span>
                 </div>
                 <span
-                  class="w-full line-clamp-3 text-sm text-white h-0
-                  opacity-0 group-hover:h-16 group-hover:opacity-100
-                  transform-translate text-left transition-all origin-left"
+                  class="transform-translate line-clamp-3 h-0 w-full origin-left
+                  text-left text-sm text-white
+                  opacity-0 transition-all group-hover:h-16 group-hover:opacity-100"
                   v-html="item.description"
                 />
                 <div class="mt-2 text-center">
                   <span
-                    class="w-full line-clamp-1 text-white font-medium
-                    h-0 opacity-0 group-hover:h-6 group-hover:opacity-100
-                    text-sm transition-all cursor-pointer"
+                    class="line-clamp-1 h-0 w-full cursor-pointer
+                    text-sm font-medium text-white opacity-0
+                    transition-all group-hover:h-6 group-hover:opacity-100"
                     @click="ViewArticle(item.id)"
                   >
                     <span class="duration-300 ease-in-out hover:text-[#5EE738]">
                       See more
                     </span>
                     <span
-                      class="inline-block transition-transform transform"
+                      class="inline-block transform transition-transform"
                     >
                       <i class="ri-arrow-right-s-line align-middle"></i>
                     </span>
@@ -343,8 +343,8 @@
 </template>
 
 <script>
+import _debounce from 'lodash/debounce'
 import VueSlickCarousel from 'vue-slick-carousel'
-import debounce from 'lodash/debounce';
 import handlesMedia from '~/mixins/shop/handlesMedia';
 import currencyMixin from '~/mixins/currency/handlesCurrency'
 
@@ -457,26 +457,25 @@ export default {
       );
     },
   },
-  created() {
-    this.retrieveSeries();
-  },
   watch: {
     query() {
-      this.debouncedSearch();
+      this.quickFetch();
     },
     dateFilter: {
       handler(newDate) {
-        this.retrieveSeries();
+        this.quickFetch();
       },
       immediate: true,
     },
   },
   mounted() {
-    this.debouncedSearch = debounce(this.retrieveSeries, 800);
-    this.retrieveSeries();
+    this.quickFetch();
     this.page = 1
   },
   methods: {
+    quickFetch: _debounce(function() {
+      this.retrieveSeries();
+    }, 50),
     eventDot(type) {
       if (type === 'weekly') {
         return 'success'

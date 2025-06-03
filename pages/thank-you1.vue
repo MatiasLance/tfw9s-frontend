@@ -1,6 +1,6 @@
 <template>
   <div class="h-full">
-    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
+    <BaseHeader class="from-brand-green to-brand-black bg-gradient-to-r">
       <div
         class="
           col-span-12
@@ -36,7 +36,7 @@
       </div>
     </BaseHeader>
 
-    <div class="flex flex-col items-center justify-center py-20 px-8">
+    <div class="flex flex-col items-center justify-center px-8 py-20">
       <template v-if="status === 'loading'">
         <VProgressCircular
           size="125"
@@ -65,22 +65,24 @@
         <div class="mt-4 flex items-center justify-center">
           <NuxtLink to="/tournaments">
             <span
-              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
+              class="bg-brand-black mx-2 cursor-pointer px-4 py-2 text-white"
             >
               Tournaments
             </span>
           </NuxtLink>
         </div>
-<!--         <div class="mt-4 flex items-center justify-center">
-          <NuxtLink to="/card">
-            <span
-            @click="viewIdCard"
-            class="mx-2 cursor-pointer bg-brand-green px-4 py-2 text-black"
-          >
-            View Your Player ID Card
-            </span>
-          </NuxtLink>
-        </div> -->
+<!--
+  <div class="mt-4 flex items-center justify-center">
+  <NuxtLink to="/card">
+  <span
+  @click="viewIdCard"
+  class="mx-2 cursor-pointer bg-brand-green px-4 py-2 text-black"
+  >
+  View Your Player ID Card
+  </span>
+  </NuxtLink>
+  </div> 
+-->
       </template>
 
       <template v-else-if="status === 'processing'">
@@ -96,7 +98,7 @@
         </div>
         <div class="mt-4 flex items-center justify-center">
           <span
-            class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
+            class="bg-brand-black mx-2 cursor-pointer px-4 py-2 text-white"
             @click="verify"
           >
             Refresh
@@ -118,14 +120,14 @@
         <div class="mt-4 flex items-center justify-center">
           <NuxtLink to="/tournaments">
             <span
-              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
+              class="bg-brand-black mx-2 cursor-pointer px-4 py-2 text-white"
             >
               Tournaments
             </span>
           </NuxtLink>
           <NuxtLink to="/register">
             <span
-              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
+              class="bg-brand-black mx-2 cursor-pointer px-4 py-2 text-white"
             >
               Checkout
             </span>
@@ -248,7 +250,7 @@ export default {
         this.bannerText = 'Order failed'
       }
     },
-        viewIdCard() {
+    viewIdCard() {
       if (!this.registrationId || !this.registrationType) {
         console.error('Registration data not available')
         return

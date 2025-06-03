@@ -1,121 +1,150 @@
 <template>
   <div class="min-h-screen bg-[#1A1A1B] text-white">
-    <div>
-      <div class="block gap-4 md:grid md:grid-cols-12">
-        <div class="article-gallery col-span-12 relative">
-          <VCarousel
-            height="450"
-            :show-arrows="false"
-            cycle
-            hide-delimiters-background
+    <section
+    v-if="isLoading"
+    class="flex h-screen items-center justify-center"
+    >
+      <VProgressCircular
+      size="125"
+      width="10"
+      indeterminate
+      color="gray lighten-2"
+      />
+    </section>
+    <section
+    v-else-if="record && record.id"
+    class="gap-4 flex flex-col items-center justify-center"
+    >
+      <div class="article-gallery relative w-full max-w-screen-2xl">
+        <VCarousel
+          height="450"
+          :show-arrows="false"
+          cycle
+          hide-delimiters-background
+        >
+          <VCarouselItem
+            v-for="(photo, i) in photos"
+            :key="i"
+            :src="photo"
+            cover
           >
-            <VCarouselItem
-              v-for="(photo, i) in photos"
-              :key="i"
-              :src="photo"
-              cover
+            <span
+              class="back-button absolute left-2
+              top-2 z-10 cursor-pointer text-white"
+              @click="$router.back()"
             >
-              <span
-                @click="backToNews"
-                class="back-button absolute top-2
-                left-2 cursor-pointer z-10 text-white"
-              >
-                <div class="md:m-4 flex items-center justify-center gap-2">
-                  <i class="ri-arrow-left-line text-xl"></i>
-                  <span class="text-sm font-semibold">BACK</span>
-                </div>
-              </span>
-            </VCarouselItem>
-            <VCarouselItem
-              v-if="photos.length === 0"
-              src="http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg"
-              cover
+              <div class="flex items-center justify-center gap-2 md:m-4">
+                <i class="ri-arrow-left-line text-xl"></i>
+                <span class="text-sm font-semibold">BACK</span>
+              </div>
+            </span>
+          </VCarouselItem>
+          <VCarouselItem
+            v-if="photos.length === 0"
+            src="http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg"
+            cover
+          >
+            <span
+              class="back-button absolute left-2
+              top-2 z-10 cursor-pointer text-white"
+              @click="$router.back()"
             >
-              <span
-                @click="backToNews"
-                class="back-button absolute top-2
-                left-2 cursor-pointer z-10 text-white"
-              >
-                <div class="md:m-4 flex items-center justify-center gap-2">
-                  <i class="ri-arrow-left-line text-xl"></i>
-                  <span class="text-sm font-semibold">BACK</span>
-                </div>
-              </span>
-            </VCarouselItem>
-          </VCarousel>
-        </div>
-        <div
-        class="article-context font-semibold col-span-12 p-[1rem]
-        mx-auto max-w-screen-xl w-full"
-        >
-          <span class="text-2xl md:text-3xl">
-            {{article.headline}}
-          </span>
-          <p class="text-lg text-brand-slate">
-            {{ formattedDate(article.updated_at) }}
-          </p>
-        </div>
-        <article
-        class="article-description col-span-12 p-[1rem]
-        mx-auto max-w-screen-xl w-full text-wrap"
-        >
-          <p
-            class="my-4 text-white"
-            v-html="article.content"
-          />
-        </article>
+              <div class="flex items-center justify-center gap-2 md:m-4">
+                <i class="ri-arrow-left-line text-xl"></i>
+                <span class="text-sm font-semibold">BACK</span>
+              </div>
+            </span>
+          </VCarouselItem>
+        </VCarousel>
       </div>
-    </div>
+      <div
+      class="article-context mx-auto w-full
+      max-w-screen-xl p-4 font-semibold"
+      >
+        <span class="text-2xl md:text-3xl">
+          {{record.item? record.item.name : 'Unknown'}}
+        </span>
+        <p class="text-brand-slate text-lg">
+          {{ SeriesDateRange(record.item) }}
+        </p>
+      </div>
+      <article
+      class="article-description mx-auto
+      w-full max-w-screen-xl text-wrap p-4"
+      >
+        <p
+          class="my-4 text-white"
+          v-html="series.description"
+        />
+      </article>
+      <article
+      v-if="players && players.length > 0"
+      class="grid gap-4 p-4 lg:grid-cols-2  w-full max-w-screen-xl">
+        <div
+        v-for="player in players"
+        :key="player.id"
+        class="flex flex-col items-center justify-center gap-4 rounded-lg bg-gray-800 p-4"
+        >
+          <PlayerCardView
+          :player="player"
+          @image-click="openEditImageModal(player)"
+          />
+          <button
+            type="button"
+            class="w-full select-none rounded-lg border border-transparent
+            bg-gradient-to-tr from-[#5EE738] via-[#3e872a] to-[#050505] px-4 py-2
+            font-semibold text-white transition hover:brightness-125"
+            @click="generatePlayerCard(player)"
+          >
+            Generate Registration Card
+          </button>
+        </div>
+      </article>
+      <article v-if="teams && teams.length > 0">
+        {{ teams}}
+      </article>
+    </section>
+    <section
+    v-else
+    class="flex h-screen flex-col items-center justify-center"
+    >
+      <VIcon size="150" color="red darken-2">
+        mdi-alert-circle
+      </VIcon>
+      <div class="mt-8 text-2xl font-bold text-white">
+        Transaction not found
+      </div>
+      <div class="text-base text-gray-400">
+        Opps! We couldn't find the transaction you were looking for.
+      </div>
+      <div class="mt-4 flex items-center justify-center">
+        <span
+        class="bg-brand-black mx-2 cursor-pointer px-4 py-2 text-white"
+        @click="$router.back()"
+        >
+          Return
+        </span>
+      </div>
+    </section>
+    <OModal :active="showUploadModal" @close="showUploadModal = false">
+      <ImageCropper @upload="handleUpload"/>
+    </OModal>
   </div>
 </template>
 
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css';
+import PlayerCardView from '../components/PlayerCardView.vue';
+import ImageCropper from '../components/ImageCropper.vue';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
 import currencyMixin from '~/mixins/currency'
 import formattedDate from '~/mixins/utilities/formattedDate'
 
-const slickSettings = {
-  arrows: true,
-  slidesToShow: 4,
-  slidesToScroll: 4,
-  initialSlide: 0,
-  speed: 500,
-  swipe: true,
-  swipeToSlide: true,
-  infinite: true,
-  touchThreshold: 5,
-  responsive: [
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 3,
-        slidesToScroll: 3,
-        infinite: true
-      }
-    },
-    {
-      breakpoint: 600,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2,
-        initialSlide: 2
-      }
-    },
-    {
-      breakpoint: 480,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1
-      }
-    }
-  ]
-}
-
 export default {
-  name: 'news-article',
+  name: 'transaction',
+  components: { PlayerCardView, ImageCropper },
   mixins: [
     currencyMixin,
     handlesMedia,
@@ -124,49 +153,16 @@ export default {
   ],
   data() {
     return {
-      isSelected: '',
-      salePriceMock: 100,
-      showRRP: true,
-      isOnSaleMock: true,
-      article: {
-        id: 0,
-        headline: '',
-        content: '',
-        // eslint-disable-next-line camelcase
-        updated_at: null,
-      },
-      showOutOfStock: true,
+      record: [],
+      series: [],
+      players: [],
+      teams: [],
       activeImageURL: '',
       photos: [],
-      quantity: 1,
-      imageCarouselSettings: slickSettings,
-      colors: [
-        'indigo',
-        'warning',
-        'pink darken-2',
-        'red lighten-1',
-        'deep-purple accent-4',
-      ],
-      slides: [
-        'First',
-        'Second',
-        'Third',
-        'Fourth',
-        'Fifth',
-      ],
+      isLoading: true,
+      showUploadModal: false,
+      selected: [],
     };
-  },
-  computed: {
-    cartItems: {
-      get() {
-        return this.$store.state.cart.cart
-      },
-    },
-    cartCount: {
-      get() {
-        return this.$store.getters['cart/cartCount']
-      },
-    },
   },
   watch: {
     $route() {
@@ -182,29 +178,119 @@ export default {
     this.retrieveTransaction(this.$route.query.key);
   },
   methods: {
-    viewVariantSlider() {
-      const sliderCoordinates = this.getCoordinates(this.$refs.variantSlider)
-      window.scrollTo({
-        top: sliderCoordinates.top,
-        left: sliderCoordinates.left,
-        behavior: 'smooth',
-      })
-    },
-    setActiveMedia(path) {
-      this.activeImageURL = this.getMediaURL(path)
+    openEditImageModal(player) {
+      this.showUploadModal = true;
+      this.selected = { ...player };
     },
     retrieveTransaction(key) {
+      this.isLoading = true;
       this.$axios
         .$get(`v1/transaction/retrieve/${key}`)
         .then((response) => {
-          this.article = response.data.record
-          this.activeImageURL = this.getMediaURL(this.article.media[0])
-          this.photos = this.article.media.map((x) =>
+          this.record = response.data.record
+          this.series = response.data.record.item
+          this.players = response.data.record.players
+          this.teams = response.data.record.teams
+
+          this.activeImageURL = this.getMediaURL(this.series.media[0])
+          this.photos = this.series.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);
         })
+        .finally(() => {
+          this.isLoading = false;
+        })
     },
-    backToNews() {
-      this.$router.push('/news');
+    formattedDate(dateString) {
+      const date = new Date(dateString);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    },
+    SeriesDateRange(series) {
+      const start = this.formattedDate(series.start)
+      const end = this.formattedDate(series.end)
+
+      const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
+      const suffixes = [
+        'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'
+      ];
+      const startdate = start.getDate();
+      const enddate = end.getDate();
+      const startmonth = months[start.getMonth()];
+      const endmonth = months[end.getMonth()];
+      const startyear = start.getFullYear();
+      const endyear = end.getFullYear();
+
+      const suffix1 = startdate % 100;
+      const suffix2 = enddate % 100;
+      const startsuffix = suffixes[suffix1 >= 11 &&
+      suffix1 <= 13 ? 0 : startdate % 10];
+      const endsuffix = suffixes[suffix2 >= 11 &&
+      suffix2 <= 13 ? 0 : enddate % 10];
+
+      // eslint-disable-next-line max-len, vue/max-len, no-return-assign
+      return `${startmonth === endmonth? startmonth:endmonth} ${startdate}${startsuffix} -  ${startmonth !== endmonth? endmonth:''} ${enddate}${endsuffix} ${startyear === endyear? startyear: endyear}`;
+    },
+    handleUpload(image) {
+      try {
+        if (image && image instanceof Blob) {
+          const imgUrl = URL.createObjectURL(image);
+          const imgData = image;
+
+          if (!this.selected.media) {
+            this.selected.media = [];
+          }
+
+          this.selected = {
+            ...this.selected,
+            url: imgUrl,
+            data: imgData,
+          };
+          this.setPlayerImage();
+        } else {
+          console.error('Invalid image file');
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+    },
+    removeUpload() {
+      this.selected.url = null;
+      this.selected.data = null;
+    },
+    setPlayerImage() {
+      this.players = this.players.map(x => {
+        if (x.id === this.selected.id) {
+          return { ...this.selected };
+        }
+        return x;
+      });
+      this.showUploadModal = false;
+    },
+    generatePlayerCard(player) {
+      const playerName = `${player.player_firstname} ${player.player_lastname}`;
+      this.$oruga.notification.open({
+        // eslint-disable-next-line max-len, vue/max-len
+        message: `<div class="text-center">Player card for ${playerName} generated successfully!<hr/>(WIP)</div>`,
+        variant: 'info',
+        duration: 5000,
+        position: 'bottom',
+        queue: true,
+        dangerouslyUseHTMLString: true, // allow HTML in message
+      })
+
     },
   },
 };
