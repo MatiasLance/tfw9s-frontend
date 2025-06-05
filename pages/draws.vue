@@ -39,7 +39,6 @@
       <div class="grid grid-cols-3 gap-2">
         <div class="col-span-3 p-2" data-aos="fade-up">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <!-- Event Year -->
             <div>
               <span
                 class="hidden w-full py-2 align-middle text-[20px]
@@ -56,7 +55,6 @@
               />
             </div>
 
-            <!-- Age Group -->
             <div>
               <span
                 class="hidden w-full py-2 align-middle text-[20px]
@@ -70,10 +68,10 @@
                 placeholder="Select Age Group"
                 solo
                 class="w-full"
+              
               />
             </div>
 
-            <!-- Region -->
             <div>
               <span
                 class="hidden w-full py-2 align-middle text-[20px]
@@ -90,7 +88,6 @@
               />
             </div>
 
-            <!-- Team Name -->
             <div>
               <span
                 class="hidden w-full py-2 align-middle text-[20px]

@@ -94,7 +94,7 @@
             v-html="article.description"
           />
         </article>
-        <div v-if="!article.pause"
+        <div v-if="!article.pause && article.type !== 'weekly'"
           class="mb-4 flex w-full justify-center"
         >
           <NuxtLink
@@ -398,8 +398,8 @@ export default {
           this.article = {
             ...series,
             ageGroup: {
-              id: series.age_group?.id || 0,
-              name: series.age_group?.name || '',
+              id: (series.age_group && series.age_group.id) || 0,
+              name: (series.age_group && series.age_group.name) || '',
             },
           };
           this.article.pause = parseInt(series.is_paused) === 1;

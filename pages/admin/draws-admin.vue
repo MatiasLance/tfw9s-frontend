@@ -1,11 +1,9 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B] -ml-8">
-
-    <section class="mx-auto max-w-screen-xl gap-4 p-7">
+  <div class="min-h-screen bg-[#1A1A1B] text-white">
+    <section class="mx-auto w-full max-w-screen-xl gap-4 p-4 sm:p-7">
       <div class="grid grid-cols-3 gap-2">
         <div class="col-span-3 p-2" data-aos="fade-up">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <!-- Event Year -->
             <div>
               <span
                 class="hidden w-full py-2 align-middle text-[20px]
@@ -78,15 +76,15 @@
         <div class="col-span-3">
           <section
             v-if="totalPages > 0"
-            class="grid w-full grid-cols-1 md:grid-cols-2 gap-2"
+            class="grid w-full grid-cols-1 gap-4 md:grid-cols-2"
           >
             <div
               v-for="(match) in filteredMatchList"
               :key="match.id" data-aos="fade-up"
               data-aos-offset="0"
-              class="col-span-1"
+              class="col-span-1 mx-auto w-full max-w-lg"
             >
-              <div class="grid grid-cols-5 rounded-lg bg-[#212121] p-4">
+              <div class="grid grid-cols-5 rounded-lg bg-[#212121] p-4 w-full">
                 <div class="col-span-4 text-md md:text-xl font-medium text-white">
                   {{ match.event_date }}
                 </div>
@@ -180,9 +178,9 @@
           </section>
           <section
             v-if="filteredMatchList.length === 0"
-            class="col-span-1 flex h-60 items-center
+            class="col-span-3 flex h-60 items-center
             justify-center font-semibold
-            text-[#555555] md:col-span-3"
+            text-[#555555]"
             data-aos="fade-up"
           >
             No Draws
@@ -192,6 +190,7 @@
     </section>
   </div>
 </template>
+
 <script>
 import handlesMedia from '~/mixins/shop/handlesMedia';
 export default {
@@ -283,9 +282,8 @@ export default {
       }));
     },
 formattedFields() {
-  // First get all unique fields from the FieldList
   const allFields = this.FieldList
-    .filter(field => field && field.id && field.name) // Filter out invalid fields
+    .filter(field => field && field.id && field.name)
     .map(field => ({
       id: field.id,
       name: field.name

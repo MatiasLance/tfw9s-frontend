@@ -195,7 +195,9 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrlEdit: [],
       imgListEdit: [],
-      SeriesData: {},
+      SeriesData: {
+        agegroup_id: null
+      },
       AgeGroupList: [
         { text: 'U6', value: 'U6' },
         { text: 'U7', value: 'U7' },
@@ -214,11 +216,10 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.SeriesData = this.series;
-          this.SeriesData.agegroup = this.series.agegroup_id??null
-          this.selectedDate = new Date(this.SeriesData.dob);
+          this.SeriesData = {...this.series};
+          this.SeriesData.agegroup_id = this.series.agegroup_id || null;
           this.selectedDate = this.series.dob ? new Date(this.series.dob) : null;
-          this.phoneDigits = this.SeriesData.phone_number.replace(/^\+61/, '');
+          this.phoneDigits = this.SeriesData.phone_number?.replace(/^\+61/, '') || '';
         }
       },
       immediate: true,
@@ -252,7 +253,7 @@ export default {
     updateImageEdit(image) {
       this.imgListEdit = image
     },
-DatePickerToSQL(datestring) {
+  DatePickerToSQL(datestring) {
   if (!datestring) return '';
   
   // Create a new Date object (handles both Date objects and strings)
@@ -315,7 +316,7 @@ DatePickerToSQL(datestring) {
       formData.append('player_lastname', this.SeriesData.player_lastname);
       formData.append('team_name', this.SeriesData.team_name);
       formData.append('dob', this.SeriesData.dob);
-      formData.append('agegroup', this.SeriesData.agegroup);
+      formData.append('agegroup_id', this.SeriesData.agegroup_id);
       formData.append('description', this.SeriesData.description);
 
       for (let i = 0; i < this.imgListEdit.length; i++) {

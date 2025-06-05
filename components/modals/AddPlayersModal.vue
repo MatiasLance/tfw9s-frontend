@@ -129,7 +129,7 @@
                   <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
                       <label for="selectagegroup" class="mb-1 block">
-                        Age Group
+                        Age Group *
                       </label>
                       <VSelect
                         v-model="player.ageGroup"

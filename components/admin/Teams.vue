@@ -41,93 +41,93 @@
               @change="setPage"
               />
           </div>
-          <section class="col-span-1">
-            <div
-            class="grid grid-cols-1 overflow-y-hidden
-            overflow-x-scroll md:overflow-x-hidden"
-            >
-              <div
-              v-if="totalPages > 0"
-              class="col-span-1 flex min-w-[960px] pr-24 md:w-auto"
-              data-aos="flip-up"
-              >
-                <span
-                class="flex-1 text-center px-4 py-2 align-middle
-                text-[20px] font-semibold text-[#555555]"
+            <section class="col-span-1">
+              <div class="overflow-x-auto">
+              <div class="inline-block min-w-full text-center">
+                <div 
+                    v-if="totalItems  > 0"
+                    class="flex min-w-[1200px] pr-24 md:w-auto"
+                    data-aos="flip-up"
                 >
-                Team
-                </span>
-                <span
-                class="flex-1 text-center px-4 py-2 align-middle
-                text-[20px] font-semibold text-[#555555]"
+                  <span
+                  class="flex-1 text-center px-4 py-2 align-middle
+                  text-[20px] font-semibold text-[#555555]"
+                  >
+                  Team
+                  </span>
+                  <span
+                  class="flex-1 text-center px-4 py-2 align-middle
+                  text-[20px] font-semibold text-[#555555]"
+                  >
+                  Age Group
+                  </span>
+                  <span
+                  class="flex-1 text-center px-4 py-2 align-middle
+                  text-[20px] font-semibold text-[#555555]"
+                  >
+                  Series
+                  </span>
+                  <span
+                  class="flex-1 text-center px-4 py-2 align-middle
+                  text-[20px] font-semibold text-[#555555]"
+                  >
+                  Region
+                  </span>
+                </div>
+                <div
+                v-for="(data) in Teams"
+                :key="data.id" class="col-span-1 mb-0.5 gap-0"
+                data-aos="flip-down" data-aos-duration="500"
+                data-aos-offset="0"  data-aos-once="true"
                 >
-                Age Group
-                </span>
-                <span
-                class="flex-1 text-center px-4 py-2 align-middle
-                text-[20px] font-semibold text-[#555555]"
-                >
-                Series
-                </span>
-                <span
-                class="flex-1 text-center px-4 py-2 align-middle
-                text-[20px] font-semibold text-[#555555]"
-                >
-                Region
-                </span>
+                <div class="flex min-w-[640px] items-center justify-center">
+                  <input
+                  v-model="data.name"
+                  :rules="Rules"
+                  placeholder="Enter Team"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  v-model="data.agegroup.name"
+                  :rules="Rules"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  v-model="data.series.name"
+                  :rules="Rules"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  :value="getRegionName(data.region_id)"
+                  @input="handleRegionInput(data, $event)"
+                  :rules="Rules"
+                  hide-details
+                  required
+                  readonly
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <i
+                  class="ri-pencil-fill px-4 text-xl text-white"
+                  @click="openEditTeamDialog(data)"
+                  />
+                  <i
+                  class="ri-delete-bin-fill px-4 text-xl text-red-400"
+                  @click="openDeleteTeamDialog(data)"
+                  />              
               </div>
-              <div
-              v-for="(data) in Teams"
-              :key="data.id" class="col-span-1 mb-0.5 gap-0"
-              data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="0"  data-aos-once="true"
-              >
-              <div class="flex min-w-[960px] items-center justify-center">
-                <input
-                v-model="data.name"
-                :rules="Rules"
-                placeholder="Enter Team"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.agegroup.name"
-                :rules="Rules"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.series.name"
-                :rules="Rules"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                :value="getRegionName(data.region_id)"
-                @input="handleRegionInput(data, $event)"
-                :rules="Rules"
-                hide-details
-                required
-                readonly
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <i
-                class="ri-pencil-fill px-4 text-xl text-white"
-                @click="openEditTeamDialog(data)"
-                />
-                <i
-                class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                @click="openDeleteTeamDialog(data)"
-                />              </div>
+              </div>
               </div>
             </div>
-          </section>
+            </section>
           <section
           v-if="totalPages === 0"
           class="col-span-1 flex h-60 items-center
@@ -229,27 +229,40 @@ export default {
       ],
     };
   },
-  mounted() {
-    this.retrieveTeams();
-    this.retrieveAgeGroups();
-    this.retrieveSeries();
-    this.retrieveRegions();
-  },
+async mounted() {
+  try {
+    await Promise.all([
+      this.retrieveAgeGroups(),
+      this.retrieveSeries(),
+      this.retrieveRegions()
+    ]);
+  } catch (error) {
+    console.error("Failed to load initial lookup data:", error);
+    this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Failed to load some essential data. Please try refreshing.',
+        position: 'bottom',
+        variant: 'danger',
+        queue: true
+      });
+  }
+  
+  this.retrieveTeams();
+},
   watch: {
     totalPages() {
-      if (this.page > this.totalPages) {
-        this.setPage(1)
-      }
-    },
+    if (this.page > this.totalPages && this.totalPages > 0) { // Check totalPages > 0
+      this.page = this.totalPages; // Go to the new last page
+      this.retrieveTeams();
+    } else if (this.page > 1 && this.totalPages === 0) {
+      this.page = 1;
+      this.retrieveTeams();
+    }
+  },
     page: {
       handler(newPage) {
         this.retrieveTeams()
-        this.retrieveAgeGroups()
-        this.retrieveSeries()
-        this.retrieveRegions()
-
       },
-      immediate: true,
     },
   },
   methods: {
@@ -282,30 +295,26 @@ export default {
       this.selectedData = ({});
       this.showDeleteTeamModal = false
     },
-AddTeam(response) {
-  console.log('AddTeam response:', response); // Debug log
-  
-  this.$oruga.notification.open({
-    duration: 5000,
-    message: response?.message || 'Team Added',
-    position: 'bottom',
-    variant: 'success',
-    queue: true
-  });
-  
-  this.showAddTeamModal = false;
-  
-  // Force refresh all data
-  Promise.all([
-    this.retrieveTeams(),
-    this.retrieveAgeGroups(),
-    this.retrieveSeries(),
-    this.retrieveRegions()
-  ]).then(() => {
-    this.getTeams();
-    this.getEvents();
-  });
-},
+    AddTeam(newTeamData) {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Team Added Successfully',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      });
+      
+      this.showAddTeamModal = false;
+      
+      this.retrieveTeams().then(() => {
+        if (typeof this.getTeams === 'function') {
+          this.getTeams();
+        }
+        if (typeof this.getEvents === 'function') {
+          this.getEvents();
+        }
+      });
+    },
     EditTeam() {
       this.$oruga.notification.open({
         duration: 5000,
@@ -332,57 +341,60 @@ AddTeam(response) {
       this.getTeams();
       this.getEvents();
     },
-  async retrieveTeams() {
-  try {
-    // First ensure regions are loaded
-    if (this.regionList.length === 0) {
-      await this.retrieveRegions();
-    }
+    async retrieveTeams() {
+      try {
+        if (this.ageGroupList.length === 0 && this.totalItems > 0) { // Only log if expecting teams but no age groups
+            console.warn("retrieveTeams: ageGroupList is empty. Data might be missing. Trying to reload.");
+            await this.retrieveAgeGroups();
+        }
 
-    const query = {
-      q: this.query,
-      sort: 'a_to_z',
-      page: this.page,
-      maxTeamsPerPage: 10,
-    };
+        const query = {
+          q: this.query,
+          sort: 'a_to_z',
+          page: this.page,
+          maxTeamsPerPage: this.perPage,
+        };
 
-    const queryString = new URLSearchParams(query).toString();
+        Object.keys(query).forEach((key) => {
+          if (query[key] == null || query[key] === '') {
+            delete query[key];
+          }
+        });
 
-    const response = await this.$axios.$get(`v1/teams?${queryString}`);
-    
-    // Process team data with proper relationships
-    this.Teams = response.data.teams.map(team => {
-      // Find age group
-      const ageGroup = this.ageGroupList.find(ag => ag.id === team.agegroup_id) || {};
-      
-      // Find series
-      const series = this.seriesList.find(s => s.id === team.series_id) || {};
-      
-      return {
-        ...team,
-        name: team.name,
-        agegroup: {
-          name: ageGroup.name || '',
-          id: team.agegroup_id
-        },
-        series: {
-          name: series.name || '',
-          id: team.series_id
-        },
-        region_id: team.region_id
-      };
-    });
+        const queryString = new URLSearchParams(query).toString();
+        const response = await this.$axios.$get(`v1/teams?${queryString}`);
+        
+        this.Teams = response.data.teams.map(team => {
+          const foundAgeGroup = this.ageGroupList.find(ag => ag.id === team.agegroup_id);
+          const foundSeries = this.seriesList.find(s => s.id === team.series_id);
+          
+          return {
+            ...team,
+            agegroup: foundAgeGroup 
+              ? { name: foundAgeGroup.name, id: foundAgeGroup.id } 
+              : { name: `(ID: ${team.agegroup_id || 'N/A'})`, id: team.agegroup_id }, // Fallback
+            series: foundSeries 
+              ? { name: foundSeries.name, id: foundSeries.id }
+              : { name: `(ID: ${team.series_id || 'N/A'})`, id: team.series_id }, // Fallback
+          };
+        });
 
-    this.totalItems = response.data.total_items;
-    this.totalPages = response.data.last_page;
-    this.from = response.data.from;
-    this.to = response.data.to;
-    
-    console.log('Processed Teams:', this.Teams); // Debug log
-  } catch (error) {
-    console.error('Error retrieving teams:', error);
-  }
-},
+        this.totalItems = response.data.total_items;
+        this.totalPages = response.data.last_page;
+        this.from = response.data.from;
+        this.to = response.data.to;
+        
+        if (this.Teams.some(t => t.agegroup.name.startsWith('(ID:'))) {
+          console.warn("Some teams have missing age group names. Check ageGroupList and team agegroup_ids. Current ageGroupList count:", this.ageGroupList.length);
+        }
+
+      } catch (error) {
+        console.error('Error retrieving teams:', error);
+        this.Teams = [];
+        this.totalItems = 0;
+        this.totalPages = 0;
+      }
+    },
 
     getRegionName(regionId) {
       const region = this.regionList.find(r => r.id === regionId);
@@ -391,23 +403,28 @@ AddTeam(response) {
     retrieveAgeGroups() {
       const query = {
         q: this.query,
-        page: this.page,
       };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
+  Object.keys(query).forEach((key) => {
+    if (query[key] == null || query[key] === '') {
+      delete query[key];
+    }
+  });
 
       const queryString = new URLSearchParams(query).toString()
 
-      this.$axios
-        .$get(`v1/agegroups?${queryString}`)
-        .then((response) => {
-          this.ageGroupList= response.data.ageGroups;
-        })
-    },
+  return this.$axios
+    .$get(`v1/agegroups?${queryString}`)
+    .then((response) => {
+      this.ageGroupList = response.data.ageGroups;
+      console.log('All Age Groups Loaded:', this.ageGroupList);
+    })
+    .catch(error => {
+      console.error('Error fetching age groups:', error);
+      this.ageGroupList = [];
+      throw error; 
+    });
+},
     retrieveSeries() {
       this.$axios
         .$get('v1/series')
@@ -423,8 +440,7 @@ AddTeam(response) {
       this.$axios
         .$get('v1/regions')
         .then((response) => {
-          console.log('Regions API response:', response); // Debug log
-          // Handle different possible response structures
+          console.log('Regions API response:', response);
           if (response.data && response.data.regions) {
             this.regionList = response.data.regions;
           } else if (Array.isArray(response.data)) {

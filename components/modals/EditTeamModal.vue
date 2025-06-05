@@ -263,15 +263,19 @@ export default {
       type: Boolean,
       required: true
     },
+    field: {
+    type: Array,
+    required: false,
+    default: () => []
+  },
     team: {
       type: Object,
       default: () => ({}),
     },
-    // eslint-disable-next-line vue/prop-name-casing
   field: {
     type: Array,
-    required: false, // Change to false if the field is optional
-    default: () => [] // Provide empty array as default
+    required: false,
+    default: () => []
   },
     series: {
       type: Array,

@@ -1,9 +1,7 @@
-<!-- eslint-disable vue/max-len -->
-<!-- eslint-disable max-len -->
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-            <form @submit.prevent="deleteSeries">
+            <form @submit.prevent="submitDelete">
                 <h3 class="text-brand-black mb-3 font-bold">
                     Delete Series
                 </h3>
@@ -24,6 +22,8 @@
                   color="success"
                   class="custom-btn w-full md:w-[185px] lg:w-[185px]"
                   type="submit"
+                  :loading="isDeleting"
+                  :disabled="isDeleteing"
                   >
                     OK
                   </VBtn>
@@ -32,6 +32,7 @@
                     color="error"
                     class="custom-btn w-full md:w-[185px] lg:w-[185px]"
                     @click="closeDialog"
+                    :disabled="isDeleting"
                   >
                     Cancel
                   </VBtn>
@@ -60,8 +61,9 @@ export default {
   },
   data() {
     return {
-      seriesData: { name: '' },
+      seriesData: { id: null, name: '' },
       rules: [ value => !!value || 'Required' ],
+      isDeleting: false,
     }
   },
   watch: {
@@ -69,6 +71,7 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.seriesData = this.series;
+          this.isDeleting = false;
         }
       },
       immediate: true,
@@ -76,22 +79,42 @@ export default {
   },
 
   methods: {
-    deleteSeries() {
-      this.$axios
-        .$delete(`/v1/series/${this.series.id}`)
-        .catch(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to remove gym',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true,
-          });
+    async submitDelete() {
+      if (!this.seriesData || !this.seriesData.id) {
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Series data is missing. Cannot delete.',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
         });
-      this.$emit('confirm')
+        return;
+      }
+
+      this.isDeleting = true;
+      try {
+        await this.$axios.$delete(`/v1/series/${this.seriesData.id}`);
+        this.$emit('confirm', this.seriesData.id);
+      } catch (error) {
+        console.error('Failed to delete series:', error);
+        const errorMessage = error.response?.data?.message || 'Failed to remove series. Please try again.';
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: errorMessage,
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
+        });
+        // Optionally, you might want to close the dialog on failure or let the user retry
+        // For now, it keeps the dialog open.
+      } finally {
+        this.isDeleting = false;
+      }
     },
     closeDialog() {
-      this.$emit('close')
+      if (!this.isDeleting) { // Prevent closing while delete is in progress
+        this.$emit('close');
+      }
     },
   }
 }
