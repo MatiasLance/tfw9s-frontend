@@ -42,11 +42,13 @@
                     />
                   </template>
                   <template v-if="column.name === 'action'">
+                  <!--
                     <i
-                      title="View Transaction"
-                      class="ri-eye-fill text-3xl text-blue-400"
-                      @click="View(row)"
+                    title="View Transaction"
+                    class="ri-eye-fill text-3xl text-blue-400"
+                    @click="View(row)"
                     />
+                  -->
                     <i
                       v-if="!row.action"
                       title="Refund Transaction"
@@ -113,13 +115,13 @@ export default {
     });
   },
   methods: {
-    View(row) {
+  /*     View(row) {
       this.$emit('view', {
     itemdata: row,
     player_firstname: row.playername?.split(' ')[0] || '',
     player_lastname: row.playername?.split(' ')[1] || '',
   });
-},
+}, */
 
     Manage(data) {
       this.$emit('transaction-data', data);
