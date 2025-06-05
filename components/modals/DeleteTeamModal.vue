@@ -52,7 +52,6 @@ export default {
   data() {
     return {
       teamData: { name: '', id: null },
-      rules: [ value => !!value || 'Required' ],
       isLoading: false
     }
   },
@@ -86,8 +85,9 @@ export default {
       this.isLoading = true;
       
       try {
-        await this.$axios.$delete(`/v1/teams/${this.teamData.id}`);
-        this.$emit('confirm');
+        await this.$axios.$delete(`v1/teams/${this.teamData.id}`);
+        
+        this.$emit('confirm', { success: true, message: 'Team successfully deleted' });
         
         this.$oruga.notification.open({
           duration: 5000,
@@ -104,6 +104,8 @@ export default {
           errorMessage = error.response.data.message;
         }
         
+        this.$emit('confirm', { success: false, message: errorMessage });
+        
         this.$oruga.notification.open({
           duration: 5000,
           message: errorMessage,
@@ -113,6 +115,7 @@ export default {
         });
       } finally {
         this.isLoading = false;
+        this.closeDialog();
       }
     },
     closeDialog() {

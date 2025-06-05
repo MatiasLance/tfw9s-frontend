@@ -496,14 +496,18 @@ export default {
   },
   watch: {
     ActiveTab: {
-      handler(newPage) {
+      handler() {
         this.retrieveSeries();
       },
       immediate: true,
     },
-    totalPages() {
-      if (this.page > this.totalPages) {
-        this.setPage(1)
+    totalPages(newTotalPages) {
+      if (this.page > this.totalPages && newTotalPages > 0) {
+        this.page = newTotalPages;
+        this.retrieveSeries();
+      } else if (this.page > newTotalPages === 0) {
+        this.page = 1;
+        this.retrieveSeries();
       }
     },
   },
@@ -534,7 +538,7 @@ export default {
     AddSeries(data) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Tournament Series Added',
+        message: 'Series Added',
         position: 'bottom',
         variant: 'success',
         queue: true
@@ -599,15 +603,20 @@ export default {
       this.selecetedData = ({})
       this.showDeleteSeriesModal = false
     },
-    DeleteSeries(data) {
+    DeleteSeries(deletedSeriesId) {
+      const index = this.Data.findIndex(series => series.id === deletedSeriesId);
+      if (index !== -1) {
+        this.Data.splice(index, 1);
+      }
       this.$oruga.notification.open({
         duration: 5000,
-        message: 'Tournament Series Removed',
+        message: 'Series Removed',
         position: 'bottom',
         variant: 'success',
         queue: true
-      })
+      });
       this.showDeleteSeriesModal = false;
+      this.selecetedData = ({});
       this.retrieveSeries();
       this.getSeries();
       this.getEvents();
@@ -618,14 +627,11 @@ export default {
     replaceUnderWithU(str) {
       return str.replace(/^Under \b/, 'U');
     },
-    // eslint-disable-next-line camelcase
     FindTeam(team_id) {
-      // eslint-disable-next-line camelcase
       const foundField = this.TeamList.find(team => team.id === team_id);
       if (foundField) {
         return foundField.name;
       } else {
-        // If no matching field is found, return "unknown"
         return 'Unknown';
       }
     },
@@ -693,14 +699,15 @@ export default {
         sort: 'a_to_z',
         page: this.page,
         type: this.ActiveTab,
-        maxSeriesPerPage: 10,
+        maxSeriesPerPage: this.perPage,
       };
 
       Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
+        if (query[key] == null || query[key] === '')
+        {
+          delete query[key];
         }
-      })
+      });
 
       const queryString = new URLSearchParams(query).toString()
 
@@ -714,10 +721,23 @@ export default {
               end: this.formattedDate(event.end),
             };
           });
-          this.totalItems = response.data.total_items;
-          this.totalPages = response.data.last_page;
+                    this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page; // This will trigger the watcher if it changes
           this.from = response.data.from;
           this.to = response.data.to;
+        })
+        .catch(error => {
+          console.error("Error retrieving series:", error);
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: error.response?.data?.message || 'Failed to load series data.',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+          this.Data = [];
+          this.totalItems = 0;
+          this.totalPages = 0;
         })
         .finally(() => {
           this.showVueTable = true;

@@ -20,51 +20,29 @@
             +
           </button>
         </div>
-        <div class="col-span-1 md:col-span-2"></div>
-        <div class="flex items-center col-span-3 md:col-start-1 md:col-span-1">
-          <select
-            v-model="ActiveTab"
-            class="
-              mt-1
-              block
-              w-full
-              appearance-none
-              rounded-md
-              border border-gray-200
-              bg-gray-100
-              py-[13px]
-              px-[15px]
-              font-normal
-              outline-inherit
-              hover:border-gray-400
-              focus:border-gray-400
-              focus:bg-white
-              focus:outline-none
-              focus:ring-0
-            "
-          >
-            <option
-              v-for="option in options"
-              :key="option.id"
-              :value="option.id"
-            >
-              {{ option.name }}
-            </option>
-          </select>
+        <div class="flex flex-col col-span-2 md:col-start-1 md:col-span-1">
+          <VSelect
+            v-model="selectedAgeGroup"
+            :items="formattedPlayerAgeGroups"
+            placeholder="Select Age Group"
+            solo
+            class="w-full"
+            :hide-details="true" 
+            @change="retrievePlayersOnSelectChange" 
+          />
         </div>
-        <div class="flex items-center col-span-3 md:col-start-3 md:col-span-1">
+        <div class="flex flex-col col-span-2 md:col-start-3 md:col-span-1">
           <input
             v-model="query"
             type="text"
             class="
-              mt-1
               block
               w-full
               appearance-none
               rounded-md
               border border-gray-200
               bg-gray-100
-              py-[13px]
+              py-[12px]
               px-[15px]
               font-normal
               outline-inherit
@@ -95,7 +73,7 @@
             :total-visible="7"
             class="text-white"
             dark
-            @change="setPage"
+            @update:modelValue="page = $event"
             />
         </div>
 <section class="col-span-3">
@@ -103,7 +81,7 @@
   <div class="inline-block min-w-full text-center">
 
       <div 
-        v-if="totalPages > 0"
+        v-if="totalItems  > 0"
         class="flex min-w-[1200px] pr-24 md:w-auto"
         data-aos="flip-up"
 >
@@ -227,7 +205,7 @@
             </div>
           </section>
           <section
-          v-if="totalPages === 0"
+          v-if="totalItems === 0"
           class="col-span-1 flex h-60 items-center
           justify-center font-semibold
           text-[#555555] md:col-span-3"
@@ -287,8 +265,7 @@ export default {
   },
   data() {
     return {
-      ActiveTab: null,
-      options: [ { name: 'All Age Group', id: null } ],
+      selectedAgeGroup: null,
       showAddPlayersModal: false,
       showEditPlayersModal: false,
       showDeletePlayersModal: false,
@@ -297,8 +274,10 @@ export default {
       query: null,
       selectedEvent: null,
       selectedYear: null,
+      selectedAgeGroup: null,
       selectedGroup: [],
       ageGroupList: [],
+      isLoading: false,
       events: [
         'Event 1',
         'Event 2',
@@ -336,35 +315,43 @@ export default {
       totalItems: 0,
     }
   },
+  // Inside the export default { ... }
+computed: { // If you don't have a computed section, create one
+  formattedPlayerAgeGroups() {
+    const formatted = (this.ageGroupList || []).map(group => ({
+      text: group.name,
+      value: group.id
+    }));
+    return [{ text: 'All Age Groups', value: null }, ...formatted];
+  },
+  // ... any other computed properties you might have
+},
   watch: {
     query() {
       this.debouncedSearch();
     },
-    ActiveTab: {
-      handler(newPage) {
-        this.retrievePlayers();
-        this.retrieveAgeGroups();
-      },
-      immediate: true,
-    },
+      page(newVal, oldVal) {
+    if (newVal !== oldVal) {
+      this.retrievePlayers();
+    }
+  },
+  selectedAgeGroup(newVal, oldVal) {
+    console.log('Age group changed from', oldVal, 'to', newVal);
+    if (newVal !== oldVal) {
+      this.page = 1;
+      this.retrievePlayers();
+    }
+  },
     totalPages() {
       if (this.page > this.totalPages) {
         this.setPage(1)
       }
     },
-    ageGroupList: {
-      handler(newList) {
-        this.options = [
-          { name: 'All Age Group', id: null },
-          ...newList.map(group => ({ name: group.name, id: group.id }))
-        ];
-      },
-      immediate: true,
-    }
   },
   mounted() {
     this.debouncedSearch = debounce(this.retrievePlayers, 800);
     this.retrievePlayers();
+    this.retrieveAgeGroups();
     this.page = 1
   },
   methods: {
@@ -394,10 +381,11 @@ export default {
         // return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
     },
         // ... (keep existing methods)
-      getAgeGroupName(agegroup_id) {
-        const group = this.ageGroupList.find(g => g.id === agegroup_id);
-        return group ? group.name : 'Unknown';
-    },
+getAgeGroupName(agegroup_id) {
+  if (agegroup_id === null) return 'All Age Groups';
+  const group = this.ageGroupList.find(g => g.id === agegroup_id);
+  return group ? group.name : 'Unknown';
+},
     openEditPlayersDialog(data) {
       this.selecetedData = data
       this.showEditPlayersModal = true
@@ -439,9 +427,13 @@ export default {
       this.getSeries();
     },
     setTab(tab) {
-      this.ActiveTab = tab
+      this.selectedAgeGroup = tab
       this.query = tab
     },
+    retrievePlayersOnSelectChange() {
+  this.page = 1;
+  this.retrievePlayers();
+},
     replaceUnderWithU(str) {
       return str.replace(/^Under \b/, 'U');
     },
@@ -514,59 +506,67 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
 
-      this.$axios
-        .$get(`v1/agegroups?${queryString}`)
+      return this.$axios
+        .$get('v1/agegroups')
         .then((response) => {
-          this.ageGroupList= response.data.ageGroups;
+          this.ageGroupList = response.data?.ageGroups || [];
         })
-    },
-    retrievePlayers() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-        type: this.ActiveTab,
-        agegroup: this.ActiveTab,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`/v1/players?${queryString}`)
-        .then((response) => {
-          this.Players = response.data.players.map(player => {
-            return {
-              ...player,
-              name: `${player.player_firstname} ${player.player_lastname}`,
-              dob: this.formatDate(player.dob),
-              agegroup: this.getAgeGroupName(player.agegroup_id),
-            };  
-          });
-          this.totalItems = response.data.total_items;
-          this.totalPages = response.data.last_page;
-          this.from = response.data.from;
-          this.to = response.data.to;
-        })
-        .catch((error) => {
-          console.error('API request failed', error);
-          this.Players = [];
-          this.totalItems = 0;
-          this.totalPages = 0;
-          this.from = 0;
-          this.to = 0;
-        })
-        .finally(() => {
-          this.showVueTable = true;
+        .catch(error => {
+          console.error('Error retrieving age groups:', error);
+          this.ageGroupList = []; 
         });
     },
-  }
-}
+        retrievePlayers() {
+          if (this.isLoading) return;
+          this.isLoading = true;
+            
+          const params = {
+            q: this.query,
+            sort: 'a_to_z',
+            page: this.page,
+            per_page: this.perPage,
+          };
+
+          if (this.selectedAgeGroup !== null) {
+            params.agegroup = this.selectedAgeGroup;
+          }
+
+          console.log('Request params (after fix attempt):', params);
+
+          this.$axios
+            .$get('/v1/players', { params })
+            .then((response) => {
+              console.log('API Response:', response); 
+              
+              const playersData = response.data?.players || response.data?.data?.players || [];
+              
+              this.Players = playersData.map(player => ({
+                ...player,
+                name: `${player.player_firstname} ${player.player_lastname}`,
+                dob: this.formatDate(player.dob),
+                agegroup: this.getAgeGroupName(player.agegroup_id),
+              }));
+
+              this.totalItems = response.data?.total_items || 0;
+              this.totalPages = response.data?.last_page || 1;
+              this.from = response.data?.from || 1;
+              this.to = response.data?.to || this.Players.length;
+            })
+            .catch((error) => {
+              console.error('API request failed', error);
+              this.Players = [];
+              this.totalItems = 0;
+              this.totalPages = 0;
+              this.from = 0;
+              this.to = 0;
+            })
+            .finally(() => {
+              this.isLoading = false;
+            });
+        }
+      
+      }
+    }
 </script>
 
 <style scoped>
@@ -574,4 +574,3 @@ export default {
   color: black
 }
 </style>
-

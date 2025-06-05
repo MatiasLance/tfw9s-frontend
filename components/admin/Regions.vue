@@ -1,101 +1,97 @@
 <template>
   <div>
-<div class="bg-[#1A1A1B]" data-aos="fade-up">
-  <section class="mx-auto max-w-screen-xl gap-4 p-4">
-<!-- Tabs with Add Button aligned right -->
-<div class="flex items-center justify-between mb-4">
-  <!-- Tabs -->
-  <div class="flex gap-2">
-    <button
-      v-for="tab in tabs"
-      :key="tab.id"
-      @click="activeTab = tab.id"
-  :class="[
-    'rounded-md px-4 py-1.5 text-center text-sm',
-    activeTab === tab.id
-      ? 'font-semibold text-white bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505]'
-      : 'font-semibold bg-[#212121] text-[#555555]'
-  ]"
->
-      {{ tab.label }}
-    </button>
-  </div>
-</div>
-
-
-    <div v-if="activeTab === 'matches'" class="grid grid-cols-1 gap-4">
-      <!-- Your existing regions content goes here -->
-      <div class="col-span-1 flex items-center">
-        <button
-          type="button"
-          class="w-full rounded-md bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505] py-1.5 text-center font-semibold text-white sm:w-36"
-          @click="openAddRegionDialog"
-        >
-          +
-        </button>
-      </div>
-      <div
-        v-if="totalPages > 0"
-        class="col-span-1 flex flex-wrap items-center justify-around gap-x-2 md:justify-between"
-        data-aos="flip-up" data-aos-once="true"
-      >
-        <span class="font-medium text-white">
-          Showing {{ from }}-{{ to }} of {{ totalItems }} items
-        </span>
-        <VPagination
-          v-model="page"
-          :length="totalPages"
-          :total-visible="7"
-          class="text-white"
-          color="success"
-          dark
-          @change="setPage"
-        />
-      </div>
-      <section v-if="totalPages > 0" class="col-span-1">
-        <div class="grid grid-cols-1 overflow-x-scroll overflow-y-hidden md:overflow-x-hidden">
-          <table class="col-span-1 min-w-[640px]">
-            <tr 
-              v-for="(region) in RegionList"
-              :key="region.id"
-              data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="0" data-aos-once="true"
+    <div class="bg-[#1A1A1B]" data-aos="fade-up">
+      <section class="mx-auto max-w-screen-xl gap-4 p-4">
+      <!-- Tabs with Add Button aligned right -->
+        <div class="flex items-center justify-between mb-4">
+          <!-- Tabs -->
+          <div class="flex gap-2">
+            <button
+              v-for="tab in tabs"
+              :key="tab.id"
+              @click="activeTab = tab.id"
+              :class="[
+                'rounded-md px-4 py-1.5 text-center text-sm',
+                activeTab === tab.id
+                  ? 'font-semibold text-white bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505]'
+                  : 'font-semibold bg-[#212121] text-[#555555]'
+              ]"
             >
-              <td class="flex-1 bg-white px-2 py-1 border-b-[2.5px] border-[#1a1a1b]">
-                {{region.name??'Unknown'}}
-              </td>
-              <td class="w-[116px] text-center">
-                <i
-                  class="ri-pencil-fill px-4 text-xl text-white"
-                  @click="openEditRegionDialog(region)"
-                />
-                <i
-                  class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                  @click="openDeleteRegionDialog(region)"
-                />
-              </td>
-            </tr>
-          </table>
+              {{ tab.label }}
+            </button>
+          </div>
+        </div>
+        <div v-if="activeTab === 'matches'" class="grid grid-cols-1 gap-4">
+          <!-- Your existing regions content goes here -->
+          <div class="col-span-1 flex items-center">
+            <button
+              type="button"
+              class="w-full rounded-md bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505] py-1.5 text-center font-semibold text-white sm:w-36"
+              @click="openAddRegionDialog"
+            >
+              +
+            </button>
+          </div>
+          <div
+            v-if="totalPages > 0"
+            class="col-span-1 flex flex-wrap items-center justify-around gap-x-2 md:justify-between"
+            data-aos="flip-up" data-aos-once="true"
+          >
+            <span class="font-medium text-white">
+              Showing {{ from }}-{{ to }} of {{ totalItems }} items
+            </span>
+            <VPagination
+              v-model="page"
+              :length="totalPages"
+              :total-visible="7"
+              class="text-white"
+              color="success"
+              dark
+              @change="setPage"
+            />
+          </div>
+          <section v-if="totalPages > 0" class="col-span-1">
+            <div class="grid grid-cols-1 overflow-x-scroll overflow-y-hidden md:overflow-x-hidden">
+              <table class="col-span-1 min-w-[640px]">
+                <tr 
+                  v-for="(region) in RegionList"
+                  :key="region.id"
+                  data-aos="flip-down" data-aos-duration="500"
+                  data-aos-offset="0" data-aos-once="true"
+                >
+                  <td class="flex-1 bg-white px-2 py-1 border-b-[2.5px] border-[#1a1a1b]">
+                    {{region.name??'N/A'}}
+                  </td>
+                  <td class="w-[116px] text-center">
+                    <i
+                      class="ri-pencil-fill px-4 text-xl text-white"
+                      @click="openEditRegionDialog(region)"
+                    />
+                    <i
+                      class="ri-delete-bin-fill px-4 text-xl text-red-400"
+                      @click="openDeleteRegionDialog(region)"
+                    />
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </section>
+          <section
+            v-if="totalPages=== 0"
+            class="col-span-1 flex h-60 items-center justify-center font-semibold text-[#555555] md:col-span-3"
+          >
+            No Regions Available
+          </section>
+        </div>
+        <div v-if="activeTab === 'teams'" class="grid grid-cols-1 gap-4">
+          <RegionTeams 
+            v-if="activeTab === 'teams'"
+            :regions="RegionList"
+            @refresh="retrieveRegions"
+          />
         </div>
       </section>
-      <section
-        v-if="totalPages=== 0"
-        class="col-span-1 flex h-60 items-center justify-center font-semibold text-[#555555] md:col-span-3"
-      >
-        No Regions Available
-      </section>
     </div>
-
-    <div v-if="activeTab === 'teams'" class="grid grid-cols-1 gap-4">
-      
-      <RegionTeams 
-        v-if="activeTab === 'teams'"
-        :regions="RegionList"
-        @refresh="retrieveRegions"
-      />
-    </div>
-  </section>
-</div>
     <AddRegionModal
     :active="showAddRegionModal"
     @close="closeAddRegionDialog"

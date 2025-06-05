@@ -12,12 +12,12 @@
                       Name:
                     </label>
                     <VTextField
-                    id="name"
-                    v-model="regionData.name"
-                    label="Enter Region Name"
-                    :rules="rules"
-                    type="text"
-                    solo
+                      id="name"
+                      v-model="regionData.name"
+                      label="Enter Region Name"
+                      :rules="rules"
+                      type="text"
+                      solo
                     />
                   </div>
                 </div>

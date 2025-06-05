@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <OModal :active="active" @close="closeDialog">
     <div
       class="w-full mx-auto rounded bg-white sm:w-[700px] sm:p-4 
@@ -174,4 +174,4 @@ computed: {
       }
     }
 }
-</script>
+</script> -->
