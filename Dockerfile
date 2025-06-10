@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1
+
 FROM node:16.14-buster
 
 LABEL maintainer="tech1@sumomedia.co"
@@ -17,4 +18,4 @@ USER node
 
 EXPOSE 3000
 
-CMD bash -c "npm install && npm run dev"
+CMD [ "sh", "-c", "npm install && npm run dev" ]
