@@ -54,7 +54,7 @@
 
     <div class="grid gap-x-3 lg:grid-cols-2">
       <div class="mb-4">
-        <label class="mb-1 block"> Phone* </label>
+        <label class="mb-1 block"> Phone*</label>
         <div class="flex w-full">
           <input
             v-model="phoneCode"
@@ -114,378 +114,10 @@
         />
       </div>
     </div>
-
-    <hr class="my-4" />
-
-    <!-- radio selection -->
-    <div class="mb-6 grid gap-3 sm:grid-cols-2">
-      <label
-        :class="`
-          shipping-option
-          flex
-          cursor-pointer
-          border border-gray-200 bg-gray-50
-          p-3
-          ${isDeliveryAvailableStatic ? '' : 'disabled'}
-        `"
-      >
-        <span>
-          <input
-            v-model="shippingType"
-            value="delivery"
-            name="shipping"
-            type="radio"
-            class="mt-1 h-4 w-4 bg-gray-200
-            text-brand-black focus:ring-slate-500"
-            :disabled="!isDeliveryAvailableStatic"
-            @change="resetShippingCalcOption"
-          />
-        </span>
-        <p class="ml-2">
-          <span class="">
-            Delivery
-          </span>
-          <small
-            class="block text-sm text-gray-400"
-            v-html="deliveryNote"
-          ></small>
-        </p>
-      </label>
-      <label
-        :class="`
-          shipping-option
-          flex
-          cursor-pointer
-          border border-gray-200
-          bg-gray-50
-          p-3
-          ${isPickupAvailableStatic ? '' : 'disabled'}
-        `"
-      >
-        <span>
-          <input
-            v-model="shippingType"
-            value="pickup"
-            name="shipping"
-            type="radio"
-            class="mt-1 h-4 w-4 bg-gray-200
-            text-brand-black focus:ring-slate-500"
-            :disabled="!isPickupAvailableStatic"
-            @change="setShippingCalcOptionDefault"
-          />
-        </span>
-        <p class="ml-2">
-          <span>Self pick-up</span>
-          <small
-            class="block text-sm text-gray-400"
-            v-html="pickupNote"
-          ></small>
-        </p>
-      </label>
-    </div>
-    <!-- radio selection .//end -->
-
-    <div class="grid gap-x-3 md:grid-cols-3">
-      <template v-if="shippingType === 'delivery'">
-        <div class="my-4 md:col-span-3">
-          <div class="grid w-full grid-cols-2 gap-2">
-              <label
-                class="
-                  shipping-option
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    p-3
-                    hover:border-brand-grey
-                    hover:bg-blue-50
-                "
-                :class="[
-                  isOwnCountryActive ? 'bg-transparent' : 'disabled bg-gray-50',
-                  shippingChoiceCalc === 'Own Country'
-                    ? 'bg-brand-green' : '',
-                  shippingChoiceCalc === 'Own State'
-                    ? 'bg-brand-green' : '',
-                  shippingChoiceCalc === 'Own City'
-                    ? 'bg-brand-green' : '',
-                  shippingChoiceCalc === 'Other State'
-                    ? 'bg-brand-green' : '',
-                  shippingChoiceCalc === 'Other City'
-                    ? 'bg-brand-green' : '',
-                ]"
-                >
-                <span>
-                    <input
-                    v-model="shippingChoiceCalc"
-                    value="Own Country"
-                    type="radio"
-                    class="
-                    mt-1 h-4 w-4 bg-gray-200
-                    text-brand-black focus:ring-slate-500"
-                    :disabled="!isOwnCountryActive"
-                    />
-                </span>
-                  <template v-if="!isOwnCountryActive">
-                    <span>
-                      To suppliers own Country (no rate set)
-                    </span>
-                  </template>
-                  <template v-else>
-                    <span>
-                      To {{ ownCountry }}
-                    </span>
-                  </template>
-                </label>
-                <label
-                class="
-                  shipping-option
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    p-3
-                    hover:border-brand-grey
-                    hover:bg-blue-50
-                "
-:class="[
-  isOtherCountryActive ? 'bg-transparent' : 'disabled bg-gray-50',
-  shippingChoiceCalc === 'Other Country'
-    ? 'bg-brand-green' : ''
-]"
-                >
-                <span>
-                    <input
-                    v-model="shippingChoiceCalc"
-                    value="Other Country"
-                    type="radio"
-                    class="
-                  mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500"
-                  :disabled="!isOtherCountryActive"
-                    />
-                </span>
-                  <template v-if="!isOtherCountryActive">
-                    <span>To other Country (no rate set)</span>
-                  </template>
-                  <template v-else>
-                    <span>To other Country</span>
-                  </template>
-                </label>
-          </div>
-          <div
-            class="grid w-full grid-cols-2 gap-2"
-          >
-                <label
-                class="
-                  shipping-option
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    p-3
-                    hover:border-brand-grey
-                    hover:bg-blue-50
-                "
-                :class="[
-                  isOwnStateActive ?
-                  'bg-transparent' : 'disabled bg-gray-50',
-                  shippingChoiceCalc === 'Own Country'
-                    ? 'border-brand-green border-2' : '',
-                  shippingChoiceCalc === 'Other Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent',
-                  shippingChoiceCalc === 'Own State'
-                    ? 'bg-brand-green' : '',
-                  shippingChoiceCalc === 'Own City'
-                    ? 'bg-brand-green' : '',
-                  shippingChoiceCalc === 'Other City'
-                    ? 'bg-brand-green' : '',
-                ]"
-                >
-                <span>
-                    <input
-                    v-model="shippingChoiceCalc"
-                    value="Own State"
-                    name="shippingChoiceState"
-                    type="radio"
-                    class="
-                  mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500
-                  disabled:cursor-not-allowed"
-                  :disabled="
-                    !isOwnStateActive ||
-                    shippingChoiceCalc === 'Other Country'
-                  "
-                    />
-                </span>
-                <span v-if="!isOwnStateActive">
-                    To suppliers own State (no rate set)
-                  </span>
-                  <span v-else>To {{ ownState }}</span>
-              </label>
-              <label
-                class="
-                  shipping-option
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    p-3
-                    hover:border-brand-grey
-                    hover:bg-blue-50
-                "
-                :class="[
-                  isOtherStateActive ?
-                  'bg-transparent' : 'disabled bg-gray-50',
-                  shippingChoiceCalc === 'Own Country'
-                    ? 'border-brand-green border-2' : '',
-                  shippingChoiceCalc === 'Other Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent',
-                  shippingChoiceCalc === 'Other State'
-                    ? 'bg-brand-green' : ''
-                ]"
-                >
-                <span>
-                    <input
-                    v-model="shippingChoiceCalc"
-                    value="Other State"
-                    name="shippingChoiceState"
-                    type="radio"
-                    class="
-                  mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500
-                  disabled:cursor-not-allowed"
-                  :disabled="
-                    !isOtherStateActive ||
-                    shippingChoiceCalc === 'Other Country'
-                  "
-                    />
-                </span>
-                <template v-if="!isOtherStateActive">
-                  <span>To other State (no rate set)</span>
-                </template>
-                <template v-else>
-                  <span>To other State</span>
-                </template>
-                </label>
-          </div>
-          <div
-            class="grid w-full grid-cols-2 gap-2"
-          >
-                <label
-                class="
-                  shipping-option
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    p-3
-                    hover:border-brand-grey
-                    hover:bg-blue-50
-                "
-                :class="[
-                  isOwnCityActive ?
-                  'bg-transparent' : 'disabled bg-gray-50',
-                  shippingChoiceCalc === 'Own Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent',
-                  shippingChoiceCalc === 'Other Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent',
-                  shippingChoiceCalc === 'Other State' ?
-                  'disabled bg-gray-50' : 'bg-transparent',
-                  shippingChoiceCalc === 'Own City'
-                    ? 'bg-brand-green' : '',
-                  shippingChoiceCalc === 'Own State'
-                    ? 'border-brand-green border-2' : '',
-                ]"
-                >
-                <span>
-                    <input
-                    v-model="shippingChoiceCalc"
-                    value="Own City"
-                    name="shippingChoiceCity"
-                    type="radio"
-                    class="
-                  mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500
-                  disabled:cursor-not-allowed"
-                  :disabled="
-                    !isOwnCityActive ||
-                    shippingChoiceCalc === 'Other Country' ||
-                    shippingChoiceCalc === 'Other State'
-                  "
-                    />
-                </span>
-                  <template v-if="!isOwnCityActive">
-                    <span>To suppliers own City (no rate set)</span>
-                  </template>
-                  <template v-else>
-                    <span>To {{ ownCity }}</span>
-                  </template>
-                </label>
-                <label
-                class="
-                    shipping-option
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    p-3
-                    hover:border-brand-grey
-                    hover:bg-blue-50
-                "
-                :class="[
-                  isOtherCityActive ?
-                  'bg-transparent' : 'disabled bg-gray-50',
-                  shippingChoiceCalc === 'Own Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent',
-                  shippingChoiceCalc === 'Other Country' ?
-                  'disabled bg-gray-50' : 'bg-transparent',
-                  shippingChoiceCalc === 'Other State' ?
-                  'disabled bg-gray-50' : 'bg-transparent',
-                  shippingChoiceCalc === 'Other City'
-                    ? 'bg-brand-green' : '',
-                  shippingChoiceCalc === 'Own State'
-                    ? 'border-brand-green border-2' : '',
-                ]"
-                >
-                <span>
-                    <input
-                    v-model="shippingChoiceCalc"
-                    value="Other City"
-                    name="shippingChoiceCity"
-                    type="radio"
-                    class="
-                  mt-1 h-4 w-4 bg-gray-200
-                  text-brand-black focus:ring-slate-500
-                  disabled:cursor-not-allowed"
-                  :disabled="
-                    !isOtherCityActive ||
-                    shippingChoiceCalc === 'Other Country' ||
-                    shippingChoiceCalc === 'Other State'
-                  "
-                    />
-                </span>
-                  <template v-if="!isOtherCityActive">
-                    <span>To other City (no rate set)</span>
-                  </template>
-                  <template v-else>
-                    <span>To other City</span>
-                  </template>
-                </label>
-          </div>
-  <!-- Adding shipping delivery choices insurance, registered, express -->
-          <ShippingChoicesValue
-            :shipping="shippingChoiceCalc"
-            @change="setShippingOptions"
-          />
-          <!-- End of adding shipping delivery choices -->
-        </div>
-      </template>
-    </div>
-
     <div class="grid gap-x-3 md:grid-cols-3">
       <div class="mb-4 md:col-span-2">
         <label class="mb-1 block">
-          Address<span v-show="shippingType === 'delivery'">*</span>
+          Address
         </label>
         <input
           v-model="address"
@@ -502,12 +134,11 @@
           "
           type="text"
           placeholder="Address"
-          :required="shippingType === 'delivery'"
         />
       </div>
       <div class="mb-4 md:col-span-1">
         <label class="mb-1 block">
-          Postcode<span v-show="shippingType === 'delivery'">*</span>
+          Postcode
         </label>
         <input
           v-model="postCode"
@@ -524,7 +155,6 @@
           "
           type="text"
           placeholder="Post Code"
-          :required="shippingType === 'delivery'"
         />
       </div>
     </div>
@@ -619,13 +249,11 @@
 <script>
 import Modal from '~/components/Modal';
 import TermsSection from '~/components/TermsSection';
-import ShippingChoicesValue from '~/components/ShippingChoicesValue.vue';
 
 export default {
   components: {
     Modal,
-    TermsSection,
-    ShippingChoicesValue
+    TermsSection
   },
   props: {
     isLoading: {
@@ -635,66 +263,16 @@ export default {
   },
   data() {
     return {
-      shippingSettingsList: [],
-      shippingSettingsList2: [],
-      shippingSettingsList3: [],
-      shippingSettingsList4: [],
-      shippingSettingsList5: [],
-      shippingSettingsList6: [],
       firstName: '',
       lastName: '',
       phoneCode: '+61',
       phoneDigits: '',
-      totalShippingCost: 0,
-      shippingChoiceCalc: null,
-      isPickupAvailableStatic: true,
-      isDeliveryAvailableStatic: true,
-      otherCountryShippingValues: {
-        registeredValue: 0,
-        expressValue: 0,
-        insuranceValue: 0
-      },
-      otherStateShippingValues: {
-        registeredValue: 0,
-        expressValue: 0,
-        insuranceValue: 0
-      },
-      otherCityShippingValues: {
-        registeredValue: 0,
-        expressValue: 0,
-        insuranceValue: 0
-      },
-      ownCountry: '',
-      ownCountryDeliveryChoice: null,
-      ownCountryShippingValues: {
-        registeredValue: 0,
-        expressValue: 0,
-        insuranceValue: 0,
-      },
-      showStateLayer: false,
-      ownState: '',
-      ownStateShippingValues: {
-        registeredValue: 0,
-        expressValue: 0,
-        insuranceValue: 0,
-      },
-      showCityLayer: false,
-      ownCity: '',
-      ownCityShippingValues: {
-        registeredValue: 0,
-        expressValue: 0,
-        insuranceValue: 0,
-      },
-      shippingOptions: [],
       email: '',
-      hasAgreedToTerms: false,
-      shippingType: 'null',
       address: '',
       postCode: '',
       remarks: '',
+      hasAgreedToTerms: false,
       showTermsModal: false,
-      deliveryNote: '',
-      pickupNote: '',
     }
   },
   computed: {
@@ -702,327 +280,20 @@ export default {
       get() {
         return `${this.phoneCode}${this.phoneDigits}`
       },
-    },
-    shippingAvailability: {
-      get() {
-        return this.$store.state.cart.shippingAvailability
-      },
-    },
-    isDeliveryAvailable: {
-      get() {
-        return (
-          this.shippingAvailability === 3 ||
-          this.shippingAvailability === 1
-        )
-      },
-    },
-    isOwnCountryActive: {
-      get() {
-        return (
-          this.$store.state.cart.own.country.active
-        )
-      }
-    },
-    isOwnStateActive: {
-      get() {
-        return (
-          this.$store.state.cart.own.state.active
-        )
-      }
-    },
-    isOwnCityActive: {
-      get() {
-        return (
-          this.$store.state.cart.own.city.active
-        )
-      }
-    },
-    isOtherCountryActive: {
-      get() {
-        return (
-          this.$store.state.cart.other.country.active
-        )
-      }
-    },
-    isOtherStateActive: {
-      get() {
-        return (
-          this.$store.state.cart.other.state.active
-        )
-      }
-    },
-    isOtherCityActive: {
-      get() {
-        return (
-          this.$store.state.cart.other.city.active
-        )
-      }
-    },
-    isPickupAvailable: {
-      get() {
-        return (
-          this.shippingAvailability === 3 ||
-          this.shippingAvailability === 2
-        )
-      },
-    },
-  },
-  mounted() {
-    this.retrieveShipping();
-    this.retrieveShippingNotes();
-    this.retrieveShippingInfo();
-    this.retrieveShippingSetting();
-    this.getShippingOptions()
-
-    if (this.shippingAvailability === 3) {
-      this.shippingType = 'delivery'
-    } else if (this.shippingAvailability === 2) {
-      this.shippingType = 'pickup'
-    } else if (this.shippingAvailability === 1) {
-      this.shippingType = 'delivery'
-    } else {
-      this.shippingType = null
     }
   },
   methods: {
-    resetShippingCalcOption() {
-      if (this.shippingType === 'delivery') {
-        this.shippingChoiceCalc = ''
-        this.shippingOptions = []
-      }
-    },
-    setShippingCalcOptionDefault() {
-      if (this.shippingType === 'pickup') {
-        this.shippingChoiceCalc = ''
-        this.shippingOptions = { selected: [ 'Registered Value' ] }
-      }
-    },
-    retrieveShippingInfo() {
-      this.firstName = this.$store.state.order.shippingInformation.firstName
-      this.lastName = this.$store.state.order.shippingInformation.lastName
-      this.phoneDigits =
-        this.$store.state.order.shippingInformation.phoneNumber.slice(3)
-      this.email = this.$store.state.order.shippingInformation.email
-      this.shippingType =
-        this.$store.state.order.shippingInformation.shippingType
-      this.shippingChoiceCalc =
-        this.$store.state.order.shippingInformation.shippingChoiceCalc
-      this.shippingOptions =
-        this.$store.state.order.shippingInformation.shippingOptions
-      this.address = this.$store.state.order.shippingInformation.address
-      this.postCode = this.$store.state.order.shippingInformation.postCode
-      this.remarks = this.$store.state.order.shippingInformation.remarks
-    },
-    setShippingOptions(options) {
-      this.shippingOptions = options
-    },
-    getShippingOptions() {
-      const shippingoptions =
-        this.$store.state.order.shippingInformation.shippingOptions
-      this.setShippingOptions(shippingoptions)
-    },
-    retrieveShipping() {
-      this.$axios
-        .$get('v1/shipping/country/')
-        .then((response) => {
-          this.shippingSettingsList = response.list.data
-          const ownCountryLength = this.shippingSettingsList.length
-          if (ownCountryLength === 0) {
-            this.$store.commit('cart/setOwnCountryActive', false)
-          } else {
-            this.$store.commit('cart/setOwnCountryActive', true)
-          }
-        })
-        .catch((err) => {
-          this.$store.commit('cart/setOwnCountryActive', false)
-          console.log(err)
-          this.$oruga.notification.open({
-            message: err.message,
-            variant: 'danger',
-            duration: 3000,
-            position: 'bottom',
-            queue: true
-          })
-        })
-      this.$axios
-        .$get('v1/shipping/state/')
-        .then((response) => {
-          this.shippingSettingsList2 = response.list.data
-          const ownStateLength = this.shippingSettingsList2.length
-          if (ownStateLength === 0) {
-            this.$store.commit('cart/setOwnStateActive', false)
-          } else {
-            this.$store.commit('cart/setOwnStateActive', true)
-          }
-        })
-        .catch((err) => {
-          this.$store.commit('cart/setOwnStateActive', false)
-          console.log(err)
-          this.$oruga.notification.open({
-            message: err.message,
-            variant: 'danger',
-            duration: 3000,
-            position: 'bottom',
-            queue: true
-          })
-        })
-      this.$axios
-        .$get('v1/shipping/city/')
-        .then((response) => {
-          this.shippingSettingsList3 = response.list.data
-          const ownCityLength = this.shippingSettingsList3.length
-          if (ownCityLength === 0) {
-            this.$store.commit('cart/setOwnCityActive', false)
-          } else {
-            this.$store.commit('cart/setOwnCityActive', true)
-          }
-        })
-        .catch((err) => {
-          this.$store.commit('cart/setOwnCityActive', false)
-          this.$oruga.notification.open({
-            message: err.message,
-            variant: 'danger',
-            duration: 3000,
-            position: 'bottom',
-            queue: true
-          })
-        })
-      this.$axios
-        .$get('v1/shipping/othercountry/')
-        .then((response) => {
-          this.shippingSettingsList4 = response.list.data
-          if (this.shippingSettingsList4.length === 0) {
-            this.$store.commit('cart/setOtherCountryActive', false)
-          } else {
-            this.$store.commit('cart/setOtherCountryActive', true)
-          }
-        })
-        .catch((err) => {
-          this.$store.commit('cart/setOtherCountryActive', false)
-          this.$oruga.notification.open({
-            message: err.message,
-            variant: 'danger',
-            duration: 3000,
-            position: 'bottom',
-            queue: true
-          })
-        })
-      this.$axios
-        .$get('v1/shipping/otherstate/')
-        .then((response) => {
-          this.shippingSettingsList5 = response.list.data
-          if (this.shippingSettingsList5.length === 0) {
-            this.$store.commit('cart/setOtherStateActive', false)
-          } else {
-            this.$store.commit('cart/setOtherStateActive', true)
-          }
-        })
-        .catch((err) => {
-          this.$store.commit('cart/setOtherStateActive', false)
-          this.$oruga.notification.open({
-            message: err.message,
-            variant: 'danger',
-            duration: 3000,
-            position: 'bottom',
-            queue: true
-          })
-        })
-      this.$axios
-        .$get('v1/shipping/othercity/')
-        .then((response) => {
-          this.shippingSettingsList6 = response.list.data
-          if (this.shippingSettingsList6.length === 0) {
-            this.$store.commit('cart/setOtherCityActive', false)
-          } else {
-            this.$store.commit('cart/setOtherCityActive', true)
-          }
-        })
-        .catch((err) => {
-          this.$store.commit('cart/setOtherCityActive', false)
-          this.$oruga.notification.open({
-            message: err.message,
-            variant: 'danger',
-            duration: 3000,
-            position: 'bottom',
-            queue: true
-          })
-        })
-    },
-    triggerFunc2() {
-      this.hideCityFunc()
-    },
-    triggerFunc1() {
-      this.hideStateFunc()
-      this.hideCityFunc()
-    },
-    showStateFunc() {
-      this.showStateLayer = true
-    },
-    hideStateFunc() {
-      this.showStateLayer = false
-    },
-    showCityFunc() {
-      this.showCityLayer = true
-    },
-    hideCityFunc() {
-      this.showCityLayer = false
-    },
     submit() {
-      if (this.additionalValidation()) {
-        this.$emit('submit', {
-          firstName: this.firstName,
-          lastName: this.lastName,
-          phoneNumber: this.phoneNumber,
-          email: this.email,
-          shippingType: this.shippingType,
-          shippingChoiceCalc: this.shippingChoiceCalc,
-          shippingOptions: this.shippingOptions,
-          address: this.address,
-          postCode: this.postCode,
-          remarks: this.remarks,
-        })
-      } else {
-        this.$oruga.notification.open({
-          message: 'You need to pick a shipping type to continue',
-          variant: 'error',
-          duration: 5000,
-          position: 'bottom',
-          queue: true
-        })
-      }
-
-      return false
-    },
-    additionalValidation() {
-      return this.shippingType && this.shippingType !== null
-    },
-    retrieveShippingSetting() {
-      this.$axios
-        .$get('/v1/shipping/country/latest')
-        .then((response) => {
-          this.ownCountry = response.data.data.country
-        })
-      this.$axios
-        .$get('/v1/shipping/state/latest')
-        .then((response) => {
-          this.ownState = response.data.data.state
-        })
-      this.$axios
-        .$get('/v1/shipping/city/latest')
-        .then((response) => {
-          this.ownCity = response.data.data.city
-        })
-    },
-    retrieveShippingNotes() {
-      this.$axios
-        .$get('/v1/orders/shipping-notes/')
-        .then((response) => {
-          this.deliveryNote = response.data.options.delivery_note
-          const regex = /(<([^>]+)>)/ig;
-          const pickupNoteRaw = response.data.options.pickup_note
-          this.pickupNote = pickupNoteRaw.replace(regex, '')
-        })
-    },
+      this.$emit('submit', {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        phoneNumber: this.phoneNumber,
+        email: this.email,
+        address: this.address,
+        postCode: this.postCode,
+        remarks: this.remarks,
+      })
+    }
   }
 }
 </script>

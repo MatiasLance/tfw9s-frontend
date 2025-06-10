@@ -6,9 +6,6 @@ export const state = () => ({
     lastName: '',
     phoneNumber: '',
     email: '',
-    shippingType: '',
-    shippingChoiceCalc: '',
-    shippingOptions: '',
     address: '',
     postCode: '',
     remarks: '',
@@ -30,11 +27,6 @@ export const mutations = {
     state.shippingInformation.lastName = shippingInformation.lastName
     state.shippingInformation.phoneNumber = shippingInformation.phoneNumber
     state.shippingInformation.email = shippingInformation.email
-    state.shippingInformation.shippingType = shippingInformation.shippingType
-    state.shippingInformation.shippingChoiceCalc =
-      shippingInformation.shippingChoiceCalc
-    state.shippingInformation.shippingOptions =
-      shippingInformation.shippingOptions
     state.shippingInformation.address = shippingInformation.address
     state.shippingInformation.postCode = shippingInformation.postCode
     state.shippingInformation.remarks = shippingInformation.remarks
