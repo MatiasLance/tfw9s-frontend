@@ -34,7 +34,7 @@
                   class="flex flex-row text-3xl font-bold
                   text-white lg:text-6xl"
               >
-                Master Settings
+                Tax Setting
               </h1>
           </div>
       </BaseHeader>
@@ -50,7 +50,6 @@
                   lg:p-6
                   "
               >
-<!-- todo: change this back to proceed when backend endpoint is ready -->
             <form @submit.prevent="proceed">
               <div class="mb-4">
                 <div class="flex flex-wrap items-start justify-start gap-4">
@@ -190,7 +189,7 @@
 import 'remixicon/fonts/remixicon.css'
 
 export default {
-  name: 'master-setting',
+  name: 'tax-setting',
   data() {
     return {
       addTaxOnCartPrice: 0,
@@ -240,10 +239,6 @@ export default {
     setTimeout(() => {
       this.retrieveControlValues();
     }, 1000);
-    /*
-     * TODO: uncomment this.retrieveControlValues() if backend is ready
-     * this.retrieveToggleControl()
-     */
   },
   methods: {
     handleDecimal(event) {
@@ -293,7 +288,6 @@ export default {
       form.append('toggleControl1', this.toggleControl1)
       form.append('toggleControl2', this.toggleControl2)
 
-      // todo: insert final endpoint here when backend is ready.
       const endpoint = 'v1/toogletax/1'
       this.$axios
         .$post(endpoint, form)
@@ -318,7 +312,6 @@ export default {
     },
     retrieveToggleControl() {
       const id = 1;
-      // todo: check endpoint
       const endpoint = `v1/toogletax/${id}`
       this.$axios
         .$get(endpoint)
@@ -338,30 +331,11 @@ export default {
           })
         })
     },
-    proceedDemo() {
-      this.$oruga.notification.open({
-        message: 'Work in progress',
-        duration: 5000,
-        variant: 'info',
-        queue: true,
-        position: 'bottom'
-      })
-      if (!this.toggleControl1 && !this.toggleControl2) {
-        this.$store.commit('cart/setTax', 0)
-      } else {
-        this.$store.commit('cart/setTax', this.addTaxOnCartPrice)
-      }
-      this.$store.commit('master/setAddTaxValue', this.addTaxOnCartPrice);
-      this.$store.commit('master/setIncludeTaxValue', this.includeTaxOnCartPrice);
-      this.saveControl1()
-      this.saveControl2()
-    },
     proceed() {
       const form = new FormData();
       form.append('_method', 'PATCH')
       form.append('addTaxValue', this.addTaxOnCartPrice)
       form.append('includeTaxValue', this.includeTaxOnCartPrice)
-      // todo: check endpoint in backend
       const id = 1
       const endpoint = `v1/tax/${id}`
       this.$axios
