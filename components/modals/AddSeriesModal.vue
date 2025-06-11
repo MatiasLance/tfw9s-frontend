@@ -261,7 +261,7 @@ export default {
 
           this.SeriesData.start = sDate;
           this.SeriesData.end = eDate;
-          this.dateRange = [sDate, eDate];
+          this.dateRange = [ sDate, eDate ];
         } catch (error) {
           console.error('Date handling error:', error);
           this.SeriesData.start = null;
@@ -388,7 +388,7 @@ export default {
               this.$router.push('/unauthorized');
               return;
             }
-            errorMessage = error.response.data?.message || errorMessage;
+            errorMessage = error.response.data.message || errorMessage;
           }
           this.$oruga.notification.open({
             message: errorMessage,

@@ -1,8 +1,8 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+  <div class="min-h-screen w-screen bg-[#1A1A1B]">
     <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    class="from-brand-green to-brand-black mx-auto
+    max-w-screen-xl gap-4 bg-gradient-to-r lg:px-8"
     >
       <div
         class="
@@ -100,15 +100,23 @@
           </span>
           <section
           v-if="isLoading"
-          class="text-center"
+          class="pt-12 text-center"
           >
             <VProgressCircular
-              :size="200"
+              :size="150"
               :width="15"
               color="green"
               indeterminate
             >
             </VProgressCircular>
+          </section>
+          <section
+          v-else-if="allTeamStats.length === 0"
+          class="col-span-1 flex h-60 items-center
+          justify-center font-semibold
+          text-[#555555] md:col-span-3"
+          >
+          No Data Recorded
           </section>
           <section
           v-else
@@ -120,14 +128,6 @@
             :data="allTeamStats"
             class="border"
           />
-          </section>
-          <section
-          v-if="allTeamStats.length === 0"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
-          >
-          No Data Recorded
           </section>
         </div>
       </div>
@@ -336,8 +336,8 @@ export default {
            * this.selectedEvent = null
            * this.selectedAgeGroup = null
            */
-          this.selectedAgeGroup = this.formattedAgeGroup[0]?.value ?? null;
-          this.selectedSeries = this.formattedSeries[0]?.value ?? null;
+          this.selectedAgeGroup = this.formattedAgeGroup[0].value || null;
+          this.selectedSeries = this.formattedSeries[0].value || null;
           this.selectedRound = null;
         }
       },
@@ -464,7 +464,7 @@ export default {
           const fteams = response.data.teamPositions.map((team, index) => ({
             ...team,
             team: team.team.name,
-            round: team.event.round??null,
+            round: team.event.round || null,
             pos: index + 1,
           }));
 

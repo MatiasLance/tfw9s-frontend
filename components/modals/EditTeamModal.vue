@@ -2,7 +2,7 @@
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
-                <h3 class="mb-3 font-bold text-brand-black">
+                <h3 class="text-brand-black mb-3 font-bold">
                     Edit Team
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
@@ -194,7 +194,7 @@
                         v-if="showGenerateCreatedImageBtn"
                         dark
                         large
-                        class="bg-gradient-to-r from-brand-black to-brand-black"
+                        class="from-brand-black to-brand-black bg-gradient-to-r"
                         @click="generateImage"
                         >
                           GENERATE
@@ -210,12 +210,12 @@
                         <button
                             type="button"
                             class="
-                            absolute
-                            left-0 my-2
-                            h-6
-                            w-6 text-brand-lgrey
+                            text-brand-lgrey
+                            hover:bg-brand-black absolute
+                            left-0
+                            my-2 h-6
+                            w-6
                             shadow-sm
-                            hover:bg-brand-black
                             hover:text-white
                             "
                             @click="removeImage(photoIndex)"
@@ -263,20 +263,15 @@ export default {
       type: Boolean,
       required: true
     },
-    field: {
-    type: Array,
-    required: false,
-    default: () => []
-  },
     team: {
       type: Object,
       default: () => ({}),
     },
-  field: {
-    type: Array,
-    required: false,
-    default: () => []
-  },
+    field: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
     series: {
       type: Array,
       required: true
@@ -358,7 +353,7 @@ export default {
         if (newActive) {
           this.TeamData = {
             ...this.team,
-            region_id: this.team.region?.id || null // Initialize region_id
+            region_id: this.team.region_id || null // Initialize region_id
           };
           this.imgUrl = this.TeamData.media.map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`);

@@ -19,8 +19,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -40,8 +40,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -64,8 +64,8 @@
               appearance-none
               border border-gray-200
               bg-gray-100
-              py-2
               px-3
+              py-2
               hover:border-gray-400
               focus:border-gray-400 focus:outline-none
             "
@@ -81,8 +81,8 @@
               appearance-none
               border border-gray-200
               bg-gray-100
-              py-2
               px-3
+              py-2
               hover:border-gray-400
               focus:border-gray-400 focus:outline-none
             "
@@ -103,8 +103,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -128,8 +128,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -149,8 +149,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -173,8 +173,8 @@
               appearance-none
               border border-gray-200
               bg-gray-100
-              py-2
               px-3
+              py-2
               hover:border-gray-400
               focus:border-gray-400 focus:outline-none
             "
@@ -190,8 +190,8 @@
               appearance-none
               border border-gray-200
               bg-gray-100
-              py-2
               px-3
+              py-2
               hover:border-gray-400
               focus:border-gray-400 focus:outline-none
             "
@@ -211,7 +211,7 @@
               class="
               w-full appearance-none border
               border-gray-200 bg-gray-100
-              py-2 px-3 hover:border-gray-400
+              px-3 py-2 hover:border-gray-400
               focus:border-gray-400 focus:outline-none"
               required
             >
@@ -228,9 +228,9 @@
             <div
               v-if="!ageGroup"
               class="
-              absolute inset-y-0 left-0
-              flex items-center pl-3
-              pointer-events-none text-gray-500"
+              pointer-events-none absolute inset-y-0
+              left-0 flex items-center
+              pl-3 text-gray-500"
             >
               Age Group
             </div>
@@ -245,14 +245,14 @@
           v-model="hasAgreedToTerms"
           type="checkbox"
           class="
+            text-brand-black
             mr-2
             h-4
             w-4
             cursor-pointer
-            rounded-full
-            border-[3px] border-gray-300
+            rounded-full border-[3px]
+            border-gray-300
             bg-gray-400
-            text-brand-black
             hover:border-gray-700
             focus:border-transparent
             focus:bg-gray-200
@@ -276,7 +276,7 @@
 
       <button
         type="submit"
-        class="w-24 cursor-pointer bg-brand-black py-2 text-white"
+        class="bg-brand-black w-24 cursor-pointer py-2 text-white"
         :class="{
           'bg-brand-black': !isLoading && !isAgeLimitReached,
           'bg-gray-400': isLoading || isAgeLimitReached

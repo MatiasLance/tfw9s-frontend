@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div>
   <div class="bg-[#1A1A1B]" data-aos="fade-up">
@@ -7,8 +8,8 @@
         <div
           class="
             col-span-1 flex flex-col
-            md:flex-row items-center
-            md:col-span-3 gap-2"
+            items-center gap-2
+            md:col-span-3 md:flex-row"
           >
           <button
             type="button"
@@ -150,24 +151,26 @@
         />
       -->
 
-        <div v-if="!ActiveTab" class="col-span-1">
+        <!--
+          <div v-if="!ActiveTab" class="col-span-1">
           <VBtnToggle
           v-model="ActiveTab"
           mandatory
           shaped
           dark
-        >
+          >
           <VBtn size="large" :value="'weekly'">
-            Weekly Competition
+          Weekly Competition
           </VBtn>
           <VBtn size="large" :value="'tournament'">
-            Tournament
+          Tournament
           </VBtn>
           <VBtn size="large" :value="'coast'">
-            Central Coast
+          Central Coast
           </VBtn>
-        </VBtnToggle>
-        </div>
+          </VBtnToggle>
+          </div> 
+        -->
 
         <div
         v-if="totalPages > 0"
@@ -191,21 +194,24 @@
             />
         </div>
         <section
-        class="col-span-1 md:col-span-3 overflow-x-scroll
-        overflow-y-hidden md:overflow-x-hidden"
+        class="col-span-1 overflow-y-hidden overflow-x-scroll
+        md:col-span-3 md:overflow-x-hidden"
         >
-          <div class="grid min-w-[640px] grid-cols-1 gap-2">
+          <div
+          v-if="seriesList && seriesList.length > 0"
+          class="grid min-w-[640px] grid-cols-1 gap-2"
+          >
             <div
-            v-for="(data) in Data"
+            v-for="data in seriesList"
             :key="data.id"
-            class="col-span-1 p-4 text-white bg-[#212121]"
+            class="col-span-1 bg-[#212121] p-4 text-white"
             data-aos="fade-up" data-aos-offset="0"
             >
-              <Form class="w-full grid grid-cols-3 gap-2 p-2">
+              <Form class="grid w-full grid-cols-3 gap-2 p-2">
                 <div class="col-span-2 font-semibold">
                   {{ data.name}}
                 </div>
-                <div class="col-span-1 font-medium text-right">
+                <div class="col-span-1 text-right font-medium">
                   {{ DateRange(data.start, data.end) }}
                 </div>
                 <span class="col-span-3 line-clamp-4"
@@ -220,15 +226,6 @@
                   : `Location: ${data.address}`"
                 >
                 </span>
-                <span
-                  v-if="ActiveTab === 'weekly'"
-                  class="col-span-3 line-clamp-4"
-                  v-html="data.age_group?.name
-                    ? data.age_group.name.length > 20
-                      ? `Age Group: ${data.age_group.name.substring(0, 20)}...`
-                      : `Age Group: ${data.age_group.name}`
-                    : ''"
-                />
                 <div class="col-span-3 flex justify-end gap-4">
                   <div v-if="!data.is_paused">
                     <BaseButton
@@ -236,8 +233,8 @@
                         max-w-full rounded-lg
                         border border-gray-200
                         bg-[#737373]
-                        py-2
                         px-4
+                        py-2
                         text-white
                       "
                       @click="pauseSeries(data.id)"
@@ -251,8 +248,8 @@
                         max-w-full rounded-lg
                         border border-gray-200
                         bg-[#737373]
-                        py-2
                         px-4
+                        py-2
                         text-white
                       "
                       @click="resumeSeries(data.id)"
@@ -261,13 +258,26 @@
                     </BaseButton>
                   </div>
                   <BaseButton
+                    v-show="ActiveTab === 'weekly'"
+                    class="
+                    max-w-full rounded-lg
+                    border border-gray-200
+                    bg-[#737373]
+                    px-4
+                    py-2
+                    "
+                    @click="openWeeklyTeamsDialog(data)"
+                  >
+                    Manage Teams
+                  </BaseButton>
+                  <BaseButton
                     v-show="ActiveTab === 'tournament' || ActiveTab === 'coast'"
                   class="
                     max-w-full rounded-lg
                     border border-gray-200
                     bg-[#737373]
-                    py-2
                     px-4
+                    py-2
                     "
                     @click="openTeamLimitDialog(data)"
                   >
@@ -278,8 +288,8 @@
                     max-w-full rounded-lg
                     border border-gray-200
                     bg-[#4cbe5c]
-                    py-2
                     px-4
+                    py-2
                     text-white
                     "
                     @click="openEditSeriesDialog(data)"
@@ -291,8 +301,8 @@
                     max-w-full rounded-lg
                     border border-gray-200
                     bg-[#fb0d2b]
-                    py-2
                     px-4
+                    py-2
                     text-white
                     "
                     @click="openDeleteSeriesDialog(data)"
@@ -329,6 +339,12 @@
   @close="closeTeamLimitDialog"
   @confirm="EditTeamLimit"
   />
+  <ManageWeeklySeriesTeamsModal
+  :active="showWeeklyTeamsModal"
+  :selected="selected"
+  :agegroup="AgeGroupList"
+  @close="closeWeeklyTeamsDialog"
+  />
   <EditSeriesModal
   :active="showEditSeriesModal"
   :agegroup="AgeGroupList"
@@ -359,11 +375,13 @@ import AddSeriesModal from '~/components/modals/AddSeriesModal.vue';
 import EditSeriesModal from '~/components/modals/EditSeriesModal.vue';
 import DeleteSeriesModal from '~/components/modals/DeleteSeriesModal.vue';
 import ManageTeamLimitModal from '~/components/modals/ManageTeamLimitModal.vue';
+import ManageWeeklySeriesTeamsModal from '~/components/modals/ManageWeeklySeriesTeamsModal.vue';
 import EditThumbnailModal from '~/components/modals/EditThumbnailModal.vue';
 export default {
   components: {
     AddSeriesModal,
     ManageTeamLimitModal,
+    ManageWeeklySeriesTeamsModal,
     EditSeriesModal,
     DeleteSeriesModal,
     EditThumbnailModal
@@ -395,11 +413,13 @@ export default {
   },
   data() {
     return {
-      showAddSeriesModal: false,
-      Data: [],
       page: 1,
       itemsPerPage: 5,
       totalPages: 0,
+      from: 0,
+      to: 0,
+      perPage: 10,
+      totalItems: 0,
       ActiveTab: 'weekly',
       SeriesTabs: [
         { text: 'Weekly Competitions', value: 'weekly' },
@@ -410,9 +430,10 @@ export default {
       showEditSeriesModal: false,
       showEditThumbnailModal: false,
       showTeamLimitModal: false,
+      showWeeklyTeamsModal: false,
       showDeleteSeriesModal: false,
       selecetedData: ({}),
-      Data: [],
+      seriesList: [],
       query: null,
       selectedEvent: null,
       selectedYear: null,
@@ -446,19 +467,13 @@ export default {
       ],
       showVueTable: false,
       matches: [],
-      data: [],
-      from: 0,
-      to: 0,
-      page: 1,
-      perPage: 10,
-      totalPages: 0,
-      totalItems: 0,
+      selected: [],
     }
   },
   computed: {
     formattedEvents() {
       return this.EventList.map(event => ({
-        text: `${event.name}`,
+        text: event.name,
         value: event.id,
         date: new Date(event.event_date),
       }));
@@ -522,6 +537,10 @@ export default {
       this.seriesid = data.id
       this.showTeamLimitModal = true
     },
+    openWeeklyTeamsDialog (data) {
+      this.selected = { ...data }
+      this.showWeeklyTeamsModal = true
+    },
     closeEditThumbnailDialog() {
       this.showEditThumbnailModal = false
     },
@@ -531,18 +550,12 @@ export default {
     closeAddSeriesDialog() {
       this.showAddSeriesModal = false
     },
-    AddSeries(seriesData) {
-      this.Data.unshift(seriesData);
-      this.closeAddSeriesDialog();
+    closeWeeklyTeamsDialog () {
+      this.selected = []
+      this.showWeeklyTeamsModal = false
     },
     AddSeries(data) {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Series Added',
-        position: 'bottom',
-        variant: 'success',
-        queue: true
-      })
+      this.seriesList.unshift(data);
       this.showAddSeriesModal = false;
       this.retrieveSeries();
       this.getSeries();
@@ -604,9 +617,9 @@ export default {
       this.showDeleteSeriesModal = false
     },
     DeleteSeries(deletedSeriesId) {
-      const index = this.Data.findIndex(series => series.id === deletedSeriesId);
+      const index = this.seriesList.findIndex(series => series.id === deletedSeriesId);
       if (index !== -1) {
-        this.Data.splice(index, 1);
+        this.seriesList.splice(index, 1);
       }
       this.$oruga.notification.open({
         duration: 5000,
@@ -627,8 +640,8 @@ export default {
     replaceUnderWithU(str) {
       return str.replace(/^Under \b/, 'U');
     },
-    FindTeam(team_id) {
-      const foundField = this.TeamList.find(team => team.id === team_id);
+    FindTeam(teamId) {
+      const foundField = this.TeamList.find(team => team.id === teamId);
       if (foundField) {
         return foundField.name;
       } else {
@@ -667,13 +680,15 @@ export default {
       const endsuffix = suffixes[suffix2 >= 11 &&
       suffix2 <= 13 ? 0 : enddate % 10];
 
-          // eslint-disable-next-line max-len, vue/max-len, no-return-assign
+      // eslint-disable-next-line max-len, vue/max-len, no-return-assign
       if (startmonth === endmonth && startyear === endyear) {
         return `${startmonth} ${startdate}${startsuffix} - ${enddate}${endsuffix}, ${startyear}`;
       } else if (startyear === endyear) {
-        return `${startmonth} ${startdate}${startsuffix} - ${endmonth} ${enddate}${endsuffix}, ${startyear}`;
+        return `${startmonth} ${startdate}${startsuffix} - ${endmonth}
+         ${enddate}${endsuffix}, ${startyear}`;
       } else {
-        return `${startmonth} ${startdate}${startsuffix}, ${startyear} - ${endmonth} ${enddate}${endsuffix}, ${endyear}`;
+        return `${startmonth} ${startdate}${startsuffix}, ${startyear}
+         - ${endmonth} ${enddate}${endsuffix}, ${endyear}`;
       }
     },
     calendarDate(date) {
@@ -703,8 +718,7 @@ export default {
       };
 
       Object.keys(query).forEach((key) => {
-        if (query[key] == null || query[key] === '')
-        {
+        if (query[key] == null || query[key] === '') {
           delete query[key];
         }
       });
@@ -714,14 +728,14 @@ export default {
       this.$axios
         .$get(`v1/series?${queryString}`)
         .then((response) => {
-          this.Data = response.data.series.map(event => {
+          this.seriesList = response.data.series.map(event => {
             return {
               ...event,
               start: this.formattedDate(event.start),
               end: this.formattedDate(event.end),
             };
           });
-                    this.totalItems = response.data.total_items;
+          this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page; // This will trigger the watcher if it changes
           this.from = response.data.from;
           this.to = response.data.to;
@@ -730,12 +744,12 @@ export default {
           console.error("Error retrieving series:", error);
           this.$oruga.notification.open({
             duration: 5000,
-            message: error.response?.data?.message || 'Failed to load series data.',
+            message: error.response.data.message || 'Failed to load series data.',
             position: 'bottom',
             variant: 'danger',
             queue: true,
           });
-          this.Data = [];
+          this.seriesList = [];
           this.totalItems = 0;
           this.totalPages = 0;
         })

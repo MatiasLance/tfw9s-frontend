@@ -1,3 +1,5 @@
+<!-- eslint-disable max-len -->
+<!-- eslint-disable vue/max-len -->
 <template>
   <div>
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
@@ -7,13 +9,14 @@
           <!-- Tabs -->
           <div class="flex gap-2">
             <button
+              type="button"
               v-for="tab in tabs"
               :key="tab.id"
               @click="activeTab = tab.id"
               :class="[
                 'rounded-md px-4 py-1.5 text-center text-sm',
                 activeTab === tab.id
-                  ? 'font-semibold text-white bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505]'
+                  ? 'font-semibold text-white bg-gradient-to-brfrom-[#5EE738] via-[#3e872a] to-[#050505]'
                   : 'font-semibold bg-[#212121] text-[#555555]'
               ]"
             >
@@ -60,7 +63,7 @@
                   data-aos-offset="0" data-aos-once="true"
                 >
                   <td class="flex-1 bg-white px-2 py-1 border-b-[2.5px] border-[#1a1a1b]">
-                    {{region.name??'N/A'}}
+                    {{region.name||'N/A'}}
                   </td>
                   <td class="w-[116px] text-center">
                     <i
@@ -153,7 +156,7 @@ export default {
           return 'Name is required.'
         },
         value => {
-          if (value?.length <= 10) {
+          if (value.length <= 10) {
             return true
           }
 

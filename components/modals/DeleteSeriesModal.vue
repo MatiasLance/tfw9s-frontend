@@ -23,7 +23,7 @@
                   class="custom-btn w-full md:w-[185px] lg:w-[185px]"
                   type="submit"
                   :loading="isDeleting"
-                  :disabled="isDeleteing"
+                  :disabled="isDeleting"
                   >
                     OK
                   </VBtn>
@@ -97,7 +97,7 @@ export default {
         this.$emit('confirm', this.seriesData.id);
       } catch (error) {
         console.error('Failed to delete series:', error);
-        const errorMessage = error.response?.data?.message || 'Failed to remove series. Please try again.';
+        const errorMessage = error.response.data.message || 'Failed to remove series. Please try again.';
         this.$oruga.notification.open({
           duration: 5000,
           message: errorMessage,

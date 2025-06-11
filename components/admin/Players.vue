@@ -20,7 +20,7 @@
             +
           </button>
         </div>
-        <div class="flex flex-col col-span-2 md:col-start-1 md:col-span-1">
+        <div class="col-span-2 flex flex-col md:col-span-1 md:col-start-1">
           <VSelect
             v-model="selectedAgeGroup"
             :items="formattedPlayerAgeGroups"
@@ -31,7 +31,7 @@
             @change="retrievePlayersOnSelectChange" 
           />
         </div>
-        <div class="flex flex-col col-span-2 md:col-start-3 md:col-span-1">
+        <div class="col-span-2 flex flex-col md:col-span-1 md:col-start-3">
           <input
             v-model="query"
             type="text"
@@ -42,8 +42,8 @@
               rounded-md
               border border-gray-200
               bg-gray-100
-              py-[12px]
               px-[15px]
+              py-[12px]
               font-normal
               outline-inherit
               hover:border-gray-400
@@ -86,43 +86,43 @@
         data-aos="flip-up"
 >
   <span
-    class="flex-1 text-center px-4 py-2 align-middle
+    class="flex-1 px-4 py-2 text-center align-middle
     text-[20px] font-semibold text-[#555555]   "
   >
     Contact Name
   </span>
   <span
-    class="flex-1 text-center px-4 py-2 align-middle
+    class="flex-1 px-4 py-2 text-center align-middle
     text-[20px] font-semibold text-[#555555]   "
   >
     Phone Number
   </span>
   <span
-    class="flex-1 text-center px-4 py-2 align-middle
+    class="flex-1 px-4 py-2 text-center align-middle
     text-[20px] font-semibold text-[#555555]  "
   >
     Email
   </span>
   <span
-    class="flex-1 text-center px-4 py-2 align-middle
+    class="flex-1 px-4 py-2 text-center align-middle
     text-[20px] font-semibold text-[#555555]  "
   >
     Player Name
   </span>
   <span
-    class="flex-1 text-center px-4 py-2 align-middle
+    class="flex-1 px-4 py-2 text-center align-middle
     text-[20px] font-semibold text-[#555555] "
   >
     Team
   </span>
   <span
-    class="flex-1 text-center px-4 py-2 align-middle
+    class="flex-1 px-4 py-2 text-center align-middle
     text-[20px] font-semibold text-[#555555] "
   >
     Date of Birth
   </span>
   <span 
-    class="flex-1 text-center px-4 py-2 align-middle
+    class="flex-1 px-4 py-2 text-center align-middle
     text-[20px] font-semibold text-[#555555] "
   >
     Age Group
@@ -265,7 +265,6 @@ export default {
   },
   data() {
     return {
-      selectedAgeGroup: null,
       showAddPlayersModal: false,
       showEditPlayersModal: false,
       showDeletePlayersModal: false,
@@ -316,32 +315,32 @@ export default {
     }
   },
   // Inside the export default { ... }
-computed: { // If you don't have a computed section, create one
-  formattedPlayerAgeGroups() {
-    const formatted = (this.ageGroupList || []).map(group => ({
-      text: group.name,
-      value: group.id
-    }));
-    return [{ text: 'All Age Groups', value: null }, ...formatted];
-  },
+  computed: { // If you don't have a computed section, create one
+    formattedPlayerAgeGroups() {
+      const formatted = (this.ageGroupList || []).map(group => ({
+        text: group.name,
+        value: group.id
+      }));
+      return [ { text: 'All Age Groups', value: null }, ...formatted ];
+    },
   // ... any other computed properties you might have
-},
+  },
   watch: {
     query() {
       this.debouncedSearch();
     },
-      page(newVal, oldVal) {
-    if (newVal !== oldVal) {
-      this.retrievePlayers();
-    }
-  },
-  selectedAgeGroup(newVal, oldVal) {
-    console.log('Age group changed from', oldVal, 'to', newVal);
-    if (newVal !== oldVal) {
-      this.page = 1;
-      this.retrievePlayers();
-    }
-  },
+    page(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.retrievePlayers();
+      }
+    },
+    selectedAgeGroup(newVal, oldVal) {
+      console.log('Age group changed from', oldVal, 'to', newVal);
+      if (newVal !== oldVal) {
+        this.page = 1;
+        this.retrievePlayers();
+      }
+    },
     totalPages() {
       if (this.page > this.totalPages) {
         this.setPage(1)
@@ -375,17 +374,20 @@ computed: { // If you don't have a computed section, create one
     },
     formatDate(date) {
       if (!date) return "N/A"; // Handle null/undefined
-        const d = new Date(date);
-        return d.toLocaleDateString('en-GB'); // Formats as DD/MM/YYYY
-        // OR for custom format:
-        // return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+      const d = new Date(date);
+      return d.toLocaleDateString('en-GB'); // Formats as DD/MM/YYYY
+      // OR for custom format:
+      // return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
     },
-        // ... (keep existing methods)
-getAgeGroupName(agegroup_id) {
-  if (agegroup_id === null) return 'All Age Groups';
-  const group = this.ageGroupList.find(g => g.id === agegroup_id);
-  return group ? group.name : 'Unknown';
-},
+    // ... (keep existing methods)
+    // eslint-disable-next-line camelcase
+    getAgeGroupName(agegroup_id) {
+      // eslint-disable-next-line camelcase
+      if (agegroup_id === null) return 'All Age Groups';
+      // eslint-disable-next-line camelcase
+      const group = this.ageGroupList.find(g => g.id === agegroup_id);
+      return group ? group.name : 'Unknown';
+    },
     openEditPlayersDialog(data) {
       this.selecetedData = data
       this.showEditPlayersModal = true
@@ -431,9 +433,9 @@ getAgeGroupName(agegroup_id) {
       this.query = tab
     },
     retrievePlayersOnSelectChange() {
-  this.page = 1;
-  this.retrievePlayers();
-},
+      this.page = 1;
+      this.retrievePlayers();
+    },
     replaceUnderWithU(str) {
       return str.replace(/^Under \b/, 'U');
     },
@@ -493,80 +495,67 @@ getAgeGroupName(agegroup_id) {
       this.retrievePlayers();
     },
     retrieveAgeGroups() {
-      const query = {
-        q: this.query,
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
       return this.$axios
         .$get('v1/agegroups')
         .then((response) => {
-          this.ageGroupList = response.data?.ageGroups || [];
+          this.ageGroupList = response.data.ageGroups || [];
         })
         .catch(error => {
           console.error('Error retrieving age groups:', error);
           this.ageGroupList = []; 
         });
     },
-        retrievePlayers() {
-          if (this.isLoading) return;
-          this.isLoading = true;
+    retrievePlayers() {
+      if (this.isLoading) return;
+      this.isLoading = true;
             
-          const params = {
-            q: this.query,
-            sort: 'a_to_z',
-            page: this.page,
-            per_page: this.perPage,
-          };
+      const params = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        // eslint-disable-next-line camelcase
+        per_page: this.perPage,
+      };
 
-          if (this.selectedAgeGroup !== null) {
-            params.agegroup = this.selectedAgeGroup;
-          }
-
-          console.log('Request params (after fix attempt):', params);
-
-          this.$axios
-            .$get('/v1/players', { params })
-            .then((response) => {
-              console.log('API Response:', response); 
-              
-              const playersData = response.data?.players || response.data?.data?.players || [];
-              
-              this.Players = playersData.map(player => ({
-                ...player,
-                name: `${player.player_firstname} ${player.player_lastname}`,
-                dob: this.formatDate(player.dob),
-                agegroup: this.getAgeGroupName(player.agegroup_id),
-              }));
-
-              this.totalItems = response.data?.total_items || 0;
-              this.totalPages = response.data?.last_page || 1;
-              this.from = response.data?.from || 1;
-              this.to = response.data?.to || this.Players.length;
-            })
-            .catch((error) => {
-              console.error('API request failed', error);
-              this.Players = [];
-              this.totalItems = 0;
-              this.totalPages = 0;
-              this.from = 0;
-              this.to = 0;
-            })
-            .finally(() => {
-              this.isLoading = false;
-            });
-        }
-      
+      if (this.selectedAgeGroup !== null) {
+        params.agegroup = this.selectedAgeGroup;
       }
+
+      console.log('Request params (after fix attempt):', params);
+
+      this.$axios
+        .$get('/v1/players', { params })
+        .then((response) => {
+              
+          const playersData = response.data.players || response.data.data.players || [];
+              
+          this.Players = playersData.map(player => ({
+            ...player,
+            name: `${player.player_firstname} ${player.player_lastname}`,
+            dob: this.formatDate(player.dob),
+            agegroup: this.getAgeGroupName(player.agegroup_id),
+          }));
+
+          this.totalItems = response.data.total_items || 0;
+          this.totalPages = response.data.last_page || 1;
+          this.from = response.data.from || 1;
+          this.to = response.data.to || this.Players.length;
+        })
+        .catch((error) => {
+          console.error('API request failed', error);
+          this.Players = [];
+          this.totalItems = 0;
+          this.totalPages = 0;
+          this.from = 0;
+          this.to = 0;
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     }
+      
+  }
+}
 </script>
 
 <style scoped>
