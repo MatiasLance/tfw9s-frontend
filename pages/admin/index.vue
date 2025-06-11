@@ -161,23 +161,9 @@ export default {
           count: 0
         },
         {
-          title: 'Master Settings',
+          title: 'Tax',
           icon: 'fas fa-cog',
-          route: '/admin/master-setting',
-          desc: 'Edit',
-          count: -1
-        },
-        {
-          title: 'Shipping Settings',
-          icon: 'fas fa-truck',
-          route: '/admin/shipping-setting',
-          desc: 'Edit',
-          count: -1
-        },
-        {
-          title: 'Shipping Master Controls',
-          icon: 'fas fa-cog',
-          route: '/admin/shipping-master',
+          route: '/admin/tax-setting',
           desc: 'Edit',
           count: -1
         },
@@ -230,27 +216,6 @@ export default {
           desc: 'Edit',
           count: -1
         },
-      ],
-      items: [
-        {
-          title: 'Weekly Wrap up',
-          text: '00-00-00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
-        },
-        {
-          title: 'Weekly Wrap up',
-          text: '00-00-00',
-          description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
-        },
-        {
-          title: 'Weekly Wrap up',
-          text: '00-00-00',
-          description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          image: require('~/assets/images/kidsplaying.jpg')
-        },
-
       ]
     };
   },
@@ -264,7 +229,7 @@ export default {
       case 'MASTER':
         return this.panels.filter(panel => {
           return [
-            'News', 'Partner Sponsor', 'Master Settings', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info'
+            'News', 'Partner Sponsor', 'Tax', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info'
           ].includes(panel.title)
         })
       case 'DRAWS':
