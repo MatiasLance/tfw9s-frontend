@@ -12,7 +12,7 @@ module.exports = {
     ".eslintrc.js",
     "jsconfig.json",
   ],
-  parser: "@babel/eslint-parser",
+  parser: "vue-eslint-parser",
   extends: [
     'eslint:recommended',
     '@nuxtjs',
