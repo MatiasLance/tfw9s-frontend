@@ -56,15 +56,14 @@
               >
               Showing {{ from }}-{{ to }} of {{ totalItems }} items
               </span>
-              <VPagination
-                v-model="page"
-                :length="totalPages"
-                color="success"
-                :total-visible="7"
-                class="text-white"
-                dark
-                @change="setPage"
-                />
+            <VPagination
+              v-model="page"
+              :length="totalPages"
+              color="success"
+              :total-visible="7"
+              class="text-white"
+              dark
+            />
             </div>
             <section class="col-span-1">
               <div class="overflow-x-auto">
@@ -192,17 +191,18 @@
     </div>
   </template>
 
-  <script>
-  import AddTeamModal from '~/components/modals/AddTeamModal.vue';
-  import EditTeamModal from '~/components/modals/EditTeamModal.vue';
-  import DeleteTeamModal from '~/components/modals/DeleteTeamModal.vue';
-  export default {
-    components: {
-      AddTeamModal,
-      EditTeamModal,
-      DeleteTeamModal
-    },
-    props: {
+<script>
+import AddTeamModal from '~/components/modals/AddTeamModal.vue';
+import EditTeamModal from '~/components/modals/EditTeamModal.vue';
+import DeleteTeamModal from '~/components/modals/DeleteTeamModal.vue';
+
+export default {
+  components: {
+    AddTeamModal,
+    EditTeamModal,
+    DeleteTeamModal
+  },
+  props: {
     FieldList: {
       type: Array,
       required: false,
@@ -219,45 +219,31 @@
       default: () => () => {}
     },
   },
-
-    data() {
-      return {
-        selectedData: ({}),
-        showAddTeamModal: false,
-        showEditTeamModal: false,
-        showDeleteTeamModal: false,
-        selectedRegion: null,
-        selectedSeries: null,
-        Teams: [],
-        Dataset: [],
-        ageGroupList: [],
-        seriesList: [],
-        regionList: [],
-        query: null,
-        from: 0,
-        to: 0,
-        page: 1,
-        perPage: 10,
-        totalPages: 0,
-        totalItems: 0,
-        Rules: [
-          value => {
-            if (value) {
-              return true
-            }
-
-            return 'Name is required.'
-          },
-          value => {
-            if (value?.length <= 10) {
-              return true
-            }
-
-            return 'Name must be less than 10 characters.'
-          },
-        ],
-      };
-    },
+  data() {
+    return {
+      selectedData: {},
+      showAddTeamModal: false,
+      showEditTeamModal: false,
+      showDeleteTeamModal: false,
+      selectedRegion: null,
+      selectedSeries: null,
+      Teams: [],
+      ageGroupList: [],
+      seriesList: [],
+      regionList: [],
+      query: null,
+      from: 0,
+      to: 0,
+      page: 1,
+      perPage: 10,
+      totalPages: 0,
+      totalItems: 0,
+      Rules: [
+        value => !!value || 'Name is required.',
+        value => (value?.length || 0) <= 10 || 'Name must be less than 10 characters.'
+      ],
+    };
+  },
   computed: {
     formattedSeriesItems() {
       const formatted = (this.seriesList || []).map(series => ({
@@ -266,7 +252,6 @@
       }));
       return [{ text: 'All Series', value: null }, ...formatted];
     },
-
     formattedRegionItems() {
       const formatted = (this.regionList || []).map(region => ({
         text: region.name,
@@ -275,230 +260,44 @@
       return [{ text: 'All Regions', value: null }, ...formatted];
     },
   },
-async mounted() {
-  try {
-    console.log("Component mounted. Fetching lookup data...");
-    await Promise.all([
-      this.retrieveAgeGroups(),
-      this.retrieveSeries(),
-      this.retrieveRegions()
-    ]);
-    console.log("Lookup data fetched. Fetching initial teams...");
-    await this.retrieveTeams();
-  } catch (error) {
-    console.error("Error during component mount initialization:", error);
-    this.$oruga.notification.open({
-      message: 'Failed to load initial data. Please try refreshing.',
-      variant: 'danger',
-      duration: 5000,
-      position: 'bottom'
-    });
-  }
-},
-    watch: {
-        page(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.retrieveMainDisplayData();
-      }
-    },
-  totalPages() {
-    if (this.page > this.totalPages && this.totalPages > 0) {
-      this.page = this.totalPages;
-      this.retrieveTeams();
-    } else if (this.page > 1 && this.totalPages === 0) {
-      this.page = 1;
-      this.retrieveTeams();
-    }
-  },
-      selectedRegion(newVal) {
-        this.page = 1;
+  watch: {
+    page(newPage, oldPage) {
+      if (newPage !== oldPage) {
         this.retrieveTeams();
-      },
-      selectedSeries(newVal) {
-      this.page = 1;
-      this.retrieveTeams();
-      },
-      page: {
-        handler(newPage) {
-          this.retrieveTeams()
-          this.retrieveAgeGroups()
-          this.retrieveSeries()
-          this.retrieveRegions()
-
-        },
-        immediate: true,
-      },
-    },
-  methods: {
-retrieveAgeGroups() {
-  const query = {
-    q: this.query,
-  };
-
-  Object.keys(query).forEach((key) => {
-    if (query[key] == null || query[key] === '') {
-      delete query[key];
-    }
-  });
-
-  const queryString = new URLSearchParams(query).toString();
-
-  return this.$axios
-    .$get(`v1/agegroups?${queryString}`)
-    .then((response) => {
-      this.ageGroupList = response.data.ageGroups || [];
-      console.log('All Age Groups Loaded:', this.ageGroupList.length);
-    })
-    .catch(error => {
-      console.error('Error fetching age groups:', error);
-      this.ageGroupList = [];
-      throw error;
-    });
-},
-
-    async retrieveSeries() {
-      try {
-        const response = await this.$axios.$get('v1/series');
-        this.seriesList = (response.data.series || response.data || []).filter(series =>
-            series.type !== 'weekly'
-        );
-        console.log('All Series Loaded:', this.seriesList.length);
-      } catch (error) {
-        console.error('Error fetching series list:', error);
-        this.seriesList = [];
-        throw error;
       }
     },
-
-    async retrieveRegions() { // Make it async or ensure promise return
-      try {
-        const response = await this.$axios.$get('v1/regions'); // Assuming this fetches all regions
-        // Ensure correct path to region data
-        this.regionList = response.data.regions || response.data || [];
-        console.log('All Regions Loaded:', this.regionList.length);
-      } catch (error) {
-        console.error('Failed to retrieve regions:', error);
-        this.regionList = [];
-        throw error;
-      }
-    },
-
-    onFilterChange() {
-      this.page = 1;
-      this.retrieveTeams();
-    },
-
-    async retrieveMainDisplayData() {
-
-      const params = {
-        q: this.query,
-        page: this.page,
-      };
-
-      if (this.selectedSeries !== null) {
-        params.series = this.selectedSeries;
-      }
-      if (this.selectedRegion !== null) {
-        params.region = this.selectedRegion;
-      }
-
-      try {
-
-        console.log('Fetching main display data with params:', params);
+  },
+  async mounted() {
+    try {
+      await Promise.all([
+        this.retrieveSeries(),
+        this.retrieveRegions(),
+        this.retrieveAgeGroups()
+      ]);
+      await this.retrieveTeams();
     } catch (error) {
-        console.error('Error fetching main display data:', error);
-
-      } finally {
-      
+      console.error("Error during component mount initialization:", error);
+      this.$oruga.notification.open({
+        message: 'Failed to load initial data. Please try refreshing.',
+        variant: 'danger',
+        duration: 5000,
+        position: 'bottom'
+      });
     }
   },
-      matchField(id) {
-        const fieldData = this.FieldList.find(field => field.id === id);
-        return fieldData ? fieldData.name : '';
-      },
-      setPage() {
-        this.retrieveTeams();
-      },
-      openAddTeamDialog(a) {
-        this.showAddTeamModal = true
-      },
-      openEditTeamDialog(a) {
-        this.selectedData = a;
-        this.showEditTeamModal = true
-      },
-      openDeleteTeamDialog(a) {
-        this.selectedData = a;
-        this.showDeleteTeamModal = true
-      },
-      closeAddTeamDialog(a) {
-        this.showAddTeamModal = false
-      },
-      closeEditTeamDialog(a) {
-        this.selectedData = ({});
-        this.showEditTeamModal = false
-      },
-      closeDeleteTeamDialog(a) {
-        this.selectedData = ({});
-        this.showDeleteTeamModal = false
-      },
-    AddTeam(response) {
-        console.log('AddTeam confirmed, data from modal (if any):', response);
-        
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Team Added Successfully',
-          position: 'bottom',
-          variant: 'success',
-          queue: true
-        });
-        
-        this.showAddTeamModal = false;
-        
-        this.retrieveTeams().then(() => {
-            if (typeof this.getTeams === 'function') this.getTeams();
-            if (typeof this.getEvents === 'function') this.getEvents();
-        });
+  methods: {
+    onFilterChange() {
+      this.page = 1; 
+      this.retrieveTeams();
     },
- async EditTeam() {
-     this.$oruga.notification.open({
-         duration: 5000,
-         message: 'Team Modified Successfully',
-         position: 'bottom',
-         variant: 'success',
-         queue: true
-     });
-     this.showEditTeamModal = false;
-     await this.retrieveTeams();
-     if (typeof this.getTeams === 'function') this.getTeams();
-     if (typeof this.getEvents === 'function') this.getEvents();
- },
- async DeleteTeam(deletedTeamId) {
-     this.$oruga.notification.open({
-         duration: 5000,
-         message: 'Team Removed Successfully',
-         position: 'bottom',
-         variant: 'success',
-         queue: true
-     });
-     this.showDeleteTeamModal = false;
-    
-     await this.retrieveTeams();
-     if (typeof this.getTeams === 'function') this.getTeams();
-     if (typeof this.getEvents === 'function') this.getEvents();
- },
     async retrieveTeams() {
       try {
-        if (this.ageGroupList.length === 0 && this.totalItems > 0) { 
-          console.warn("retrieveTeams: ageGroupList is empty. Attempting to reload it.");
-          await this.retrieveAgeGroups();
-        }
-
         const queryData = {
           q: this.query,
           sort: 'a_to_z',
           page: this.page,
-          series_id: this.selectedSeries,
-          region_id: this.selectedRegion,
+          seriestype: this.selectedSeries,
+          region: this.selectedRegion,
           maxTeamsPerPage: this.perPage,
         };
 
@@ -509,7 +308,6 @@ retrieveAgeGroups() {
         });
 
         const queryString = new URLSearchParams(queryData).toString();
-        console.log(`Fetching teams with query: v1/teams?${queryString}`);
         const response = await this.$axios.$get(`v1/teams?${queryString}`);
         
         this.Teams = response.data.teams.map(team => {
@@ -535,10 +333,6 @@ retrieveAgeGroups() {
         this.from = response.data.from;
         this.to = response.data.to;
 
-        if (this.Teams.some(t => t.agegroup.name.startsWith('(ID:'))) {
-            console.warn("Some teams have missing age group names. Check ageGroupList and team agegroup_ids. Current ageGroupList count:", this.ageGroupList.length);
-        }
-
       } catch (error) {
         console.error('Error retrieving teams:', error);
         this.$oruga.notification.open({
@@ -552,61 +346,84 @@ retrieveAgeGroups() {
         this.totalPages = 0;
       }
     },
-
+    async retrieveAgeGroups() {
+      try {
+        const response = await this.$axios.$get('v1/agegroups');
+        this.ageGroupList = response.data.ageGroups || [];
+      } catch (error) {
+        console.error('Error fetching age groups:', error);
+        this.ageGroupList = [];
+        throw error;
+      }
+    },
+    async retrieveSeries() {
+      try {
+        const response = await this.$axios.$get('v1/series');
+        this.seriesList = (response.data.series || []).filter(s => s.type !== 'weekly');
+      } catch (error) {
+        console.error('Error fetching series list:', error);
+        this.seriesList = [];
+        throw error;
+      }
+    },
+    async retrieveRegions() {
+      try {
+        const response = await this.$axios.$get('v1/regions');
+        this.regionList = response.data.regions || [];
+      } catch (error) {
+        console.error('Failed to retrieve regions:', error);
+        this.regionList = [];
+        throw error;
+      }
+    },
     getRegionName(regionId) {
-        const region = this.regionList.find(r => r.id === regionId);
-        return region ? region.name : 'Unknown';
-      },
-  retrieveAgeGroups() {
-    const query = {
-      q: this.query,
-    };
-
-  Object.keys(query).forEach((key) => {
-    if (query[key] == null || query[key] === '')
-    { 
-      delete query[key];
-    }
-  });
-
-    const queryString = new URLSearchParams(query).toString()
-
-  return this.$axios
-    .$get(`v1/agegroups?${queryString}`)
-    .then((response) => {
-      this.ageGroupList = response.data.ageGroups || [];
-      console.log('All Age Groups Loaded:', this.ageGroupList.length);
-    })
-    .catch(error => {
-      console.error('Error fetching age groups:', error);
-      this.ageGroupList = [];
-      throw error;
-    });
-  },
-      retrieveSeries() {
-        this.$axios
-          .$get('v1/series')
-          .then((response) => {
-            this.seriesList = response.data.series.filter(series =>
-              series.type !== 'weekly');
-          })
-          .finally(() => {
-            this.showVueTable = true;
-          });
-      },
-  async retrieveRegions() {
-    try {
-      const response = await this.$axios.$get('v1/regions');
-      console.log('Retrieved regions:', response.data.regions);
-      this.regionList = response.data.regions;
-    } catch (error) {
-      console.error('Failed to retrieve regions:', error);
-    }
+      const region = this.regionList.find(r => r.id === regionId);
+      return region ? region.name : 'Unknown';
+    },
+    openAddTeamDialog() { 
+      this.showAddTeamModal = true 
+    },
+    openEditTeamDialog(data) {
+      this.selectedData = data;
+      this.showEditTeamModal = true
+    },
+    openDeleteTeamDialog(data) {
+      this.selectedData = data;
+      this.showDeleteTeamModal = true
+    },
+    closeAddTeamDialog() { 
+      this.showAddTeamModal = false 
+    },
+    closeEditTeamDialog() {
+      this.selectedData = {};
+      this.showEditTeamModal = false
+    },
+    closeDeleteTeamDialog() {
+      this.selectedData = {};
+      this.showDeleteTeamModal = false
+    },
+    async AddTeam() {
+      this.$oruga.notification.open({ duration: 5000, message: 'Team Added Successfully', position: 'bottom', variant: 'success', queue: true });
+      this.showAddTeamModal = false;
+      await this.retrieveTeams();
+      if (typeof this.getTeams === 'function') this.getTeams();
+    },
+    async EditTeam() {
+      this.$oruga.notification.open({ duration: 5000, message: 'Team Modified Successfully', position: 'bottom', variant: 'success', queue: true });
+      this.showEditTeamModal = false;
+      await this.retrieveTeams();
+      if (typeof this.getTeams === 'function') this.getTeams();
+    },
+    async DeleteTeam() {
+      this.$oruga.notification.open({ duration: 5000, message: 'Team Removed Successfully', position: 'bottom', variant: 'success', queue: true });
+      this.showDeleteTeamModal = false;
+      await this.retrieveTeams();
+      if (typeof this.getTeams === 'function') this.getTeams();
+    },
   }
-    }
-  }
-  </script>
-
+}
+</script>
+ 
   <style scoped>
   .superheadline {
   color: aliceblue;

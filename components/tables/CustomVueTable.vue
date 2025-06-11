@@ -117,14 +117,14 @@ export default {
 .custom-table-position {
   transform: translateX(0) !important;
 }
-@media (min-width: 768px) {
-  .custom-table-position {
-    transform: translateX(-18.5em) !important;
+/* @ media (min-width: 768px) {
+  . custom-table-position {
+    transform: translateX(-18. 5em) !important;
   }
 }
-@media (min-width: 1200px) {
-  .custom-table-position {
-    transform: translateX(-18.5em) !important;
+@ media (min-width: 1200px) {
+  . custom-table-position {
+    transform: translateX(-18. 5em) !important;
   }
-}
+}*/
 </style>

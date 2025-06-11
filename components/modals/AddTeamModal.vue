@@ -1,63 +1,64 @@
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-            <VForm ref="form" v-model="valid" lazy-validation>
-                <h3 class="mb-3 font-bold text-brand-black">
-                    Add Team
-                </h3>
-                <hr class="my-3 lg:w-[918px]"/>
+      <VForm ref="form" v-model="valid" lazy-validation>
+        <h3 class="mb-3 font-bold text-brand-black">
+          Add Team
+        </h3>
+        <hr class="my-3 lg:w-[918px]"
+        />
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <div class="col-span-1 md:col-span-2">
+                  <div class="col-span-1">
                     <label for="teamname" class="mb-1 block">
                       Name:
                     </label>
                     <VTextField
-                    id="title"
-                    v-model="TeamData.name"
-                    label="Enter Team Name"
-                    :rules="rules"
-                    type="text"
-                    solo
+                      id="title"
+                      v-model="TeamData.name"
+                      label="Enter Team Name"
+                      :rules="rules"
+                      type="text"
+                      solo
                     />
-                  </div>
-                  <div class="col-span-2 md:col-span-1">
-                    <div class="col-span-1">
-                      <label for="selectagegroup" class="mb-1 block">
-                        Age Group:
-                      </label>
-                      <VSelect
-                        v-model="TeamData.agegroup_id"
-                        :items="formattedAgeGroup"
-                        label="Choose Age Group"
-                        :rules="rules"
-                        solo
-                        >
-                      </VSelect>
-                    </div>
                   </div>
                   <div class="col-span-1">
                     <label for="selectevent" class="mb-1 block">
                       Series:
                     </label>
                     <VSelect
-                    v-model="TeamData.series_id"
-                    :items="formattedSeries"
-                    label="Choose Series"
-                    :rules="rules"
-                    solo
+                      v-model="TeamData.series_id"
+                      :items="formattedSeries"
+                      label="Choose Series"
+                      :rules="rules"
+                      solo
                     >
                     </VSelect>
                   </div>
+
+                  <div class="col-span-1">
+                    <label for="selectagegroup" class="mb-1 block">
+                      Age Group:
+                    </label>
+                    <VSelect
+                      v-model="TeamData.agegroup_id"
+                      :items="formattedAgeGroup"
+                      label="Choose Age Group"
+                      :rules="rules"
+                      solo
+                    >
+                    </VSelect>
+                  </div>
+
                   <div class="col-span-1">
                     <label for="region" class="mb-1 block">
                       Region:
                     </label>
                     <VSelect
-                    v-model="TeamData.region_id"
-                    :items="formattedRegions"
-                    label="Choose Region"
-                    :rules="rules"
-                    solo
+                      v-model="TeamData.region_id"
+                      :items="formattedRegions"
+                      label="Choose Region"
+                      :rules="rules"
+                      solo
                     >
                     </VSelect>
                   </div>
@@ -160,45 +161,47 @@
                           @loading-end="applyMetadata"
                         >
                         </Croppa>
-                        <br />
-                        <div class="flex justify-start">
-                            <VBtn @click="rotateAnti">
+                        
+                        <!-- START: Responsive Button Changes -->
+                        <!-- This container allows buttons to wrap on small screens -->
+                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                            <VBtn small @click="rotateAnti">
                                 <i class="ri-anticlockwise-line"></i>
                             </VBtn>
-                            <VBtn @click="rotate">
+                            <VBtn small @click="rotate">
                                 <i class="ri-clockwise-line"></i>
                             </VBtn>
-                            <VBtn @click="flipx">
+                            <VBtn small @click="flipx">
                                 <i class="ri-arrow-left-right-line"></i>
                             </VBtn>
-                            <VBtn @click="flipy">
+                            <VBtn small @click="flipy">
                                 <i class="ri-arrow-up-down-line"></i>
                             </VBtn>
-                        </div>
-                        <div class="flex justify-start">
-                            <VBtn @click="zoomIn">
+                            <VBtn small @click="zoomIn">
                                 <i class="ri-zoom-in-line"></i>
                             </VBtn>
-                            <VBtn @click="zoomOut">
+                            <VBtn small @click="zoomOut">
                                 <i class="ri-zoom-out-line"></i>
                             </VBtn>
-                            <VBtn plain @click="setImagePreset">
+                            <VBtn small plain @click="setImagePreset">
                                 set
                             </VBtn>
-                            <VBtn plain @click="clearImagePreset">
+                            <VBtn small plain @click="clearImagePreset">
                                 clr
                             </VBtn>
                         </div>
-                        <br />
+                        
                         <VBtn
                         v-if="showGenerateCreatedImageBtn"
                         dark
                         large
-                        class="bg-gradient-to-r from-brand-black to-brand-black"
+                        class="bg-gradient-to-r from-brand-black to-brand-black mt-4 w-full"
                         @click="generateImage"
                         >
                           GENERATE
                         </VBtn>
+                        <!-- END: Responsive Button Changes -->
+
                       </div>
                       <div class="col-span-1 max-h-[320px] max-w-[320px]">
                         <div
@@ -228,11 +231,11 @@
                   </div>
                 </div>
                 <hr class="my-3"/>
-                <div class="flex flex-col justify-end gap-2 md:flex-row">
+               <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
                   depressed
                   color="success"
-                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+                  class="custom-btn w-full md:w-[185px]"
                   :disabled="!valid"
                   @click="validate"
                   >
@@ -241,12 +244,13 @@
                   <VBtn
                   depressed
                   color="error"
-                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+                  class="custom-btn w-full md:w-[185px]"
                   @click="closeDialog"
                   >
                     Cancel
                   </VBtn>
                 </div>
+                <!-- END: Responsive Button Changes -->
             </VForm>
         </div>
   </OModal>
@@ -298,17 +302,17 @@ export default {
       imgUrl: [],
       imgList: [],
       TeamData: {
-      name: null,
-      agegroup_id: null,
-      series_id: null,
-      region_id: this.initialRegionId || null,
-      coach_name: null,
-      coach_mobile: null,
-      coach_email: null,
-      manager_name: null,
-      manager_mobile: null,
-      manager_email: null,
-      type: 'default'
+        name: null,
+        agegroup_id: null,
+        series_id: null,
+        region_id: this.initialRegionId || null,
+        coach_name: null,
+        coach_mobile: null,
+        coach_email: null,
+        manager_name: null,
+        manager_mobile: null,
+        manager_email: null,
+        type: 'default'
       },
       rules: [ value => !!value || 'Required' ],
       agegroup: []
@@ -319,27 +323,35 @@ export default {
       return this.field.map(field =>
         ({ text: field.name, value: field.id }));
     },
-formattedAgeGroup() {
-  if (!Array.isArray(this.agegroup)) return [];
-  return this.agegroup.map(agegroup => 
-    ({ text: agegroup?.name || '', value: parseInt(agegroup?.id || 0) }));
-},
-formattedSeries() {
-  console.log('Raw series prop:', this.series); // Debug log
-  
-  // Handle cases where series might be nested in a data property
-  const rawSeries = this.series?.data?.series || this.series;
-  
-  if (!Array.isArray(rawSeries)) {
-    console.error('Series data is not an array:', rawSeries);
-    return [];
-  }
-  
-  return rawSeries.map(series => ({
-    text: series.name,
-    value: series.id,
-  }));
-},
+    formattedAgeGroup() {
+      if (!Array.isArray(this.agegroup)) return [];
+      return this.agegroup.map(agegroup => 
+        ({ text: agegroup.name || '', value: parseInt(agegroup.id || 0) }));
+    },
+    formattedSeries() {
+      try {
+        // First check if series is defined
+        if (!this.series) return [];
+        
+        // Handle both possible structures with the correct operator-linebreak style
+        const rawSeries = Array.isArray(this.series) ?
+          this.series :
+          (this.series.data.series || []); // Also added optional chaining for safety
+        
+        if (!Array.isArray(rawSeries)) {
+          console.error('Series data is not an array:', rawSeries);
+          return [];
+        }
+        
+        return rawSeries.map(series => ({
+          text: series.name,
+          value: series.id,
+        }));
+      } catch (error) {
+        console.error('Error formatting series:', error);
+        return [];
+      }
+    },
     formattedRegions() {
       try {
         // Check if regions exists and is an array
@@ -425,17 +437,17 @@ formattedSeries() {
     },
     addTeam() {
       const formData = new FormData();
-        const coachData = {
-    name: this.TeamData.coach_name,
-    mobile: this.TeamData.coach_mobile,
-    email: this.TeamData.coach_email
-  };
+      const coachData = {
+        name: this.TeamData.coach_name,
+        mobile: this.TeamData.coach_mobile,
+        email: this.TeamData.coach_email
+      };
 
-  const managerData = {
-    name: this.TeamData.manager_name,
-    mobile: this.TeamData.manager_mobile,
-    email: this.TeamData.manager_email
-  };
+      const managerData = {
+        name: this.TeamData.manager_name,
+        mobile: this.TeamData.manager_mobile,
+        email: this.TeamData.manager_email
+      };
       formData.append('name', this.TeamData.name);
       formData.append('agegroup_id', parseInt(this.TeamData.agegroup_id));
       formData.append('series_id', this.TeamData.series_id);
@@ -452,7 +464,7 @@ formattedSeries() {
         .$post('v1/teams', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
-          this.$emit('confirm', response); // ✅ send back the API response
+          this.$emit('confirm', response);
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {
@@ -461,7 +473,7 @@ formattedSeries() {
             console.error('Error:', error);
             this.$emit('confirm', {
               success: false,
-              message: error.response?.data?.message || 'Failed to add team'
+              message: error.response.data.message || 'Failed to add team'
             });
           }
         });
@@ -578,10 +590,10 @@ formattedSeries() {
     },
   },
   mounted() {
-  if (this.fromRegion && this.initialRegionId) {
-    this.TeamData.region_id = this.initialRegionId;
+    if (this.fromRegion && this.initialRegionId) {
+      this.TeamData.region_id = this.initialRegionId;
+    }
   }
-}
 }
 </script>
 

@@ -7,7 +7,7 @@
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <div class="col-span-1 md:col-span-2">
+                  <div class="col-span-1">
                     <label for="teamname" class="mb-1 block">
                       Name:
                     </label>
@@ -19,21 +19,6 @@
                     type="text"
                     solo
                     />
-                  </div>
-                  <div class="col-span-2 md:col-span-1">
-                    <div class="col-span-1">
-                      <label for="selectagegroup" class="mb-1 block">
-                        Age Group:
-                      </label>
-                      <VSelect
-                        v-model="TeamData.agegroup_id"
-                        :items="formattedAgeGroup"
-                        label="Choose Age Group"
-                        :rules="rules"
-                        solo
-                        >
-                      </VSelect>
-                    </div>
                   </div>
                   <div class="col-span-1">
                     <label for="selectevent" class="mb-1 block">
@@ -47,6 +32,19 @@
                     solo
                     >
                     </VSelect>
+                  </div>
+                    <div class="col-span-1">
+                      <label for="selectagegroup" class="mb-1 block">
+                        Age Group:
+                      </label>
+                      <VSelect
+                        v-model="TeamData.agegroup_id"
+                        :items="formattedAgeGroup"
+                        label="Choose Age Group"
+                        :rules="rules"
+                        solo
+                        >
+                      </VSelect>
                   </div>
                   <div class="col-span-1">
                     <label for="region" class="mb-1 block">
