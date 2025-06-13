@@ -335,7 +335,6 @@ export default {
       }
     },
     selectedAgeGroup(newVal, oldVal) {
-      console.log('Age group changed from', oldVal, 'to', newVal);
       if (newVal !== oldVal) {
         this.page = 1;
         this.retrievePlayers();
@@ -520,8 +519,6 @@ export default {
       if (this.selectedAgeGroup !== null) {
         params.agegroup = this.selectedAgeGroup;
       }
-
-      console.log('Request params (after fix attempt):', params);
 
       this.$axios
         .$get('/v1/players', { params })

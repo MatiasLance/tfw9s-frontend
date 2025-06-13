@@ -2,9 +2,7 @@
     <div class="
     block
     w-full
-    md:w-max
-    overflow-x-auto
-    custom-table-position"
+    overflow-x-auto"
     >
       <table
       class="w-full table-auto border-collapse
@@ -113,18 +111,5 @@ export default {
 <style scoped>
 .v-btn {
   text-transform:none !important;
-}
-.custom-table-position {
-  transform: translateX(0) !important;
-}
-@media (min-width: 768px) {
-  .custom-table-position {
-    transform: translateX(-18.5em) !important;
-  }
-}
-@media (min-width: 1200px) {
-  .custom-table-position {
-    transform: translateX(-18.5em) !important;
-  }
 }
 </style>

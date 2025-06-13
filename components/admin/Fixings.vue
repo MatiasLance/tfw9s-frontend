@@ -2,7 +2,7 @@
 <div>
   <div class="bg-[#1A1A1B]" data-aos="fade-up">
     <section class="mx-auto max-w-screen-xl gap-4 p-4">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div class="col-span-1 flex items-center justify-between">
           <button
           type="button"
@@ -22,26 +22,25 @@
         </div>
         <div class="col-span-1"></div>
         <form
-        @submit.prevent="retrieveEvents"
-       class="col-span-1 flex items-end justify-between"
+        class="col-span-1 flex items-end justify-between"
+       @submit.prevent="retrieveEvents"
        >
          <input
          id="query"
          v-model="query"
          placeholder="Search..."
-         :rules="rules"
          type="text"
-         class="flex-1 h-9 rounded-l"
+         class="h-9 flex-1 rounded-l"
          solo
          />
          <button
          type="submit"
-         class="h-9 px-4 rounded-r
-         text-xl font-semibold text-white
-         bg-gradient-to-tr
-         from-[#5EE738]
-         via-[#3e872a]
-         to-[#050505]"
+         class="h-9 rounded-r bg-gradient-to-tr
+         from-[#5EE738] via-[#3e872a] to-[#050505]
+         px-4
+         text-xl
+         font-semibold
+         text-white"
          >
          <i class="ri-search-line"/>
          </button>
@@ -68,8 +67,8 @@
             />
         </div>
         <section
-        class="col-span-1 overflow-y-hidden lg:col-span-3
-        overflow-x-scroll md:overflow-x-hidden"
+        class="col-span-1 overflow-y-hidden overflow-x-scroll
+        md:overflow-x-hidden lg:col-span-3"
         >
           <div class="grid min-w-[640px] grid-cols-1 gap-2">
             <div
@@ -78,7 +77,7 @@
             class="col-span-1 mb-0.5 gap-0 border-2 border-gray-500"
             data-aos="fade-up" data-aos-offset="0"
             >
-              <Form class="w-full grid grid-cols-6 gap-2 p-2">
+              <Form class="grid w-full grid-cols-6 gap-2 p-2">
                 <div
                 class="col-span-1 m-auto flex
                 items-center text-lg font-semibold
@@ -136,8 +135,8 @@
                     max-w-full rounded-lg
                     border border-gray-200
                     bg-[#4cbe5c]
-                    py-2
                     px-4
+                    py-2
                     text-white
                     "
                     @click="openEditFixingDialog(event)"
@@ -149,8 +148,8 @@
                     max-w-full rounded-lg
                     border border-gray-200
                     bg-[#fb0d2b]
-                    py-2
                     px-4
+                    py-2
                     text-white
                     "
                     @click="openDeleteFixingDialog(event)"
@@ -165,8 +164,8 @@
         <section
         v-if="totalPages=== 0"
         class="col-span-1 flex h-60 items-center
-        justify-center font-semibold lg:col-span-3
-        text-[#555555]"
+        justify-center font-semibold text-[#555555]
+        lg:col-span-3"
         >
         No Fixings Available
         </section>
@@ -317,7 +316,7 @@ export default {
           return 'Name is required.'
         },
         value => {
-          if (value?.length <= 10) {
+          if (value.length <= 10) {
             return true
           }
 
@@ -450,18 +449,18 @@ export default {
             return {
               ...event,
               // eslint-disable-next-line camelcase
-              series_name: event.series?.name ?? '',
+              series_name: event.series.name || '',
               // eslint-disable-next-line camelcase
-              region_name: event.region?.name ?? '',
+              region_name: event.region.name || '',
               // eslint-disable-next-line camelcase
-              agegroup_name: event.agegroup?.name ?? '',
+              agegroup_name: event.agegroup.name || '',
               date: this.formattedDate(event.event_date),
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
                   matchtime: this.AMPMformat(event.time),
                   // eslint-disable-next-line camelcase
-                  field: match.field?.name ?? 'Unknown',
+                  field: match.field.name || 'Unknown',
                 };
               })
             };

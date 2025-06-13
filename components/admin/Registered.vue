@@ -66,7 +66,7 @@
             justify-center font-semibold
             text-[#555555] md:col-span-3"
           >
-          Nothing Registration Today
+            No Registration Record Found
           </section>
           <section
             v-if="teamList.length === 0 && ActiveTab !== 'weekly'"
@@ -74,7 +74,7 @@
             justify-center font-semibold
             text-[#555555] md:col-span-3"
           >
-          Nothing Registered Today
+            No Registration Record Found
           </section>
         </div>
       </section>
@@ -142,7 +142,6 @@ export default {
       teamList: [],
       Data: [],
       individualData: [
-        { name: 'id', label: 'id' },
         { name: 'timestamp', label: 'Timestamp' },
         { name: 'agegroup', label: 'Age Group' },
         { name: 'phone', label: 'Contact' },
@@ -157,7 +156,6 @@ export default {
         { name: 'action', label: 'Action' },
       ],
       teamData: [
-        { name: 'id', label: 'id' },
         { name: 'timestamp', label: 'Timestamps' },
         { name: 'series', label: 'Series' },
         { name: 'team', label: 'Team' },

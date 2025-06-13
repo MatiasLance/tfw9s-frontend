@@ -3,8 +3,8 @@
     <!-- Insert myCroppa here -->
     <Croppa
       v-model="myCroppa"
-      :width="420"
-      :height="280"
+      :width="width"
+      :height="height"
       :quality="5"
       placeholder="Place image here"
       :placeholder-font-size="15"
@@ -65,6 +65,16 @@
 
 <script>
 export default {
+  props: {
+    width: {
+      type: [ String, Number ],
+      default: 420
+    },
+    height: {
+      type: [ String, Number ],
+      default: 280
+    },
+  },
   data() {
     return {
       myCroppa: {},

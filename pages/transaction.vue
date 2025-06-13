@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="min-h-screen bg-[#1A1A1B] text-white">
     <section
@@ -13,7 +14,7 @@
     </section>
     <section
     v-else-if="record && record.id"
-    class="gap-4 flex flex-col items-center justify-center"
+    class="flex flex-col items-center justify-center gap-4"
     >
       <div class="article-gallery relative w-full max-w-screen-2xl">
         <VCarousel
@@ -79,13 +80,15 @@
       </article>
       <article
       v-if="players && players.length > 0"
-      class="grid gap-4 p-4 lg:grid-cols-2  w-full max-w-screen-xl">
+      class="grid w-full max-w-screen-xl gap-4 p-4 lg:grid-cols-2"
+      >
         <div
         v-for="player in players"
         :key="player.id"
         class="flex flex-col items-center justify-center gap-4 rounded-lg bg-gray-800 p-4"
         >
           <PlayerCardView
+          id="player-card"
           :player="player"
           @image-click="openEditImageModal(player)"
           />
@@ -100,8 +103,30 @@
           </button>
         </div>
       </article>
-      <article v-if="teams && teams.length > 0">
-        {{ teams}}
+      <article v-if="teams && teams.length > 0"
+      class="grid w-full max-w-screen-xl gap-4 p-4"
+      >
+        <div
+        v-for="team in teams"
+        :key="team.id"
+        class="flex md:flex-row flex-col items-center
+        justify-center gap-4 rounded-lg bg-gray-800 p-4"
+        >
+          <img
+          v-if="team.media"
+          :src="getMediaURL(team.media[0])"
+          alt="Team Logo"
+          class="size-32 object-cover"
+          />
+          <span class="flex flex-1 flex-col">
+            <span class="text-xl md:text-2xl font-semibold">
+              {{team.name || 'Unknown'}}
+            </span>
+            <p class="text-brand-slate text-lg">
+              Age Group: {{team.agegroup? team.agegroup.name : 'Unknown'}}
+            </p>
+          </span>
+        </div>
       </article>
     </section>
     <section
@@ -127,7 +152,13 @@
       </div>
     </section>
     <OModal :active="showUploadModal" @close="showUploadModal = false">
-      <ImageCropper @upload="handleUpload"/>
+      <section class="p-4">
+        <ImageCropper
+        :width="320"
+        :height="320"
+        @upload="handleUpload"
+        />
+      </section>
     </OModal>
   </div>
 </template>
@@ -135,6 +166,9 @@
 <script>
 import 'remixicon/fonts/remixicon.css';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css';
+// import domtoimage from 'dom-to-image-more';
+// import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import PlayerCardView from '../components/PlayerCardView.vue';
 import ImageCropper from '../components/ImageCropper.vue';
 import handlesMedia from '~/mixins/shop/handlesMedia'
@@ -143,6 +177,7 @@ import currencyMixin from '~/mixins/currency'
 import formattedDate from '~/mixins/utilities/formattedDate'
 
 export default {
+  // eslint-disable-next-line vue/component-definition-name-casing
   name: 'transaction',
   components: { PlayerCardView, ImageCropper },
   mixins: [
@@ -246,19 +281,29 @@ export default {
     handleUpload(image) {
       try {
         if (image && image instanceof Blob) {
-          const imgUrl = URL.createObjectURL(image);
-          const imgData = image;
+          const reader = new FileReader();
 
-          if (!this.selected.media) {
-            this.selected.media = [];
-          }
+          reader.onloadend = () => {
+            const base64Url = reader.result; // This is your base64 data URL
 
-          this.selected = {
-            ...this.selected,
-            url: imgUrl,
-            data: imgData,
+            if (!this.selected.media) {
+              this.selected.media = [];
+            }
+
+            this.selected = {
+              ...this.selected,
+              url: base64Url,     // ✅ base64 instead of blob:
+              data: image,        // original blob still stored if needed
+            };
+
+            this.setPlayerImage();
           };
-          this.setPlayerImage();
+
+          reader.onerror = () => {
+            console.error('Error reading image as base64');
+          };
+
+          reader.readAsDataURL(image); // ✅ Convert blob to base64
         } else {
           console.error('Invalid image file');
         }
@@ -266,6 +311,7 @@ export default {
         console.error('Error uploading image:', error);
       }
     },
+
     removeUpload() {
       this.selected.url = null;
       this.selected.data = null;
@@ -279,19 +325,53 @@ export default {
       });
       this.showUploadModal = false;
     },
-    generatePlayerCard(player) {
+    async generatePlayerCard(player) {
       const playerName = `${player.player_firstname} ${player.player_lastname}`;
-      this.$oruga.notification.open({
-        // eslint-disable-next-line max-len, vue/max-len
-        message: `<div class="text-center">Player card for ${playerName} generated successfully!<hr/>(WIP)</div>`,
-        variant: 'info',
-        duration: 5000,
-        position: 'bottom',
-        queue: true,
-        dangerouslyUseHTMLString: true, // allow HTML in message
-      })
+      const fileName = `${player.player_firstname} ${player.player_lastname}-player-card.png`.toLowerCase().replace(/\s+/g, '-');
 
-    },
+      await document.fonts.ready;
+
+      const node = document.getElementById('player-card');
+
+      toPng(node, {
+        cacheBust: true,
+        backgroundColor: null,
+        pixelRatio: 2, // Higher resolution
+        style: {
+          margin: '0',
+          padding: '0',
+          fontFamily: 'Montserrat, sans-serif',
+        },
+      })
+        .then(dataUrl => {
+          const link = document.createElement('a');
+          link.download = fileName;
+          link.href = dataUrl;
+          link.click();
+
+          this.$oruga.notification.open({
+            message: `Player card for ${playerName} generated successfully!`,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+            dangerouslyUseHTMLString: true,
+          });
+        })
+        .catch(err => {
+          console.error('Card capture failed:', err);
+
+          this.$oruga.notification.open({
+            message: 'Something went wrong...',
+            variant: 'danger',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+            dangerouslyUseHTMLString: true,
+          });
+        });
+    }
+
   },
 };
 </script>

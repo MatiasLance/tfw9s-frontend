@@ -345,7 +345,6 @@ export default {
       try {
         if (this.ageGroupList.length === 0 && this.totalItems > 0) {
           // Only log if expecting teams but no age groups
-          console.warn("retrieveTeams: ageGroupList is empty. Data might be missing. Trying to reload.");
           await this.retrieveAgeGroups();
         }
 
@@ -416,7 +415,6 @@ export default {
         .$get(`v1/agegroups?${queryString}`)
         .then((response) => {
           this.ageGroupList = response.data.ageGroups;
-          console.log('All Age Groups Loaded:', this.ageGroupList);
         })
         .catch(error => {
           console.error('Error fetching age groups:', error);
@@ -439,7 +437,6 @@ export default {
       this.$axios
         .$get('v1/regions')
         .then((response) => {
-          console.log('Regions API response:', response);
           if (response.data && response.data.regions) {
             this.regionList = response.data.regions;
           } else if (Array.isArray(response.data)) {
@@ -450,7 +447,6 @@ export default {
             console.error('Unexpected regions response format:', response);
             this.regionList = [];
           }
-          console.log('Processed regionList:', this.regionList);
         })
         .catch(error => {
           console.error('Error fetching regions:', error);
