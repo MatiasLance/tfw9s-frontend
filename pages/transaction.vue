@@ -92,15 +92,16 @@
           :player="player"
           @image-click="openEditImageModal(player)"
           />
-          <button
-            type="button"
-            class="w-full select-none rounded-lg border border-transparent
-            bg-gradient-to-tr from-[#5EE738] via-[#3e872a] to-[#050505] px-4 py-2
-            font-semibold text-white transition hover:brightness-125"
-            @click="generatePlayerCard(player)"
+          <VBtn
+          color="green"
+          class="rounded-md font-semibold py-2 transition hover:brightness-125"
+          :loading="generating"
+          block
+          dark
+          @click="generatePlayerCard(player)"
           >
             Generate Registration Card
-          </button>
+          </VBtn>
         </div>
       </article>
       <article v-if="teams && teams.length > 0"
@@ -109,8 +110,8 @@
         <div
         v-for="team in teams"
         :key="team.id"
-        class="flex md:flex-row flex-col items-center
-        justify-center gap-4 rounded-lg bg-gray-800 p-4"
+        class="flex flex-col items-center justify-center
+        gap-4 rounded-lg bg-gray-800 p-4 md:flex-row"
         >
           <img
           v-if="team.media"
@@ -119,7 +120,7 @@
           class="size-32 object-cover"
           />
           <span class="flex flex-1 flex-col">
-            <span class="text-xl md:text-2xl font-semibold">
+            <span class="text-xl font-semibold md:text-2xl">
               {{team.name || 'Unknown'}}
             </span>
             <p class="text-brand-slate text-lg">
@@ -197,6 +198,7 @@ export default {
       isLoading: true,
       showUploadModal: false,
       selected: [],
+      generating: false,
     };
   },
   watch: {
@@ -326,6 +328,7 @@ export default {
       this.showUploadModal = false;
     },
     async generatePlayerCard(player) {
+      this.generating = true;
       const playerName = `${player.player_firstname} ${player.player_lastname}`;
       const fileName = `${player.player_firstname} ${player.player_lastname}-player-card.png`.toLowerCase().replace(/\s+/g, '-');
 
@@ -369,7 +372,10 @@ export default {
             queue: true,
             dangerouslyUseHTMLString: true,
           });
-        });
+        })
+        .finally(() => {
+          this.generating = false
+        })
     }
 
   },
