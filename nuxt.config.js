@@ -1,5 +1,6 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  target: 'static',
   head: {
     title: 'TFW9s',
     htmlAttrs: {
@@ -82,14 +83,12 @@ export default {
       src: '~/plugins/vuex-persist.js',
       mode: 'client',
     },
-    {
-      src: '~/plugins/axios.js',
-    },
+    { src: '~/plugins/axios.js' },
     { src: '~/plugins/oruga.js' },
     { src: '~/plugins/croppa.js' },
     { src: '~/plugins/ChromePicker.js', mode: 'client' },
     { src: '~/plugins/PhotoshopPicker.js', mode: 'client' },
-    { src: '~/plugins/vue-stripe.js', mode: 'client' },
+    { src: '~/plugins/vue-stripe.js', mode: 'client' }
   ],
 
   router: {

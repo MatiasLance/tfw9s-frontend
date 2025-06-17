@@ -150,10 +150,6 @@
           <span>{{ formatCurrency(originalAmount.subtotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
-          <span>Shipping:</span>
-          <span>{{ formatCurrency(shipping) }}</span>
-        </li>
-        <li class="mb-1 flex justify-between">
           <span>GST:</span>
           <span v-if="showGSTIncluded" class="pl-2">GST Inclusive</span>
           <span v-if="showGSTExcluded" class="pl-2">GST Exclusive</span>
@@ -482,7 +478,7 @@ for this code.
       const items = this.$store.state.cart.cart
       const metadata = this.shippingInformation
       const discounted = this.isDiscountCodeMatch
-      const discountcode = this.discountcode ?? ''
+      const discountcode = this.discountcode
       const paymentIntent = this.paymentIntent
       // eslint-disable-next-line camelcase
       const payment_method = this.paymentMethod
@@ -498,14 +494,8 @@ for this code.
         })
         .then((response) => {
           this.activeStep = 2
-          if (this.shippingInformation.shippingType === 'pickup') {
-            response.shippingCalculation.totalShipping = 0
-          }
-          this.$store.commit('cart/setShipping', response.shippingCalculation.totalShipping/100)
-          this.$store.commit('cart/setTotal', response.OverallTotal/100)
-          const productcost = response.OverallTotal/100
-          const shippingcost = response.shippingCalculation.totalShipping/100
-          this.newSubTotal = (productcost + shippingcost);
+          this.$store.commit('cart/setTotal', response.OverallTotal/100);
+          const productcost = response.OverallTotal/100;
           this.overallTotal = productcost;
         })
         .finally(() => {
