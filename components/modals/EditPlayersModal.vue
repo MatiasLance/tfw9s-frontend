@@ -120,7 +120,7 @@
                       Date of Birth *
                     </label>
                     <ODatepicker
-                    v-model="selectedDate"
+                    v-model="this.selectedDate"
                     icon="calendar"
                     :rules="rules"
                     />
@@ -131,7 +131,7 @@
                         Age Group:
                       </label>
                       <VSelect
-                        v-model="SeriesData.agegroup"
+                        v-model="SeriesData.agegroup_id"
                         :items="formattedAgeGroup"
                         label="Choose Age Group"
                         :rules="rules"
@@ -219,14 +219,6 @@ export default {
       return this.agegroup.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
     },
-    formattedDisplayDate() {
-      if (!this.selectedDate) return '';
-      const d = new Date(this.selectedDate);
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const year = d.getFullYear();
-      return `${day}/${month}/${year}`;
-    },
   },
   watch: {
     active: {
@@ -240,10 +232,13 @@ export default {
       },
       immediate: true,
     },
-    selectedDate(newDate) {
-      if (newDate && this.active) {
-        this.SeriesData.dob = this.DatePickerToSQL(newDate);
-      }
+    selectedDate: {
+      handler(newDate) {
+        if (newDate && this.active) {
+          this.SeriesData.dob = this.DatePickerToSQL(newDate);
+        }
+      },
+      immediate: true,
     },
   },
   methods: {

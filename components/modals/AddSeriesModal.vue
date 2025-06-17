@@ -81,56 +81,6 @@
                       solo
                     />
                   </div>
-                  <div class="col-span-1">
-                    <label for="teamname" class="mb-1 block">
-                      Coach Email:
-                    </label>
-                    <VTextField
-                    id="coach_email"
-                    v-model="SeriesData.coach_email"
-                    label="Coach Email"
-                    :rules="rules"
-                    type="text"
-                    solo
-                    />
-                  </div>
-                  <div v-if="showAgeGroup" class="mb-4">
-                    <div class="mb-4">
-                      <label class="mb-1 block"> Age Group* </label>
-                        <div class="relative">
-                          <select
-                            v-model="SeriesData.ageGroup"
-                            name="agegroup"
-                            class="
-                            w-full appearance-none border
-                            border-gray-200 bg-gray-100
-                            py-2 px-3 hover:border-gray-400
-                            focus:border-gray-400 focus:outline-none"
-                            required
-                          >
-                            <option :value="null" disabled hidden>
-                              Age Group
-                            </option>
-                            <option
-                              v-for="group in agegroup"
-                              :key="group.id" :value="group.id"
-                            >
-                              {{ group.name }}
-                            </option>
-                          </select>
-                          <div
-                            v-if="!SeriesData.ageGroup"
-                            class="
-                            absolute inset-y-0 left-0
-                            flex items-center pl-3
-                            pointer-events-none text-gray-500
-                            "
-                          >
-                            Age Group
-                          </div>
-                      </div>
-                    </div>
-                  </div>
                   <div class="col-span-1 md:col-span-2">
                     <label for="teamdescription" class="mb-1 block">
                       Description:
@@ -190,10 +140,6 @@ export default {
       type: Boolean,
       required: true
     },
-    agegroup: {
-      type: Array,
-      required: true
-    },
   },
   data() {
     return {
@@ -220,15 +166,6 @@ export default {
       rules: [ value => !!value || 'Required' ],
       dateRules: [ value => (value && value.length === 2) || 'Please select both start and end dates' ]
     }
-  },
-  computed: {
-    formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
-    },
-    showAgeGroup() {
-      return this.SeriesData.type === 'weekly';
-    },
   },
   methods: {
     handleDateRangeChange(newDates) {
@@ -358,11 +295,6 @@ export default {
       formData.append('start', startDate);
       formData.append('end', endDate);
       formData.append('price', this.currencyToCents(this.SeriesData.price));
-      formData.append('coach_email', this.SeriesData.coach_email);
-
-      if (this.showAgeGroup && this.SeriesData.ageGroup) {
-        formData.append('agegroup_id', parseInt(this.SeriesData.ageGroup) || null);
-      }
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'newsThumbnail.png');

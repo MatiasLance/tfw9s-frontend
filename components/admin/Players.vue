@@ -176,7 +176,7 @@
                 class="mr-0.5 flex-1 border-black bg-white p-1"
                 />
                 <input
-                v-model="data.dob"
+                v-model="data.dobGB"
                 placeholder="Enter Birth Date"
                 hide-details
                 required
@@ -529,7 +529,7 @@ export default {
           this.Players = playersData.map(player => ({
             ...player,
             name: `${player.player_firstname} ${player.player_lastname}`,
-            dob: this.formatDate(player.dob),
+            dobGB: this.formatDate(player.dob),
             agegroup: this.getAgeGroupName(player.agegroup_id),
           }));
 

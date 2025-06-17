@@ -215,16 +215,11 @@
                   {{ DateRange(data.start, data.end) }}
                 </div>
                 <span class="col-span-3 line-clamp-4"
-                  v-html="data.description.length > 80
-                  ? data.description.substring(0, 80) + '...'
-                  : data.description"
+                  v-html="data.description"
                 >
                 </span>
-                <span class="col-span-3 line-clamp-4"
-                  v-html="data.address.length > 20
-                  ? `Location: ${data.address.substring(0, 20)}...`
-                  : `Location: ${data.address}`"
-                >
+                <span class="col-span-3 line-clamp-4">
+                  {{ `Location: ${data.address || 'Unknown'}`}}
                 </span>
                 <div class="col-span-3 flex justify-end gap-4">
                   <div v-if="!data.is_paused">
@@ -648,7 +643,9 @@ export default {
         return 'Unknown';
       }
     },
-    DateRange(start, end) {
+    DateRange(eventStart, eventEnd) {
+      const start = new Date(eventStart) || new Date;
+      const end = new Date(eventEnd) || new Date;
       const months = [
         'January',
         'February',
@@ -666,8 +663,8 @@ export default {
       const suffixes = [
         'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'
       ];
-      const startdate = start.getDate();
-      const enddate = end.getDate();
+      const startdate = (start).getDate();
+      const enddate = (end).getDate();
       const startmonth = months[start.getMonth()];
       const endmonth = months[end.getMonth()];
       const startyear = start.getFullYear();
@@ -691,7 +688,8 @@ export default {
          - ${endmonth} ${enddate}${endsuffix}, ${endyear}`;
       }
     },
-    calendarDate(date) {
+    calendarDate(datestring) {
+      const date = new Date(datestring)
       const month = date.getMonth() + 1;
       const day = date.getDate();
       const year = date.getFullYear();

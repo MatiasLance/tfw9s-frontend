@@ -94,7 +94,7 @@
           />
           <VBtn
           color="green"
-          class="rounded-md font-semibold py-2 transition hover:brightness-125"
+          class="rounded-md py-2 font-semibold transition hover:brightness-125"
           :loading="generating"
           block
           dark

@@ -55,7 +55,10 @@
             rounded-md bg-[#212121] p-4 text-white"
             data-aos="fade-up" data-aos-offset="0"
             >
-              <p class="absolute right-2 top-2 text-xs text-gray-400">
+              <p
+              class="absolute right-2 top-2 rounded  px-1
+              text-xs text-gray-400 transition hover:text-gray-300"
+              >
                 {{ team.registered_players_count || 0 }} / {{ team.player_limit }}
               </p>
               <img
