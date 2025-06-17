@@ -1,8 +1,8 @@
 <template>
-  <OModal :active="active" @close="closeDialog" :width="'960px'">
+  <OModal :active="active" :width="'960px'" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
-                <h3 class="mb-3 font-bold text-brand-black">
+                <h3 class="text-brand-black mb-3 font-bold">
                     Edit Series
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
@@ -80,56 +80,6 @@
                       solo
                     />
                   </div>
-                  <div class="col-span-1">
-                    <label for="teamname" class="mb-1 block">
-                      Coach Email:
-                    </label>
-                    <VTextField
-                    id="coach_email"
-                    v-model="SeriesData.coach_email"
-                    label="Coach Email"
-                    :rules="rules"
-                    type="text"
-                    solo
-                    />
-                  </div>
-                  <div v-if="showAgeGroup" class="mb-4">
-                    <div class="mb-4">
-                      <label class="mb-1 block"> Age Group* </label>
-                        <div class="relative">
-                          <select
-                            v-model="SeriesData.ageGroup"
-                            name="agegroup"
-                            class="
-                            w-full appearance-none border
-                            border-gray-200 bg-gray-100
-                            py-2 px-3 hover:border-gray-400
-                            focus:border-gray-400 focus:outline-none"
-                            required
-                          >
-                            <option :value="null" disabled hidden>
-                              Age Group
-                            </option>
-                            <option
-                              v-for="group in agegroup"
-                              :key="group.id" :value="group.id"
-                            >
-                              {{ group.name }}
-                            </option>
-                          </select>
-                          <div
-                            v-if="!SeriesData.ageGroup"
-                            class="
-                            absolute inset-y-0 left-0
-                            flex items-center pl-3
-                            pointer-events-none text-gray-500
-                            "
-                          >
-                            Age Group
-                          </div>
-                      </div>
-                    </div>
-                  </div>
                   <div class="col-span-1 md:col-span-2">
                     <label for="teamdescription" class="mb-1 block">
                       Description:
@@ -191,10 +141,6 @@ export default {
       type: Boolean,
       required: true
     },
-    agegroup: {
-      type: Array,
-      required: true
-    },
     series: {
       type: Object,
       default: () => ({}),
@@ -231,7 +177,6 @@ export default {
         if (newActive) {
           if (newActive) {
             this.SeriesData = this.series;
-            this.SeriesData.ageGroup = Number(this.series.agegroup_id) ?? null;
 
             this.SeriesData.price = this.series.price / 100;
 
@@ -240,7 +185,7 @@ export default {
 
             startDate.setHours(12, 0, 0, 0);
             endDate.setHours(12, 0, 0, 0);
-            this.selectedDateRange = [startDate, endDate];
+            this.selectedDateRange = [ startDate, endDate ];
             this.imgUrlEdit = this.SeriesData.media.map((x) =>
               `${this.$config.baseURL}/storage/${x.path}`
             );
@@ -253,7 +198,7 @@ export default {
     selectedDateRange: {
       handler(newRange) {
         if (newRange && newRange.length === 2) {
-          const [startDate, endDate] = newRange;
+          const [ startDate, endDate ] = newRange;
 
           // Create new Date objects to avoid reference issues
           const sDate = new Date(startDate);
@@ -268,15 +213,6 @@ export default {
         }
       }
     }
-  },
-  computed: {
-    formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
-    },
-    showAgeGroup() {
-      return this.SeriesData.type === 'weekly';
-    },
   },
   methods: {
     updateImageEdit(image) {
@@ -343,11 +279,6 @@ export default {
       formData.append('start', this.DatePickerToSQL(this.SeriesData.start));
       formData.append('end', this.DatePickerToSQL(this.SeriesData.end));
       formData.append('price', this.SeriesData.price*100);
-      formData.append('coach_email', this.SeriesData.coach_email);
-
-      if (this.showAgeGroup && this.SeriesData.ageGroup) {
-        formData.append('agegroup_id', parseInt(this.SeriesData.ageGroup) || null);
-      }
 
       for (let i = 0; i < this.imgListEdit.length; i++) {
         formData.append('photo[]', this.imgListEdit[i]);

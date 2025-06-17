@@ -2,10 +2,10 @@
   <div
     class="
     ud-header
-    top-0 left-0 z-40
-    flex h-20
-    w-full items-center
-    bg-brand-black text-white"
+    bg-brand-black left-0 top-0
+    z-40 flex
+    h-20 w-full
+    items-center text-white"
   >
     <div class="container max-w-6xl">
       <div class="relative flex justify-between">
@@ -32,13 +32,13 @@
                 navbarNavToggle
                 ring-primary
                 absolute
-                top-1/2
                 left-4
+                top-1/2
                 block
                 -translate-y-1/2
                 rounded-lg
-                py-[6px]
                 px-3
+                py-[6px]
                 focus:ring-2
                 lg:hidden
               "
@@ -58,8 +58,8 @@
               id="navbarCollapse"
               class="
                 absolute
-                top-full
                 left-4
+                top-full
                 hidden
                 w-full
                 max-w-[250px]
@@ -92,7 +92,8 @@
                         flex whitespace-nowrap
                         py-2
                         text-base
-                        text-white transition
+                        uppercase text-white
+                        transition
                         duration-300
                         ease-in-out
                         group-hover:underline
@@ -101,10 +102,9 @@
                         group-hover:underline-offset-8
                         lg:mr-0
                         lg:inline-flex
-                        lg:py-4
                         lg:px-0
+                        lg:py-4
                         lg:text-white
-                        uppercase
                         lg:group-hover:text-[#5EE738]
                       "
                       :class="(link.to === $route.path)
@@ -117,7 +117,7 @@
                 </li>
                 <li
                   v-if="more.length > 0"
-                  class="group submenu-item relative hover:bg-black-400"
+                  class="submenu-item hover:bg-black-400 group relative"
                 >
                   <span
                     class="
@@ -130,23 +130,22 @@
                       text-base
                       text-white
                       after:absolute
-                      after:top-1/2
                       after:right-1
+                      after:top-1/2
                       after:mt-[-2px]
-                      after:h-2
-                      after:w-2
+                      after:size-2
                       after:-translate-y-1/2
                       after:rotate-45
-                      after:border-r-2
                       after:border-b-2
+                      after:border-r-2
                       after:border-current
                       group-hover:text-slate-200
-                      lg:mr-0
                       lg:ml-8
+                      lg:mr-0
                       lg:inline-flex
                       lg:py-6
-                      lg:pr-4
                       lg:pl-0
+                      lg:pr-4
                       lg:text-white
                       lg:after:right-0
                       lg:group-hover:text-white
@@ -160,8 +159,8 @@
                     class="
                       submenu
                       relative
-                      top-full
                       left-0
+                      top-full
                       hidden
                       w-[250px]
                       rounded-sm
@@ -191,8 +190,8 @@
                           text-body-color
                           block
                           rounded
-                          py-[10px]
                           px-4
+                          py-[10px]
                           text-sm
                           hover:text-gray-500 hover:underline
                         "
@@ -209,8 +208,9 @@
               id="navbarCollapse"
               class="
                 menuDropdown
-                absolute
-                top-full left-4 w-full
+                lg:bg-brand-black/60
+                absolute left-4 top-full
+                w-full
                 max-w-[250px]
                 rounded-lg
                 bg-black
@@ -222,9 +222,8 @@
                 lg:block
                 lg:w-full
                 lg:max-w-full
-                lg:bg-brand-black/60
-                lg:py-0
                 lg:px-4
+                lg:py-0
                 lg:shadow-none
                 xl:px-6
               "
@@ -238,14 +237,14 @@
                   <NuxtLink :to="link.to">
                     <span
                       class="
-                      uppercase
                       ud-menu-scroll
                       group-hover:text-primary
                       font-montserrat
                       mx-6
-                      flex whitespace-nowrap
-                      py-2
+                      flex
+                      whitespace-nowrap py-2
                       text-base
+                      uppercase
                       text-white transition
                       duration-300
                       ease-in-out
@@ -256,8 +255,8 @@
                       group-hover:underline-offset-8
                       lg:mr-0
                       lg:inline-flex
-                      lg:py-4
                       lg:px-0
+                      lg:py-4
                       lg:text-white
                       "
                       :class="(link.to === $route.path)
@@ -291,8 +290,8 @@
                       group-hover:underline-offset-8
                       lg:mr-0
                       lg:inline-flex
-                      lg:py-4
                       lg:px-0
+                      lg:py-4
                       lg:text-white
                       lg:group-hover:text-[#53B437]
                       "
@@ -303,7 +302,7 @@
                 </li>
                 <li
                   v-if="more.length > 0"
-                  class="group submenu-item relative"
+                  class="submenu-item group relative"
                 >
                   <span
                     href="javascript:void(0)"
@@ -318,27 +317,27 @@
                       text-base
                       text-white
                       after:absolute
-                      after:top-1/2
                       after:right-1
+                      after:top-1/2
                       after:mt-[-2px]
-                      after:h-2
-                      after:w-2
+                      after:size-2
                       after:-translate-y-1/2
                       after:rotate-45
-                      after:border-r-2
                       after:border-b-2
+                      after:border-r-2
                       after:border-current
                       hover:text-gray-500
                       hover:underline
-                      lg:mr-0
                       lg:ml-8
+                      lg:mr-0
                       lg:inline-flex
                       lg:py-6
-                      lg:pr-4
                       lg:pl-0
+                      lg:pr-4
                       lg:text-white
-                      lg:after:right-0 lg:group-hover:text-white
-                      lg:group-hover:opacity-70 xl:ml-12
+                      lg:after:right-0
+                      lg:group-hover:text-white lg:group-hover:opacity-70
+                      xl:ml-12
                     "
                     @click="toggle2"
                     @mouseover="toggle2"
@@ -350,8 +349,8 @@
                     class="
                       submenu
                       relative
-                      top-full
                       left-0
+                      top-full
                       w-[250px]
                       rounded-sm
                       bg-white
@@ -378,12 +377,12 @@
                       <span
                         class="
                           text-body-color
+                          hover:text-brand-mgrey
                           block
                           rounded
-                          py-[10px]
                           px-4
-                          text-sm
-                          hover:text-brand-mgrey hover:underline
+                          py-[10px]
+                          text-sm hover:underline
                         "
                       >
                         {{ link.text }}
@@ -411,11 +410,11 @@
               <button
                 type="button"
                 class="
-                  relative
-                  flex cursor-pointer
-                  flex-row-reverse
-                  items-center px-3
                   hover:text-brand-dgrey
+                  relative flex
+                  cursor-pointer
+                  flex-row-reverse items-center
+                  px-3
                 "
               >
                 <div

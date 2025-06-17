@@ -1,16 +1,16 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+  <div class="min-h-screen w-screen bg-[#1A1A1B]">
     <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    class="from-brand-green to-brand-black mx-auto
+    max-w-screen-xl gap-4 bg-gradient-to-r lg:px-8"
     >
       <div
         class="
           col-span-12
           text-center
+          lg:col-span-6
           lg:space-y-3
           lg:text-left
-          lg:col-span-6
           xl:mt-10"
           data-aos="fade-right"
       >
@@ -110,7 +110,7 @@
         <div class="col-span-3">
           <section
             v-if="totalPages > 0"
-            class="grid w-full grid-cols-1 md:grid-cols-2 gap-2"
+            class="grid w-full grid-cols-1 gap-2 md:grid-cols-2"
           >
             <div
               v-for="(match) in filteredMatchList"
@@ -119,24 +119,24 @@
               class="col-span-1"
             >
               <div class="grid grid-cols-5 rounded-lg bg-[#212121] p-4">
-                <div class="col-span-4 text-md md:text-xl font-medium text-white">
+                <div class="text-md col-span-4 font-medium text-white md:text-xl">
                   {{ match.event_date }}
                 </div>
-                <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
+                <div class="col-span-4 text-sm font-medium text-green-600 md:text-lg">
                   {{ match.time }}
                 </div>
-                <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
+                <div class="col-span-4 text-sm font-medium text-green-600 md:text-lg">
                   {{ match.field }}
                 </div>
                 <div
                   class="col-span-2 flex text-lg
                   font-medium text-slate-600"
                 >
-                  <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
+                  <span class="h-44 flex-1 p-4 transition sm:h-52 md:h-60">
                     <img
                     :src="getMediaURL(match.team1.media[0])"
                     alt="Team 1 logo"
-                    class="h-full w-full object-contain"
+                    class="size-full object-contain"
                     />
                   </span>
                 </div>
@@ -145,40 +145,40 @@
                   class="col-span-2 flex text-lg
                   font-medium text-slate-600"
                 >
-                  <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
+                  <span class="h-44 flex-1 p-4 transition sm:h-52 md:h-60">
                     <img
                     :src="getMediaURL(match.team2.media[0])"
                     alt="Team 2 logo"
-                    class="h-full w-full object-contain"
+                    class="size-full object-contain"
                     />
                   </span>
                 </div>
                 <div
-                class="col-span-2 text-center text-sm md:text-lg font-semibold
-                text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
+                class="col-span-2 text-center text-sm font-semibold text-white
+                md:text-lg lg:truncate lg:whitespace-nowrap lg:text-xl"
                 >
                   {{ match.team1.name }}
                 </div>
                 <div
                 class="col-span-1 flex items-center justify-center text-center
-                text-sm md:text-lg font-semibold text-[#CCCCCC] lg:text-xl"
+                text-sm font-semibold text-[#CCCCCC] md:text-lg lg:text-xl"
                   >
                   VS
                 </div>
                 <div
-                class="col-span-2 text-center text-sm md:text-lg font-semibold
-                text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
+                class="col-span-2 text-center text-sm font-semibold text-white
+                md:text-lg lg:truncate lg:whitespace-nowrap lg:text-xl"
                   >
                   {{ match.team2.name }}
                 </div>
                 <div v-if="match.submit"
-                class="col-span-5 text-2xl text-white font-semibold
-                flex justify-center pt-2 relative"
+                class="relative col-span-5 flex justify-center
+                pt-2 text-2xl font-semibold text-white"
                 >
-                  <div class="absolute bg-red-500 text-sm rounded px-2">
+                  <div class="absolute rounded bg-red-500 px-2 text-sm">
                     Final Score
                   </div>
-                  <div class="bg-[#1A1A1B] px-4 py-2 mt-8 rounded">
+                  <div class="mt-8 rounded bg-[#1A1A1B] px-4 py-2">
                   <span
                   :class="(parseInt(match.team1_score) >= parseInt(match.team2_score))
                   ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
@@ -195,13 +195,13 @@
                   </div>
                 </div>
                 <div v-if="!match.submit"
-                class="col-span-5 text-2xl text-white font-semibold
-                flex justify-center pt-4 pb-2 relative"
+                class="relative col-span-5 flex justify-center
+                pb-2 pt-4 text-2xl font-semibold text-white"
                 >
-                  <div class="absolute bg-green-600 text-sm rounded px-2">
+                  <div class="absolute rounded bg-green-600 px-2 text-sm">
                     Upcoming
                   </div>
-                  <div class="px-4 py-2 mt-4">
+                  <div class="mt-4 px-4 py-2">
                   <span class="font-semibold text-[#5EE738]">
                     {{ match.time }}
                   </span>
@@ -365,17 +365,16 @@ export default {
       if (!this.searchTeamName.trim()) {
         return this.MatchList;
       }
-      
+    
       const searchTerm = this.searchTeamName.toLowerCase().trim();
-
-      const teamMatches = this.MatchList.filter(match => {
+      return this.MatchList.filter(match => {
+      // Add null checks in case team1 or team2 is undefined
         const team1Name = match.team1.name.toLowerCase() || '';
         const team2Name = match.team2.name.toLowerCase() || '';
-        
+      
         return team1Name.includes(searchTerm) || 
-               team2Name.includes(searchTerm);
+             team2Name.includes(searchTerm);
       });
-      return teamMatches.filter(match => !match.submit);
     }
   },
   watch: {
@@ -396,8 +395,6 @@ export default {
           } else {
             console.error('Missing or invalid event data');
           }
-        } else {
-          console.warn('No events or invalid events array');
         }
       },
       immediate: true,
@@ -406,6 +403,10 @@ export default {
       handler(newYear) {
         if (newYear && this.isLoaded) {
           this.page = 1
+          /*
+           * this.selectedRegion = null
+           * this.selectedAgeGroup = null
+           */
           this.selectedAgeGroup = this.formattedAgeGroup[0].value || null;
           this.selectedRegion = this.formattedRegions[0].value || null;
         }

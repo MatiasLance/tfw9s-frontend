@@ -1,8 +1,8 @@
 <template>
-  <OModal :active="active" @close="closeDialog" :width="'960px'">
+  <OModal :active="active" :width="'960px'" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
-                <h3 class="mb-3 font-bold text-brand-black">
+                <h3 class="text-brand-black mb-3 font-bold">
                     Add Player
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
@@ -12,8 +12,8 @@
                       Contact First Name *
                     </label>
                     <VTextField
-                    v-model="contact.firstName"
                     id="title"
+                    v-model="contact.firstName"
                     label="Contact First Name"
                     :rules="rules"
                     type="text"
@@ -25,8 +25,8 @@
                       Contact Last Name *
                     </label>
                     <VTextField
-                    v-model="contact.lastName"
                     id="title"
+                    v-model="contact.lastName"
                     label="Contact Last Name"
                     :rules="rules"
                     type="text"
@@ -60,8 +60,8 @@
                         Email *
                       </label>
                       <VTextField
-                      v-model="contact.email"
                       id="title"
+                      v-model="contact.email"
                       label="Email"
                       :rules="rules"
                       type="email"
@@ -76,8 +76,8 @@
                         Player First Name *
                       </label>
                       <VTextField
-                      v-model="player.firstName"
                       id="title"
+                      v-model="player.firstName"
                       label="Player First Name"
                       :rules="rules"
                       type="text"
@@ -91,8 +91,8 @@
                         Player Last Name *
                       </label>
                       <VTextField
-                      v-model="player.lastName"
                       id="title"
+                      v-model="player.lastName"
                       label="Player Last Name"
                       :rules="rules"
                       type="text"
@@ -106,8 +106,8 @@
                         Team Name *
                       </label>
                       <VTextField
-                      v-model="player.teamName"
                       id="title"
+                      v-model="player.teamName"
                       label="Team Name"
                       :rules="rules"
                       type="text"
@@ -132,7 +132,7 @@
                         Age Group *
                       </label>
                       <VSelect
-                        v-model="player.ageGroup"
+                        v-model="player.agegroup_id"
                         :items="formattedAgeGroup"
                         label="Choose Age Group"
                         :rules="rules"
@@ -190,9 +190,7 @@ export default {
   },
   data() {
     return {
-            form: {
-        region_id: this.initialRegionId || '',
-      },
+      form: { region_id: this.initialRegionId || '' },
       valid: true,
       showGenerateCreatedImageBtn: false,
       imgUrl: [],
@@ -310,7 +308,7 @@ export default {
       formData.append('player_lastname', this.player.lastName);
       formData.append('team_name', this.player.teamName);
       formData.append('dob', this.DatePickerToSQL(this.player.dob));
-      formData.append('agegroup', this.player.ageGroup);
+      formData.append('agegroup', this.player.agegroup_id);
       formData.append('description', this.player.description);
 
       for (let i = 0; i < this.imgList.length; i++) {

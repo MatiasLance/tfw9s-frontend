@@ -3,11 +3,11 @@
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
                 <h3 class="text-brand-black mb-3 font-bold">
-                    Edit Team
+                    {{ team.id?'Update':'Create' }} Series Team
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <div class="col-span-1">
+                  <div class="col-span-1 md:col-span-2">
                     <label for="teamname" class="mb-1 block">
                       Name:
                     </label>
@@ -20,19 +20,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1">
-                    <label for="selectevent" class="mb-1 block">
-                      Series:
-                    </label>
-                    <VSelect
-                    v-model="TeamData.series_id"
-                    :items="formattedSeries"
-                    label="Choose Series"
-                    :rules="rules"
-                    solo
-                    >
-                    </VSelect>
-                  </div>
+                  <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
                       <label for="selectagegroup" class="mb-1 block">
                         Age Group:
@@ -45,6 +33,7 @@
                         solo
                         >
                       </VSelect>
+                    </div>
                   </div>
                   <div class="col-span-1">
                     <label for="region" class="mb-1 block">
@@ -59,7 +48,35 @@
                     >
                     </VSelect>
                   </div>
-                  <div class="col-span-1 md:col-span-2" hidden>
+                  <div class="col-span-1">
+                    <label for="selectevent" class="mb-1 block">
+                      Series:
+                    </label>
+                    <VSelect
+                    v-model="TeamData.series_id"
+                    :items="formattedSeries"
+                    label="Choose Series"
+                    :rules="rules"
+                    :readonly="active"
+                    solo
+                    >
+                    </VSelect>
+                  </div>
+                  <div class="col-span-1">
+                    <label for="selectevent" class="mb-1 block">
+                      Player Limit:
+                    </label>
+                    <VTextField
+                    id="title"
+                    v-model="TeamData.player_limit"
+                    label="Enter Registration Player Limit"
+                    :rules="rules"
+                    type="number"
+                    min="1"
+                    solo
+                    />
+                  </div>
+                  <div class="col-span-1 md:col-span-2" >
                     <label for="teamname" class="mb-1 block">
                       Coach Name:
                     </label>
@@ -71,7 +88,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1" hidden>
+                  <div class="col-span-1" >
                     <label for="teamname" class="mb-1 block">
                       Coach Mobile Number:
                     </label>
@@ -83,7 +100,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1" hidden>
+                  <div class="col-span-1" >
                     <label for="teamname" class="mb-1 block">
                       Coach Email:
                     </label>
@@ -95,7 +112,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1 md:col-span-2" hidden>
+                  <div class="col-span-1 md:col-span-2" >
                     <label for="teamname" class="mb-1 block">
                       Manager Name:
                     </label>
@@ -107,7 +124,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1" hidden>
+                  <div class="col-span-1" >
                     <label for="teamname" class="mb-1 block">
                       Manager Mobile Number:
                     </label>
@@ -119,7 +136,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1" hidden>
+                  <div class="col-span-1" >
                     <label for="teamname" class="mb-1 block">
                       Manager Email:
                     </label>
@@ -131,7 +148,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1 md:col-span-2" hidden>
+                  <div class="col-span-1 md:col-span-2" >
                     <label for="photo" class="mb-1 block">
                         Image upload:
                     </label>
@@ -211,8 +228,7 @@
                             text-brand-lgrey
                             hover:bg-brand-black absolute
                             left-0
-                            my-2 h-6
-                            w-6
+                            my-2 size-6
                             shadow-sm
                             hover:text-white
                             "
@@ -253,30 +269,28 @@
 <script>
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
+import fields from '../../mixins/dataset/fields';
+import regions from '../../mixins/dataset/regions';
+import series from '../../mixins/dataset/series';
+import AgegroupList from '../../mixins/dataset/agegroups';
 
 export default {
-  name: 'EditTeamModal',
+  name: 'ManageSeriesTeamModal',
+  mixins: [
+    fields, regions, series, AgegroupList
+  ],
   props: {
     active: {
       type: Boolean,
       required: true
     },
     team: {
-      type: Object,
+      type: [ Array, Object ],
       default: () => ({}),
     },
-    field: {
-      type: Array,
-      required: false,
-      default: () => []
-    },
     series: {
-      type: Array,
-      required: true
-    },
-    regions: {
-      type: Array,
-      required: true
+      type: [ Array, Object ],
+      default: () => ({}),
     },
   },
   data() {
@@ -292,31 +306,31 @@ export default {
         description: null
       },
       rules: [ value => !!value || 'Required' ],
-      agegroup: []
     }
   },
   computed: {
     formattedField() {
-      return this.field.map(field =>
-        ({ text: field.name, value: field.id }));
+      return this.FieldList.map(FieldList =>
+        ({ text: FieldList.name, value: FieldList.id }));
     },
     formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
+      return this.AgegroupList.map(AgegroupList =>
+        ({ text: AgegroupList.name, value: AgegroupList.id }));
     },
     formattedSeries() {
-      return this.series.map(series => ({
-        text: series.name,
-        value: series.id,
+      return this.SeriesList.map(SeriesList => ({
+        text: SeriesList.name,
+        value: SeriesList.id,
       }));
     },
     formattedRegions() {
       try {
-        if (!Array.isArray(this.regions)) {
-          console.error('Regions is not an array:', this.regions);
+        if (!Array.isArray(this.RegionList)) {
+          // eslint-disable-next-line no-console
+          console.error('Regions is not an array:', this.RegionList);
           return [];
         }
-        const regionsData = this.regions.map(item => {
+        const regionsData = this.RegionList.map(item => {
           if (item.id && item.name) {
             return {
               text: item.name,
@@ -333,14 +347,15 @@ export default {
         }).filter(Boolean);
         return regionsData;
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error formatting regions:', error);
         return [];
       }
     },
     filteredField() {
-      return this.formattedField.filter(field =>
-        field && field.text && typeof field.text === 'string' ?
-          field.text.toLowerCase().includes(this.fieldQuery.toLowerCase()) :
+      return this.formattedField.filter(FieldList =>
+        FieldList && FieldList.text && typeof FieldList.text === 'string' ?
+          FieldList.text.toLowerCase().includes(this.fieldQuery.toLowerCase()) :
           false
       );
     },
@@ -349,22 +364,25 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.TeamData = {
-            ...this.team,
-            region_id: this.team.region_id || null // Initialize region_id
-          };
-          this.imgUrl = this.TeamData.media.map((x) =>
-            `${this.$config.baseURL}/storage/${x.path}`);
-          this.imgList = this.TeamData.media.map((x) => x.hash);
+          this.retrieveRegions()
+          this.retrieveFields()
+          this.retrieveSeries()
+          this.retrieveAgegroups()
+          if (this.team && this.team.id) {
+            this.TeamData = { ...this.team };
+            this.imgUrl = this.TeamData.media.map((x) =>
+              `${this.$config.baseURL}/storage/${x.path}`);
+            this.imgList = this.TeamData.media.map((x) => x.hash);
+          } else {
+            this.TeamData = {};
+            this.imgUrl = [];
+            this.imgList = [];
+          }
+          this.TeamData.series_id = this.series.id || null;
         }
       },
       immediate: true,
     },
-    'TeamData.series_id'(newVal, oldVal) {
-      if (newVal) {
-        this.retrieveTeamLimits();
-      }
-    }
   },
   methods: {
     validate() {
@@ -395,10 +413,10 @@ export default {
       this.$refs.form.resetValidation()
     },
     confirm() {
-      this.editTeam()
+      this.saveSeriesTeam()
       this.closeDialog()
     },
-    editTeam() {
+    saveSeriesTeam() {
       const formData = new FormData();
       formData.append('name', this.TeamData.name);
       formData.append('agegroup_id', this.TeamData.agegroup_id);
@@ -410,21 +428,39 @@ export default {
       formData.append('manager_name', this.TeamData.manager_name);
       formData.append('manager_mobile', this.TeamData.manager_mobile);
       formData.append('manager_email', this.TeamData.manager_email);
+      formData.append('player_limit', this.TeamData.player_limit);
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i]);
       }
+      const team = { ...this.team }
+      const endpoint = this.team.id ? `v1/teams/${this.team.id}` : 'v1/teams';
 
       this.$axios
-        .$post(`v1/teams/${this.team.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .$post(`${endpoint}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: `Series Team ${team.id ? 'Updated' : 'Created'}`,
+            position: 'bottom',
+            variant: 'success',
+            queue: true
+          })
           this.reset();
           this.$emit('confirm')
         })
         .catch((error) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Something went wrong.',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
           if (error.response && error.response.status === 403) {
             this.$router.push('/unauthorized');
           } else {
+            // eslint-disable-next-line no-console
             console.error('Error:', error);
           }
         });
@@ -529,16 +565,6 @@ export default {
     handleImageRemoveCreate() {
       this.showGenerateCreatedImageBtn = false;
     },
-    retrieveTeamLimits() {
-      this.$axios
-        .$get(`v1/teamlimit/${this.TeamData.series_id}`)
-        .then((response) => {
-          this.agegroup = response.data
-            .filter(limit => limit.is_selected === 1)
-            .map(limit => limit.age_groups)
-            .flat();
-        })
-    },
   }
 }
 </script>
@@ -556,7 +582,7 @@ export default {
   padding-right: 0.25rem;
 }
 
-::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
+::v-deep .v-text-FieldList.v-text-FieldList--solo:not(.v-text-FieldList--solo-flat)
 > .v-input__control > .v-input__slot {
 box-shadow: none;
 border: 1px rgb(243 244 246 / var(--tw-border-opacity));
@@ -568,7 +594,7 @@ border-radius: 0;
 transition: border-color 0.3s;
 }
 
-::v-deep .v-text-field input::label {
+::v-deep .v-text-FieldList input::label {
 font-size: 1rem !important;
 font-family: inherit !important;
 color: rgb(104, 104, 104) !important;

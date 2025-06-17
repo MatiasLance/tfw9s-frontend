@@ -1,21 +1,24 @@
+<!-- eslint-disable max-len -->
+<!-- eslint-disable vue/max-len -->
 <template>
   <div>
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-4">
       <!-- Tabs with Add Button aligned right -->
-        <div class="flex items-center justify-between mb-4">
+        <div class="mb-4 flex items-center justify-between">
           <!-- Tabs -->
           <div class="flex gap-2">
             <button
               v-for="tab in tabs"
               :key="tab.id"
-              @click="activeTab = tab.id"
+              type="button"
               :class="[
                 'rounded-md px-4 py-1.5 text-center text-sm',
                 activeTab === tab.id
-                  ? 'font-semibold text-white bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505]'
-                  : 'font-semibold bg-[#212121] text-[#555555]'
+                  ? 'bg-gradient-to-brfrom-[#5EE738] via-[#3e872a] to-[#050505] font-semibold text-white'
+                  : 'bg-[#212121] font-semibold text-[#555555]'
               ]"
+              @click="activeTab = tab.id"
             >
               {{ tab.label }}
             </button>
@@ -51,7 +54,7 @@
             />
           </div>
           <section v-if="totalPages > 0" class="col-span-1">
-            <div class="grid grid-cols-1 overflow-x-scroll overflow-y-hidden md:overflow-x-hidden">
+            <div class="grid grid-cols-1 overflow-y-hidden overflow-x-scroll md:overflow-x-hidden">
               <table class="col-span-1 min-w-[640px]">
                 <tr 
                   v-for="(region) in RegionList"
@@ -59,8 +62,8 @@
                   data-aos="flip-down" data-aos-duration="500"
                   data-aos-offset="0" data-aos-once="true"
                 >
-                  <td class="flex-1 bg-white px-2 py-1 border-b-[2.5px] border-[#1a1a1b]">
-                    {{region.name??'N/A'}}
+                  <td class="flex-1 border-b-[2.5px] border-[#1a1a1b] bg-white px-2 py-1">
+                    {{region.name||'N/A'}}
                   </td>
                   <td class="w-[116px] text-center">
                     <i
@@ -85,7 +88,6 @@
         </div>
         <div v-if="activeTab === 'teams'" class="grid grid-cols-1 gap-4">
           <RegionTeams 
-            v-if="activeTab === 'teams'"
             :regions="RegionList"
             @refresh="retrieveRegions"
           />
@@ -153,7 +155,7 @@ export default {
           return 'Name is required.'
         },
         value => {
-          if (value?.length <= 10) {
+          if (value.length <= 10) {
             return true
           }
 

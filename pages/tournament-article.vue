@@ -1,17 +1,32 @@
 <template>
-  <div class="flex w-screen min-h-screen items-center bg-[#1A1A1B] text-white">
-    <div class="">
+  <div class="flex min-h-screen w-screen items-center bg-[#1A1A1B] text-white">
+    <section
+    v-if="isLoading"
+    class="flex w-full h-[70vh] items-center justify-center"
+    >
+      <VProgressCircular
+        :size="150"
+        :width="15"
+        color="green"
+        indeterminate
+      >
+      </VProgressCircular>
+    </section>
+    <div
+    v-else
+    class=""
+    >
       <div
         class="
-        p-2
-        sm:p-6
-        md:p-10
+        grid
         h-auto
         w-screen
-        grid
         grid-cols-1
         gap-4
-        md:grid-cols-6"
+        p-2
+        sm:p-6
+        md:grid-cols-6
+        md:p-10"
       >
         <div class="md:col-span-4">
           <div v-if="photos.length !== 0" class="grid grid-cols-3 gap-4">
@@ -31,9 +46,9 @@
                   >
                     <a
                       :href="`${$config.baseURL}/storage/${photo.path}`"
-                      class="mx-1 inline-block
-                      border border-gray-200 p-1 py-2
-                      px-1 text-center hover:border-brand-green"
+                      class="hover:border-brand-green mx-1
+                      inline-block border border-gray-200 p-1
+                      px-1 py-2 text-center"
                       @click.prevent="setActiveMedia(photo)"
                     >
                       <img
@@ -63,34 +78,34 @@
           md:col-span-2"
         >
         <div
-          class="font-semibold p-[1rem]
-          mx-auto max-w-screen-xl w-full"
+          class="mx-auto w-full
+          max-w-screen-xl p-[1rem] font-semibold"
         >
           <span class="text-xl md:text-3xl">
             {{article.name}}
           </span>
-          <p class="text-base md:text-lg text-brand-slate">
+          <p class="text-brand-slate text-base md:text-lg">
             {{ DateRange(formattedDate(article.start),
               formattedDate(article.end)) }}
           </p>
-          <p class="text-base md:text-lg text-brand-slate">
+          <p class="text-brand-slate text-base md:text-lg">
            Age: {{ article.ageGroup.name || '' }}
           </p>
         </div>
         <div
-          class="article-context font-bold px-[1rem]
-          mx-auto max-w-screen-xl w-full
-          text-xl md:text-4xl"
+          class="article-context mx-auto w-full
+          max-w-screen-xl px-[1rem] text-xl
+          font-bold md:text-4xl"
         >
           {{ formatCurrencyFromCent(article.price) }}
         </div>
         <article
-          class="article-description p-[1rem]
-          mx-auto max-w-screen-xl w-full text-wrap
-          h-[200px] overflow-y-scroll mb-4"
+          class="article-description mx-auto
+          mb-4 h-[200px] w-full max-w-screen-xl
+          overflow-y-scroll text-wrap p-[1rem]"
         >
           <p
-            class="my-4 text-white text-sm md:text-lg"
+            class="my-4 text-sm text-white md:text-lg"
             v-html="article.description"
           />
         </article>
@@ -117,8 +132,8 @@
               from-[#5EE738]
               via-[#3e872a]
               to-[#050505]
-              py-2
               px-6
+              py-2
               text-center text-xl
               font-semibold
               text-white
@@ -144,17 +159,17 @@
               inline-block
               w-[250px]
               rounded-lg
-              bg-[#212121] text-[#999999]
-              border-2
-              border-[#414141]
-              py-3
+              border-2 border-[#414141]
+              bg-[#212121]
               px-4
-              text-center text-lg
-              font-medium
+              py-3
+              text-center
+              text-lg font-medium
+              text-[#999999]
               shadow-sm
-              hover:text-white
-              hover:bg-[#414141]
               transition
+              hover:bg-[#414141]
+              hover:text-white
             "
             >
               Back to Tournaments
@@ -227,6 +242,7 @@ export default {
   },
   data() {
     return {
+      isLoading: true,
       isSelected: '',
       addTaxOnCartPrice: 0,
       includeTaxOnCartPrice: 0,
@@ -390,6 +406,7 @@ export default {
       })
     },
     retrieveSeries(Id) {
+      this.isLoading = true;
       this.$axios
         .$get(`v1/series/${Id}`)
         .then((response) => {
@@ -409,6 +426,9 @@ export default {
         })
         .catch((error) => {
           console.error('Error fetching series:', error);
+        })
+        .finally(() => {
+          this.isLoading = false;
         });
     },
     calculatePriceAggregates() {

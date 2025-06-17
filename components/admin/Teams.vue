@@ -50,25 +50,25 @@
                     data-aos="flip-up"
                 >
                   <span
-                  class="flex-1 text-center px-4 py-2 align-middle
+                  class="flex-1 px-4 py-2 text-center align-middle
                   text-[20px] font-semibold text-[#555555]"
                   >
                   Team
                   </span>
                   <span
-                  class="flex-1 text-center px-4 py-2 align-middle
+                  class="flex-1 px-4 py-2 text-center align-middle
                   text-[20px] font-semibold text-[#555555]"
                   >
                   Age Group
                   </span>
                   <span
-                  class="flex-1 text-center px-4 py-2 align-middle
+                  class="flex-1 px-4 py-2 text-center align-middle
                   text-[20px] font-semibold text-[#555555]"
                   >
                   Series
                   </span>
                   <span
-                  class="flex-1 text-center px-4 py-2 align-middle
+                  class="flex-1 px-4 py-2 text-center align-middle
                   text-[20px] font-semibold text-[#555555]"
                   >
                   Region
@@ -108,12 +108,12 @@
                   />
                   <input
                   :value="getRegionName(data.region_id)"
-                  @input="handleRegionInput(data, $event)"
                   :rules="Rules"
                   hide-details
                   required
                   readonly
                   class="mr-0.5 flex-1 border-black bg-white p-1"
+                  @input="handleRegionInput(data, $event)"
                   />
                   <i
                   class="ri-pencil-fill px-4 text-xl text-white"
@@ -220,7 +220,7 @@ export default {
           return 'Name is required.'
         },
         value => {
-          if (value?.length <= 10) {
+          if (value.length <= 10) {
             return true
           }
 
@@ -229,41 +229,41 @@ export default {
       ],
     };
   },
-async mounted() {
-  try {
-    await Promise.all([
-      this.retrieveAgeGroups(),
-      this.retrieveSeries(),
-      this.retrieveRegions()
-    ]);
-  } catch (error) {
-    console.error("Failed to load initial lookup data:", error);
-    this.$oruga.notification.open({
+  watch: {
+    totalPages() {
+      if (this.page > this.totalPages && this.totalPages > 0) { // Check totalPages > 0
+        this.page = this.totalPages; // Go to the new last page
+        this.retrieveTeams();
+      } else if (this.page > 1 && this.totalPages === 0) {
+        this.page = 1;
+        this.retrieveTeams();
+      }
+    },
+    page: {
+      handler(newPage) {
+        this.retrieveTeams()
+      },
+    },
+  },
+  async mounted() {
+    try {
+      await Promise.all([
+        this.retrieveAgeGroups(),
+        this.retrieveSeries(),
+        this.retrieveRegions()
+      ]);
+    } catch (error) {
+      console.error("Failed to load initial lookup data:", error);
+      this.$oruga.notification.open({
         duration: 5000,
         message: 'Failed to load some essential data. Please try refreshing.',
         position: 'bottom',
         variant: 'danger',
         queue: true
       });
-  }
-  
-  this.retrieveTeams();
-},
-  watch: {
-    totalPages() {
-    if (this.page > this.totalPages && this.totalPages > 0) { // Check totalPages > 0
-      this.page = this.totalPages; // Go to the new last page
-      this.retrieveTeams();
-    } else if (this.page > 1 && this.totalPages === 0) {
-      this.page = 1;
-      this.retrieveTeams();
     }
-  },
-    page: {
-      handler(newPage) {
-        this.retrieveTeams()
-      },
-    },
+  
+    this.retrieveTeams();
   },
   methods: {
     matchField(id) {
@@ -343,9 +343,9 @@ async mounted() {
     },
     async retrieveTeams() {
       try {
-        if (this.ageGroupList.length === 0 && this.totalItems > 0) { // Only log if expecting teams but no age groups
-            console.warn("retrieveTeams: ageGroupList is empty. Data might be missing. Trying to reload.");
-            await this.retrieveAgeGroups();
+        if (this.ageGroupList.length === 0 && this.totalItems > 0) {
+          // Only log if expecting teams but no age groups
+          await this.retrieveAgeGroups();
         }
 
         const query = {
@@ -370,12 +370,12 @@ async mounted() {
           
           return {
             ...team,
-            agegroup: foundAgeGroup 
-              ? { name: foundAgeGroup.name, id: foundAgeGroup.id } 
-              : { name: `(ID: ${team.agegroup_id || 'N/A'})`, id: team.agegroup_id }, // Fallback
-            series: foundSeries 
-              ? { name: foundSeries.name, id: foundSeries.id }
-              : { name: `(ID: ${team.series_id || 'N/A'})`, id: team.series_id }, // Fallback
+            agegroup: foundAgeGroup ? 
+              { name: foundAgeGroup.name, id: foundAgeGroup.id } : 
+              { name: `(ID: ${team.agegroup_id || 'N/A'})`, id: team.agegroup_id }, // Fallback
+            series: foundSeries ? 
+              { name: foundSeries.name, id: foundSeries.id } :
+              { name: `(ID: ${team.series_id || 'N/A'})`, id: team.series_id }, // Fallback
           };
         });
 
@@ -401,30 +401,27 @@ async mounted() {
       return region ? region.name : '';
     },
     retrieveAgeGroups() {
-      const query = {
-        q: this.query,
-      };
+      const query = { q: this.query };
 
-  Object.keys(query).forEach((key) => {
-    if (query[key] == null || query[key] === '') {
-      delete query[key];
-    }
-  });
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null || query[key] === '') {
+          delete query[key];
+        }
+      });
 
       const queryString = new URLSearchParams(query).toString()
 
-  return this.$axios
-    .$get(`v1/agegroups?${queryString}`)
-    .then((response) => {
-      this.ageGroupList = response.data.ageGroups;
-      console.log('All Age Groups Loaded:', this.ageGroupList);
-    })
-    .catch(error => {
-      console.error('Error fetching age groups:', error);
-      this.ageGroupList = [];
-      throw error; 
-    });
-},
+      return this.$axios
+        .$get(`v1/agegroups?${queryString}`)
+        .then((response) => {
+          this.ageGroupList = response.data.ageGroups;
+        })
+        .catch(error => {
+          console.error('Error fetching age groups:', error);
+          this.ageGroupList = [];
+          throw error; 
+        });
+    },
     retrieveSeries() {
       this.$axios
         .$get('v1/series')
@@ -440,7 +437,6 @@ async mounted() {
       this.$axios
         .$get('v1/regions')
         .then((response) => {
-          console.log('Regions API response:', response);
           if (response.data && response.data.regions) {
             this.regionList = response.data.regions;
           } else if (Array.isArray(response.data)) {
@@ -451,7 +447,6 @@ async mounted() {
             console.error('Unexpected regions response format:', response);
             this.regionList = [];
           }
-          console.log('Processed regionList:', this.regionList);
         })
         .catch(error => {
           console.error('Error fetching regions:', error);

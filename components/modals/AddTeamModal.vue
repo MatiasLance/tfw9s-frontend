@@ -1,12 +1,11 @@
 <template>
   <OModal :active="active" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-      <VForm ref="form" v-model="valid" lazy-validation>
-        <h3 class="mb-3 font-bold text-brand-black">
-          Add Team
-        </h3>
-        <hr class="my-3 lg:w-[918px]"
-        />
+            <VForm ref="form" v-model="valid" lazy-validation>
+                <h3 class="text-brand-black mb-3 font-bold">
+                    Add Team
+                </h3>
+                <hr class="my-3 lg:w-[918px]"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <div class="col-span-1">
                     <label for="teamname" class="mb-1 block">
@@ -195,7 +194,7 @@
                         v-if="showGenerateCreatedImageBtn"
                         dark
                         large
-                        class="bg-gradient-to-r from-brand-black to-brand-black mt-4 w-full"
+                        class="from-brand-black to-brand-black bg-gradient-to-r"
                         @click="generateImage"
                         >
                           GENERATE
@@ -213,12 +212,12 @@
                         <button
                             type="button"
                             class="
-                            absolute
-                            left-0 my-2
-                            h-6
-                            w-6 text-brand-lgrey
+                            text-brand-lgrey
+                            hover:bg-brand-black absolute
+                            left-0
+                            my-2 h-6
+                            w-6
                             shadow-sm
-                            hover:bg-brand-black
                             hover:text-white
                             "
                             @click="removeImage(photoIndex)"
@@ -315,7 +314,6 @@ export default {
         type: 'default'
       },
       rules: [ value => !!value || 'Required' ],
-      agegroup: []
     }
   },
   computed: {
@@ -329,36 +327,16 @@ export default {
         ({ text: agegroup.name || '', value: parseInt(agegroup.id || 0) }));
     },
     formattedSeries() {
-      try {
-        // First check if series is defined
-        if (!this.series) return [];
-        
-        // Handle both possible structures with the correct operator-linebreak style
-        const rawSeries = Array.isArray(this.series) ?
-          this.series :
-          (this.series.data.series || []); // Also added optional chaining for safety
-        
-        if (!Array.isArray(rawSeries)) {
-          console.error('Series data is not an array:', rawSeries);
-          return [];
-        }
-        
-        return rawSeries.map(series => ({
-          text: series.name,
-          value: series.id,
-        }));
-      } catch (error) {
-        console.error('Error formatting series:', error);
+      if (!this.series || this.series.length === 0) {
         return [];
       }
+      return this.series.map(series => ({
+        text: series.name,
+        value: series.id,
+      }));
     },
     formattedRegions() {
       try {
-        // Check if regions exists and is an array
-        if (!Array.isArray(this.regions)) {
-          console.error('Regions is not an array:', this.regions);
-          return [];
-        }
         const regionsData = this.regions.map(item => {
           // Add null checks for region properties
           if (item.id && item.name) {
@@ -375,7 +353,6 @@ export default {
           }
           return null;
         }).filter(Boolean); // Remove any null entries
-        console.log('Formatted regions:', regionsData);
         return regionsData;
       } catch (error) {
         console.error('Error formatting regions:', error);
@@ -396,12 +373,6 @@ export default {
         this.retrieveTeamLimits();
       }
     },
-    regions: {
-      immediate: true,
-      handler(newVal) {
-        console.log('Regions prop changed:', newVal);
-      }
-    }
   },
   methods: {
     validate() {
@@ -582,6 +553,7 @@ export default {
       this.$axios
         .$get(`v1/teamlimit/${this.TeamData.series_id}`)
         .then((response) => {
+          // eslint-disable-next-line vue/no-mutating-props
           this.agegroup = response.data
             .filter(limit => limit.is_selected === 1)
             .map(limit => limit.age_groups)

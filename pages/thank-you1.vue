@@ -62,27 +62,25 @@
         <div class="text-base text-gray-300">
           You can go back to the Tournaments to continue the registration
         </div>
+                <div class="mt-4 flex items-center justify-center">
+        <span
+          v-if="transactionUrl"
+          class="mx-2 cursor-pointer rounded bg-gradient-to-tr
+          from-[#5EE738] via-[#3e872a] to-[#050505] px-4 py-2 text-white"
+          @click="redirectTo(transactionUrl)"
+          >
+            Registration Details
+          </span>
+        </div> 
         <div class="mt-4 flex items-center justify-center">
           <NuxtLink to="/tournaments">
             <span
-              class="bg-brand-black mx-2 cursor-pointer px-4 py-2 text-white"
+              class="bg-brand-black mx-2 cursor-pointer rounded px-4 py-2 text-white"
             >
               Tournaments
             </span>
           </NuxtLink>
         </div>
-<!--
-  <div class="mt-4 flex items-center justify-center">
-  <NuxtLink to="/card">
-  <span
-  @click="viewIdCard"
-  class="mx-2 cursor-pointer bg-brand-green px-4 py-2 text-black"
-  >
-  View Your Player ID Card
-  </span>
-  </NuxtLink>
-  </div> 
--->
       </template>
 
       <template v-else-if="status === 'processing'">
@@ -162,7 +160,8 @@ export default {
       bannerText: 'Verifying Order',
       registrationId: null,
       registrationType: null,
-      playerData: null
+      playerData: null,
+      transactionUrl: '',
     }
   },
   computed: {
@@ -250,22 +249,6 @@ export default {
         this.bannerText = 'Order failed'
       }
     },
-    viewIdCard() {
-      if (!this.registrationId || !this.registrationType) {
-        console.error('Registration data not available')
-        return
-      }
-      
-      // Create the encrypted key payload
-      const payload = {
-        target: this.registrationId,
-        type: this.registrationType
-      }
-      
-      // Encrypt the payload and redirect
-      const encryptedKey = btoa(JSON.stringify(payload));
-      this.$router.push(`/card/?key=${encryptedKey}`)
-    },
     generateTransactionURL(key) {
       const formData = new FormData();
       formData.append('type', this.$route.query.seriesType);
@@ -273,10 +256,11 @@ export default {
       this.$axios
         .$post('v1/transaction/generate', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
-          const url = response.data.url
-          console.log('Transaction URL:', url)
-          
+          this.transactionUrl = response.data.url
         })
+    },
+    redirectTo(url) {
+      if (url) window.open(url, '_blank')
     },
 
   },

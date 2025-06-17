@@ -45,7 +45,7 @@ export default {
       required: true
     },
     team: {
-      type: Object,
+      type: [ Array, Object ],
       default: () => ({}),
     },
   },
@@ -60,10 +60,10 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.teamData = {
-            name: this.team?.name || '',
-            id: this.team?.id || null
+            name: this.team.name || '',
+            id: this.team.id || null
           };
-      }
+        }
       },
       immediate: true,
     },
@@ -100,7 +100,7 @@ export default {
         console.error('Delete team error:', error);
         
         let errorMessage = 'Failed to delete team';
-        if (error.response?.data?.message) {
+        if (error.response.data.message) {
           errorMessage = error.response.data.message;
         }
         

@@ -8,6 +8,86 @@
       Information
     </h2>
 
+        <hr class="my-4" />
+
+    <div class="grid gap-x-3 lg:grid-cols-2">
+      <div class="mb-4">
+        <label class="mb-1 block"> Team Name </label>
+          <div class="relative">
+            <select
+              v-model="player.teamName"
+              name="teams"
+              class="
+              w-full appearance-none border
+              border-gray-200 bg-gray-100
+              px-3 py-2 hover:border-gray-400
+              focus:border-gray-400 focus:outline-none"
+              disabled
+              required
+            >
+              <option :value="null" disabled hidden>
+                Player Team Name
+              </option>
+              <option
+                v-for="team in teams"
+                :key="team.id" :value="team.id"
+              >
+                {{ team.name }}
+              </option>
+            </select>
+            <div
+              v-if="!player.teamName"
+              class="
+              pointer-events-none absolute inset-y-0
+              left-0 flex items-center
+              pl-3 text-gray-500
+              "
+            >
+              Team Name
+            </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="mb-1 block"> Age Group </label>
+          <div class="relative">
+            <select
+              v-model="player.ageGroup"
+              name="agegroup"
+              class="
+              w-full appearance-none border
+              border-gray-200 bg-gray-100
+              px-3 py-2 hover:border-gray-400
+              focus:border-gray-400 focus:outline-none"
+              disabled
+              required
+            >
+              <option :value="null" disabled hidden>
+                Age Group
+              </option>
+              <option
+                v-for="group in agegroup"
+                :key="group.id" :value="group.id"
+              >
+                {{ group.name }}
+              </option>
+            </select>
+            <div
+              v-if="!player.ageGroup"
+              class="
+              pointer-events-none absolute inset-y-0
+              left-0 flex items-center
+              pl-3 text-gray-500
+              "
+            >
+              Age Group
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-4" />
+
     <div class="grid gap-x-3 lg:grid-cols-2">
       <div class="mb-4">
         <label class="mb-1 block"> Parent Name* </label>
@@ -19,8 +99,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -40,8 +120,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -50,9 +130,7 @@
           required
         />
       </div>
-    </div>
 
-    <div class="grid gap-x-3 lg:grid-cols-2">
       <div class="mb-4">
         <label class="mb-1 block"> Parent Phone Number* </label>
         <div class="flex w-full">
@@ -64,8 +142,8 @@
               appearance-none
               border border-gray-200
               bg-gray-100
-              py-2
               px-3
+              py-2
               hover:border-gray-400
               focus:border-gray-400 focus:outline-none
             "
@@ -81,8 +159,8 @@
               appearance-none
               border border-gray-200
               bg-gray-100
-              py-2
               px-3
+              py-2
               hover:border-gray-400
               focus:border-gray-400 focus:outline-none
             "
@@ -103,8 +181,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -128,8 +206,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -149,8 +227,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -158,42 +236,6 @@
           placeholder="Player Last Name"
           required
         />
-      </div>
-
-      <div class="mb-4">
-        <label class="mb-1 block"> Team Name* </label>
-          <div class="relative">
-            <select
-              v-model="player.teamName"
-              name="teams"
-              class="
-              w-full appearance-none border
-              border-gray-200 bg-gray-100
-              py-2 px-3 hover:border-gray-400
-              focus:border-gray-400 focus:outline-none"
-              required
-            >
-              <option :value="null" disabled hidden>
-                Age Group
-              </option>
-              <option
-                v-for="team in teams"
-                :key="team.id" :value="team.name"
-              >
-                {{ team.name }}
-              </option>
-            </select>
-            <div
-              v-if="!player.teamName"
-              class="
-              absolute inset-y-0 left-0
-              flex items-center pl-3
-              pointer-events-none text-gray-500
-              "
-            >
-              Team Name
-            </div>
-        </div>
       </div>
 
       <div class="mb-4">
@@ -206,8 +248,8 @@
             appearance-none
             border border-gray-200
             bg-gray-100
-            py-2
             px-3
+            py-2
             hover:border-gray-400
             focus:border-gray-400 focus:outline-none
           "
@@ -216,48 +258,13 @@
           required
         />
       </div>
+    </div>
 
-      <div class="mb-4">
-        <label class="mb-1 block"> Age Group* </label>
-          <div class="relative">
-            <select
-              v-model="player.ageGroup"
-              name="agegroup"
-              class="
-              w-full appearance-none border
-              border-gray-200 bg-gray-100
-              py-2 px-3 hover:border-gray-400
-              focus:border-gray-400 focus:outline-none"
-              required
-            >
-              <option :value="null" disabled hidden>
-                Age Group
-              </option>
-              <option
-                v-for="group in agegroup"
-                :key="group.id" :value="group.id"
-              >
-                {{ group.name }}
-              </option>
-            </select>
-            <div
-              v-if="!player.ageGroup"
-              class="
-              absolute inset-y-0 left-0
-              flex items-center pl-3
-              pointer-events-none text-gray-500
-              "
-            >
-              Age Group
-            </div>
-        </div>
-      </div>
-          <div class="mb-4 col-span-1">
-        <ImageUpload
-          @update-image="updateImage"
-          v-model="photo"
-        />
-      </div>
+    <div class="flex">
+      <ImageUpload
+      v-model="photo"
+      @update-image="updateImage"
+      />
     </div>
 
     <div class="flex w-full flex-wrap items-center justify-between gap-x-2">
@@ -267,14 +274,13 @@
           v-model="hasAgreedToTerms"
           type="checkbox"
           class="
+            text-brand-black
             mr-2
-            h-4
-            w-4
+            size-4
             cursor-pointer
             rounded-full
             border-[3px] border-gray-300
             bg-gray-400
-            text-brand-black
             hover:border-gray-700
             focus:border-transparent
             focus:bg-gray-200
@@ -298,7 +304,11 @@
 
       <button
         type="submit"
-        class="w-24 cursor-pointer bg-brand-black py-2 text-white"
+        class="w-24 cursor-pointer py-2 text-white"
+          :class="{
+          'bg-brand-black': !isLoading && !isPlayerLimitReached,
+          'bg-gray-400': isLoading || isPlayerLimitReached
+        }"
         :disabled="isLoading"
       >
         <span v-if="!isLoading">
@@ -372,6 +382,9 @@ export default {
       showTermsModal: false,
       imgList: [],
       photo: null,
+      series: [],
+      team: [],
+      isPlayerLimitReached: false,
     }
   },
   computed: {
@@ -393,6 +406,13 @@ export default {
     this.retrieveAgeGroups();
     this.retrieveTeams();
   },
+  mounted() {
+    const token = this.$route.query.token
+
+    if (token) {
+      this.retrieveTokenData(token)
+    }
+  },
   methods: {
     submit() {
       this.$emit('submit', {
@@ -412,22 +432,22 @@ export default {
       return false
     },
     updateImage(image) {
-  if (image && image.length > 0) {
-    this.photo = image[0]; // Store the first image
-    this.imgList = image;  // Keep the array for other purposes if needed
-  } else {
-    this.photo = null;
-    this.imgList = [];
-  }
-},
-  handleFileChange(event) {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      this.$emit('update-image', Array.from(files)); // Emit array of files
-    } else {
-      this.$emit('update-image', []);
-    }
-  },
+      if (image && image.length > 0) {
+        this.photo = image[0];
+        this.imgList = image;
+      } else {
+        this.photo = null;
+        this.imgList = [];
+      }
+    },
+    handleFileChange(event) {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        this.$emit('update-image', Array.from(files));
+      } else {
+        this.$emit('update-image', []);
+      }
+    },
     retrieveAgeGroups() {
       const query = {
         q: this.query,
@@ -466,6 +486,32 @@ export default {
         .$get(`v1/teams?${queryString}`)
         .then((response) => {
           this.teams = response.data.teams;
+        })
+    },
+    retrieveTokenData(key) {
+      this.$axios
+        .$get(`v1/series/token/${key}`)
+        .then((response) => {
+          this.series = response.data.series || [];;
+          this.team = response.data.team || [];
+
+          const registered = this.team.registered_players_count || 0;
+          const limit = this.team.player_limit || 0;
+          
+          this.isPlayerLimitReached = registered >= limit
+
+          if (this.isPlayerLimitReached) {
+            this.$oruga.notification.open({
+              duration: 5000,
+              message: 'Player Registration Limit Reached',
+              position: 'bottom',
+              variant: 'info',
+              queue: true,
+            });
+          }
+
+          this.player.teamName = this.team.id
+          this.player.ageGroup = this.team.agegroup_id
         })
     },
   }

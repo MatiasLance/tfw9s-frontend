@@ -1,35 +1,39 @@
 <template>
   <div
-    class="max-w-xl mx-auto mt-15 p-4 bg-white rounded-xl shadow-md
-           border border-gray-200 relative overflow-hidden"
+    class="mt-15 relative mx-auto max-w-xl overflow-hidden rounded-xl border
+           border-gray-200 bg-white p-4 shadow-md"
   >
     <img
       src="~/assets/images/tfw9s.png"
       alt="background logo"
       class="
-      absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-      w-64 opacity-5 z-0"
+      absolute left-1/2 top-1/2 z-0 w-64 -translate-x-1/2
+      -translate-y-1/2 opacity-5"
     >
 
     <div class="relative z-10">
-      <div v-if="loading" class="text-center py-10">
+      <div v-if="loading" class="py-10 text-center">
         <VProgressCircular indeterminate color="primary" />
-        <p class="mt-4">Loading player data...</p>
+        <p class="mt-4">
+        Loading player data...
+        </p>
       </div>
 
-      <div v-else-if="error" class="text-center py-10 text-red-500">
+      <div v-else-if="error" class="py-10 text-center text-red-500">
         Error loading player data: {{ error }}
-        <VBtn @click="fetchPlayerData" class="mt-4">Retry</VBtn>
+        <VBtn class="mt-4" @click="fetchPlayerData">
+        Retry
+        </VBtn>
       </div>
 
       <div v-else>
         <div
-          class="flex flex-col sm:flex-row justify-center
-                 items-center sm:items-start gap-20 sm:gap-22"
+          class="sm:gap-22 flex flex-col items-center
+                 justify-center gap-20 sm:flex-row sm:items-start"
         >
           <div
-            class="flex flex-col items-center sm:items-start
-                   gap-3 sm:gap-4 mr-2 sm:mr-4"
+            class="mr-2 flex flex-col items-center
+                   gap-3 sm:mr-4 sm:items-start sm:gap-4"
           >
             <img
               src="~/assets/images/tfw9s.png"
@@ -37,35 +41,35 @@
               class="w-20 sm:w-24"
             >
             <div class="text-center sm:text-left">
-              <p class="font-bold text-lg sm:text-xl tracking-wider">
+              <p class="text-lg font-bold tracking-wider sm:text-xl">
                 {{ player.firstName.toUpperCase() }}
               </p>
-              <p class="font-semibold text-base sm:text-lg">
+              <p class="text-base font-semibold sm:text-lg">
                 {{ player.lastName }}
               </p>
-              <p class="text-sm mt-2 tracking-widest">
+              <p class="mt-2 text-sm tracking-widest">
                 {{ formatDate(player.dateOfBirth) }}
               </p>
             </div>
           </div>
 
-          <div class="flex flex-col items-center gap-2 ml-2 sm:ml-4">
-            <p class="font-bold text-xl sm:text-2xl">
+          <div class="ml-2 flex flex-col items-center gap-2 sm:ml-4">
+            <p class="text-xl font-bold sm:text-2xl">
               TFW9'S
             </p>
             <img
               :src="playerPhoto || require('~/assets/images/tfw9s.png')"
               alt="Player"
-              class="rounded-xl object-cover w-40 h-48
-                    border border-gray-300"
+              class="h-48 w-40 rounded-xl border
+                    border-gray-300 object-cover"
             >
           </div>
         </div>
 
         <div
-          class="mt-6 bg-green-600 text-white text-center
-                 font-bold py-2 rounded-b-xl text-lg sm:text-xl
-                 tracking-widest"
+          class="mt-6 rounded-b-xl bg-green-600 py-2
+                 text-center text-lg font-bold tracking-widest text-white
+                 sm:text-xl"
         >
           REGISTERED PLAYER
         </div>
@@ -88,6 +92,9 @@ export default {
       },
       playerPhoto: null
     }
+  },
+  mounted() {
+    this.fetchPlayerData();
   },
   methods: {
     async fetchPlayerData() {
@@ -135,7 +142,6 @@ export default {
             throw err;
           });
 
-        console.log('API Response:', response);
         
         if (!response.data) {
           throw new Error('Invalid response structure - missing data');
@@ -167,9 +173,6 @@ export default {
         this.loading = false;
       }
     }
-  },
-  mounted() {
-    this.fetchPlayerData();
   }
 }
 

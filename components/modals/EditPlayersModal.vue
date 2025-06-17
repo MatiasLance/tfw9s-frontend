@@ -1,8 +1,8 @@
 <template>
-  <OModal :active="active" @close="closeDialog" :width="'960px'">
+  <OModal :active="active" :width="'960px'" @close="closeDialog">
     <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
             <VForm ref="form" v-model="valid" lazy-validation>
-                <h3 class="mb-3 font-bold text-brand-black">
+                <h3 class="text-brand-black mb-3 font-bold">
                     Edit Player
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
@@ -12,8 +12,8 @@
                       Contact First Name *
                     </label>
                     <VTextField
-                    v-model="SeriesData.contact_firstname"
                     id="title"
+                    v-model="SeriesData.contact_firstname"
                     label="Contact First Name"
                     :rules="rules"
                     type="text"
@@ -25,8 +25,8 @@
                       Contact Last Name *
                     </label>
                     <VTextField
-                    v-model="SeriesData.contact_lastname"
                     id="title"
+                    v-model="SeriesData.contact_lastname"
                     label="Contact Last Name"
                     :rules="rules"
                     type="text"
@@ -60,8 +60,8 @@
                         Email *
                       </label>
                       <VTextField
-                      v-model="SeriesData.email"
                       id="title"
+                      v-model="SeriesData.email"
                       label="Email"
                       :rules="rules"
                       type="email"
@@ -76,8 +76,8 @@
                         Player First Name *
                       </label>
                       <VTextField
-                      v-model="SeriesData.player_firstname"
                       id="title"
+                      v-model="SeriesData.player_firstname"
                       label="Player First Name"
                       :rules="rules"
                       type="text"
@@ -91,8 +91,8 @@
                         Player Last Name *
                       </label>
                       <VTextField
-                      v-model="SeriesData.player_lastname"
                       id="title"
+                      v-model="SeriesData.player_lastname"
                       label="Player Last Name"
                       :rules="rules"
                       type="text"
@@ -106,8 +106,8 @@
                         Team Name *
                       </label>
                       <VTextField
-                      v-model="SeriesData.team_name"
                       id="title"
+                      v-model="SeriesData.team_name"
                       label="Team Name"
                       :rules="rules"
                       type="text"
@@ -120,10 +120,9 @@
                       Date of Birth *
                     </label>
                     <ODatepicker
-                    v-model="selectedDate"
+                    v-model="this.selectedDate"
                     icon="calendar"
                     :rules="rules"
-                    :formatter="dateFormatter"
                     />
                   </div>
                   <div class="col-span-2 md:col-span-1">
@@ -132,7 +131,7 @@
                         Age Group:
                       </label>
                       <VSelect
-                        v-model="SeriesData.agegroup"
+                        v-model="SeriesData.agegroup_id"
                         :items="formattedAgeGroup"
                         label="Choose Age Group"
                         :rules="rules"
@@ -195,9 +194,7 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrlEdit: [],
       imgListEdit: [],
-      SeriesData: {
-        agegroup_id: null
-      },
+      SeriesData: { agegroup_id: null },
       AgeGroupList: [
         { text: 'U6', value: 'U6' },
         { text: 'U7', value: 'U7' },
@@ -212,24 +209,6 @@ export default {
       selectedDate: '',
     }
   },
-  watch: {
-    active: {
-      handler(newActive) {
-        if (newActive) {
-          this.SeriesData = {...this.series};
-          this.SeriesData.agegroup_id = this.series.agegroup_id || null;
-          this.selectedDate = this.series.dob ? new Date(this.series.dob) : null;
-          this.phoneDigits = this.SeriesData.phone_number?.replace(/^\+61/, '') || '';
-        }
-      },
-      immediate: true,
-    },
-      selectedDate(newDate) {
-    if (newDate && this.active) {
-      this.SeriesData.dob = this.DatePickerToSQL(newDate);
-    }
-  },
-  },
   computed: {
     phoneNumber: {
       get() {
@@ -240,32 +219,45 @@ export default {
       return this.agegroup.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
     },
-      formattedDisplayDate() {
-    if (!this.selectedDate) return '';
-    const d = new Date(this.selectedDate);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
   },
+  watch: {
+    active: {
+      handler(newActive) {
+        if (newActive) {
+          this.SeriesData = { ...this.series };
+          this.SeriesData.agegroup_id = this.series.agegroup_id || null;
+          this.selectedDate = this.series.dob ? new Date(this.series.dob) : null;
+          this.phoneDigits = this.SeriesData.phone_number.replace(/^\+61/, '') || '';
+        }
+      },
+      immediate: true,
+    },
+    selectedDate: {
+      handler(newDate) {
+        if (newDate && this.active) {
+          this.SeriesData.dob = this.DatePickerToSQL(newDate);
+        }
+      },
+      immediate: true,
+    },
   },
   methods: {
     updateImageEdit(image) {
       this.imgListEdit = image
     },
-  DatePickerToSQL(datestring) {
-  if (!datestring) return '';
+    DatePickerToSQL(datestring) {
+      if (!datestring) return '';
   
-  // Create a new Date object (handles both Date objects and strings)
-  const d = new Date(datestring);
+      // Create a new Date object (handles both Date objects and strings)
+      const d = new Date(datestring);
   
-  // Format the date components
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+      // Format the date components
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
   
-  return `${year}-${month}-${day}`;
-},
+      return `${year}-${month}-${day}`;
+    },
     validate() {
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
@@ -306,7 +298,7 @@ export default {
       this.closeDialog()
     },
     editSeries() {
-     this.SeriesData.phone_number = this.phoneNumber;
+      this.SeriesData.phone_number = this.phoneNumber;
       const formData = new FormData();
       formData.append('contact_firstname', this.SeriesData.contact_firstname);
       formData.append('contact_lastname', this.SeriesData.contact_lastname);

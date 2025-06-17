@@ -148,41 +148,17 @@ export default {
     this.price = this.$route.query.price
   },
   methods: {
-    async retrieveSeries() {
+    retrieveSeries() {
+
       this.id = this.$route.query.id;
 
-      try {
-        const response = await this.$axios.$get(`v1/series/${this.id}`);
-        const seriesData = response.data.series;
-        
-        this.seriestype = seriesData.type;
-        this.pause = parseInt(seriesData.is_paused) === 1;
-        this.series = seriesData;
-        this.price = this.$route.query.price;
-
-        const maxAge = seriesData.age_group?.max_age;
-        const currentRegistrations = seriesData.max_registration || 0;
-        
-        if (this.checkRegistrationLimits(seriesData) === false) {
-          return;
-        }
-
-        if (maxAge <= 9 && currentRegistrations <= 11) {
-          return;
-        }
-        if (currentRegistrations <= 14) {
-          return;
-        }
-
-      } catch (error) {
-        this.$oruga.notification.open({
-          message: error.message,
-          duration: 5000,
-          variant: 'danger',
-          queue: true,
-          position: 'bottom'
-        });
-      }
+      this.$axios
+        .$get(`v1/series/${this.id}`)
+        .then((response) => {
+          const SeriesData = response.data.series
+          this.seriestype = SeriesData.type
+          this.pause = parseInt(SeriesData.is_paused) === 1
+        })
     },
     retrieveToggleTaxControl() {
       const id = 1;
@@ -266,7 +242,7 @@ export default {
       }
     },
     checkRegistrationLimits(seriesData) {
-      const maxAge = seriesData.age_group?.max_age;
+      const maxAge = seriesData.age_group.max_age;
       const currentRegistrations = seriesData.max_registration || 0;
       
       const maxAllowed = maxAge <= 9 ? 12 : 15;
@@ -283,7 +259,7 @@ export default {
         return false;
       }
       return true;
-    }
+    },
   },
 };
 </script>

@@ -1,8 +1,11 @@
+<!-- eslint-disable tailwindcss/classnames-order -->
 <template>
   <div>
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
-      <section class="mx-auto max-w-screen-xl gap-4 p-4">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <section
+      class="mx-auto max-w-screen-xl gap-4 p-4
+      grid grid-cols-1 md:grid-cols-3"
+      >
           <div class="flex flex-col">
             <div class="flex items-center justify-between">
               <span
@@ -35,26 +38,25 @@
             </ODatepicker>
           </div>
           <form
-           @submit.prevent="retrieveEvents"
-          class="col-span-1 flex items-end justify-between"
+           class="col-span-1 flex items-end justify-between"
+          @submit.prevent="retrieveEvents"
           >
             <input
             id="query"
             v-model="query"
             placeholder="Search..."
-            :rules="rules"
             type="text"
-            class="flex-1 h-9 rounded-l"
+            class="h-9 flex-1 rounded-l"
             solo
             />
             <button
             type="submit"
-            class="h-9 px-4 rounded-r
-            text-xl font-semibold text-white
-            bg-gradient-to-tr
-            from-[#5EE738]
-            via-[#3e872a]
-            to-[#050505]"
+            class="h-9 rounded-r bg-gradient-to-tr
+            from-[#5EE738] via-[#3e872a] to-[#050505]
+            px-4
+            text-xl
+            font-semibold
+            text-white"
             >
             <i class="ri-search-line"/>
             </button>
@@ -63,7 +65,7 @@
           class="col-span-1 flex items-end justify-end lg:justify-center"
           >
             <label
-            class="font-semibold text-[#555555] h-9 flex items-center gap-2"
+            class="flex h-9 items-center gap-2 font-semibold text-[#555555]"
             >
               Show Submitted
               <input
@@ -73,13 +75,13 @@
             </label>
           </div>
           <section
+          v-if="isLoading"
           class="
           col-span-1
           flex h-60
           items-center
           justify-center
           md:col-span-3"
-          v-if="isLoading"
           >
             <VProgressCircular
               :size="200"
@@ -91,9 +93,9 @@
           </section>
           <section
           v-else
-          class="col-span-1 md:col-span-3"
+          class="relative col-span-1 md:col-span-3"
           >
-          <div class="overflow-x-auto">
+          
             <CustomVueTable
               :columns="dataColumns"
               :data="filteredMatches"
@@ -101,7 +103,6 @@
               @submit-data="openSubmitResultDialog"
               @edit-data="openManageResultDialog"
             />
-          </div>
         </section>
           <section
           v-if="MatchList.length === 0"
@@ -111,9 +112,8 @@
           >
           Nothing Pending Today
           </section>
+        </section>
         </div>
-      </section>
-    </div>
     <ManageResultModal
     :active="showManageResultModal"
     :match="selectedMatch"
@@ -154,7 +154,7 @@ export default {
   data() {
     return {
       query: null,
-      dateFilter: new Date(),
+      dateFilter: new Date(new Date().setHours(0, 0, 0, 0)),
       submit: false,
       showCustomVueTable: false,
       showManageResultModal: false,
@@ -240,7 +240,7 @@ export default {
           return 'Name is required.'
         },
         value => {
-          if (value?.length <= 10) {
+          if (value.length <= 10) {
             return true
           }
 
@@ -387,7 +387,7 @@ export default {
         queue: true
       })
       this.showModifyResultModal = false;
-      // this.retrieveEvents();
+      this.retrieveEvents();
     },
     SubmitError(data) {
       this.$oruga.notification.open({
@@ -445,8 +445,10 @@ export default {
       const eventMonthStr = eventMonth? eventMonth.toString().padStart(2, '0') : null;
       const eventDayStr = eventDay? eventDay.toString().padStart(2, '0') : null;
 
+      // eslint-disable-next-line camelcase
       let event_date = null
       if (eventYear && eventMonthStr && eventDayStr) {
+        // eslint-disable-next-line camelcase
         event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
       }
 
@@ -454,6 +456,7 @@ export default {
         q: this.query,
         sort: 'latest',
         page: this.page,
+        // eslint-disable-next-line camelcase
         eventDate: event_date,
         submit: this.submit,
       };
@@ -478,13 +481,16 @@ export default {
               eventmatch: event.eventmatch.map(match => {
                 return {
                   ...match,
-                  series: event.series.name??'Unknown',
+                  series: event.series.name || 'Unknown',
                   matchtime: this.AMPMformat(time),
                   round: this.roundFormat(event.round),
+                  // eslint-disable-next-line camelcase
                   agegroup_id: ageGroupName,
+                  // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
                   date: event.event_date,
-                  field: match.field.name??'Unknown',
+                  // eslint-disable-next-line camelcase
+                  field: match.field.name || 'Unknown',
                   submit: match.submitted === 1
                 };
               })

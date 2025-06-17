@@ -154,9 +154,6 @@
                 <span class="font-semibold text-white">
                   {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
                 </span>
-                <span class="font-semibold text-white">
-                  Age: {{ item.age_group.name }}
-                </span>
               </div>
                 <span
                   class="transform-translate line-clamp-3 h-0 w-full origin-left

@@ -24,21 +24,23 @@
             alt="logo"
             class="aspect-square w-3/5 max-w-24"
           >
-          <div class="w-full text-left text-sm tracking-widest sm:text-base">
-            <p class="font-semibold uppercase">
+          <div
+          class="w-full text-left text-base tracking-widest sm:text-xl"
+          >
+            <p class="font-semibold uppercase leading-5">
               {{ player.player_firstname }}
             </p>
-            <p class="font-semibold capitalize">
+            <p class="font-semibold capitalize leading-5">
               {{ player.player_lastname }}
             </p>
-            <p>
+            <p class="leading-5">
               {{ formatDate(player.dob) }}
             </p>
           </div>
         </div>
 
         <div class="flex flex-1 flex-col items-center justify-center gap-1">
-          <p class="text-base font-bold sm:text-xl">
+          <p class="text-xl font-bold sm:text-3xl">
             TFW9'S
           </p>
           <img
@@ -52,7 +54,7 @@
       </div>
       <div
       class="flex-none bg-green-600 p-2 text-center text-sm font-bold
-      tracking-widest text-white sm:text-lg"
+      tracking-widest text-white sm:text-xl"
       >
         REGISTERED PLAYER
       </div>
@@ -94,5 +96,9 @@ export default {
 .card-ratio {
   aspect-ratio: 1.484 / 1;
 }
+* {
+  font-family: 'Courier Prime', monospace !important;
+}
+
 </style>
 <!-- aspect-ratio: 1.588 / 1; proper style ratio -->
