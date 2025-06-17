@@ -224,6 +224,7 @@
     </section>
   </div>
 </template>
+
 <script>
 import handlesMedia from '~/mixins/shop/handlesMedia';
 export default {
@@ -348,11 +349,9 @@ export default {
         name: event.region ? event.region.name : 'Unknown'
       }));
 
-      // Filter out duplicates and sort the region names alphabetically
       const uniqueRegions = [ ...new Set(regions.map(region => region.name)) ]
         .filter(region => region).sort();
 
-      // Create formatted region objects with text and value properties
       const formattedRegions = uniqueRegions.map(regionName => {
         const regionId = regions.find(region => region.name === regionName).id;
         return {
@@ -362,22 +361,23 @@ export default {
       });
       return formattedRegions;
     },
-  filteredMatchList() {
-    if (!this.searchTeamName.trim()) {
-      return this.MatchList;
-    }
-    
-    const searchTerm = this.searchTeamName.toLowerCase().trim();
-    return this.MatchList.filter(match => {
-      // Add null checks in case team1 or team2 is undefined
-      const team1Name = match.team1?.name?.toLowerCase() || '';
-      const team2Name = match.team2?.name?.toLowerCase() || '';
+    filteredMatchList() {
+      if (!this.searchTeamName.trim()) {
+        return this.MatchList;
+      }
       
-      return team1Name.includes(searchTerm) || 
-             team2Name.includes(searchTerm);
-    });
-  }
-},
+      const searchTerm = this.searchTeamName.toLowerCase().trim();
+
+      const teamMatches = this.MatchList.filter(match => {
+        const team1Name = match.team1.name.toLowerCase() || '';
+        const team2Name = match.team2.name.toLowerCase() || '';
+        
+        return team1Name.includes(searchTerm) || 
+               team2Name.includes(searchTerm);
+      });
+      return teamMatches.filter(match => !match.submit);
+    }
+  },
   watch: {
     EventList: {
       handler(newEvents) {
@@ -406,12 +406,8 @@ export default {
       handler(newYear) {
         if (newYear && this.isLoaded) {
           this.page = 1
-          /*
-           * this.selectedRegion = null
-           * this.selectedAgeGroup = null
-           */
-          this.selectedAgeGroup = this.formattedAgeGroup[0]?.value ?? null;
-          this.selectedRegion = this.formattedRegions[0]?.value ?? null;
+          this.selectedAgeGroup = this.formattedAgeGroup[0].value || null;
+          this.selectedRegion = this.formattedRegions[0].value || null;
         }
       },
       immediate: true,
@@ -430,7 +426,6 @@ export default {
       handler(newEvent) {
         if (newEvent && this.isLoaded) {
           this.page = 1
-          // this.query = null
           this.retrieveEventMatch();
         } else if (this.isLoaded) {
           this.team = []
@@ -439,12 +434,12 @@ export default {
       },
       immediate: true,
     },
-      searchTeamName(newVal) {
-    if (newVal) {
-      this.page = 1;
+    searchTeamName(newVal) {
+      if (newVal) {
+        this.page = 1;
+      }
     }
-  }
-},
+  },
   created() {
     this.retrieveAgeGroups();
     this.retrieveEvents();

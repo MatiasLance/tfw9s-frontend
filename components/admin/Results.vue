@@ -93,14 +93,16 @@
           v-else
           class="col-span-1 md:col-span-3"
           >
+          <div class="overflow-x-auto">
             <CustomVueTable
-            :columns="dataColumns"
-            :data="filteredMatches"
-            @match-data="openManageResultDialog"
-            @submit-data="openSubmitResultDialog"
-            @edit-data="openManageResultDialog"
+              :columns="dataColumns"
+              :data="filteredMatches"
+              @match-data="openManageResultDialog"
+              @submit-data="openSubmitResultDialog"
+              @edit-data="openManageResultDialog"
             />
-          </section>
+          </div>
+        </section>
           <section
           v-if="MatchList.length === 0"
           class="col-span-1 flex h-60 items-center
@@ -140,7 +142,6 @@ export default {
     SubmitResultModal,
   },
   props: {
-    // eslint-disable-next-line vue/prop-name-casing
     Matches: {
       type: Array,
       required: true
@@ -261,16 +262,13 @@ export default {
         ({ date: new Date(event.date), type: event.submit?'danger':'success' }));
     },
     filteredMatches() {
-      // First filter the matches based on the submit status
       const filtered = this.MatchList.filter(match =>
         match && typeof match.submit === 'boolean' ?
           match.submit === this.submit :
           false
       );
 
-      // Then sort by time (convert time to comparable format)
       return filtered.sort((a, b) => {
-        // Convert time strings to minutes since midnight for comparison
         const timeToMinutes = (timeStr) => {
           const [ time, period ] = timeStr.split(' ');
           const [ hours, minutes ] = time.split(':').map(Number);
@@ -353,22 +351,18 @@ export default {
       this.retrieveEvents();
     },
     AMPMformat(time) {
-      // eslint-disable-next-line camelcase
       const matched = this.matchTimeOption.find(data => data.value === time);
       if (matched) {
         return matched.text;
       } else {
-        // If no matching field is found, return "unknown"
         return 'Unknown';
       }
     },
     roundFormat(round) {
-      // eslint-disable-next-line camelcase
       const matched = this.matchRoundOption.find(data => data.value === round);
       if (matched) {
         return matched.text;
       } else {
-        // If no matching field is found, return "unknown"
         return 'Unknown';
       }
     },
@@ -434,10 +428,8 @@ export default {
       let eventDay = this.dateFilter ?
         (this.dateFilter.getUTCDate()): null;
 
-      // Increment the day by 1
       eventDay++;
 
-      // Get the last day of the current month
       const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
 
       if (eventDay > lastDayOfMonth) {
@@ -453,10 +445,8 @@ export default {
       const eventMonthStr = eventMonth? eventMonth.toString().padStart(2, '0') : null;
       const eventDayStr = eventDay? eventDay.toString().padStart(2, '0') : null;
 
-      // eslint-disable-next-line camelcase
       let event_date = null
       if (eventYear && eventMonthStr && eventDayStr) {
-        // eslint-disable-next-line camelcase, no-const-assign
         event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
       }
 
@@ -464,7 +454,6 @@ export default {
         q: this.query,
         sort: 'latest',
         page: this.page,
-        // eslint-disable-next-line camelcase
         eventDate: event_date,
         submit: this.submit,
       };
@@ -492,12 +481,9 @@ export default {
                   series: event.series.name??'Unknown',
                   matchtime: this.AMPMformat(time),
                   round: this.roundFormat(event.round),
-                  // eslint-disable-next-line camelcase
                   agegroup_id: ageGroupName,
-                  // eslint-disable-next-line camelcase
                   event_date: this.formattedDate(event.event_date),
                   date: event.event_date,
-                  // eslint-disable-next-line camelcase
                   field: match.field.name??'Unknown',
                   submit: match.submitted === 1
                 };
@@ -528,36 +514,32 @@ export default {
 .superheadline {
 color: aliceblue;
 }
-/* Default background color for unchecked checkbox */
-/* Default styles for unchecked checkbox */
+
 input[type="checkbox"] {
-  -webkit-appearance: none; /* Remove default styles */
+  -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-color: white; /* Transparent background */
-  border: 2px solid white; /* White border */
-  width: 25px; /* Adjust width and height as needed */
+  background-color: white;
+  border: 2px solid white;
+  width: 25px;
   height: 25px;
-  outline: none; /* Remove outline */
-  cursor: pointer; /* Show pointer on hover */
+  outline: none;
+  cursor: pointer;
   border-radius: 5px;
 }
 
-/* Background color for checked checkbox */
 input[type="checkbox"]:checked {
-  background-color:#e42828; /* Orange background */
+  background-color:#e42828;
 }
 
-/* Optional: Styles for checkmark */
 input[type="checkbox"]::after {
   display: inline-block;
-  font-size: 14px; /* Adjust size as needed */
-  color: white; /* Color of the checkmark */
-  line-height: 1; /* Vertical alignment */
-  visibility: hidden; /* Hide by default */
+  font-size: 14px;
+  color: white;
+  line-height: 1;
+  visibility: hidden;
 }
 
-/* Show checkmark when checkbox is checked */
 input[type="checkbox"]:checked::after {
   visibility: visible;
 }
