@@ -54,13 +54,74 @@
             class="relative flex items-center gap-2
             rounded-md bg-[#212121] p-4 text-white"
             data-aos="fade-up" data-aos-offset="0"
-            >
-              <p
-              class="absolute right-2 top-2 rounded  px-1
-              text-xs text-gray-400 transition hover:text-gray-300"
+            > 
+              <!-- Color Selection Bar -->
+              <article
+              class="absolute right-2 top-2 flex w-full max-w-[350px] justify-end"
               >
-                {{ team.registered_players_count || 0 }} / {{ team.player_limit }}
-              </p>
+                <div
+                class="relative mb-2 text-left"
+                > 
+                  <button
+                  type="button"
+                  class="w-full rounded px-1  text-right text-xs
+                  text-gray-400 transition hover:text-gray-300"
+                  @click="retrievePlayers(team)"
+                  @blur="selectedTeamId = null"
+                  >
+                    {{ team.registered_players_count || 0 }} / {{ team.player_limit }}
+                  </button>
+                  <!-- Basic Themes -->
+                  <div
+                    id="dropdown-menu"
+                    class="ring/5 absolute right-0 top-full z-30 mt-2 max-h-80 w-full min-w-[200px]
+                    divide-y divide-gray-100 overflow-y-auto rounded-md bg-white shadow-lg ring-1
+                    ring-black drop-shadow-lg"
+                    :class="team.id === selectedTeamId?'block':'hidden'"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="menu-button"
+                  >
+                    <div
+                    v-if="playerLoading"
+                    class="flex items-center justify-center py-4"
+                    >
+                      <VProgressCircular
+                      size="80"
+                      width="8"
+                      indeterminate
+                      color="green"
+                      />
+                    </div>
+                    <div
+                    v-else-if="players && players.length > 0"
+                    class="w-full py-1" role="none"
+                    >
+                      <a
+                        v-for="player in players"
+                        :key="player.id"
+                        class="flex items-start justify-start gap-2 p-2 text-sm
+                        font-medium text-gray-700 transition hover:bg-gray-200"
+                        role="menuitem"
+                        @mousedown="openPlayerCardModal(player)"
+                      >
+                      {{ player.name }}
+                      </a>
+                    </div>
+                    <div
+                    v-else
+                    class="w-full py-1" role="none"
+                    >
+                      <a
+                        class="flex items-center justify-center gap-2 px-2 py-6 text-sm
+                        font-medium text-gray-700 transition hover:bg-gray-200"
+                      >
+                        No Players Found
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </article>
               <img
               :src="getMediaURL(team.media[0])"
               alt="Team Logo"
@@ -141,7 +202,12 @@
           Close
         </VBtn>
       </div>
-        </div>
+    </div>
+    <PlayerCardModal
+    :active="showPlayerCardModal"
+    :player="selectedPlayer"
+    @close="closePlayerCardDialog"
+    />
     <ManageSeriesTeamModal
     :active="showManageTeamModal"
     :team="selectedTeam"
@@ -164,12 +230,15 @@ import ManageSeriesTeamModal from './ManageSeriesTeamModal.vue';
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
 import DeleteTeamModal from './DeleteTeamModal.vue';
+import PlayerCardModal from './PlayerCardModal.vue';
 import currencyMixin from '@/mixins/currency/handlesCurrency';
 import handlesMedia from '@/mixins/shop/handlesMedia';
 
 export default {
   name: 'ManageWeeklySeriesTeamsModal',
-  components: { ManageSeriesTeamModal, DeleteTeamModal },
+  components: {
+    ManageSeriesTeamModal, DeleteTeamModal, PlayerCardModal 
+  },
   mixins: [ currencyMixin, handlesMedia ],
   props: {
     active: {
@@ -198,7 +267,12 @@ export default {
       sending: false,
       showManageTeamModal: false,
       showDeleteTeamModal: false,
+      showPlayerCardModal: false,
       selectedTeam: [],
+      selectedTeamId: null,
+      selectedPlayer: [],
+      playerLoading: false,
+      players: [],
     }
   },
   computed: {
@@ -264,6 +338,43 @@ export default {
           this.isLoading = false;
         })
     },
+    retrievePlayers(team) {
+      if (!team || this.selectedTeamId === team.id) {
+        console.log(team)
+        this.selectedTeamId = null
+        return 
+      };
+      this.playerLoading = true;
+      this.selectedTeamId = team.id
+            
+      const params = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        team: team.id,
+        // eslint-disable-next-line camelcase
+        per_page: this.perPage,
+      };
+
+      this.$axios
+        .$get('/v1/players', { params })
+        .then((response) => {
+              
+          const playersData = response.data.players || [];
+              
+          this.players = playersData.map(player => ({
+            ...player,
+            name: `${player.player_firstname} ${player.player_lastname}`,
+          }));
+        })
+        .catch((error) => {
+          console.error('API request failed', error);
+          this.players = [];
+        })
+        .finally(() => {
+          this.playerLoading = false;
+        });
+    },
     notifyTeams(id) {
       this.sending = true;
       this.$axios
@@ -305,6 +416,14 @@ export default {
     closeDeleteTeamDialog() {
       this.selectedTeam = {};
       this.showDeleteTeamModal = false;
+    },
+    openPlayerCardModal(team) {
+      this.selectedPlayer = { ...team };
+      this.showPlayerCardModal = true;
+    },
+    closePlayerCardDialog() {
+      this.selectedPlayer = {};
+      this.showPlayerCardModal = false;
     },
     closeDialog() {
       this.$emit('close')

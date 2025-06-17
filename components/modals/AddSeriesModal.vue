@@ -33,7 +33,7 @@
                     >
                     </VSelect>
                   </div>
-                  <div class="col-span-1 md:col-span-2">
+                  <div class="col-span-1">
                     <label for="teamname" class="mb-1 block">
                       Location:
                     </label>
@@ -47,7 +47,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-1 md:col-span-2">
+                  <div class="col-span-1">
                     <label for="selectdate" class="mb-1 block">
                       Event Dates:
                     </label>

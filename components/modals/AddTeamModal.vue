@@ -7,57 +7,57 @@
                 </h3>
                 <hr class="my-3 lg:w-[918px]"/>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <div class="col-span-1 md:col-span-2">
+                  <div class="col-span-1">
                     <label for="teamname" class="mb-1 block">
                       Name:
                     </label>
                     <VTextField
-                    id="title"
-                    v-model="TeamData.name"
-                    label="Enter Team Name"
-                    :rules="rules"
-                    type="text"
-                    solo
+                      id="title"
+                      v-model="TeamData.name"
+                      label="Enter Team Name"
+                      :rules="rules"
+                      type="text"
+                      solo
                     />
-                  </div>
-                  <div class="col-span-2 md:col-span-1">
-                    <div class="col-span-1">
-                      <label for="selectagegroup" class="mb-1 block">
-                        Age Group:
-                      </label>
-                      <VSelect
-                        v-model="TeamData.agegroup_id"
-                        :items="formattedAgeGroup"
-                        label="Choose Age Group"
-                        :rules="rules"
-                        solo
-                        >
-                      </VSelect>
-                    </div>
                   </div>
                   <div class="col-span-1">
                     <label for="selectevent" class="mb-1 block">
                       Series:
                     </label>
                     <VSelect
-                    v-model="TeamData.series_id"
-                    :items="formattedSeries"
-                    label="Choose Series"
-                    :rules="rules"
-                    solo
+                      v-model="TeamData.series_id"
+                      :items="formattedSeries"
+                      label="Choose Series"
+                      :rules="rules"
+                      solo
                     >
                     </VSelect>
                   </div>
+
+                  <div class="col-span-1">
+                    <label for="selectagegroup" class="mb-1 block">
+                      Age Group:
+                    </label>
+                    <VSelect
+                      v-model="TeamData.agegroup_id"
+                      :items="formattedAgeGroup"
+                      label="Choose Age Group"
+                      :rules="rules"
+                      solo
+                    >
+                    </VSelect>
+                  </div>
+
                   <div class="col-span-1">
                     <label for="region" class="mb-1 block">
                       Region:
                     </label>
                     <VSelect
-                    v-model="TeamData.region_id"
-                    :items="formattedRegions"
-                    label="Choose Region"
-                    :rules="rules"
-                    solo
+                      v-model="TeamData.region_id"
+                      :items="formattedRegions"
+                      label="Choose Region"
+                      :rules="rules"
+                      solo
                     >
                     </VSelect>
                   </div>
@@ -160,36 +160,36 @@
                           @loading-end="applyMetadata"
                         >
                         </Croppa>
-                        <br />
-                        <div class="flex justify-start">
-                            <VBtn @click="rotateAnti">
+                        
+                        <!-- START: Responsive Button Changes -->
+                        <!-- This container allows buttons to wrap on small screens -->
+                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                            <VBtn small @click="rotateAnti">
                                 <i class="ri-anticlockwise-line"></i>
                             </VBtn>
-                            <VBtn @click="rotate">
+                            <VBtn small @click="rotate">
                                 <i class="ri-clockwise-line"></i>
                             </VBtn>
-                            <VBtn @click="flipx">
+                            <VBtn small @click="flipx">
                                 <i class="ri-arrow-left-right-line"></i>
                             </VBtn>
-                            <VBtn @click="flipy">
+                            <VBtn small @click="flipy">
                                 <i class="ri-arrow-up-down-line"></i>
                             </VBtn>
-                        </div>
-                        <div class="flex justify-start">
-                            <VBtn @click="zoomIn">
+                            <VBtn small @click="zoomIn">
                                 <i class="ri-zoom-in-line"></i>
                             </VBtn>
-                            <VBtn @click="zoomOut">
+                            <VBtn small @click="zoomOut">
                                 <i class="ri-zoom-out-line"></i>
                             </VBtn>
-                            <VBtn plain @click="setImagePreset">
+                            <VBtn small plain @click="setImagePreset">
                                 set
                             </VBtn>
-                            <VBtn plain @click="clearImagePreset">
+                            <VBtn small plain @click="clearImagePreset">
                                 clr
                             </VBtn>
                         </div>
-                        <br />
+                        
                         <VBtn
                         v-if="showGenerateCreatedImageBtn"
                         dark
@@ -199,6 +199,8 @@
                         >
                           GENERATE
                         </VBtn>
+                        <!-- END: Responsive Button Changes -->
+
                       </div>
                       <div class="col-span-1 max-h-[320px] max-w-[320px]">
                         <div
@@ -228,11 +230,11 @@
                   </div>
                 </div>
                 <hr class="my-3"/>
-                <div class="flex flex-col justify-end gap-2 md:flex-row">
+               <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
                   depressed
                   color="success"
-                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+                  class="custom-btn w-full md:w-[185px]"
                   :disabled="!valid"
                   @click="validate"
                   >
@@ -241,12 +243,13 @@
                   <VBtn
                   depressed
                   color="error"
-                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+                  class="custom-btn w-full md:w-[185px]"
                   @click="closeDialog"
                   >
                     Cancel
                   </VBtn>
                 </div>
+                <!-- END: Responsive Button Changes -->
             </VForm>
         </div>
   </OModal>
@@ -432,7 +435,7 @@ export default {
         .$post('v1/teams', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.reset();
-          this.$emit('confirm', response); // ✅ send back the API response
+          this.$emit('confirm', response);
         })
         .catch((error) => {
           if (error.response && error.response.status === 403) {

@@ -349,11 +349,9 @@ export default {
         name: event.region ? event.region.name : 'Unknown'
       }));
 
-      // Filter out duplicates and sort the region names alphabetically
       const uniqueRegions = [ ...new Set(regions.map(region => region.name)) ]
         .filter(region => region).sort();
 
-      // Create formatted region objects with text and value properties
       const formattedRegions = uniqueRegions.map(regionName => {
         const regionId = regions.find(region => region.name === regionName).id;
         return {
@@ -429,7 +427,6 @@ export default {
       handler(newEvent) {
         if (newEvent && this.isLoaded) {
           this.page = 1
-          // this.query = null
           this.retrieveEventMatch();
         } else if (this.isLoaded) {
           this.team = []

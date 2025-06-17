@@ -59,15 +59,14 @@
               >
               Showing {{ from }}-{{ to }} of {{ totalItems }} items
               </span>
-              <VPagination
-                v-model="page"
-                :length="totalPages"
-                color="success"
-                :total-visible="7"
-                class="text-white"
-                dark
-                @change="setPage"
-                />
+            <VPagination
+              v-model="page"
+              :length="totalPages"
+              color="success"
+              :total-visible="7"
+              class="text-white"
+              dark
+            />
             </div>
             <section class="col-span-1">
               <div class="overflow-x-auto">
@@ -225,17 +224,15 @@ export default {
       default: () => () => {}
     },
   },
-
   data() {
     return {
-      selectedData: ({}),
+      selectedData: {},
       showAddTeamModal: false,
       showEditTeamModal: false,
       showDeleteTeamModal: false,
       selectedRegion: null,
       selectedSeries: null,
       Teams: [],
-      Dataset: [],
       ageGroupList: [],
       seriesList: [],
       regionList: [],
@@ -247,20 +244,8 @@ export default {
       totalPages: 0,
       totalItems: 0,
       Rules: [
-        value => {
-          if (value) {
-            return true
-          }
-
-          return 'Name is required.'
-        },
-        value => {
-          if (value.length <= 10) {
-            return true
-          }
-
-          return 'Name must be less than 10 characters.'
-        },
+        value => !!value || 'Name is required.',
+        value => (value.length || 0) <= 10 || 'Name must be less than 10 characters.'
       ],
     };
   },
@@ -272,7 +257,6 @@ export default {
       }));
       return [ { text: 'All Series', value: null }, ...formatted ];
     },
-
     formattedRegionItems() {
       const formatted = (this.regionList || []).map(region => ({
         text: region.name,
@@ -282,11 +266,6 @@ export default {
     },
   },
   watch: {
-    page(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.retrieveMainDisplayData();
-      }
-    },
     totalPages() {
       if (this.page > this.totalPages && this.totalPages > 0) {
         this.page = this.totalPages;
@@ -304,14 +283,27 @@ export default {
       this.page = 1;
       this.retrieveTeams();
     },
+    page: {
+      handler(newPage) {
+        this.retrieveTeams()
+        this.retrieveAgeGroups()
+        this.retrieveSeries()
+        this.retrieveRegions()
+        this.retrieveMainDisplayData();
+
+      },
+      immediate: true,
+    },
   },
   async mounted() {
     try {
+      console.log("Component mounted. Fetching lookup data...");
       await Promise.all([
         this.retrieveAgeGroups(),
         this.retrieveSeries(),
         this.retrieveRegions()
       ]);
+      console.log("Lookup data fetched. Fetching initial teams...");
       await this.retrieveTeams();
     } catch (error) {
       console.error("Error during component mount initialization:", error);
@@ -339,6 +331,7 @@ export default {
         .$get(`v1/agegroups?${queryString}`)
         .then((response) => {
           this.ageGroupList = response.data.ageGroups || [];
+          console.log('All Age Groups Loaded:', this.ageGroupList.length);
         })
         .catch(error => {
           console.error('Error fetching age groups:', error);
@@ -347,11 +340,26 @@ export default {
         });
     },
 
+    async retrieveSeries() {
+      try {
+        const response = await this.$axios.$get('v1/series');
+        this.seriesList = (response.data.series || response.data || []).filter(series =>
+          series.type !== 'weekly'
+        );
+        console.log('All Series Loaded:', this.seriesList.length);
+      } catch (error) {
+        console.error('Error fetching series list:', error);
+        this.seriesList = [];
+        throw error;
+      }
+    },
+
     async retrieveRegions() { // Make it async or ensure promise return
       try {
         const response = await this.$axios.$get('v1/regions'); // Assuming this fetches all regions
         // Ensure correct path to region data
         this.regionList = response.data.regions || response.data || [];
+        console.log('All Regions Loaded:', this.regionList.length);
       } catch (error) {
         console.error('Failed to retrieve regions:', error);
         this.regionList = [];
@@ -360,7 +368,7 @@ export default {
     },
 
     onFilterChange() {
-      this.page = 1;
+      this.page = 1; 
       this.retrieveTeams();
     },
 
@@ -408,6 +416,7 @@ export default {
       this.showDeleteTeamModal = false
     },
     AddTeam(response) {
+      console.log('AddTeam confirmed, data from modal (if any):', response);
         
       this.$oruga.notification.open({
         duration: 5000,
@@ -454,6 +463,7 @@ export default {
     async retrieveTeams() {
       try {
         if (this.ageGroupList.length === 0 && this.totalItems > 0) { 
+          console.warn("retrieveTeams: ageGroupList is empty. Attempting to reload it.");
           await this.retrieveAgeGroups();
         }
 
@@ -517,17 +527,6 @@ export default {
     getRegionName(regionId) {
       const region = this.regionList.find(r => r.id === regionId);
       return region ? region.name : 'Unknown';
-    },
-    retrieveSeries() {
-      this.$axios
-        .$get('v1/series')
-        .then((response) => {
-          this.seriesList = response.data.series.filter(series =>
-            series.type !== 'weekly');
-        })
-        .finally(() => {
-          this.showVueTable = true;
-        });
     },
   }
 }
