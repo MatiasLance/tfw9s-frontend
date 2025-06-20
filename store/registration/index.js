@@ -24,7 +24,8 @@ export const state = () => ({
   tax: 0,
   taxAmount: 0,
   seriesType: '',
-  paymentIntent: ''
+  paymentIntent: '',
+  base64IMG: process.client ? sessionStorage.getItem('base64') || '' : '',
 })
 
 export const mutations = {
@@ -85,5 +86,11 @@ export const mutations = {
   },
   setPaymentIntent(state, paymentIntent) {
     state.paymentIntent = paymentIntent
+  },
+  setBase64IMG(state, imgString) {
+    state.base64IMG = imgString
+    if (process.client) {
+      sessionStorage.setItem('base64', imgString);
+    }
   },
 }

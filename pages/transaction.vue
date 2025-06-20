@@ -92,16 +92,18 @@
           :player="player"
           @image-click="openEditImageModal(player)"
           />
-          <VBtn
-          color="green"
-          class="rounded-md py-2 font-semibold transition hover:brightness-125"
-          :loading="generating"
-          block
-          dark
-          @click="generatePlayerCard(player)"
-          >
+          <!--
+            <VBtn
+            color="green"
+            class="rounded-md py-2 font-semibold transition hover:brightness-125"
+            :loading="generating"
+            block
+            dark
+            @click="generatePlayerCard(player)"
+            >
             Generate Registration Card
-          </VBtn>
+            </VBtn> 
+          -->
         </div>
       </article>
       <article v-if="teams && teams.length > 0"
@@ -216,7 +218,8 @@ export default {
   },
   methods: {
     openEditImageModal(player) {
-      this.showUploadModal = true;
+      // Image Upload modal disable for now until further notice
+      // this.showUploadModal = true;
       this.selected = { ...player };
     },
     retrieveTransaction(key) {
@@ -292,11 +295,8 @@ export default {
               this.selected.media = [];
             }
 
-            this.selected = {
-              ...this.selected,
-              url: base64Url,     // ✅ base64 instead of blob:
-              data: image,        // original blob still stored if needed
-            };
+            this.selected.media[0] = base64Url; // insert base64 at index 0
+            this.selected.data = image;         // optionally store the original blob
 
             this.setPlayerImage();
           };

@@ -146,6 +146,7 @@ export default {
     this.retrieveSeries();
     this.series = this.$route.query.series
     this.price = this.$route.query.price
+    this.$store.commit('registration/setBase64IMG', '');
   },
   methods: {
     retrieveSeries() {

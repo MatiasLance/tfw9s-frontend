@@ -66,7 +66,7 @@
                   type="button"
                   class="w-full rounded px-1  text-right text-xs
                   text-gray-400 transition hover:text-gray-300"
-                  @click="retrievePlayers(team)"
+                  @click="openPlayersCardModal(team)"
                   @blur="selectedTeamId = null"
                   >
                     {{ team.registered_players_count || 0 }} / {{ team.player_limit }}
@@ -203,10 +203,11 @@
         </VBtn>
       </div>
     </div>
-    <PlayerCardModal
-    :active="showPlayerCardModal"
-    :player="selectedPlayer"
-    @close="closePlayerCardDialog"
+    <SeriesPlayersCardModal
+    :active="showPlayersCardModal"
+    :team="selectedTeam"
+    :series="selected"
+    @close="closePlayersCardDialog"
     />
     <ManageSeriesTeamModal
     :active="showManageTeamModal"
@@ -230,14 +231,14 @@ import ManageSeriesTeamModal from './ManageSeriesTeamModal.vue';
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
 import DeleteTeamModal from './DeleteTeamModal.vue';
-import PlayerCardModal from './PlayerCardModal.vue';
+import SeriesPlayersCardModal from './SeriesPlayersCardModal.vue';
 import currencyMixin from '@/mixins/currency/handlesCurrency';
 import handlesMedia from '@/mixins/shop/handlesMedia';
 
 export default {
   name: 'ManageWeeklySeriesTeamsModal',
   components: {
-    ManageSeriesTeamModal, DeleteTeamModal, PlayerCardModal 
+    ManageSeriesTeamModal, DeleteTeamModal, SeriesPlayersCardModal 
   },
   mixins: [ currencyMixin, handlesMedia ],
   props: {
@@ -267,7 +268,7 @@ export default {
       sending: false,
       showManageTeamModal: false,
       showDeleteTeamModal: false,
-      showPlayerCardModal: false,
+      showPlayersCardModal: false,
       selectedTeam: [],
       selectedTeamId: null,
       selectedPlayer: [],
@@ -421,9 +422,13 @@ export default {
       this.selectedPlayer = { ...team };
       this.showPlayerCardModal = true;
     },
-    closePlayerCardDialog() {
-      this.selectedPlayer = {};
-      this.showPlayerCardModal = false;
+    openPlayersCardModal(team) {
+      this.selectedTeam = { ...team };
+      this.showPlayersCardModal = true;
+    },
+    closePlayersCardDialog() {
+      this.selectedTeam = {};
+      this.showPlayersCardModal = false;
     },
     closeDialog() {
       this.$emit('close')
