@@ -44,7 +44,7 @@
             TFW9'S
           </p>
           <img
-            :src="getMediaURL(player.url, 'player')"
+            :src="getMediaURL(player.media[0], 'player')"
             alt="Player"
             class="aspect-square max-h-40 w-5/6 rounded-lg border
             border-solid border-gray-300 object-cover shadow-sm"

@@ -165,17 +165,11 @@ export default {
     }
   },
   computed: {
-    playerCardLink() {
-      if (!this.registrationId || !this.registrationType) return '';
-      
-      const payload = {
-        target: this.registrationId,
-        type: this.registrationType
-      };
-      
-      const encryptedToken = btoa(JSON.stringify(payload));
-      return `/manage-registration/?key=${encryptedToken}`;
-    }
+    base64IMG: {
+      get() {
+        return this.$store.state.registration.base64IMG;
+      },
+    },
   },
   mounted() {
     if (typeof this.$route.query.payment_intent !== 'undefined') {
@@ -230,6 +224,9 @@ export default {
               this.bannerText = 'Thank you'
               this.$store.dispatch('cart/clearCart')
               this.generateTransactionURL(this.transactionId);
+              if (this.base64IMG) {
+                this.saveRegistrationImage(this.base64IMG);
+              }
             } else if (status === 'processing') {
               this.status = 'processing'
               this.bannerText = 'Order is being processed'
@@ -258,6 +255,34 @@ export default {
         .then((response) => {
           this.transactionUrl = response.data.url
         })
+    },
+    saveRegistrationImage(base64Image) {
+      // Convert base64 string to Blob
+      const byteString = atob(base64Image.split(',')[1]);
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+
+      // Create Blob from binary data
+      const media = new Blob([ ia ], { type: 'image/jpeg' });
+
+      // Build FormData
+      const formData = new FormData();
+      formData.append('type', this.$route.query.seriesType);
+      formData.append('transaction', this.transactionId);
+      formData.append('photo', media, 'photo.jpg'); // Filename is optional but recommended
+
+      this.$axios
+        .$post('v1/transaction/savemedia', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then((response) => {
+          this.$store.commit('registration/setBase64IMG', '');
+        })
+        .catch((error) => {
+          console.error('Error uploading image:', error);
+        });
     },
     redirectTo(url) {
       if (url) window.open(url, '_blank')

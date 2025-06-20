@@ -261,9 +261,44 @@
     </div>
 
     <div class="flex">
-      <ImageUpload
-      v-model="photo"
-      @update-image="updateImage"
+      <div
+      v-if="cropping"
+      class="flex size-[320px] items-center justify-center
+      overflow-hidden border-[3px] border-sky-500"
+      >
+        <VProgressCircular
+        size="80"
+        width="8"
+        indeterminate
+        color="green"
+        />
+      </div>
+      <div
+      v-else-if="base64IMG"
+      class="relative size-[320px] overflow-hidden border-[3px] border-sky-500"
+      >
+        <img
+        class="size-full object-cover"
+        :src="base64IMG"
+        />
+        <button
+          type="button"
+          class="group absolute right-0 top-0 rounded-bl-md border-2
+          border-b border-gray-400 bg-white px-3 text-base
+          text-gray-500 drop-shadow-xl transition hover:bg-gray-200"
+          @click="base64IMG = ''"
+        >
+          <i
+          class="ri-close-fill font-semibold transition-all
+          group-hover:scale-125"
+          />
+        </button>
+      </div>
+      <ImageCropper
+      v-else
+      :width="320"
+      :height="320"
+      @upload="handleUpload"
       />
     </div>
 
@@ -339,16 +374,16 @@
 </template>
 
 <script>
+import ImageCropper from '../ImageCropper.vue';
 import Modal from '~/components/Modal';
 import TermsSection from '~/components/TermsSection';
-import ImageUpload from '~/components/ImageUpload';
 
 
 export default {
   components: {
     Modal,
     TermsSection,
-    ImageUpload,
+    ImageCropper,
   },
   props: {
     isLoading: {
@@ -380,11 +415,11 @@ export default {
       phoneCode: '+61',
       hasAgreedToTerms: false,
       showTermsModal: false,
-      imgList: [],
       photo: null,
       series: [],
       team: [],
       isPlayerLimitReached: false,
+      cropping: false,
     }
   },
   computed: {
@@ -400,6 +435,14 @@ export default {
     formattedTeams() {
       return this.teams.map(teams =>
         ({ text: teams.name, value: teams.name }));
+    },
+    base64IMG: {
+      get() {
+        return this.$store.state.registration.base64IMG;
+      },
+      set(v) {
+        this.$store.commit('registration/setBase64IMG', v);
+      },
     },
   },
   created() {
@@ -431,13 +474,54 @@ export default {
 
       return false
     },
-    updateImage(image) {
-      if (image && image.length > 0) {
-        this.photo = image[0];
-        this.imgList = image;
-      } else {
-        this.photo = null;
-        this.imgList = [];
+    handleUpload(image) {
+      this.cropping = true;
+      try {
+        if (image && image instanceof Blob) {
+          const reader = new FileReader();
+
+          reader.onloadend = () => {
+            const img = new Image();
+
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+
+              const targetWidth = 500;
+              const targetHeight = 500;
+
+              canvas.width = targetWidth;
+              canvas.height = targetHeight;
+
+              ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+              const base64Url = canvas.toDataURL('image/jpeg', 0.8);
+
+              this.base64IMG = base64Url;
+              this.cropping = false; // ✅ Set false after processing
+            };
+
+            img.onerror = () => {
+              console.error('Error loading image into canvas');
+              this.cropping = false; // ✅ Also handle error case
+            };
+
+            img.src = reader.result;
+          };
+
+          reader.onerror = () => {
+            console.error('Error reading image as base64');
+            this.cropping = false; // ✅ Reader failed
+          };
+
+          reader.readAsDataURL(image);
+        } else {
+          console.error('Invalid image file');
+          this.cropping = false;
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        this.cropping = false;
       }
     },
     handleFileChange(event) {
