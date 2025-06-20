@@ -3,21 +3,23 @@
     <form id="payment-form">
       <div id="card-container"></div>
       <div class="mt-2">
-        <button
+        <!--
+          <button
           id="card-button"
           type="button"
           class="
-            mb-4
-            w-full
-            rounded bg-[#1a1d18]
-            p-4
-            font-bold
-            text-white
+          mb-4
+          w-full
+          rounded bg-[#1a1d18]
+          p-4
+          font-bold
+          text-white
           "
           @click="checkoutViaSquare"
-        >
+          >
           Pay Now
-        </button>
+          </button>
+        -->
 
         <div id="afterpay-button" @click="payViaAfterpay"></div>
 
@@ -99,7 +101,15 @@ export default {
       set(v) {
         this.$store.commit('order/setPaymentMethod', v);
       }
-    }
+    },
+    registrationInformation: {
+      get() {
+        return this.$store.state.registration.registrationInformation;
+      },
+      set(v) {
+        this.$store.commit('registration/setRegistrationInformation', v);
+      },
+    },
   },
   mounted() {
     if (!window.Square) {
@@ -108,7 +118,7 @@ export default {
 
     const payments = window.Square.payments(this.appID, this.locationID)
 
-    this.initializeSquare(payments)
+    // this.initializeSquare(payments)
 
     try {
       this.initializeAfterpay(payments)
@@ -143,7 +153,7 @@ export default {
             payment_method: 'square',
             items: this.cart,
             metadata: {
-              ...this.shippingInformation,
+              ...this.registrationInformation,
               // eslint-disable-next-line camelcase
               card_token: result.token
             },
@@ -181,7 +191,7 @@ export default {
             payment_method: 'afterpay',
             items: this.cart,
             metadata: {
-              ...this.shippingInformation,
+              ...this.registrationInformation,
               // eslint-disable-next-line camelcase
               card_token: result.token
             },

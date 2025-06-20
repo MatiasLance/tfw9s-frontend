@@ -21,10 +21,10 @@
         </PaymentTab>
         <PaymentTab
           v-if="showSquare"
-          :active="paymentMethod === 'square'"
-          @click="paymentMethod = 'square'"
+          :active="paymentMethod === 'afterpay'"
+          @click="paymentMethod = 'afterpay'"
         >
-          Square
+          Afterpay
         </PaymentTab>
       </div>
 
@@ -50,7 +50,7 @@
       />
 
       <SquareCheckout
-        v-if="paymentMethod === 'square'"
+        v-if="paymentMethod === 'afterpay'"
         class="payment-module p-10"
         :cart-total="overallTotal"
         @active-step="activeStepPrev"
@@ -465,7 +465,7 @@ export default {
       const toggleControl2 = this.toggleControl2
       const tax = this.tax
       const discounted = this.isDiscountCodeMatch
-      const discountcode = this.discountcode ?? ''
+      const discountcode = this.discountcode
       const paymentIntent = this.paymentIntent
       const paymentMethod = this.paymentMethod
 

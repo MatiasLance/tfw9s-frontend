@@ -9,12 +9,12 @@ WORKDIR /home/node
 COPY package*.json ./
 
 # Install npm globally and dependencies
-RUN npm install -g bun
+RUN npm install -g npm@8.5.0
 
 COPY . .
 
-RUN bun install
+USER node
 
-CMD bash -c "bun run dev"
+CMD bash -c "npm install && npm run dev"
 
 EXPOSE 3000
