@@ -49,9 +49,13 @@
         @active-step="activeStepPrev"
       />
 
-      <SquareCheckout
+      <AfterPayCheckout
         v-if="paymentMethod === 'afterpay'"
         class="payment-module p-10"
+        :discount-code="discountcode"
+        :series="series"
+        :seriestype="seriestype"
+        :price="price"
         :cart-total="overallTotal"
         @active-step="activeStepPrev"
       />
@@ -187,17 +191,19 @@
 
 <script>
 // import PaypalCheckout from '~/components/PaypalCheckout.vue';
-import SquareCheckout from '~/components/SquareCheckout.vue';
+// import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency/handlesCurrency';
 import StripeCheckout from '~/components/registration/StripeCheckout.vue';
+import AfterPayCheckout from '~/components/registration/AfterPayCheckout.vue';
 
 export default {
   components: {
     // PaypalCheckout,
-    SquareCheckout,
+    // SquareCheckout,
     PaymentTab,
-    StripeCheckout
+    StripeCheckout,
+    AfterPayCheckout
   },
   mixins: [ currencyMixin ],
   props: {
