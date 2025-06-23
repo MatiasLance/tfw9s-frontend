@@ -145,10 +145,8 @@ const GATEWAY_AFTERPAY = 'afterpay'
 const SUPPORTED_GATEWAYS = [
   GATEWAY_STRIPE,
   GATEWAY_PAYPAL,
-  /*
-   * GATEWAY_SQUARE,
-   * GATEWAY_AFTERPAY,
-   */
+  GATEWAY_AFTERPAY
+  // GATEWAY_SQUARE,
 ]
 
 export default {
