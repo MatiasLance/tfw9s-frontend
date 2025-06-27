@@ -281,44 +281,40 @@ export default {
         date: new Date(event.event_date),
       }));
     },
-formattedFields() {
-  const allFields = this.FieldList
-    .filter(field => field && field.id && field.name)
-    .map(field => ({
-      id: field.id,
-      name: field.name
-    }));
+    formattedFields() {
+      const allFields = this.FieldList
+        .filter(field => field && field.id && field.name)
+        .map(field => ({
+          id: field.id,
+          name: field.name
+        }));
 
-  // Then get fields from events (as fallback)
-  const eventFields = this.EventList
-    .map(event => event.field)
-    .filter(field => field && field.id && field.name) // Filter out null/undefined fields
-    .map(field => ({
-      id: field.id,
-      name: field.name
-    }));
+      const eventFields = this.EventList
+        .map(event => event.field)
+        .filter(field => field && field.id && field.name)
+        .map(field => ({
+          id: field.id,
+          name: field.name
+        }));
 
-  // Combine both sources and remove duplicates by id
-  const combinedFields = [...allFields, ...eventFields];
-  const uniqueFieldsMap = new Map();
-  
-  combinedFields.forEach(field => {
-    if (!uniqueFieldsMap.has(field.id)) {
-      uniqueFieldsMap.set(field.id, field);
-    }
-  });
+      const combinedFields = [ ...allFields, ...eventFields ];
+      const uniqueFieldsMap = new Map();
+      
+      combinedFields.forEach(field => {
+        if (!uniqueFieldsMap.has(field.id)) {
+          uniqueFieldsMap.set(field.id, field);
+        }
+      });
 
-  const uniqueFields = Array.from(uniqueFieldsMap.values());
+      const uniqueFields = Array.from(uniqueFieldsMap.values());
 
-  // Sort alphabetically by name
-  uniqueFields.sort((a, b) => a.name.localeCompare(b.name));
+      uniqueFields.sort((a, b) => a.name.localeCompare(b.name));
 
-  // Format for v-select
-  return uniqueFields.map(field => ({
-    text: field.name,
-    value: field.id
-  }));
-},
+      return uniqueFields.map(field => ({
+        text: field.name,
+        value: field.id
+      }));
+    },
     formattedYears() {
       const years = this.EventList.map(event => {
         const eventDate = new Date(event.event_date);
@@ -352,28 +348,24 @@ formattedFields() {
       });
       return formattedRegions;
     },
-filteredMatchList() {
-  let filteredMatches = this.MatchList;
-  
-  // Filter by team name if search term exists
-  if (this.searchTeamName.trim()) {
-    const searchTerm = this.searchTeamName.toLowerCase().trim();
-    filteredMatches = filteredMatches.filter(match => {
-      const team1Name = match.team1?.name?.toLowerCase() || '';
-      const team2Name = match.team2?.name?.toLowerCase() || '';
-      return team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
-    });
-  }
-  
-  // Filter by selected field if one is selected
-  if (this.selectedField) {
-    filteredMatches = filteredMatches.filter(match => {
-      return match.field && match.field.id === this.selectedField;
-    });
-  }
-  
-  return filteredMatches;
-}
+    filteredMatchList() {
+      const searchTerm = this.searchTeamName.toLowerCase().trim();
+
+      if (!searchTerm) {
+        return this.MatchList;
+      }
+
+      return this.MatchList.filter(match => {
+
+        const team1Name = match.team1.name.toLowerCase() || '';
+        const team2Name = match.team2.name.toLowerCase() || '';
+        const teamNameMatches = team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
+
+        const isNotCompleted = !match.submit;
+
+        return teamNameMatches && isNotCompleted;
+      });
+    }
   },
   watch: {
     EventList: {
@@ -424,42 +416,38 @@ filteredMatchList() {
       immediate: true,
     },
     selectedField: {
-  handler(newField) {
-    if (newField && this.isLoaded) {
-      this.page = 1;
-      this.retrieveEventMatch();
+      handler(newField) {
+        if (newField && this.isLoaded) {
+          this.page = 1;
+          this.retrieveEventMatch();
+        }
+      },
+      immediate: true,
+    },
+    searchTeamName(newVal) {
+      if (newVal) {
+        this.page = 1;
+      }
     }
   },
-  immediate: true,
-},
-      searchTeamName(newVal) {
-    if (newVal) {
-      this.page = 1;
-    }
-  }
-},
   created() {
     this.retrieveFields();
     this.retrieveEvents();
   },
   methods: {
     AMPMformat(time) {
-      // eslint-disable-next-line camelcase
       const matched = this.matchTimeOption.find(data => data.value === time);
       if (matched) {
         return matched.text;
       } else {
-        // If no matching field is found, return "unknown"
         return 'Unknown';
       }
     },
     roundFormat(round) {
-      // eslint-disable-next-line camelcase
       const matched = this.matchRoundOption.find(data => data.value === round);
       if (matched) {
         return matched.text;
       } else {
-        // If no matching field is found, return "unknown"
         return 'Unknown';
       }
     },
@@ -481,7 +469,6 @@ filteredMatchList() {
       let formattedTime;
       let period;
 
-      // Convert hours to integer for comparison
       const hoursInt = parseInt(hours, 10);
 
       if (hoursInt >= 12) {
@@ -533,7 +520,6 @@ filteredMatchList() {
 
       return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`;
     },
-    // eslint-disable-next-line camelcase
     retrieveEvents() {
       const query = {
         q: this.query,
@@ -595,24 +581,24 @@ filteredMatchList() {
       this.$axios
         .$get(`v1/events?${queryString}`)
         .then((response) => {
-    const EventList = response.data.events.map(event => {
-      return {
-        ...event,
-        eventmatch: event.eventmatch.map(match => {
-          return {
-            ...match,
-            time: this.AMPMformat(event.time),
-            round: this.roundFormat(event.round),
-            event_date: this.formattedDate(event.event_date),
-            field: {
-              id: match.field?.id || null,
-              name: match.field?.name || 'Unknown Field'
-            },
-            submit: match.submitted === 1
-          };
-        })
-      };
-    });
+          const EventList = response.data.events.map(event => {
+            return {
+              ...event,
+              eventmatch: event.eventmatch.map(match => {
+                return {
+                  ...match,
+                  time: this.AMPMformat(event.time),
+                  round: this.roundFormat(event.round),
+                  eventDate: this.formattedDate(event.event_date),
+                  field: {
+                    id: match.field.id || null,
+                    name: match.field.name || 'Unknown Field'
+                  },
+                  submit: match.submitted === 1
+                };
+              })
+            };
+          });
           this.MatchList = EventList.flatMap(data => data.eventmatch);
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;

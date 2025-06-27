@@ -642,4 +642,9 @@ export default {
   ::v-deep .o-tpck__select  {
     padding: 5px 35px 5px !important;
   }
+
+  ::v-deep input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+  }
 </style>

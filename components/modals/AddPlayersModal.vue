@@ -481,4 +481,9 @@ color: rgb(104, 104, 104) !important;
   border-radius: 0 !important;
   transition: border-color 0.3s !important;
 }
+
+::v-deep input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
 </style>

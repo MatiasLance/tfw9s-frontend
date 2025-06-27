@@ -5,7 +5,7 @@
       <div class="p-4 flex flex-col md:flex-row md:justify-between gap-2">
         <div class="flex flex-col items-center justify-left">
           <span class="text-sm text-left">
-            © TFW9's 2024. All Rights Reserved.
+            &copy; TFW9's {{ currentYear }}. All Rights Reserved.
           </span>
           <p class="text-xs text-left">
             Built by:{{ ' ' }}
@@ -198,6 +198,11 @@ export default {
         position: 'bottom',
         queue: true,
       });
+    },
+  },
+  computed: {
+    currentYear() {
+      return new Date().getFullYear();
     },
   },
 }
