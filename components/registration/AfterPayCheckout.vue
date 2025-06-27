@@ -67,10 +67,6 @@
 export default {
   name: 'AfterPayCheckout',
   props: {
-    discountCode: {
-      type: String,
-      default: ''
-    },
     seriestype: {
       type: [ String ],
       required: true
@@ -145,7 +141,7 @@ export default {
               // eslint-disable-next-line camelcase
               card_token: result.token
             },
-            discountcode: this.discountCode
+            discountcode: ''
           })
           .then((response) => {
             this.$router.push(`/thank-you?square_transaction_id=${response}`)
@@ -190,7 +186,7 @@ export default {
               // eslint-disable-next-line camelcase
               card_token: result.token
             },
-            discountcode: this.discountCode
+            discountcode: ''
           })
           .then((response) => {
             this.$router.push({

@@ -42,7 +42,6 @@
       <StripeCheckout
         v-if="paymentMethod === 'stripe'"
         class="payment-module gap-3 text-gray-600"
-        :discount-code="discountcode"
         :series="series"
         :seriestype="seriestype"
         :price="price"
@@ -52,7 +51,6 @@
       <AfterPayCheckout
         v-if="paymentMethod === 'afterpay'"
         class="payment-module p-10"
-        :discount-code="discountcode"
         :series="series"
         :seriestype="seriestype"
         :price="price"
@@ -77,70 +75,6 @@
       <h2 class="mb-3 flex justify-center text-lg font-semibold">
         Summary
       </h2>
-      <div class="mb-6 border-b border-gray-200 pb-6">
-        <form
-          v-if="showDiscountCodeForm"
-          @submit.prevent="applyDiscount()"
-        >
-          <div class="-mx-2 flex items-end justify-end">
-            <div class="grow px-2 lg:max-w-xs">
-                  <label
-                    class="mb-2 ml-1 text-xs font-semibold text-gray-600"
-                  >Discount code</label>
-                  <div>
-                      <input
-                        v-model="discountcode"
-                        class="border-swd-lgrey w-full rounded-md border-2
-                        border-solid px-3 py-2 text-lg font-bold
-                        uppercase text-brand-mgrey
-                        transition-colors
-                        placeholder:text-brand-slate
-                        focus:border-brand-grey focus:outline-none"
-                        placeholder="XXXXXXX"
-                        maxlength="20"
-                        type="text"
-                        @keydown.space.prevent
-                        @change="checkDiscountCodeField()"
-                      />
-                  </div>
-            </div>
-            <div class="px-2">
-              <button
-                  v-if="!isDiscountCodeMatch"
-                  type="submit"
-                  class="mx-auto block w-full max-w-xs
-                  rounded-md border border-transparent
-                  bg-gray-500 px-3 py-2.5 font-semibold
-                  text-white
-                  hover:bg-gray-400 focus:border-brand-dgrey
-                  disabled:cursor-not-allowed disabled:bg-gray-200"
-                  :disabled="isFormNotFilled"
-                >
-                  APPLY
-                </button>
-                <VBtn
-                  v-else
-                  class="mx-auto block w-full max-w-xs
-                  rounded-md border border-transparent
-                  bg-gray-400 px-3 py-2.5 font-semibold
-                  text-white
-                  hover:bg-gray-500 focus:bg-gray-500"
-                  @click="removeDiscount"
-                >
-                  CLEAR
-                </VBtn>
-            </div>
-          </div>
-          <div class="my-2">
-                <small
-                  v-if="showErrorMessage"
-                  class="text-sm font-semibold text-brand-dred"
-                >
-                  {{ ResponseMessage }}
-                </small>
-          </div>
-        </form>
-      </div>
       <ul v-if="isLoading" class="px-2">
         <li class="mb-1 flex justify-center">
           <VProgressCircular
@@ -168,17 +102,7 @@
           <span>Tax Amount:</span>
           <span>{{ formatCurrencyFromCent(taxAmount) }}</span>
         </li>
-        <li v-if="isDiscountCodeMatch"
-        class="mb-1 flex justify-center border-t pt-3"
-        >
-            <span class="font-bold">
-              ({{ discountRate * 100 }}% discount applied)
-            </span>
-        </li>
-        <li
-        class="mt-3 flex justify-between"
-        :class="!isDiscountCodeMatch?'border-t pt-3':''"
-        >
+        <li class="mt-3 flex justify-between">
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
             {{ formatCurrencyFromCent(overallTotal) }}
@@ -242,13 +166,7 @@ export default {
       showPaypal: true,
       showSquare: true,
       showStripe: true,
-      showDiscountCodeForm: true,
-      discountcode: null,
-      discount: -1,
-      discountRateFixed: 0.3,
-      discountRate: 0,
       taxrateValue: 0,
-      isDiscountCodeMatch: false,
       isFormNotFilled: true,
       showErrorMessage: false,
       ResponseMessage: '',
@@ -362,14 +280,6 @@ export default {
     toCurrency(x) {
       return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(x)
     },
-    checkDiscountCodeField() {
-      if (this.discountcode.length !== 0) {
-        this.isFormNotFilled = false;
-        this.showMinimumAmountMessage = false;
-      } else {
-        this.isFormNotFilled = true;
-      }
-    },
     setAsPaymentMethod(val) {
       this.paymentMethod = val
       this.$store.commit('order/setPaymentMethod', this.paymentMethod)
@@ -378,88 +288,6 @@ export default {
       const isLesserThanMinimumAmount = (
         this.price/100 < minAmount)
       return isLesserThanMinimumAmount;
-    },
-    applyDiscount() {
-      this.$oruga.notification.open({
-        message: 'Verifying discount code',
-        variant: 'info',
-        duration: 5000,
-        position: 'bottom',
-        queue: true,
-      });
-      const endpoint = '/v1/discountcode/verifycode';
-      const data = { code: this.discountcode }
-      this.$axios
-        .$post(endpoint, data)
-        .then((response) => {
-          if (response.isExist) {
-            this.minimumAmount = +response.discountcode.amountapplied;
-            if (this.checkLesserMinimumAmount(this.minimumAmount)) {
-              this.showErrorMessage = true
-              this.ResponseMessage = `
-              Subtotal is less than $${this.minimumAmount}
-              minimum order required for this code.`
-              setTimeout(() => {
-                this.showErrorMessage = false
-              }, 5000);
-            } else {
-              setTimeout(() => {
-                this.discountRate = response.discountcode.rate
-                this.$oruga.notification.open({
-                  message: response.message,
-                  variant: 'success',
-                  duration: 5000,
-                  position: 'bottom',
-                  queue: true,
-                });
-                this.isDiscountCodeMatch = true
-                this.initialize()
-              }, 2000);
-            }
-          } else {
-            setTimeout(() => {
-              this.$store.commit('cart/setSubtotal', this.originalAmount.subtotal)
-              this.$store.commit('cart/setGst', this.originalAmount.gst)
-              this.$store.commit('cart/setTotal', this.originalAmount.total)
-              this.$oruga.notification.open({
-                message: 'Discount code is invalid. Please enter a valid code',
-                variant: 'error',
-                duration: 5000,
-                position: 'bottom',
-                queue: true,
-              });
-              this.isDiscountCodeMatch = false
-            }, 2000)
-          }
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            variant: 'error',
-            duration: 5000,
-            position: 'bottom',
-            queue: true,
-          });
-        })
-
-    },
-    removeDiscount() {
-      this.discountcode = null
-      this.$oruga.notification.open({
-        message: 'Removing discount',
-        variant: 'info',
-        duration: 5000,
-        position: 'bottom',
-        queue: true,
-      });
-      setTimeout(() => {
-        this.$store.commit('cart/setSubtotal', this.originalAmount.subtotal)
-        this.$store.commit('cart/setGst', this.originalAmount.gst)
-        this.$store.commit('cart/setTotal', this.originalAmount.total)
-        this.overallTotal = this.originalAmount.total
-        this.isDiscountCodeMatch = false
-        this.initialize()
-      }, 1000)
     },
     activeStepPrev(stepNo) {
       this.$emit('active-step', stepNo)
@@ -470,8 +298,6 @@ export default {
       const toggleControl1 = this.toggleControl1
       const toggleControl2 = this.toggleControl2
       const tax = this.tax
-      const discounted = this.isDiscountCodeMatch
-      const discountcode = this.discountcode
       const paymentIntent = this.paymentIntent
       const paymentMethod = this.paymentMethod
 
@@ -488,8 +314,6 @@ export default {
           toggleControl1,
           toggleControl2,
           tax,
-          discounted,
-          discountcode,
           paymentIntent,
           paymentMethod,
         })

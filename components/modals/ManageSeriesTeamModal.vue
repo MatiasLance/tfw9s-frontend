@@ -149,6 +149,16 @@
                     />
                   </div>
                   <div class="col-span-1 md:col-span-2" >
+                    <label for="teamname" class="mb-1 block">
+                      Add Discount:
+                    </label>
+                    <VSelect
+                    v-model="TeamData.discount_codes_id"
+                    :items="formatDiscountCode"
+                    density="comfortable"
+                    />
+                  </div>
+                  <div class="col-span-1 md:col-span-2" >
                     <label for="photo" class="mb-1 block">
                         Image upload:
                     </label>
@@ -300,15 +310,21 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrl: [],
       imgList: [],
+      discountCode: [],
       eventId: null,
       TeamData: {
         name: null,
-        description: null
+        description: null,
+        discountCode: null
       },
       rules: [ value => !!value || 'Required' ],
     }
   },
   computed: {
+    formatDiscountCode() {
+      return this.discountCode.map(discount =>
+        ({ text: discount.code, value: discount.id }));
+    },
     formattedField() {
       return this.FieldList.map(FieldList =>
         ({ text: FieldList.name, value: FieldList.id }));
@@ -384,7 +400,20 @@ export default {
       immediate: true,
     },
   },
+  mounted() {
+    this.discountCodeList();
+  },
   methods: {
+    discountCodeList() {
+      this.$axios
+        .$get('v1/discountcode')
+        .then((response) => {
+          this.discountCode = response.data.discount
+        })
+        .catch((error) => {
+          console.log(error.response.data.message)
+        })
+    },
     validate() {
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
@@ -429,6 +458,7 @@ export default {
       formData.append('manager_mobile', this.TeamData.manager_mobile);
       formData.append('manager_email', this.TeamData.manager_email);
       formData.append('player_limit', this.TeamData.player_limit);
+      formData.append('discount_code_id', this.TeamData.discount_codes_id);
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i]);
@@ -452,7 +482,7 @@ export default {
         .catch((error) => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Something went wrong.',
+            message: error.response.data.message || 'Something went wrong.',
             position: 'bottom',
             variant: 'danger',
             queue: true,

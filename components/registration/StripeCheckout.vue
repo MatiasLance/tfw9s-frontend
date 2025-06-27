@@ -55,10 +55,6 @@ let elements;
 
 export default {
   props: {
-    discountCode: {
-      type: String,
-      default: ''
-    },
     seriestype: {
       type: [ String ],
       required: true
@@ -101,7 +97,7 @@ export default {
           // eslint-disable-next-line camelcase
           payment_method: 'stripe',
           metadata,
-          discountcode: this.discountCode
+          discountcode: ''
         });
 
         this.activeStep = 2;
