@@ -104,12 +104,12 @@ export default {
   lastName() {
     return this.player?.player_lastname || '';
   },
-dateOfBirth() {
+  dateOfBirth() {
     return this.player?.date_of_birth || 
            this.player?.dob ||
            null;
   },
-formattedDateOfBirth() {
+  formattedDateOfBirth() {
     const rawDate = this.dateOfBirth;
     if (!rawDate) return 'Date not available';
     
@@ -149,7 +149,7 @@ formattedDateOfBirth() {
       return 'Invalid date format';
     }
   },
-    playerPhoto() {
+  playerPhoto() {
       // First try the direct photo prop
       if (this.player?.photo) {
         return this.player.photo;
@@ -165,19 +165,19 @@ formattedDateOfBirth() {
     }
   },
   methods: {
-      formatDate(date) {
-        return date.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-      },
-      closeDialog() {
-        this.$emit('close');
-          },
-    handleImageError() {
-      this.imageError = true;
-    }
-    }
+  formatDate(date) {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  },
+  closeDialog() {
+    this.$emit('close');
+  },
+  handleImageError() {
+    this.imageError = true;
+  }
+  }
 }
 </script>

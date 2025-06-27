@@ -31,8 +31,10 @@
               <tr v-for="(ageGroup, index) in formattedAgeGroup"
                 :key="index"
                 class="border cursor-pointer"
-                :class="{'border-green-500':
-                selectedAgeGroups.includes(ageGroup.value)}"
+                :class="{
+                  'border-green-500':
+                  selectedAgeGroups.includes(ageGroup.value)
+                }"
                 @click="toggleSelection(ageGroup.value)"
               >
                 <td class="px-4 py-2 text-center">
@@ -303,10 +305,10 @@ th {
 
 tbody tr:hover {
   background-color: #f1f5f9;
+}
 
-  input[type="number"] {
-    background-color: #f1f5f9;
-  }
+input[type="number"] {
+  background-color: #f1f5f9;
 }
 
 .border-green-500 {

@@ -279,6 +279,19 @@
                   ></OInput>
               </div>
             </div>
+            <div class="col-span-3 mb-4 lg:col-span-1">
+              <div class="flex flex-wrap">
+            <label class="mb-1 block">Usage Limit:</label>
+                  <OInput
+                      v-model="discount.usageLimit"
+                      placeholder="Usage Limit"
+                      type="number"
+                      min="0"
+                      max="100"
+                      class="w-40"
+                  ></OInput>
+              </div>
+            </div>
             <div class="col-span-3 mb-4">
               <label class="mb-1 block"> Short Description: </label>
               <input
@@ -402,6 +415,19 @@
               ></OInput>
           </div>
         </div>
+        <div class="col-span-3 mb-4 lg:col-span-1">
+              <div class="flex flex-wrap">
+            <label class="mb-1 block">Usage Limit:</label>
+                  <OInput
+                      v-model="discount.usageLimit"
+                      placeholder="Usage Limit"
+                      type="number"
+                      min="0"
+                      max="100"
+                      class="w-40"
+                  ></OInput>
+              </div>
+            </div>
         <div class="col-span-3 mb-4">
             <label class="mb-1 block"> Short Description: </label>
             <input
@@ -559,6 +585,7 @@ export default {
         rate: '',
         description: '',
         amountapplied: '',
+        usageLimit: 0
       },
       showAddNewsError: {
         codename: {
@@ -858,13 +885,15 @@ export default {
           code: this.discount.codename,
           rate: decimalRate,
           description: this.discount.description,
-          amountapplied: this.discount.amountapplied
+          amountapplied: this.discount.amountapplied,
+          usageLimit: this.discount.usageLimit
         };
         const form = new FormData();
         form.append('code', discountcode.code);
         form.append('rate', discountcode.rate);
         form.append('description', discountcode.description);
         form.append('amountapplied', discountcode.amountapplied);
+        form.append('usage_limit', discountcode.usageLimit)
         const config = { headers: { 'Content-Type': 'multipart/form-data' } };
         this.$axios
           .$post('/v1/discountcode', form, config)
@@ -894,23 +923,12 @@ export default {
       } else {
         const isHeadlineEmptyOrUndefined = (this.discount.codename === '' ||
         typeof this.discount.codename === 'undefined')
-        const isContentEmptyOrUndefined = (this.discount.rate === '' || typeof this.discount.rate === 'undefined')
         const isImgListEmpty = (this.discount.description.length === 0)
         if (isHeadlineEmptyOrUndefined) {
           this.showAddNewsError.codename.status = true
           this.showAddNewsError.codename.message = 'Please indicate the discount code'
           this.$oruga.notification.open({
             message: this.showAddNewsError.codename.message,
-            variant: 'info',
-            duration: 5000,
-            position: 'bottom',
-            queue: true,
-          });
-        }
-        if (isContentEmptyOrUndefined) {
-          this.showAddNewsError.rate.message = 'Please add discount rate.'
-          this.$oruga.notification.open({
-            message: this.showAddNewsError.rate.message,
             variant: 'info',
             duration: 5000,
             position: 'bottom',
@@ -947,6 +965,8 @@ export default {
           this.discount.description = response.data.discountcode.description;
           this.discount.amountapplied = response.data
             .discountcode.amountapplied;
+          this.discount.usageLimit = response.data
+            .discountcode.usage_limit
           this.showEditNewsModal = true;
         })
         .catch((err) => {
@@ -972,7 +992,8 @@ export default {
         code: this.discount.codename,
         rate: decimalRate,
         description: this.discount.description,
-        amountapplied: this.discount.amountapplied
+        amountapplied: this.discount.amountapplied,
+        usageLimit: this.discount.usageLimit
       };
       const form = new FormData();
       form.append('_method', 'PATCH');
@@ -980,6 +1001,7 @@ export default {
       form.append('rate', editedNews.rate);
       form.append('description', editedNews.description);
       form.append('amountapplied', editedNews.amountapplied);
+      form.append('usage_limit', editedNews.usageLimit);
       form.append('id', index);
       this.$axios
         .$post(`v1/discountcode/${editObject.id}`, form)
@@ -1053,6 +1075,7 @@ export default {
       this.discount.rate = ''
       this.discount.description = ''
       this.discount.amountapplied = ''
+      this.discount.usageLimit = 0
       this.imgList = []
       this.imgUrl = []
     },
@@ -1060,8 +1083,6 @@ export default {
       return (
         this.discount.codename === '' ||
         typeof this.discount.codename === 'undefined' ||
-        this.discount.rate === '' ||
-        typeof this.discount.rate === 'undefined' ||
         this.discount.description.length === 0 ||
         typeof this.discount.description === 'undefined'
       );
@@ -1071,16 +1092,6 @@ export default {
       if (discountRate > 99) {
         this.$oruga.notification.open({
           message: 'Maximum Discount rate is 99',
-          variant: 'info',
-          duration: 5000,
-          position: 'bottom',
-          queue: true,
-        });
-        return false;
-      }
-      if (discountRate <= 0) {
-        this.$oruga.notification.open({
-          message: 'Minimum Discount rate is 1',
           variant: 'info',
           duration: 5000,
           position: 'bottom',
