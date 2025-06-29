@@ -362,18 +362,21 @@ export default {
       return formattedRegions;
     },
     filteredMatchList() {
-      if (!this.searchTeamName.trim()) {
+      const searchTerm = this.searchTeamName.toLowerCase().trim();
+
+      if (!searchTerm) {
         return this.MatchList;
       }
-    
-      const searchTerm = this.searchTeamName.toLowerCase().trim();
+
       return this.MatchList.filter(match => {
-      // Add null checks in case team1 or team2 is undefined
+
         const team1Name = match.team1.name.toLowerCase() || '';
         const team2Name = match.team2.name.toLowerCase() || '';
-      
-        return team1Name.includes(searchTerm) || 
-             team2Name.includes(searchTerm);
+        const teamNameMatches = team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
+
+        const isNotCompleted = !match.submit;
+
+        return teamNameMatches && isNotCompleted;
       });
     }
   },
