@@ -39,7 +39,7 @@
           <main class="w-full px-4">
             <div class="my-6 flex flex-wrap items-center justify-between gap-4">
               <div
-                class="flex flex-wrap justify-start gap-2"
+                class="flex justify-content-between gap-2"
               >
               <button
                 type="button"
@@ -62,6 +62,29 @@
                 >
                   <i class="ri-add-line"></i>
                   <span class="pr-1">Add Discount Code</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                class="
+                  w-full rounded-md
+                  bg-gradient-to-br
+                  from-[#5EE738] via-[#3e872a]
+                  to-[#050505] p-1.5
+                  text-center
+                  font-semibold
+                  text-white
+                  sm:w-60"
+                @click="goToDiscountCodeTable"
+              >
+                <span
+                class="
+                flex items-center
+                justify-center"
+                aria-hidden="true"
+                >
+                  <i class="ri-table-line"></i>
+                  <span class="ml-[5px]">Discount Table</span>
                 </span>
               </button>
               </div>
@@ -668,6 +691,9 @@ export default {
     this.page = 1 // Reset pagination
   },
   methods: {
+    goToDiscountCodeTable() {
+      this.$router.push('discountcodes-table');
+    },
     setAddNewsErrorContentStatus(status) {
       this.showAddNewsError.content.status = status
     },

@@ -134,6 +134,13 @@
                 <p>
                   Age Group: {{ team.agegroup.name }}
                 </p>
+                <p class="flex items-center space-x-2">
+                  <span>Discounted:</span>
+                  <span v-html="team.discount_codes_id !== 0 
+                    ? '<i class=\'ri-checkbox-circle-line text-2xl text-green-500\'></i>' 
+                    : '<i class=\'ri-close-circle-line text-2xl text-red-500\'></i>'">
+                  </span>
+                </p>
                 <span class="flex flex-wrap justify-end gap-2">
                     <button
                     type="button"
