@@ -322,8 +322,11 @@ export default {
   },
   computed: {
     formatDiscountCode() {
-      return this.discountCode.map(discount =>
-        ({ text: discount.code, value: discount.id }));
+      return [
+        { text: 'No Discount', value: 0 },
+        ...this.discountCode.map(discount =>
+          ({ text: discount.code, value: discount.id }))
+      ]
     },
     formattedField() {
       return this.FieldList.map(FieldList =>

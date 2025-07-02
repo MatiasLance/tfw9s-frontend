@@ -409,6 +409,7 @@ export default {
         teamName: '',
         dob: '',
         ageGroup: '',
+        discountCodeId: null
       },
       agegroup: [],
       teams: [],
@@ -469,7 +470,8 @@ export default {
         dob: this.player.dob,
         ageGroup: this.player.ageGroup,
         price: this.price,
-        photo: this.photo
+        photo: this.photo,
+        discountCodeId: this.player.discountCodeId
       })
 
       return false
@@ -596,6 +598,7 @@ export default {
 
           this.player.teamName = this.team.id
           this.player.ageGroup = this.team.agegroup_id
+          this.player.discountCodeId = this.team.discount_codes_id
         })
     },
   }

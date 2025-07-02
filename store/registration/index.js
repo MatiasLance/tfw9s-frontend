@@ -16,6 +16,7 @@ export const state = () => ({
     managerName: '',
     managerEmail: '',
     managerPhoneNumber: '',
+    discountCodeId: null
   },
   paymentMethod: '',
   toggleMasterSetting1: true,
@@ -62,6 +63,8 @@ export const mutations = {
       registrationInformation.managerEmail
     state.registrationInformation.managerPhoneNumber =
       registrationInformation.managerPhoneNumber
+    state.registrationInformation.discountCodeId =
+      registrationInformation.discountCodeId
   },
   setPaymentMethod(state, paymentMethod) {
     state.paymentMethod = paymentMethod
