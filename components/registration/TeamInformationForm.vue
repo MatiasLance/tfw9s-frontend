@@ -324,6 +324,10 @@ export default {
       type: Boolean,
       default: false
     },
+    price: {
+      type: [ String ],
+      required: true
+    },
   },
   data() {
     return {
@@ -380,7 +384,8 @@ export default {
         managerEmail: this.manager.email,
         managerPhoneNumber: this.managerPhoneNumber,
         teamName: this.teamName,
-        ageGroup: this.ageGroup
+        ageGroup: this.ageGroup,
+        price: this.price,
       })
 
       return false

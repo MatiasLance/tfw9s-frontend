@@ -3,24 +3,7 @@
     <form id="payment-form">
       <div id="card-container"></div>
       <div class="mt-2">
-        <!--
-          <button
-          id="card-button"
-          type="button"
-          class="
-          mb-4
-          w-full
-          rounded bg-[#1a1d18]
-          p-4
-          font-bold
-          text-white
-          "
-          @click="checkoutViaSquare"
-          >
-          Pay Now
-          </button>
-        -->
-
+        <div id="spinner" class="spinner hidden"></div>
         <div id="afterpay-button" @click="payViaAfterpay"></div>
 
         <hr class="my-4">
@@ -78,6 +61,7 @@ export default {
       afterpay: null,
       appID: this.$config.square.appId,
       locationID: this.$config.square.locationId,
+      isStepperLoading: false
     }
   },
   computed: {
@@ -168,6 +152,7 @@ export default {
       return req
     },
     async payViaAfterpay() {
+      this.setLoading(true);
       const result = await this.afterpay.tokenize()
       let endpoint = ''
       if (this.seriestype === 'weekly') {
@@ -197,7 +182,20 @@ export default {
                 seriesType: this.seriestype
               }
             })
+            this.setLoading(false);
           })
+      }
+    },
+    setLoading(isLoading) {
+      if (isLoading) {
+        // Disable the button and show a spinner
+        // document.querySelector('#afterpay-button').disabled = true;
+        document.querySelector('#spinner').classList.remove('hidden');
+        document.querySelector('#afterpay-button').classList.add('hidden');
+      } else {
+        // document.querySelector('#afterpay-button').disabled = false;
+        document.querySelector('#spinner').classList.add('hidden');
+        document.querySelector('#afterpay-button').classList.remove('hidden');
       }
     },
   },

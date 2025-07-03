@@ -56,6 +56,7 @@
           >
             <TeamInformationForm
               :is-loading="isStepperLoading"
+              :price="price"
               @submit="toPayStep"
             />
           </template>
