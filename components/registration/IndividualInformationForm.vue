@@ -132,7 +132,7 @@
       </div>
 
       <div class="mb-4">
-        <label class="mb-1 block"> Parent Phone Number* </label>
+        <label class="mb-1 block"> Parent Phone Numbers* </label>
         <div class="flex w-full">
           <input
             v-model="phoneCode"

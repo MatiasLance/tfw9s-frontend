@@ -486,7 +486,6 @@ export default {
       this.activeTab = tab;
     },
     ViewArticle(id) {
-      console.log(id);
       this.$router.push(`/tournament-article/?id=${id}`);
     },
     formattedDate(dateString) {

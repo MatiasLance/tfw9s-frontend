@@ -13,14 +13,15 @@
           </PaymentTab>
         -->
         <PaymentTab
-          v-if="showStripe"
+          v-if="showStripe && seriestype === 'tournament' ||
+          seriestype === 'coast'"
           :active="paymentMethod === 'stripe'"
           @click="setAsPaymentMethod('stripe')"
         >
           Credit Card
         </PaymentTab>
         <PaymentTab
-          v-if="showSquare"
+          v-if="showSquare && seriestype === 'weekly'"
           :active="paymentMethod === 'afterpay'"
           @click="paymentMethod = 'afterpay'"
         >
@@ -114,8 +115,6 @@
 </template>
 
 <script>
-// import PaypalCheckout from '~/components/PaypalCheckout.vue';
-// import SquareCheckout from '~/components/SquareCheckout.vue';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency/handlesCurrency';
 import StripeCheckout from '~/components/registration/StripeCheckout.vue';
@@ -123,8 +122,6 @@ import AfterPayCheckout from '~/components/registration/AfterPayCheckout.vue';
 
 export default {
   components: {
-    // PaypalCheckout,
-    // SquareCheckout,
     PaymentTab,
     StripeCheckout,
     AfterPayCheckout
@@ -163,7 +160,7 @@ export default {
       },
       overallTotal: 0,
       newSubTotal: 0,
-      showPaypal: true,
+      showPaypal: false,
       showSquare: true,
       showStripe: true,
       taxrateValue: 0,
@@ -176,7 +173,7 @@ export default {
       gstrate: '10%',
       gstrateValue: 0.1,
       afterDiscount: 0,
-      regularPrice: 0
+      regularPrice: 0,
     };
   },
   computed: {

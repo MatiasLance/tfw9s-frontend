@@ -134,6 +134,7 @@ export default {
       paymentElement.mount('#payment-element');
     },
     async handleSubmit() {
+      this.setLoading(true);
       try {
         const { error } = await this.$stripe.confirmPayment({
           elements,
