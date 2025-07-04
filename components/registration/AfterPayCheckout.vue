@@ -133,13 +133,15 @@ export default {
       }
     },
     async initializeAfterpay(payments) {
-      const paymentRequest = this.buildPaymentRequest(payments)
+      const amount = this.registrationInformation.price / 100;
+      const discountID = this.registrationInformation.discountCodeId
+      const price = await this.initialCalculation(amount, discountID)
+      const paymentRequest = this.buildPaymentRequest(payments, price)
 
       this.afterpay = await payments.afterpayClearpay(paymentRequest)
       await this.afterpay.attach('#afterpay-button')
     },
-    buildPaymentRequest(payments) {
-      const price = this.registrationInformation.price / 100;
+    buildPaymentRequest(payments, price) {
       const req = payments.paymentRequest({
         countryCode: 'AU',
         currencyCode: 'AUD',
@@ -198,6 +200,23 @@ export default {
         document.querySelector('#afterpay-button').classList.remove('hidden');
       }
     },
+    async initialCalculation(amount, discountID) {
+      let endpoint = '';
+      if (this.seriestype === 'weekly') {
+        endpoint = '/v1/tournament/indiv/afterpay/calculation'
+      } else {
+        endpoint = '/v1/tournament/team/afterpay/calculation'
+      } 
+      try {
+        const response = await this.$axios.$post(endpoint, {
+          amount,
+          discountID
+        });
+        return response.totalPrice;
+      } catch (error) {
+        console.error('Error calculating price:', error);
+      }
+    }
   },
 }
 </script>

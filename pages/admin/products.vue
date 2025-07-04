@@ -381,7 +381,7 @@
                 <div
                   v-for="categoryPickerIndex in multipleCategoryBuffer"
                   :key="categoryPickerIndex"
-                  class="flex justify-center gap-1"
+                  class="flex justify-center gap-1 relative"
                 >
                   <InfiniteCategories
                     :ref="`categoryPicker-${categoryPickerIndex}`"
@@ -394,7 +394,9 @@
                       my-4
                       h-6 w-6
                       text-brand-black
-                      hover:bg-brand-black hover:text-white
+                      hover:bg-brand-black
+                      hover:text-white
+                      absolute
                     "
                     @click="removeCategoryPicker(categoryPickerIndex)"
                   >

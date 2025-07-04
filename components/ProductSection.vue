@@ -46,7 +46,6 @@
       "
       v-bind="$attrs"
     >
-      <!-- todo: add saleprice prop after :price -->
       <ItemThumbnailView
         v-for="product in products"
         :key="product.id"
@@ -90,73 +89,7 @@ export default {
       isProductsLoading: true,
       products: [],
       isScroll: false,
-      scrollValue: 0,
-      productsStatic: [
-        {
-          id: 1,
-          name: 'CHERRY HILL 14x6 5 Dark Wood Stave Snare Drum',
-          categories: [
-            {
-              id: 1,
-              name: 'Cherry Hill'
-            }
-          ],
-          price: '1690.00',
-          salePrice: '1540.00',
-          stock: 3,
-          media: [],
-          // eslint-disable-next-line camelcase
-          has_variants: false
-        },
-        {
-          id: 2,
-          name: 'FRANKLIN 1445 5 Aged Steel Snare Drum',
-          categories: [
-            {
-              id: 1,
-              name: 'Franklin'
-            }
-          ],
-          price: '120.00',
-          salePrice: '100.00',
-          stock: 5,
-          media: [],
-          // eslint-disable-next-line camelcase
-          has_variants: false
-        },
-        {
-          id: 3,
-          name: 'SONOR 135 75 Benny Greb Signature Brass Snare Drum',
-          categories: [
-            {
-              id: 1,
-              name: 'Sonor'
-            }
-          ],
-          price: '1899.00',
-          salePrice: '0.00', // default is 0.00 if there is no sale price
-          stock: 20,
-          media: [],
-          // eslint-disable-next-line camelcase
-          has_variants: false
-        },
-        {
-          id: 4,
-          name: 'VK Drums 14x6 Snare Drum Titanium Shell',
-          categories: [
-            {
-              id: 1,
-              name: 'Sonor'
-            }
-          ],
-          price: '1899.00',
-          salePrice: '0.00', // default is 0.00 if there is no sale price
-          stock: 20,
-          media: [],
-          // eslint-disable-next-line camelcase
-          has_variants: false
-        },
-      ]
+      scrollValue: 0
     };
   },
   computed: {
