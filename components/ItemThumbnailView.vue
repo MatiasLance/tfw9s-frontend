@@ -52,18 +52,16 @@
           selection:text-white md:text-lg
         "
       >
-        <NuxtLink :to="'/product/?id=' + uid">
-          <span
-            class="
-              font-montserrat
-              whitespace-normal
-              font-semibold transition duration-300
-              text-white ease-in-out hover:text-[#5EE738]
-            "
-          >
-            {{ name }}
-          </span>
-        </NuxtLink>
+      <span
+        class="
+          font-montserrat
+          whitespace-normal
+          font-semibold transition duration-300
+          text-white ease-in-out hover:text-[#5EE738]
+        "
+      >
+        {{ name }}
+      </span>
       </h3>
       <span class="w-9 border-t-2 border-white my-4"/>
         <span v-if="!isOnSale" class="text-[18px] font-medium text-white">
@@ -89,12 +87,28 @@
       via-[#3e872a]
       to-[#050505]
       py-4
-      px-8
-      mb-6"
+      px-8"
       @click="addToCart"
       >
+      <i class="ri-shopping-cart-line text-2xl"></i>
       <span class="font-semibold normal-case text-white">
         Add to Cart
+      </span>
+      </BaseButton>
+      <BaseButton
+      class="
+      w-full rounded-lg
+      bg-gradient-to-tr
+      from-[#5EE738]
+      via-[#3e872a]
+      to-[#050505]
+      py-4
+      px-8"
+      @click="viewItem"
+      >
+      <i class="ri-eye-line text-2xl"></i>
+      <span class="font-semibold normal-case text-white">
+        View Product
       </span>
       </BaseButton>
     </div>
@@ -151,14 +165,7 @@ export default {
     }
   },
   data() {
-    return {
-      rrp: this.price, // Regular Price (RRP)
-      salePrice: 100, // Initialize with a default value
-      showRRP: true, // remove when backend has showRRP field
-      isOnSaleMock: true,
-      showComponent: false,
-      showOutOfStock: true
-    }
+    return { showOutOfStock: true }
   },
   computed: {
     cartItems: {

@@ -13,15 +13,14 @@
           </PaymentTab>
         -->
         <PaymentTab
-          v-if="showStripe && seriestype === 'tournament' ||
-          seriestype === 'coast'"
+          v-if="showStripe"
           :active="paymentMethod === 'stripe'"
           @click="setAsPaymentMethod('stripe')"
         >
           Credit Card
         </PaymentTab>
         <PaymentTab
-          v-if="showSquare && seriestype === 'weekly'"
+          v-if="showSquare"
           :active="paymentMethod === 'afterpay'"
           @click="paymentMethod = 'afterpay'"
         >
@@ -92,7 +91,7 @@
       >
         <li class="mb-1 flex justify-between">
           <span>Subtotal:</span>
-          <span>{{ formatCurrencyFromCent(price) }}</span>
+          <span>{{ formatCurrencyFromCent(subTotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
@@ -101,7 +100,7 @@
         </li>
         <li class="mb-1 flex justify-between">
           <span>Tax Amount:</span>
-          <span>{{ formatCurrencyFromCent(taxAmount) }}</span>
+          <span>{{ formatCurrency(taxAmount) }}</span>
         </li>
         <li class="mt-3 flex justify-between">
           <span>Total price:</span>
@@ -128,19 +127,11 @@ export default {
   },
   mixins: [ currencyMixin ],
   props: {
-    subtotal: {
-      type: [ Number ],
-      required: true,
-    },
     series: {
       type: [ String ],
       required: true
     },
     seriestype: {
-      type: [ String ],
-      required: true
-    },
-    price: {
       type: [ String ],
       required: true
     },
@@ -152,28 +143,23 @@ export default {
       isGSTInclusive: true,
       paymentMethod: 'stripe',
       isLoading: false,
-      minimumAmount: 500,
       originalAmount: {
         subtotal: 0,
         gst: 0,
         total: 0,
       },
       overallTotal: 0,
-      newSubTotal: 0,
       showPaypal: false,
       showSquare: true,
       showStripe: true,
-      taxrateValue: 0,
       isFormNotFilled: true,
       showErrorMessage: false,
       ResponseMessage: '',
       showMinimumAmountMessage: false,
       ResponseMessage2: '',
       showTaxInfo: true,
-      gstrate: '10%',
-      gstrateValue: 0.1,
-      afterDiscount: 0,
-      regularPrice: 0,
+      subTotal: 0,
+      taxAmount: 0
     };
   },
   computed: {
@@ -183,14 +169,6 @@ export default {
       },
       set(v) {
         this.$store.commit('cart/setTax', v)
-      }
-    },
-    taxAmount: {
-      get() {
-        return this.$store.state.cart.taxAmount
-      },
-      set(v) {
-        this.$store.commit('cart/setTaxAmount', v)
       }
     },
     registrationInformation: {
@@ -292,36 +270,27 @@ export default {
     initialize() {
       this.isLoading = true
       const item = this.$route.query.id
-      const toggleControl1 = this.toggleControl1
-      const toggleControl2 = this.toggleControl2
-      const tax = this.tax
-      const paymentIntent = this.paymentIntent
-      const paymentMethod = this.paymentMethod
+      const amount = this.registrationInformation.price / 100;
+      const discountID = this.registrationInformation.discountCodeId
 
       let endpoint = ''
 
       if (this.seriestype === 'weekly') {
-        endpoint = '/v1/tournament/indiv/calculation'
+        endpoint = '/v1/tournament/indiv/stripe/calculation'
       } else {
-        endpoint = '/v1/tournament/team/calculation'
+        endpoint = '/v1/tournament/team/stripe/calculation'
       }
       this.$axios
         .$post(endpoint, {
           item,
-          toggleControl1,
-          toggleControl2,
-          tax,
-          paymentIntent,
-          paymentMethod,
+          amount,
+          discountID
         })
         .then((response) => {
           this.activeStep = 2
-          let total = 0
-          total = response.calculation.totalPrice;
-          this.overallTotal = total;
-          this.taxAmount = response.calculation.taxAmount;
-          this.afterDiscount = response.calculation.afterDiscount;
-          this.regularPrice = response.calculation.regularPrice;
+          this.overallTotal = response.totalPrice;
+          this.taxAmount = response.taxAmount;
+          this.subTotal = response.subTotal;
 
           this.$store.commit('cart/setSubtotal', this.price)
           this.$store.commit('cart/setTotal', this.overallTotal)

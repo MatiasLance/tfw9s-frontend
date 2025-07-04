@@ -4,36 +4,36 @@
     <section class="mx-auto max-w-screen-xl gap-4 sm:p-7 sm:py-12">
       <div class="container max-w-6xl">
         <!-- Categories Slider -->
-        <div
-          class="mx-7"
-        >
-          <span
-            class="mb-5 ml-3 block text-sm uppercase tracking-wider text-white"
+        <div class="mx-7">
+          <span class="
+          mb-5
+          ml-3
+          block
+          text-sm
+          uppercase
+          tracking-wider
+          text-white"
           >
             Categories
           </span>
-          <CategorySlider
-            @change="retrieveItems"
-          />
+          <CategorySlider @change="retrieveItems"/>
         </div>
         <!-- / Categories Slider -->
         <!-- SORT & FILTER TOP ROW -->
-        <div
-          class="my-7"
-        >
-          <SortSearchTop
-            @change="retrieveItems"
-          />
+        <div class="my-7">
+          <SortSearchTop @change="retrieveItems"/>
         </div>
         <!-- / FILTER WRAP -->
-        <div
-          class="-mx-4 flex flex-col
-          sm:mx-0 sm:space-x-4 md:flex-row"
+        <div class="
+        -mx-4
+        flex
+        flex-col
+        sm:mx-0
+        sm:space-x-4
+        md:flex-row"
         >
           <main class="px-4 lg:w-full">
-            <ProductSection
-              ref="products"
-            />
+            <ProductSection ref="products"/>
           </main>
         </div>
       </div>

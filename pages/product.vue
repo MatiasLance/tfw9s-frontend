@@ -79,7 +79,6 @@
               text-white
             "
           >
-          <!-- todo: add Sale Price (if there is) and slash the RRP (price) -->
           <span class="amount text-2xl md:text-4xl">
               <span v-if="!product.is_on_sale">
                 <span>
@@ -110,15 +109,6 @@
               text-white
             "
           >
-            <!--
-              <span class="amount text-brand-green">
-              <span
-              v-if="
-              product.is_on_sale && product.saleprice
-              && product.saleprice > 0
-              && product.saleprice < product.price"
-              >SALE {{ formatCurrency(product.saleprice) }}</span>
-            -->
           </p>
           <div class="w-full">
             <p
@@ -146,10 +136,6 @@
                 <template v-if="product.has_variants">
                   <div class="flex space-x-1">
                     <i class="ri-check-line text-green-500"></i>
-                    <!--
-                      show in stock when a particular product
-                      contains variants
-                    -->
                     <span class="mt-1 text-sm font-bold uppercase">
                       Variants In Stock
                     </span>
@@ -214,7 +200,7 @@
                     </BaseButton>
                   </template>
                   <template v-else>
-                    <span
+                    <button
                       type="button"
                       class="
                       flex w-48
@@ -239,7 +225,7 @@
                     >
                         <i class="ri-shopping-cart-2-line mr-2"></i>
                         Add to Cart
-                    </span>
+                  </button>
                   </template>
 
                   <template v-if="product.parent !== null">
