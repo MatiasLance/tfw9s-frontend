@@ -62,7 +62,7 @@
             <Players
             :AgeGroupList="AgeGroupList"
             :PlayersList="PlayersList"
-            :getSeries="retrievePlayers"
+            :getSeries="retrieveSeries"
             />
           </div>
           <div v-if="activeTab === 'teams'">

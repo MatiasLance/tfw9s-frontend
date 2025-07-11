@@ -105,14 +105,14 @@
                       <label for="teamname">
                         Team Name *
                       </label>
-                      <VTextField
-                      id="title"
-                      v-model="player.teamName"
-                      label="Team Name"
-                      :rules="rules"
-                      type="text"
-                      solo
-                      />
+                      <VSelect
+                        v-model="player.teamName"
+                        :items="formattedTeam"
+                        label="Choose Team"
+                        :rules="rules"
+                        solo
+                        >
+                      </VSelect>
                     </div>
                   </div>
                   <div class="col-span-2 md:col-span-1">
@@ -141,6 +141,26 @@
                       </VSelect>
                     </div>
                   </div>
+                  <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-1">
+                      <label for="selectseries" class="mb-1 block">
+                        Select Series *
+                      </label>
+                      <VSelect
+                        v-model="player.series"
+                        :items="formattedSeries"
+                        label="Choose Series"
+                        :rules="rules"
+                        solo
+                        >
+                      </VSelect>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                  <ImageUpload
+                     @update-image="updateImage"
+                  />
                 </div>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
                   <VBtn
@@ -169,10 +189,12 @@
 <script>
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
+import ImageUpload from '~/components/ImageUpload'
 import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'AddPlayersModal',
+  components: { ImageUpload },
   mixins: [ currencyMixin ],
   props: {
     active: {
@@ -186,7 +208,7 @@ export default {
     initialRegionId: {
       type: String,
       default: null
-    }
+    },
   },
   data() {
     return {
@@ -195,11 +217,8 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrl: [],
       imgList: [],
-      SeriesList: [
-        { text: 'Weekly Competitions', value: 'weekly' },
-        { text: 'Tournaments', value: 'tournament' },
-        { text: 'Central Coast', value: 'coast' },
-      ],
+      seriesList: [],
+      teamList: [],
       rules: [ value => !!value || 'Required' ],
       phoneCode: '+61',
       phoneDigits: '',
@@ -228,8 +247,27 @@ export default {
       return this.agegroup.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
     },
+    formattedSeries() {
+      return this.seriesList.map(series =>
+        ({
+          text: `${this.capitalizeFirstLetter(series.name)}
+          ${this.capitalizeFirstLetter(series.type)} Series`,
+          value: series.id
+        }));
+    },
+    formattedTeam() {
+      return this.teamList.map(team =>
+        ({ text: team.name, value: team.id }));
+    },
+  },
+  created() {
+    this.retrieveSeries();
+    this.retrieveTeams();
   },
   methods: {
+    capitalizeFirstLetter(val) {
+      return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    },
     updateImage(image) {
       this.imgList = image
     },
@@ -306,10 +344,11 @@ export default {
       formData.append('email', this.contact.email);
       formData.append('player_firstname', this.player.firstName);
       formData.append('player_lastname', this.player.lastName);
-      formData.append('team_name', this.player.teamName);
+      formData.append('teamID', this.player.teamName);
       formData.append('dob', this.DatePickerToSQL(this.player.dob));
-      formData.append('agegroup', this.player.agegroup_id);
+      formData.append('agegroupID', this.player.agegroup_id);
       formData.append('description', this.player.description);
+      formData.append('seriesID', this.player.series);
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'newsThumbnail.png');
@@ -318,6 +357,7 @@ export default {
       this.$axios
         .$post('/v1/players', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
+          console.log(response)
           this.reset();
           this.$emit('confirm')
         })
@@ -431,6 +471,48 @@ export default {
     },
     handleImageRemoveCreate() {
       this.showGenerateCreatedImageBtn = false;
+    },
+    retrieveSeries() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/series?${queryString}`)
+        .then((response) => {
+          this.seriesList = response.data.series;
+        })
+    },
+    retrieveTeams() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/teams?${queryString}`)
+        .then((response) => {
+          this.teamList = response.data.teams;
+        })
     },
   }
 }

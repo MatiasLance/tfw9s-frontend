@@ -76,130 +76,129 @@
             @update:modelValue="page = $event"
             />
         </div>
-<section class="col-span-3">
-  <div class="overflow-x-auto">
-  <div class="inline-block min-w-full text-center">
-
-      <div 
-        v-if="totalItems  > 0"
-        class="flex min-w-[1200px] pr-24 md:w-auto"
-        data-aos="flip-up"
->
-  <span
-    class="flex-1 px-4 py-2 text-center align-middle
-    text-[20px] font-semibold text-[#555555]   "
-  >
-    Contact Name
-  </span>
-  <span
-    class="flex-1 px-4 py-2 text-center align-middle
-    text-[20px] font-semibold text-[#555555]   "
-  >
-    Phone Number
-  </span>
-  <span
-    class="flex-1 px-4 py-2 text-center align-middle
-    text-[20px] font-semibold text-[#555555]  "
-  >
-    Email
-  </span>
-  <span
-    class="flex-1 px-4 py-2 text-center align-middle
-    text-[20px] font-semibold text-[#555555]  "
-  >
-    Player Name
-  </span>
-  <span
-    class="flex-1 px-4 py-2 text-center align-middle
-    text-[20px] font-semibold text-[#555555] "
-  >
-    Team
-  </span>
-  <span
-    class="flex-1 px-4 py-2 text-center align-middle
-    text-[20px] font-semibold text-[#555555] "
-  >
-    Date of Birth
-  </span>
-  <span 
-    class="flex-1 px-4 py-2 text-center align-middle
-    text-[20px] font-semibold text-[#555555] "
-  >
-    Age Group
-  </span>
-</div>
-              <div
+    <section class="col-span-3">
+      <div class="overflow-x-auto">
+      <div class="inline-block min-w-full text-center">
+          <div 
+            v-if="totalItems  > 0"
+            class="flex min-w-[1200px] pr-24 md:w-auto"
+            data-aos="flip-up"
+          >
+            <span
+              class="flex-1 px-4 py-2 text-center align-middle
+              text-[20px] font-semibold text-[#555555]   "
+            >
+              Contact Name
+            </span>
+            <span
+              class="flex-1 px-4 py-2 text-center align-middle
+              text-[20px] font-semibold text-[#555555]   "
+            >
+              Phone Number
+            </span>
+            <span
+              class="flex-1 px-4 py-2 text-center align-middle
+              text-[20px] font-semibold text-[#555555]  "
+            >
+              Email
+            </span>
+            <span
+              class="flex-1 px-4 py-2 text-center align-middle
+              text-[20px] font-semibold text-[#555555]  "
+            >
+              Player Name
+            </span>
+            <span
+              class="flex-1 px-4 py-2 text-center align-middle
+              text-[20px] font-semibold text-[#555555] "
+            >
+              Team
+            </span>
+            <span
+              class="flex-1 px-4 py-2 text-center align-middle
+              text-[20px] font-semibold text-[#555555] "
+            >
+              Date of Birth
+            </span>
+            <span 
+              class="flex-1 px-4 py-2 text-center align-middle
+              text-[20px] font-semibold text-[#555555] "
+            >
+              Age Group
+            </span>
+          </div>
+            <div
               v-for="(data) in Players"
               :key="data.id" class="col-span-1 mb-0.5 gap-0"
               data-aos="flip-down" data-aos-duration="500"
               data-aos-offset="0"  data-aos-once="true"
               >
-              <div class="flex min-w-[640px] items-center justify-center">
-                <input
-                :value="data.contact_firstname + ' ' + data.contact_lastname"
-                placeholder="Enter Contact First Name"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.phone_number"
-                placeholder="Enter Phone Number"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.email"
-                placeholder="Enter Email"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.name"
-                placeholder="Enter Team"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.team_name"
-                placeholder="Enter Field"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.dobGB"
-                placeholder="Enter Birth Date"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.agegroup"
-                placeholder="Enter Age Group"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <i
-                class="ri-pencil-fill px-4 text-xl text-white"
-                @click="openEditPlayersDialog(data)"
-                />
-                <i
-                class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                @click="openDeletePlayersDialog(data)"
-                />
-              </div>
+                <div class="flex min-w-[640px] items-center justify-center">
+                  <input
+                  :value="data.contact_firstname + ' ' + data.contact_lastname"
+                  placeholder="Enter Contact First Name"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  v-model="data.phone_number"
+                  placeholder="Enter Phone Number"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  v-model="data.email"
+                  placeholder="Enter Email"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  v-model="data.name"
+                  placeholder="Enter Team"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  v-model="data.team_name"
+                  placeholder="Enter Field"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  v-model="data.dobGB"
+                  placeholder="Enter Birth Date"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                  v-model="data.agegroup"
+                  placeholder="Enter Age Group"
+                  hide-details
+                  required
+                  :disabled="true"
+                  class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <i
+                  class="ri-pencil-fill px-4 text-xl text-white"
+                  @click="openEditPlayersDialog(data)"
+                  />
+                  <i
+                  class="ri-delete-bin-fill px-4 text-xl text-red-400"
+                  @click="openDeletePlayersDialog(data)"
+                  />
+                </div>
               </div>
               </div>
             </div>
