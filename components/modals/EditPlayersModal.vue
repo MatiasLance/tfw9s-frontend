@@ -105,14 +105,14 @@
                       <label for="teamname">
                         Team Name *
                       </label>
-                      <VTextField
-                      id="title"
-                      v-model="SeriesData.team_name"
-                      label="Team Name"
-                      :rules="rules"
-                      type="text"
-                      solo
-                      />
+                      <VSelect
+                        v-model="SeriesData.teamId"
+                        :items="formattedTeam"
+                        label="Choose Team"
+                        :rules="rules"
+                        solo
+                        >
+                      </VSelect>
                     </div>
                   </div>
                   <div class="col-span-2 md:col-span-1">
@@ -140,6 +140,28 @@
                       </VSelect>
                     </div>
                   </div>
+                  <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-1">
+                      <label for="selectseries" class="mb-1 block">
+                        Select Series *
+                      </label>
+                      <VSelect
+                        v-model="SeriesData.seriesID"
+                        :items="formattedSeries"
+                        label="Choose Series"
+                        :rules="rules"
+                        solo
+                        >
+                      </VSelect>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                  <ImageUploadEdit
+                    :imglistedit="imgListEdit"
+                    :imgurledit="imgUrlEdit"
+                     @update-image="updateImageEdit"
+                  />
                 </div>
                 <hr class="my-3"/>
                 <div class="flex flex-col justify-end gap-2 md:flex-row">
@@ -169,10 +191,12 @@
 <script>
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
+import ImageUploadEdit from '~/components/ImageUploadEdit'
 import currencyMixin from '@/mixins/currency';
 
 export default {
   name: 'EditPlayersModal',
+  components: { ImageUploadEdit },
   mixins: [ currencyMixin ],
   props: {
     active: {
@@ -194,15 +218,9 @@ export default {
       showGenerateCreatedImageBtn: false,
       imgUrlEdit: [],
       imgListEdit: [],
+      seriesList: [],
+      teamList: [],
       SeriesData: { agegroup_id: null },
-      AgeGroupList: [
-        { text: 'U6', value: 'U6' },
-        { text: 'U7', value: 'U7' },
-        { text: 'U8', value: 'U8' },
-        { text: 'U9', value: 'U9' },
-        { text: 'U10', value: 'U10' },
-        { text: 'U11', value: 'U11' },
-      ],
       rules: [ value => !!value || 'Required' ],
       phoneCode: '+61',
       phoneDigits: '',
@@ -219,6 +237,18 @@ export default {
       return this.agegroup.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
     },
+    formattedSeries() {
+      return this.seriesList.map(series =>
+        ({
+          text: `${this.capitalizeFirstLetter(series.name)}
+          ${this.capitalizeFirstLetter(series.type)} Series`,
+          value: series.id
+        }));
+    },
+    formattedTeam() {
+      return this.teamList.map(team =>
+        ({ text: team.name, value: team.id }));
+    },
   },
   watch: {
     active: {
@@ -226,6 +256,12 @@ export default {
         if (newActive) {
           this.SeriesData = { ...this.series };
           this.SeriesData.agegroup_id = this.series.agegroup_id || null;
+          this.SeriesData.teamId = this.series.team_id || null;
+          this.SeriesData.seriesID = this.series.series_id || null;
+          this.imgUrlEdit = this.series.media.map((x) =>
+            `${this.$config.baseURL}/storage/${x.path}`
+          );
+          this.imgListEdit = this.series.media.map((x) => x.hash);
           this.selectedDate = this.series.dob ? new Date(this.series.dob) : null;
           this.phoneDigits = this.SeriesData.phone_number.replace(/^\+61/, '') || '';
         }
@@ -241,7 +277,14 @@ export default {
       immediate: true,
     },
   },
+  created() {
+    this.retrieveSeries();
+    this.retrieveTeams();
+  },
   methods: {
+    capitalizeFirstLetter(val) {
+      return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    },
     updateImageEdit(image) {
       this.imgListEdit = image
     },
@@ -306,10 +349,11 @@ export default {
       formData.append('email', this.SeriesData.email);
       formData.append('player_firstname', this.SeriesData.player_firstname);
       formData.append('player_lastname', this.SeriesData.player_lastname);
-      formData.append('team_name', this.SeriesData.team_name);
+      formData.append('teamID', this.SeriesData.teamId);
       formData.append('dob', this.SeriesData.dob);
-      formData.append('agegroup_id', this.SeriesData.agegroup_id);
+      formData.append('agegroupID', this.SeriesData.agegroup_id);
       formData.append('description', this.SeriesData.description);
+      formData.append('seriesID', this.SeriesData.seriesID);
 
       for (let i = 0; i < this.imgListEdit.length; i++) {
         formData.append('photo[]', this.imgListEdit[i]);
@@ -429,6 +473,48 @@ export default {
     },
     handleImageRemoveCreate() {
       this.showGenerateCreatedImageBtn = false;
+    },
+    retrieveSeries() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/series?${queryString}`)
+        .then((response) => {
+          this.seriesList = response.data.series;
+        })
+    },
+    retrieveTeams() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/teams?${queryString}`)
+        .then((response) => {
+          this.teamList = response.data.teams;
+        })
     },
   }
 }
