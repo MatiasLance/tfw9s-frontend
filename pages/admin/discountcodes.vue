@@ -1115,9 +1115,9 @@ export default {
     },
     validateDiscountRate() {
       const discountRate = parseInt(this.discount.rate);
-      if (discountRate > 99) {
+      if (discountRate > 100) {
         this.$oruga.notification.open({
-          message: 'Maximum Discount rate is 99',
+          message: 'Maximum Discount rate is 100',
           variant: 'info',
           duration: 5000,
           position: 'bottom',
