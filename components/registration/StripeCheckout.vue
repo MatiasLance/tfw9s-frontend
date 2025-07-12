@@ -92,6 +92,7 @@ export default {
       }
 
       try {
+        this.setLoading(true);
         const response = await this.$axios.$post(endpoint, {
           item: this.$route.query.id,
           // eslint-disable-next-line camelcase
@@ -99,10 +100,21 @@ export default {
           metadata,
           discountcode: ''
         });
-
-        this.activeStep = 2;
-        this.$store.commit('registration/setPaymentIntent', response.paymentIntentId);
-        this.loadStripe(response.stripeToken);
+        if (Number(response.amount) === 0) {
+          this.$router.push({
+            path: '/thank-you1',
+            query: {
+              seriesType: this.seriestype,
+              amount: response.amount,
+              transactionID: response.transactionId
+            }
+          });
+        } else {
+          this.setLoading(false);
+          this.activeStep = 2;
+          this.$store.commit('registration/setPaymentIntent', response.paymentIntentId);
+          this.loadStripe(response.stripeToken);
+        }
       } catch (error) {
         console.error('Checkout initialization failed:', error.response || error);
         this.showMessage('Payment initialization failed.');

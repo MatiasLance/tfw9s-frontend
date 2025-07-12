@@ -156,9 +156,6 @@ export default {
       transactionId: null,
       paymentGateway: null,
       bannerText: 'Verifying Order',
-      registrationId: null,
-      registrationType: null,
-      playerData: null,
       transactionUrl: '',
     }
   },
@@ -187,19 +184,36 @@ export default {
       this.bannerText = 'Could not find transaction'
     }
 
-    if (this.$route.query.seriesType) {
-      this.registrationType = this.$route.query.seriesType === 'weekly' ? 'individual' : 'team'
-    }
-
     this.$nextTick(() => {
-      this.verify()
+      const amount = Number(this.$route.query.amount);
+      if (amount !== 0) {
+        this.verify()
+      } else {
+        this.verifyFullyDiscountedTransaction();
+      }
     })
   },
   methods: {
+    verifyFullyDiscountedTransaction() {
+      const amount = Number(this.$route.query.amount);
+      this.transactionId = this.$route.query.transactionID
+      this.status = 'loading'
+      setTimeout(() => {
+        if (amount === 0) {
+          this.status = 'success'
+          this.bannerText = 'Thank you'
+          this.$store.dispatch('cart/clearCart')
+          this.generateTransactionURL();
+          if (this.base64IMG) {
+            this.saveRegistrationImage(this.base64IMG);
+          }
+        }
+      }, 500)
+    },
     verify() {
-      if (SUPPORTED_GATEWAYS.includes(this.paymentGateway)) {
+      const amount = this.$route.query.amount
+      if (SUPPORTED_GATEWAYS.includes(this.paymentGateway) && amount !== 0) {
         this.status = 'loading'
-
         let endpoint = ''
 
         if (this.$route.query.seriesType === 'weekly') {
@@ -221,7 +235,7 @@ export default {
               this.status = 'success'
               this.bannerText = 'Thank you'
               this.$store.dispatch('cart/clearCart')
-              this.generateTransactionURL(this.transactionId);
+              this.generateTransactionURL();
               if (this.base64IMG) {
                 this.saveRegistrationImage(this.base64IMG);
               }
@@ -244,7 +258,7 @@ export default {
         this.bannerText = 'Order failed'
       }
     },
-    generateTransactionURL(key) {
+    generateTransactionURL() {
       const formData = new FormData();
       formData.append('type', this.$route.query.seriesType);
       formData.append('transaction', this.transactionId);
