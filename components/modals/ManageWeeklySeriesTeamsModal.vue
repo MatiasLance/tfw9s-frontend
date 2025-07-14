@@ -69,7 +69,7 @@
                   @click="openPlayersCardModal(team)"
                   @blur="selectedTeamId = null"
                   >
-                    {{ team.registered_players_count || 0 }} / {{ team.player_limit }}
+                    {{ team.registered_players_count }} / {{ team.player_limit }}
                   </button>
                   <!-- Basic Themes -->
                   <div

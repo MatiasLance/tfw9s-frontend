@@ -100,17 +100,18 @@
                       />
                     </div>
                   </div>
-                  <div class="col-span-2 md:col-span-1">
+                   <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
-                      <label for="teamname">
-                        Team Name *
+                      <label for="selectseries" class="mb-1 block">
+                        Select Series *
                       </label>
                       <VSelect
-                        v-model="player.teamName"
-                        :items="formattedTeam"
-                        label="Choose Team"
+                        v-model="player.series"
+                        :items="formattedSeries"
+                        label="Choose Series"
                         :rules="rules"
                         solo
+                        @change="handleSelectChangeSeries"
                         >
                       </VSelect>
                     </div>
@@ -128,28 +129,28 @@
                   </div>
                   <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
-                      <label for="selectagegroup" class="mb-1 block">
-                        Age Group *
+                      <label for="teamname">
+                        Team Name *
                       </label>
                       <VSelect
-                        v-model="player.agegroup_id"
-                        :items="formattedAgeGroup"
-                        label="Choose Age Group"
+                        v-model="player.teamName"
+                        :items="team"
+                        label="Choose Team"
                         :rules="rules"
                         solo
                         >
                       </VSelect>
                     </div>
-                  </div>
+                  </div>  
                   <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
-                      <label for="selectseries" class="mb-1 block">
-                        Select Series *
+                      <label for="selectagegroup" class="mb-1 block">
+                        Age Group *
                       </label>
                       <VSelect
-                        v-model="player.series"
-                        :items="formattedSeries"
-                        label="Choose Series"
+                        v-model="player.agegroup_id"
+                        :items="ageGroup"
+                        label="Choose Age Group"
                         :rules="rules"
                         solo
                         >
@@ -235,6 +236,8 @@ export default {
         ageGroup: '',
         description: null,
       },
+      team: [],
+      ageGroup: [],
     }
   },
   computed: {
@@ -254,17 +257,33 @@ export default {
           ${this.capitalizeFirstLetter(series.type)} Series`,
           value: series.id
         }));
-    },
-    formattedTeam() {
-      return this.teamList.map(team =>
-        ({ text: team.name, value: team.id }));
-    },
+    }
   },
   created() {
-    this.retrieveSeries();
-    this.retrieveTeams();
+    this.listOfSeries();
   },
   methods: {
+    handleSelectChangeSeries(value) {
+      this.retrieveSeries(value)
+    },
+    retrieveSeries(id) { 
+      this.$axios
+        .$get(`v1/series/${id}`)
+        .then((response) => {
+          this.team = response.data.series.team.map(team => ({
+            text: team.name,
+            value: team.id
+          }))
+          this.ageGroup = response.data.series.team.map(team => ({
+            text: team.agegroup.name,
+            value: team.agegroup.id
+          })
+          )
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
     capitalizeFirstLetter(val) {
       return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     },
@@ -472,7 +491,7 @@ export default {
     handleImageRemoveCreate() {
       this.showGenerateCreatedImageBtn = false;
     },
-    retrieveSeries() {
+    listOfSeries() {
       const query = {
         q: this.query,
         sort: 'a_to_z',
@@ -491,29 +510,9 @@ export default {
         .$get(`v1/series?${queryString}`)
         .then((response) => {
           this.seriesList = response.data.series;
+          this.teamList = response.data.series
         })
-    },
-    retrieveTeams() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/teams?${queryString}`)
-        .then((response) => {
-          this.teamList = response.data.teams;
-        })
-    },
+    }
   }
 }
 </script>
