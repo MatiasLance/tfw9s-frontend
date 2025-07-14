@@ -1,58 +1,94 @@
 <template>
-  <Modal :active="active" @close="closeDialog">
-    <section class="min-h-40 w-full flex-col gap-2 p-2 sm:p-4">
-      <h3 class="text-brand-black font-bold">
-        {{ team.name }}'s Players
-      </h3>
-      <hr class="my-2"/>
-      <div
-      v-if="playerLoading"
-      class="flex items-center justify-center py-4"
-      >
-        <VProgressCircular
-        size="80"
-        width="8"
-        indeterminate
-        color="green"
-        />
-      </div>
-      <div
-      v-else-if="players && players.length > 0" class="grid gap-4 md:grid-cols-2 md:gap-6">
-          <PlayerCardView
-          v-for="player in players"
-          :id="player.card"
-          :key="player.id"
-          :player="player"
+<Modal :active="active" @close="closeDialog">
+  <section class="min-h-40 w-full flex flex-col p-2 sm:p-4 gap-2">
+    <!-- Header -->
+    <h3 class="text-brand-black font-bold">
+      {{ team.name }}'s Players
+    </h3>
+    <hr class="my-2" />
+
+    <!-- Loading Spinner -->
+    <div v-if="playerLoading"
+    class="
+    flex items-center
+    justify-center py-4
+    flex-grow"
+    >
+      <VProgressCircular size="80" width="8" indeterminate color="green" />
+    </div>
+
+    <!-- Player Grid -->
+    <div v-else class="flex-grow overflow-y-auto">
+      <div v-if="players && players.length > 0">
+        <!-- Pagination Row -->
+        <div class="flex flex-wrap items-center justify-between gap-x-2 mb-4">
+          <span class="font-medium text-white">
+            Showing {{ from }}-{{ to }} of {{ totalItems }} items
+          </span>
+          <VPagination
+            v-model="page"
+            :length="totalPages"
+            color="success"
+            :total-visible="7"
+            class="text-white"
+            dark
+            @change="quickFetch"
           />
-        <VBtn
-        color="green"
-        class="rounded-md py-2 font-semibold transition
-        hover:brightness-125 md:col-span-2"
-        :loading="generating"
-        block
-        dark
-        @click="generateTeamPlayersCard()"
-        >
-        Generate Team IDs
-        </VBtn>     
+        </div>
+
+        <!-- Grid of Player Cards -->
+        <div class="grid gap-4 grid-cols-1 md:grid-cols-2 md:gap-6">
+          <PlayerCardView
+            v-for="player in players"
+            :key="player.id"
+            :player="player"
+            :id="player.card"
+          />
+        </div>
       </div>
-      <div
-      v-else
-      class="w-full py-1" role="none"
-      >
+
+      <!-- No Players Found -->
+      <div v-else class="w-full py-1" role="none">
         <a
-          class="flex items-center justify-center gap-2 px-2 py-6 text-sm
-          font-medium text-gray-700 transition hover:bg-gray-200"
+        class="
+        flex
+        items-center
+        justify-center
+        gap-2 px-2 py-6
+        text-sm
+        font-medium
+        text-gray-700
+        transition
+        hover:bg-gray-200"
         >
           No Players Found
         </a>
       </div>
-    </section>
-  </Modal>
+    </div>
+
+    <!-- Sticky Bottom Button -->
+    <div class="mt-4 pt-2 border-t border-gray-600">
+      <VBtn
+        color="green"
+        class="
+        rounded-md
+        py-2 font-semibold
+        w-full transition
+        hover:brightness-125"
+        :loading="generating"
+        dark
+        @click="generateTeamPlayersCard()"
+      >
+        Generate Team IDs
+      </VBtn>
+    </div>
+  </section>
+</Modal>
 </template>
 
 <script>
 /* eslint-disable camelcase */
+import _debounce from 'lodash/debounce'
 import 'vue-croppa/dist/vue-croppa.css';
 import { toPng } from 'html-to-image';
 import JSZip from 'jszip';
@@ -79,9 +115,14 @@ export default {
   },
   data() {
     return {
+      from: 0,
+      to: 0,
+      page: 1,
       players: [],
       playerLoading: false,
       generating: false,
+      totalPages: 0,
+      totalItems: 0
     };
   },
   watch: {
@@ -90,6 +131,7 @@ export default {
         if (newActive) {
           this.playerLoading = true;
           this.retrieveTeamPlayers(this.team);
+          this.quickFetch()
         } else {
           this.playerLoading = false;
           this.players = [] // clear modal teams
@@ -97,11 +139,21 @@ export default {
       },
       immediate: true,
     },
+    page: {
+      handler() {
+        this.quickFetch()
+      },
+      immediate: true,
+    },
   },
   methods: {
+    quickFetch: _debounce(function() {
+      if (this.active) {
+        this.retrieveTeamPlayers(this.team);
+      }
+    }, 50),
     retrieveTeamPlayers(team) {
       if (!team || this.selectedTeamId === team.id) {
-        console.log(team)
         this.selectedTeamId = null
         return 
       };
@@ -121,7 +173,6 @@ export default {
       this.$axios
         .$get('/v1/players', { params })
         .then((response) => {
-              
           const playersData = response.data.players || [];
               
           this.players = playersData.map(player => ({
@@ -129,6 +180,10 @@ export default {
             card: `player-card-${player.id}`,
             name: `${player.player_firstname} ${player.player_lastname}`,
           }));
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
         })
         .catch((error) => {
           console.error('API request failed', error);

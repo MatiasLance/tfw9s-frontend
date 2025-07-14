@@ -120,7 +120,7 @@
                       Date of Birth *
                     </label>
                     <ODatepicker
-                    v-model="this.selectedDate"
+                    v-model="selectedDate"
                     icon="calendar"
                     :rules="rules"
                     />
