@@ -152,11 +152,21 @@
                     <label for="teamname" class="mb-1 block">
                       Add Discount:
                     </label>
-                    <VSelect
-                    v-model="TeamData.discount_codes_id"
-                    :items="formatDiscountCode"
-                    density="comfortable"
-                    />
+                    <template>
+                      <VSelect
+                        v-model="TeamData.discount_codes_id"
+                        :items="formatDiscountCode"
+                        density="comfortable"
+                        @update:menu="onMenuOpen"
+                        ref="discountSelect"
+                      >
+                        <template v-slot:append-item v-if="loading">
+                          <div class="text-center py-2 text-gray-500">
+                            Loading...
+                          </div>
+                        </template>
+                      </VSelect>
+                    </template>
                   </div>
                   <div class="col-span-1 md:col-span-2" >
                     <label for="photo" class="mb-1 block">
@@ -318,6 +328,11 @@ export default {
         discountCode: null
       },
       rules: [ value => !!value || 'Required' ],
+      hasMore: true,
+      loading: false,
+      page: 1,
+      query: '',
+      menuContent: null
     }
   },
   computed: {
@@ -401,21 +416,90 @@ export default {
         }
       },
       immediate: true,
-    },
+    }
   },
   mounted() {
     this.discountCodeList();
   },
+  beforeDestroy() {
+    const selectComponent = this.$refs.discountSelect;
+    if (selectComponent && 'menuContentRef' in selectComponent) {
+      const menu = selectComponent.menuContentRef;
+      if (menu && '$el' in menu) {
+        this.menuContent = menu.$el;
+        if (this.menuContent) {
+          this.menuContent.removeEventListener('scroll', this.handleScroll);
+        }
+      }
+    }
+  },
   methods: {
-    discountCodeList() {
+    discountCodeList(loadMore = false) {
+      const query = {
+        q: this.query || null,
+        sort: 'a_to_z',
+        page: this.page,
+        maxDiscountPerPage: 500,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] === null || query[key] === '') {
+          delete query[key];
+        }
+      });
+
+      const queryString = new URLSearchParams(query).toString();
+
+      this.loading = true;
+
       this.$axios
-        .$get('v1/discountcode')
+        .$get(`v1/discountcode?${queryString}`)
         .then((response) => {
-          this.discountCode = response.data.discount
+          const newDiscounts = response.data.discount;
+
+          if (loadMore && Array.isArray(newDiscounts)) {
+            this.discountCode = [ ...this.discountCode, ...newDiscounts ];
+          } else {
+            this.discountCode = newDiscounts;
+          }
+          if (newDiscounts.length < this.maxDiscountPerPage) {
+            this.hasMore = false;
+          }
+          this.loading = false;
         })
         .catch((error) => {
-          console.log(error.response.data.message)
-        })
+          console.error('Failed to fetch discount codes:', error);
+          this.loading = false;
+        });
+    },
+    onMenuOpen(isOpen) {
+      console.log(isOpen)
+      if (isOpen && this.discountCode.length > 0 && this.hasMore) {
+        this.$nextTick(() => {
+          const selectComponent = this.$refs.discountSelect;
+          if (selectComponent && 'menuContentRef' in selectComponent) {
+            const menu = selectComponent.menuContentRef;
+            if (menu && '$el' in menu) {
+              this.menuContent = menu.$el;
+              if (this.menuContent) {
+                this.menuContent.addEventListener('scroll', this.handleScroll);
+              }
+            }
+          }
+        });
+      }
+    },
+    handleScroll(e) {
+      const element = e.target;
+
+      if (
+        element.scrollHeight - element.scrollTop <= element.clientHeight + 50 &&
+        !this.loading &&
+        this.hasMore
+      ) {
+        this.page++;
+        this.discountCodeList(true);
+      }
     },
     validate() {
       if (!this.$refs.form.validate()) {

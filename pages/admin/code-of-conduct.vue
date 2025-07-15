@@ -1,44 +1,15 @@
 <!-- eslint-disable max-len -->
 <template>
-    <div class="min-h-screen bg-[#1A1A1B]">
+    <div class="min-h-full bg-[#1A1A1B]">
       <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-        <div
-          class="
-            space-y-3
-            px-6
-            text-left
-            sm:text-left
-            lg:col-span-6 lg:mt-10
-            xl:mt-10
-          "
-        >
-          <span
-            class="
-              superheadline
-              flex flex-row
-              items-center
-              pb-3
-              text-[1rem]
-              font-normal
-            "
-          >
-            <span class="font-medium">
-              <NuxtLink to="/admin">
-                <VBtn text color="white">Admin</VBtn>
-              </NuxtLink>
-            </span>
-          </span>
-          <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-            Code of Conduct
-          </h1>
-        </div>
+         <!-- Breadcrumbs and Title -->
+        <BreadCrumbs title="Code of Conduct Setting"/>
       </BaseHeader>
       <div class="mx-auto max-w-screen-xl px-4 py-7">
-        <div class="bg-[#1A1A1B]" data-aos="fade-up">
-          <section class="mx-auto max-w-screen-xl gap-4 p-4">
-            <div class="grid grid-cols-1 gap-4">
-              <div class="col-span-1 flex items-center">
-                <button
+        <div data-aos="fade-up">
+          <div class="grid grid-cols-1 gap-4">
+            <div class="col-span-1 flex items-center">
+              <button
                 type="button"
                 class="
                 w-full rounded-md
@@ -53,121 +24,168 @@
               >
                 +
               </button>
-              </div>
-              <div
-              v-if="totalPages > 0"
-              class="col-span-1 flex flex-wrap items-center
-              justify-around gap-x-2 md:justify-between"
-              data-aos="flip-up"
-              >
-                <span
-                class="font-medium text-white"
+            </div>
+
+            <section v-if="totalPages > 0" class="mb-10" data-aos="fade-up">
+                <div
+                class="
+                flex flex-wrap
+                items-center
+                justify-between gap-4
+                rounded-lg bg-white
+                px-6 py-4 text-black
+                shadow-md"
                 >
-                Showing {{ from }}-{{ to }} of {{ totalItems }} items
-                </span>
-                <VPagination
-                  v-model="page"
-                  :length="totalPages"
-                  :total-visible="7"
-                  class="text-white"
-                  color="success"
-                  dark
-                  @change="setPage"
-                  />
-              </div>
-              <section
-              class="col-span-1 overflow-x-scroll
-              overflow-y-hidden md:overflow-x-hidden"
-              >
-                <div class="grid min-w-[640px] grid-cols-1 gap-2">
-                  <div
-                  v-for="(content, index) in ContentList"
-                  :key="content.id"
-                  class="col-span-1 p-4 text-white bg-[#212121]"
-                  data-aos="fade-up" data-aos-offset="0"
-                  >
-                    <Form class="grid grid-cols-3 gap-2 p-2">
-                      <div class="col-span-3 font-semibold">
-                        {{ `Guideline ${index + 1}`}}
-                        <span v-if="content.isActive">
-                          <ActiveChip />
-                        </span>
-                      </div>
-                      <span class="col-span-3 indent-8 line-clamp-4 link"
-                      v-html="content.content"
-                      />
-                      <div class="col-span-3 flex justify-end gap-4">
-                        <div v-if="!content.isActive">
-                          <BaseButton
-                            class="
-                              max-w-full rounded-lg
-                              border border-gray-200
-                              bg-[#737373]
-                              py-2
-                              px-4
-                              text-white
-                            "
-                            @click="setActive(content.id)"
-                          >
-                            Set as Active
-                          </BaseButton>
-                        </div>
-                        <div v-else>
-                          <BaseButton
-                            class="
-                              max-w-full rounded-lg
-                              border border-gray-200
-                              bg-[#737373]
-                              py-2
-                              px-4
-                              text-white
-                            "
-                            @click="deactivate(content.id)"
-                          >
-                            Deactivate
-                          </BaseButton>
-                        </div>
-                        <BaseButton
-                        class="
-                          max-w-full rounded-lg
-                          border border-gray-200
-                          bg-[#4cbe5c]
-                          py-2
-                          px-4
-                          text-white
-                          "
-                          @click="openEditContentDialog(content)"
-                        >
-                          Edit
-                        </BaseButton>
-                        <BaseButton
-                        class="
-                          max-w-full rounded-lg
-                          border border-gray-200
-                          bg-[#fb0d2b]
-                          py-2
-                          px-4
-                          text-white
-                          "
-                          @click="openDeleteContentDialog(content)"
-                        >
-                          Delete
-                        </BaseButton>
-                      </div>
-                    </Form>
+                  <!-- Showing Results Info -->
+                  <div class="flex items-center space-x-2 text-sm md:text-base">
+                    <i class="ri-information-line text-lg text-green-400"></i>
+                    <span>
+                      Showing <span class="font-semibold">{{ from }}</span>–
+                      <span class="font-semibold">{{ to }}</span>
+                      of <span class="font-semibold">{{ totalItems }}</span> results
+                    </span>
+                  </div>
+
+                  <!-- Pagination Component -->
+                  <div class="flex shrink-0">
+                    <BasePagination
+                      :active-page="page"
+                      :total-pages="totalPages"
+                      @change="setPage"
+                    />
                   </div>
                 </div>
               </section>
+
+              <section class="col-span-1 overflow-x-scroll md:overflow-x-hidden">
+                <div class="min-w-[640px] grid grid-cols-1 gap-4 md:gap-6">
+                  <div
+                    v-for="(content, index) in ContentList"
+                    :key="content.id"
+                    class="
+                      rounded-lg border border-gray-200 bg-white p-5 shadow-sm
+                      transition duration-300 hover:border-green-500 hover:shadow-md
+                    "
+                    data-aos="fade-up"
+                    data-aos-offset="0"
+                  >
+                    <!-- Title + Status -->
+                    <div class="mb-4 flex items-center justify-between">
+                      <h3 class="text-xl font-bold text-gray-800">
+                        Guideline {{ index + 1 }}
+                      </h3>
+                      <span v-if="content.isActive">
+                        <ActiveChip />
+                      </span>
+                    </div>
+
+                    <!-- Content Preview -->
+                    <div class="mb-6 line-clamp-4 text-gray-600" v-html="content.content"></div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end space-x-3">
+                      <BaseButton
+                        v-if="!content.isActive"
+                        @click="setActive(content.id)"
+                        class="
+                          flex items-center gap-2 rounded-md
+                          border border-gray-300
+                          bg-gray-800 px-4 py-2
+                          text-sm font-medium
+                          text-gray-800
+                          transition
+                          hover:bg-gray-700
+                        "
+                      >
+                        <i class="ri-check-line text-white text-2xl"></i> Set as Active
+                      </BaseButton>
+
+                      <BaseButton
+                        v-else
+                        @click="deactivate(content.id)"
+                        class="
+                          flex items-center gap-2 rounded-md
+                          border border-gray-300
+                          bg-gray-800 px-4 py-2
+                          text-sm font-medium
+                          text-gray-800
+                          transition
+                          hover:bg-gray-700
+                        "
+                      >
+                        <i class="ri-close-circle-line text-white text-2xl"></i> Deactivate
+                      </BaseButton>
+
+                      <BaseButton
+                        @click="openEditContentDialog(content)"
+                        class="
+                          flex items-center gap-2 rounded-md
+                          border border-green-200
+                          bg-green-600 px-4 py-2
+                          text-sm font-medium
+                          text-white
+                          transition
+                          hover:bg-green-700
+                        "
+                      >
+                        <i class="ri-edit-line text-white text-xl"></i> Edit
+                      </BaseButton>
+
+                      <BaseButton
+                        @click="openDeleteContentDialog(content)"
+                        class="
+                          flex items-center gap-2 rounded-md
+                          border border-red-200
+                          bg-red-600 px-4 py-2
+                          text-sm font-medium
+                          text-white
+                          transition
+                          hover:bg-red-700
+                        "
+                      >
+                        <i class="ri-delete-bin-line text-white text-xl"></i> Delete
+                      </BaseButton>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
               <section
-              v-if="totalPages=== 0"
-              class="col-span-1 flex h-60 items-center
-              justify-center font-semibold
-              text-[#555555] md:col-span-3"
+                v-if="totalPages === 0"
+                class="
+                  col-span-1
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-gray-50
+                  p-8
+                  text-center
+                  font-semibold
+                  text-gray-600
+                  shadow-inner
+                  transition-all
+                  duration-300
+                  md:col-span-3
+                  h-60"
               >
-              No Code of Conduct Available
+                <!-- Icon -->
+                <i class="
+                ri-sticky-note-line
+                text-4xl text-green-500
+                mb-3 animate-pulse"
+                ></i>
+
+                <!-- Message -->
+                <h3 class="text-lg">
+                  No Code of Conduct Available
+                </h3>
+                <p class="mt-1 text-sm text-gray-500">
+                  Try adding some code of conduct or adjusting your search.
+                </p>
               </section>
             </div>
-          </section>
         </div>
       </div>
       <OModal
@@ -413,14 +431,12 @@ export default {
           if (value) {
             return true
           }
-
           return 'Name is required.'
         },
         value => {
-          if (value?.length <= 10) {
+          if (value.length <= 10) {
             return true
           }
-
           return 'Name must be less than 10 characters.'
         },
       ],

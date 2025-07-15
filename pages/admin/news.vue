@@ -1,297 +1,357 @@
 <!-- eslint-disable max-len -->
 <template>
-    <div class="h-full  bg-[#1A1A1B]">
-      <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-        <div
-          class="
-            space-y-3
-            px-6
-            text-left
-            sm:text-left
-            lg:col-span-6 lg:mt-10
-            xl:mt-10"
-          data-aos="fade-right"
-        >
-          <span
-            class="
-              superheadline
-              flex flex-row
-              items-center
-              pb-3
-              text-[1rem]
-              font-normal
-            "
-          >
-            <span class="font-medium">
-              <NuxtLink to="/admin">
-                <VBtn text color="white">Admin</VBtn>
-              </NuxtLink>
-            </span>
-          </span>
-          <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-            News
-          </h1>
-        </div>
+    <div class="bg-[#1A1A1B] h-full">
+      <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black shadow-md">
+          <!-- Breadcrumbs and Title -->
+          <BreadCrumbs title="News Setting"/>
       </BaseHeader>
 
       <div class="mx-auto max-w-screen-xl px-4 py-7">
         <div class="-mx-4 flex flex-wrap">
           <main class="w-full px-4">
-            <div class="my-6 flex flex-wrap items-center justify-between gap-4">
-              <div
-                class="flex flex-wrap justify-start gap-2"
-              >
-              <button
-                type="button"
-                class="
-                  w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] p-1.5
-                  text-center
-                  font-semibold
-                  text-white
-                  sm:w-60"
-                @click="addNews"
-              >
-                <span
-                class="
-                flex items-center
-                justify-center"
-                aria-hidden="true"
+            <div
+              class="
+              my-6 flex flex-wrap
+              items-center justify-between
+              gap-4 rounded-xl
+              bg-white p-5 shadow-md"
+            >
+              <!-- Left Section: Add News Button -->
+              <div class="flex flex-wrap justify-start gap-2">
+                <button
+                  type="button"
+                  class="
+                    group
+                    flex w-full items-center justify-center
+                    rounded-lg
+                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                    p-2.5
+                    font-semibold text-white
+                    transition-transform duration-200
+                    hover:scale-[1.02]
+                    sm:w-60
+                    shadow-md hover:shadow-lg"
+                  @click="addNews"
                 >
-                  <i class="ri-add-line"></i>
-                  <span class="pr-1">Add News</span>
-                </span>
-              </button>
+                  <i
+                  class="
+                  ri-add-line mr-2
+                  text-lg transition-transform
+                  group-hover:rotate-90"
+                  ></i>
+                  <span>Add News</span>
+                </button>
               </div>
+
+              <!-- Right Section: Search Bar -->
               <div class="w-full sm:w-80">
-              <form @submit.prevent="retrieveNews">
-                <SearchBar v-model="query" />
-              </form>
-            </div>
+                <form @submit.prevent="retrieveNews" class="relative">
+                  <SearchBar v-model="query" placeholder="Search news..." />
+                </form>
+              </div>
             </div>
           </main>
         </div>
 
-        <section v-if="totalPages > 0" class="mb-8" data-aos="fade-up">
+        <section v-if="totalPages > 0" class="mb-10" data-aos="fade-up">
           <div
-            class="
-              flex flex-wrap items-center justify-around
-              gap-x-2
-              md:justify-between
-            "
+          class="
+          flex flex-wrap
+          items-center
+          justify-between gap-4
+          rounded-lg bg-white
+          px-6 py-4 text-black
+          shadow-md"
           >
-            <span class="flex items-center">
-              <p class="text-base leading-[2.5em] text-white">
-                Showing {{ from }}-{{ to }} of {{ totalItems }} results
-              </p>
-            </span>
-            <BasePagination
-              :active-page="page"
-              :total-pages="totalPages"
-              @change="setPage"
-            />
+            <!-- Showing Results Info -->
+            <div class="flex items-center space-x-2 text-sm md:text-base">
+              <i class="ri-information-line text-lg text-green-400"></i>
+              <span>
+                Showing <span class="font-semibold">{{ from }}</span>–
+                <span class="font-semibold">{{ to }}</span>
+                of <span class="font-semibold">{{ totalItems }}</span> results
+              </span>
+            </div>
+
+            <!-- Pagination Component -->
+            <div class="flex shrink-0">
+              <BasePagination
+                :active-page="page"
+                :total-pages="totalPages"
+                @change="setPage"
+              />
+            </div>
           </div>
         </section>
+
         <section
           v-if="totalPages === 0"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
-          >
-          No News Available
+          class="
+            col-span-1
+            flex
+            flex-col
+            items-center
+            justify-center
+            rounded-xl
+            bg-gray-50
+            p-8
+            text-center
+            font-semibold
+            text-gray-600
+            shadow-inner
+            transition-all
+            duration-300
+            md:col-span-3
+            h-60"
+        >
+          <!-- Icon -->
+          <i class="
+          ri-newspaper-line
+          text-4xl text-green-500
+          mb-3 animate-pulse"
+          ></i>
+
+          <!-- Message -->
+          <h3 class="text-lg">
+            No News Available
+          </h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Try adding some news or adjusting your search.
+          </p>
         </section>
-        <article class="mx-auto max-w-screen-xl gap-4">
-            <div class="grid grid-cols-1 gap-4">
-              <div
-                v-for="(news, index) in newsList"
-                :key="index" class="group col-span-1 bg-[#212121]"
-                data-aos="fade-up"
-              >
-                <div
-                  class="
-                  grid grid-cols-1
-                  gap-4 md:grid-cols-6
-                  lg:grid-cols-6"
-                >
-                  <div
+        <article class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 gap-6">
+            <div
+              v-for="(news, index) in newsList"
+              :key="index"
+              class="
+              group col-span-1
+              overflow-hidden
+              rounded-xl bg-white
+              backdrop-blur-sm
+              shadow-lg transition-all
+              duration-300 hover:shadow-2xl
+              md:flex md:flex-col"
+              data-aos="fade-up"
+            >
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-6">
+                <!-- Text Content -->
+                <div class="col-span-1 p-5 md:col-span-3 lg:col-span-4 lg:p-8">
+                  <h3
                     class="
-                    col-span-1 p-4 md:col-span-3
-                    lg:col-span-4 lg:p-8"
+                    text-xl font-bold
+                    text-black transition-colors
+                    group-hover:text-green-400 sm:text-2xl"
                   >
-                    <h3
-                      class="
-                      grid text-xl sm:text-2xl font-semibold
-                      text-white sm:grid-cols-1"
-                    >
-                      {{ news.headline }}
-                    </h3>
+                    {{ news.headline }}
+                  </h3>
 
-                    <p class="text-sm text-brand-slate">
+                  <p class="mt-2 text-sm text-gray-600">
                     {{ formattedDate(news.updated_at) }}
-                    </p>
+                  </p>
 
-                    <p
-                      class="my-4 text-white line-clamp-3"
-                      v-html="news.content"
-                    ></p>
+                  <p
+                    class="mt-4 line-clamp-3 text-black"
+                    v-html="news.content"
+                  ></p>
 
-                    <div
-                      class="mt-8 flex flex-wrap justify-start gap-2"
-                      >
-                      <button
-                        type="button"
-                        class="
-                          text-brand-green
-                          hover:text-brand-green
-                          hover:decoration-brand-green
-                          mr-2
-                          flex
-                          cursor-pointer
-                          items-center
-                          text-sm hover:underline
-                          "
-                        @click="editNews(news.id)"
-                      >
-                        <i class="ri-edit-line"></i> Edit
-                      </button>
-                      <button
-                        type="button"
-                        class="
-                          text-brand-red
-                          hover:text-brand-red
-                          hover:decoration-brand-red
-                          mr-2
-                          flex
-                          cursor-pointer
-                          items-center
-                          text-sm hover:underline
-                          "
-                        @click="removeNews(news.id)"
-                      >
-                        <i class="ri-delete-bin-5-line"></i> Remove
-                      </button>
-                    </div>
+                  <!-- Action Buttons -->
+                  <div class="mt-6 flex flex-wrap items-center gap-4">
+                    <button
+                      type="button"
+                      class="
+                        inline-flex items-center gap-2
+                        px-3 py-2 rounded-md
+                        bg-green-100 text-brand-green
+                        hover:bg-green-200
+                        active:bg-green-300
+                        transition-colors
+                        text-sm font-medium
+                      "
+                      @click="editNews(news.id)"
+                    >
+                      <i class="ri-edit-line"></i>
+                      <span>Edit</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="
+                        inline-flex items-center gap-2
+                        px-3 py-2 rounded-md
+                        bg-red-100 text-brand-red
+                        hover:bg-red-200
+                        active:bg-red-300
+                        transition-colors
+                        text-sm font-medium
+                      "
+                      @click="removeNews(news.id)"
+                    >
+                      <i class="ri-delete-bin-5-line"></i>
+                      <span>Remove</span>
+                    </button>
                   </div>
-                  <div
-                    class="col-span-1 overflow-hidden
-                    md:col-span-3 lg:col-span-2"
-                  >
-                    <img
-                      :src="getMediaURL(news.media[0], 'news')"
-                      alt="Product Image"
-                      class="h-64 w-full object-cover transition-all
-                        group-hover:scale-110"
-                      >
-                  </div>
+                </div>
+
+                <!-- Image Section -->
+                <div class="col-span-1 overflow-hidden md:col-span-3 lg:col-span-2">
+                  <img
+                    :src="getMediaURL(news.media[0], 'news')"
+                    alt="News Image"
+                    class="
+                    h-full w-full object-cover
+                    object-center transition-transform
+                    duration-500 group-hover:scale-110"
+                  />
                 </div>
               </div>
             </div>
+          </div>
         </article>
       </div>
-       <!-- showAdd modal component -->
-       <OModal
-       :active="showAddNewsModal"
-       @close="showAddNewsModal = false"
-       >
-        <VForm
-        ref="form" v-model="valid" lazy-validation
-        class="p-2 md:p-4"
-        >
-          <h3
-        class="
-        mb-3
-        font-bold"
-        >
-            Add News
-          </h3>
-          <hr class="my-3">
-          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <div class="col-span-3">
-              <label for="headline" class="mb-1 block">
-                Headline:
-              </label>
-              <VTextField
-                id="news"
-                v-model="news.headline"
-                label="Enter Headline"
-                :rules="rules"
-                type="text"
-                solo
-              />
-            </div>
-
-            <div class="col-span-3">
-              <label for="content" class="mb-1 block">
-                Content:
-              </label>
-              <Tiptap
-                id="content"
-                v-model="news.content"
-                />
-            </div>
-
-            <div class="col-span-3">
-              <ImageUpload
-                 @update-image="updateImage"
-              />
-            </div>
-          </div>
-          <hr class="my-3">
-          <div class="block lg:flex lg:flex-auto lg:justify-end">
-            <button
-              type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-green
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-green-700
-                lg:mx-4 lg:w-48
-              "
-              :disabled="!valid"
-              @click="validate('Add')"
-            >
-              OK
-            </button>
-            <button
-              type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-red
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-[#B1271B]
-                lg:mx-4 lg:w-48
-              "
-              @click="close"
-            >
-              Cancel
-            </button>
-          </div>
-        </VForm>
-      </OModal>
-      <!-- Show Edit News -->
+      <!-- Add Modal Component -->
       <OModal
-      :active="showEditNewsModal"
-      @close="showEditNewsModal = false"
-    >
+        :active="showAddNewsModal"
+        @close="showAddNewsModal = false"
+      >
+        <div class="
+          relative rounded-lg shadow-xl overflow-hidden
+          bg-white transition-all duration-300 transform"
+          >
+          <!-- Close Button -->
+          <button
+            type="button"
+            class="
+            absolute top-4
+            right-4 text-gray-500
+            hover:text-gray-800
+            dark:text-gray-400
+            dark:hover:text-white"
+            @click="showAddNewsModal = false"
+          >
+            <i class="ri-close-line text-xl"></i>
+          </button>
+
+          <!-- Form -->
+          <VForm
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            class="p-4 md:p-6"
+          >
+            <h3 class="text-xl font-bold text-gray-800 light:text-dark mb-2">
+              Add News
+            </h3>
+            <hr class="my-4 border-gray-200 dark:border-gray-700" />
+
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <!-- Headline -->
+              <div class="col-span-3">
+                <label
+                for="headline"
+                class="
+                mb-1 block text-sm
+                font-medium text-gray-700
+                light:text-dark"
+                >
+                  Headline:
+                </label>
+                <VTextField
+                  id="news"
+                  v-model="news.headline"
+                  label="Enter Headline"
+                  :rules="rules"
+                  type="text"
+                  solo
+                  class="w-full focus:ring focus:ring-green-200"
+                  :dark="$store.getters.isDarkMode"
+                />
+              </div>
+
+              <!-- Content -->
+              <div class="col-span-3">
+                <label
+                for="content"
+                class="
+                mb-1 block text-sm font-medium
+                text-gray-700 light:text-dark"
+                >
+                  Content:
+                </label>
+                <Tiptap
+                  id="content"
+                  v-model="news.content"
+                />
+              </div>
+
+              <!-- Image Upload -->
+              <div class="col-span-3">
+                <ImageUpload @update-image="updateImage" />
+              </div>
+            </div>
+
+            <hr class="my-6 border-gray-200 dark:border-gray-700" />
+
+            <!-- Actions -->
+            <div class="flex flex-col-reverse justify-end gap-3 sm:flex-row">
+              <!-- Cancel Button -->
+              <button
+                type="button"
+                @click="close"
+                class="
+                  group relative w-full
+                  rounded-md px-5 py-3
+                  bg-[#050505] text-white
+                  font-semibold text-sm uppercase tracking-wider
+                  shadow-md hover:shadow-lg
+                  transition-all duration-300
+                  overflow-hidden
+                  before:absolute before:inset-0 before:bg-white
+                  before:opacity-0 before:w-full before:h-full
+                  hover:before:opacity-10
+                  sm:w-auto
+                "
+              >
+                <span class="relative z-10">Cancel</span>
+              </button>
+
+              <!-- Save News Button -->
+              <button
+                type="button"
+                :disabled="!valid"
+                @click="validate('Add')"
+                class="
+                  group relative w-full
+                  rounded-md px-5 py-3
+                  bg-[#5ecb3e] text-white
+                  font-semibold text-sm uppercase tracking-wider
+                  shadow-md hover:shadow-lg
+                  transition-all duration-300
+                  overflow-hidden
+                  before:absolute before:inset-0 before:bg-white
+                  before:opacity-0 before:w-full before:h-full
+                  hover:before:opacity-20
+                  active:bg-green-700
+                  disabled:opacity-60 disabled:cursor-not-allowed
+                  sm:w-auto
+                "
+              >
+                <span class="relative z-10">Save News</span>
+              </button>
+            </div>
+          </VForm>
+        </div>
+      </OModal>
+
+      <!-- Edit Modal Component -->
+      <OModal
+        :active="showEditNewsModal"
+        @close="showEditNewsModal = false"
+      >
       <VForm
-      ref="form" v-model="valid" lazy-validation
-      class="p-2 md:p-4"
+        ref="form"
+        v-model="valid"
+        lazy-validation
+        class="p-2 md:p-4"
       >
         <h3 class="text-swd-red mb-3 font-bold">
           Edit News
@@ -331,52 +391,50 @@
           </div>
         </div>
         <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
+        <div class="block lg:flex lg:justify-end lg:items-center gap-4">
+          <!-- Confirm Button -->
           <button
             type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-800
-              lg:mx-4 lg:w-48
-            "
             :disabled="!valid"
             @click="validate('Edit')"
+            class="
+              group relative w-full
+              rounded-md px-5 py-3
+              bg-[#5ecb3e] text-white
+              font-semibold text-sm uppercase tracking-wider
+              overflow-hidden shadow-md hover:shadow-lg
+              transition-all duration-300
+              before:absolute before:inset-0 before:bg-white
+              before:opacity-0 before:w-full before:h-full
+              hover:before:opacity-20
+              disabled:opacity-60 disabled:cursor-not-allowed
+              lg:w-48 lg:my-2"
           >
-            Confirm
+            <span class="relative z-10">Confirm</span>
           </button>
+
+          <!-- Cancel Button -->
           <button
             type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-            "
             @click="closeEdit"
+            class="
+              group relative w-full
+              rounded-md px-5 py-3
+              bg-[#050505] text-white
+              font-semibold text-sm uppercase tracking-wider
+              overflow-hidden shadow-md hover:shadow-lg
+              transition-all duration-300
+              before:absolute before:inset-0 before:bg-white
+              before:opacity-0 before:w-full before:h-full
+              hover:before:opacity-10
+              lg:w-48 lg:my-2"
           >
-            Cancel
+            <span class="relative z-10">Cancel</span>
           </button>
         </div>
       </VForm>
     </OModal>
-    <!-- showRemoveProduct modal component -->
+    <!-- Remove Modal Component -->
     <OModal
       :active="showRemoveNewsModal"
       @close="showRemoveNewsModal = false"
@@ -445,6 +503,7 @@ import 'vue-croppa/dist/vue-croppa.css';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
+import BreadCrumbs from '~/components/BreadCrumbs.vue';
 import SearchBar from '~/components/SearchBar'
 import aosMixin from '@/mixins/aos';
 import Tiptap from '~/components/Wysiwyg/Tiptap'
@@ -460,7 +519,8 @@ export default {
     SearchBar,
     Tiptap,
     ImageUpload,
-    ImageUploadEdit
+    ImageUploadEdit,
+    BreadCrumbs
   },
   mixins: [
     aosMixin,

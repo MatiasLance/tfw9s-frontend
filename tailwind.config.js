@@ -8,7 +8,6 @@ module.exports = {
     },
     extend: {
       colors: {
-        // 'brand-black': '#090909',
         'brand-black': '#050505',
         'brand-yellow': '#ecbe13',
         'brand-blue': '#3981da',
@@ -24,7 +23,6 @@ module.exports = {
         'brand-lgrey': '#6C6C6C',
         'brand-mgrey': '#4C4C4C',
         'brand-slate': '#abb8c3',
-        // 'brand-green': '#4cbe5c',
         'brand-green': '#5ecb3e',
       },
       maxHeight: {

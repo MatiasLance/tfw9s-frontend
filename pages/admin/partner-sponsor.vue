@@ -2,106 +2,124 @@
 <template>
     <div class="h-full  bg-[#1A1A1B]">
       <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-        <div
-          class="
-            space-y-3
-            px-6
-            text-left
-            sm:text-left
-            lg:col-span-6 lg:mt-10
-            xl:mt-10
-          "
-        >
-          <span
-            class="
-              superheadline
-              flex flex-row
-              items-center
-              pb-3
-              text-[1rem]
-              font-normal
-            "
-          >
-            <span class="font-medium">
-              <NuxtLink to="/admin">
-                <VBtn text color="white">Admin</VBtn>
-              </NuxtLink>
-            </span>
-          </span>
-          <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-            Partner Sponsor
-          </h1>
-        </div>
+         <!-- Breadcrumbs and Title -->
+         <BreadCrumbs title="Partner Sponsor Setting"/>
       </BaseHeader>
 
       <div class="mx-auto max-w-screen-xl px-4 py-7">
         <div class="-mx-4 flex flex-wrap">
           <main class="w-full px-4">
-            <div class="my-6 flex flex-wrap items-center justify-between gap-4">
-              <div
-                class="flex flex-wrap justify-start gap-2"
-              >
-              <button
-                type="button"
-                class="
-                  w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] p-1.5
-                  text-center
-                  font-semibold
-                  text-white
-                  sm:w-60"
-                @click="addPartnerSponsor"
-              >
-                <span
-                class="
-                flex items-center
-                justify-center"
-                aria-hidden="true"
+            <div
+              class="
+              my-6 flex flex-wrap
+              items-center justify-between
+              gap-4 rounded-xl
+              bg-white p-5 shadow-md"
+            >
+              <!-- Left Section: Add News Button -->
+              <div class="flex flex-wrap justify-start gap-2">
+                <button
+                  type="button"
+                  class="
+                    group
+                    flex w-full items-center justify-center
+                    rounded-lg
+                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                    p-2.5
+                    font-semibold text-white
+                    transition-transform duration-200
+                    hover:scale-[1.02]
+                    sm:w-60
+                    shadow-md hover:shadow-lg"
+                  @click="addPartnerSponsor"
                 >
-                  <i class="ri-add-line"></i>
-                  <span class="pr-1">Add Partner Sponsor</span>
-                </span>
-              </button>
+                  <i
+                  class="
+                  ri-add-line mr-2
+                  text-lg transition-transform
+                  group-hover:rotate-90"
+                  ></i>
+                  <span>Add Partner Sponsor</span>
+                </button>
               </div>
+
+              <!-- Right Section: Search Bar -->
               <div class="w-full sm:w-80">
-              <form @submit.prevent="retrieveSponsors">
-                <SearchBar v-model="query" />
-              </form>
-            </div>
+                <form @submit.prevent="retrieveSponsors" class="relative">
+                  <SearchBar v-model="query"/>
+                </form>
+              </div>
             </div>
           </main>
         </div>
 
-        <section  v-if="totalPages > 0" class="mb-8" data-aos="fade-up">
-        <div
+        <section v-if="totalPages > 0" class="mb-10" data-aos="fade-up">
+          <div
           class="
-            flex flex-wrap items-center justify-around
-            gap-x-2
-            md:justify-between
-          "
-        >
-          <span class="flex items-center">
-            <p class="text-base leading-[2.5em] text-white">
-              Showing {{ from }}-{{ to }} of {{ totalItems }} results
-            </p>
-          </span>
-            <BasePagination
-              :active-page="page"
-              :total-pages="totalPages"
-              @change="setPage"
-            />
+          flex flex-wrap
+          items-center
+          justify-between gap-4
+          rounded-lg bg-white
+          px-6 py-4 text-black
+          shadow-md"
+          >
+            <!-- Showing Results Info -->
+            <div class="flex items-center space-x-2 text-sm md:text-base">
+              <i class="ri-information-line text-lg text-green-400"></i>
+              <span>
+                Showing <span class="font-semibold">{{ from }}</span>–
+                <span class="font-semibold">{{ to }}</span>
+                of <span class="font-semibold">{{ totalItems }}</span> results
+              </span>
+            </div>
+
+            <!-- Pagination Component -->
+            <div class="flex shrink-0">
+              <BasePagination
+                :active-page="page"
+                :total-pages="totalPages"
+                @change="setPage"
+              />
+            </div>
           </div>
         </section>
+
         <section
           v-if="totalPages === 0"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
-          >
-          No Partner Sponsor Available
+          class="
+            col-span-1
+            flex
+            flex-col
+            items-center
+            justify-center
+            rounded-xl
+            bg-gray-50
+            p-8
+            text-center
+            font-semibold
+            text-gray-600
+            shadow-inner
+            transition-all
+            duration-300
+            md:col-span-3
+            h-60"
+        >
+          <!-- Icon -->
+          <i class="
+          ri-service-line
+          text-4xl text-green-500
+          mb-3 animate-pulse"
+          ></i>
+
+          <!-- Message -->
+          <h3 class="text-lg">
+            No Partner Sponsor Available
+          </h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Try adding some partner sponsor or adjusting your search.
+          </p>
         </section>
+
         <div
             class="grid grid-cols-1 gap-x-0 gap-y-6
             sm:grid-cols-2 sm:gap-x-4
@@ -109,94 +127,77 @@
             xl:grid-cols-4 xl:gap-x-4 xl:gap-y-12
             "
         >
-        <article
+          <article
             v-for="sponsor in partnerSponsors"
             :key="sponsor.id"
             class="
-            group
-            mb-5 flex
-            rounded
-            text-white
-            bg-[#212121]
-            shadow-sm
-            transition
-            duration-200
-            hover:cursor-pointer hover:shadow-xl
-            flex
-            flex-col
+              group
+              mb-6 overflow-hidden
+              rounded-xl bg-white
+              shadow-md hover:shadow-xl
+              transition-all duration-300
+              flex flex-col
+              border border-gray-100
+              hover:border-green-200
             "
             data-aos="fade-up"
-        >
-          <div class="w-full h-64 overflow-hidden">
-            <img
-            :src="getMediaURL(sponsor.media[0])"
-            alt="Sponsor Image"
-            class="w-full h-full object-contain transition-all
-              group-hover:scale-110"
-            >
-          </div>
-          <div class="w-full">
-            <div class="p-5">
-              <div class="mb-4 space-y-2">
-              <span
-              class="text-2xl selection:bg-black-600 selection:text-white"
-              >
-                <span
+          >
+            <!-- Image Section -->
+            <div class="relative w-full h-56 overflow-hidden bg-gray-100">
+              <img
+                :src="getMediaURL(sponsor.media[0])"
+                alt="Sponsor Image"
                 class="
-                font-michroma font-bold
-                transition
-                duration-200
-                "
-                >
-                    {{ sponsor.company_name }}
-                </span>
-              </span>
-              </div>
-              <div class="mb-6 w-full">
-              <!--
-                <span
-                class="text-left text-slate-400 line-clamp-1"
-                v-html="sponsor.description"
-                />
-              -->
-              </div>
-              <div class="mt-4 flex flex-wrap justify-start gap-2">
-              <button
+                w-full h-full object-contain
+                object-center transition-transform
+                duration-500 group-hover:scale-105"
+              />
+            </div>
+
+            <!-- Content Section -->
+            <div class="p-5 flex-grow flex flex-col justify-center items-center text-center">
+              <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                {{ sponsor.company_name }}
+              </h3>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap gap-3">
+                <button
                   type="button"
                   class="
-                  text-brand-green
-                  hover:text-brand-green
-                  hover:decoration-brand-green
-                  mr-2
-                  flex
-                  cursor-pointer
-                  items-center
-                  text-sm hover:underline
+                    inline-flex items-center gap-2
+                    px-3 py-2 rounded-md
+                    bg-green-100 text-brand-green
+                    hover:bg-green-200
+                    active:bg-green-300
+                    transition-colors
+                    text-sm font-medium
                   "
                   @click="editSponsor(sponsor.id)"
-              >
-                  <i class="ri-edit-line"></i> Edit
-              </button>
-              <button
+                >
+                  <i class="ri-edit-line"></i>
+                  <span>Edit</span>
+                </button>
+
+                <button
                   type="button"
                   class="
-                  text-brand-red
-                  hover:text-brand-red
-                  hover:decoration-brand-red
-                  mr-2
-                  flex
-                  cursor-pointer
-                  items-center
-                  text-sm hover:underline
+                    inline-flex items-center gap-2
+                    px-3 py-2 rounded-md
+                    bg-red-100 text-brand-red
+                    hover:bg-red-200
+                    active:bg-red-300
+                    transition-colors
+                    text-sm font-medium
                   "
                   @click="removeSponsor(sponsor.id)"
-              >
-                  <i class="ri-delete-bin-5-line"></i> Remove
-              </button>
+                >
+                  <i class="ri-delete-bin-5-line"></i>
+                  <span>Remove</span>
+                </button>
               </div>
             </div>
-          </div>
-        </article>
+          </article>
         </div>
       </div>
        <!-- showAdd modal component -->

@@ -1,120 +1,109 @@
 <!-- eslint-disable max-len -->
 <template>
     <div class="h-full  bg-[#1A1A1B]">
-      <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-        <div
-          class="
-            space-y-3
-            px-6
-            text-left
-            sm:text-left
-            lg:col-span-6 lg:mt-10
-            xl:mt-10
-          "
-        >
-          <span
-            class="
-              superheadline
-              flex flex-row
-              items-center
-              pb-3
-              text-[1rem]
-              font-normal
-            "
-          >
-            <span class="font-medium">
-              <NuxtLink to="/admin">
-                <VBtn text color="white">Admin</VBtn>
-              </NuxtLink>
-            </span>
-          </span>
-          <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-            {{ adminpage.title }}
-          </h1>
-        </div>
+      <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black shadow-md">
+        <!-- Breadcrumbs and Title -->
+         <BreadCrumbs title="Discount Code Setting"/>
       </BaseHeader>
 
       <div class="mx-auto max-w-screen-xl px-4 py-7">
         <div class="-mx-4 flex flex-wrap">
           <main class="w-full px-4">
-            <div class="my-6 flex flex-wrap items-center justify-between gap-4">
-              <div
-                class="flex justify-content-between gap-2"
-              >
-              <button
-                type="button"
-                class="
-                  w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] p-1.5
-                  text-center
-                  font-semibold
-                  text-white
-                  sm:w-60"
-                @click="addDiscountCode"
-              >
-                <span
-                class="
-                flex items-center
-                justify-center"
-                aria-hidden="true"
+            <div
+              class="
+              my-6 flex flex-wrap
+              items-center justify-between
+              gap-4 rounded-xl
+              bg-white p-5 shadow-md"
+            >
+              <!-- Left Section: Add News Button -->
+              <div class="flex flex-wrap justify-start gap-2">
+                <button
+                  type="button"
+                  class="
+                    group
+                    flex w-full items-center justify-center
+                    rounded-lg
+                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                    p-2.5
+                    font-semibold text-white
+                    transition-transform duration-200
+                    hover:scale-[1.02]
+                    sm:w-60
+                    shadow-md hover:shadow-lg"
+                  @click="addDiscountCode"
                 >
-                  <i class="ri-add-line"></i>
-                  <span class="pr-1">Add Discount Code</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                class="
-                  w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] p-1.5
-                  text-center
-                  font-semibold
-                  text-white
-                  sm:w-60"
-                @click="goToDiscountCodeTable"
-              >
-                <span
-                class="
-                flex items-center
-                justify-center"
-                aria-hidden="true"
+                  <i
+                  class="
+                  ri-add-line mr-2
+                  text-lg transition-transform
+                  group-hover:rotate-90"
+                  ></i>
+                  <span>Add Discount Code</span>
+                </button>
+                <button
+                  type="button"
+                  class="
+                    group
+                    flex w-full items-center justify-center
+                    rounded-lg
+                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                    p-2.5
+                    font-semibold text-white
+                    transition-transform duration-200
+                    hover:scale-[1.02]
+                    sm:w-60
+                    shadow-md hover:shadow-lg"
+                  @click="goToDiscountCodeTable"
                 >
-                  <i class="ri-table-line"></i>
-                  <span class="ml-[5px]">Discount Table</span>
-                </span>
-              </button>
+                  <i
+                  class="
+                  ri-add-line mr-2
+                  text-lg transition-transform
+                  group-hover:rotate-90"
+                  ></i>
+                  <span>Discount Table</span>
+                </button>
               </div>
+
+              <!-- Right Section: Search Bar -->
               <div class="w-full sm:w-80">
-              <form @submit.prevent="retrieveNews">
-                <SearchBar v-model="query" />
-              </form>
-            </div>
+                <form @submit.prevent="retrieveNews" class="relative">
+                  <SearchBar v-model="query" placeholder="Search news..." />
+                </form>
+              </div>
             </div>
           </main>
         </div>
 
-        <section v-if="totalPages > 0" class="mb-8" data-aos="fade-up">
+        <section v-if="totalPages > 0" class="mb-10" data-aos="fade-up">
           <div
-            class="
-              flex flex-wrap items-center justify-around
-              gap-x-2
-              md:justify-between
-            "
+          class="
+          flex flex-wrap
+          items-center
+          justify-between gap-4
+          rounded-lg bg-white
+          px-6 py-4 text-black
+          shadow-md"
           >
-            <span class="flex items-center">
-              <p class="text-base leading-[2.5em] text-white">
-                Showing {{ from }}-{{ to }} of {{ totalItems }} results
-              </p>
-            </span>
-            <BasePagination
-              :active-page="page"
-              :total-pages="totalPages"
-              @change="setPage"
-            />
+            <!-- Showing Results Info -->
+            <div class="flex items-center space-x-2 text-sm md:text-base">
+              <i class="ri-information-line text-lg text-green-400"></i>
+              <span>
+                Showing <span class="font-semibold">{{ from }}</span>–
+                <span class="font-semibold">{{ to }}</span>
+                of <span class="font-semibold">{{ totalItems }}</span> results
+              </span>
+            </div>
+
+            <!-- Pagination Component -->
+            <div class="flex shrink-0">
+              <BasePagination
+                :active-page="page"
+                :total-pages="totalPages"
+                @change="setPage"
+              />
+            </div>
           </div>
         </section>
         <section
@@ -125,109 +114,147 @@
           >
           No Discount Code Available
         </section>
-        <div
-            class="grid grid-cols-1 gap-x-0 gap-y-6
-            sm:grid-cols-2 sm:gap-x-4
-            md:grid-cols-3 md:gap-x-4 md:gap-y-8
-            xl:grid-cols-3 xl:gap-x-4 xl:gap-y-12
-            "
+        <section
+          v-if="totalPages === 0"
+          class="
+            col-span-1
+            flex
+            flex-col
+            items-center
+            justify-center
+            rounded-xl
+            bg-gray-50
+            p-8
+            text-center
+            font-semibold
+            text-gray-600
+            shadow-inner
+            transition-all
+            duration-300
+            md:col-span-3
+            h-60"
         >
-        <article
+          <!-- Icon -->
+          <i class="
+          ri-exchange-dollar-line
+          text-4xl text-green-500
+          mb-3 animate-pulse"
+          ></i>
+
+          <!-- Message -->
+          <h3 class="text-lg">
+            No Discount Code Available
+          </h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Try adding some discount code or adjusting your search.
+          </p>
+        </section>
+        <div
+          class="
+          grid grid-cols-1 gap-x-0
+          gap-y-6 sm:grid-cols-2
+          sm:gap-x-4 md:grid-cols-3
+          md:gap-x-4 md:gap-y-8 xl:grid-cols-3
+          xl:gap-x-4 xl:gap-y-12"
+        >
+          <article
             v-for="code in discountCodeList"
             :key="code.id"
             class="
-            group
-            mb-5 flex
-            rounded
-            text-white
-            bg-[#212121]
-            shadow-sm
-            transition
-            duration-200
-            hover:cursor-pointer hover:shadow-xl
-            flex
-            flex-col
+              group
+              relative
+              overflow-hidden
+              rounded-lg
+              bg-white
+              text-black
+              shadow-md
+              transition-all duration-300 ease-in-out
+              hover:shadow-xl hover:cursor-pointer
+              flex flex-col
             "
             data-aos="fade-up"
-        >
-            <div class="w-full">
-            <div class="p-5">
-                <div class="mb-9 space-y-2">
+          >
+            <!-- Main Content -->
+            <div class="p-5 flex flex-col justify-between h-full">
+              <!-- Code Title -->
+              <div class="mb-9 space-y-2">
                 <span
-                class="text-2xl selection:bg-yellow-600 selection:text-white"
+                  class="text-2xl selection:bg-yellow-600 selection:text-white"
                 >
-                    <span
+                  <span
                     class="
-                        font-michroma font-bold
-                        transition
-                        duration-200
+                      font-michroma font-bold
+                      transition
+                      duration-200
                     "
-                    >
-                        {{ code.code }}
-                    </span>
+                  >
+                    {{ code.code }}
+                  </span>
                 </span>
-                </div>
-                <div class="mb-6 w-full">
+              </div>
+
+              <!-- Description -->
+              <div class="mb-6 w-full">
                 <p
-                    class="text-left text-slate-400 line-clamp-1"
-                    v-html="code.description"
-                >
-                </p>
-                </div>
-                <div class="mt-4 flex flex-wrap justify-start gap-2">
+                  class="text-left text-slate-400 line-clamp-1"
+                  v-html="code.description"
+                ></p>
+              </div>
+
+              <!-- Actions -->
+              <div class="mt-4 flex flex-wrap justify-start gap-2">
                 <button
-                    type="button"
-                    class="
-                    text-brand-green
-                    hover:text-brand-green
-                    hover:decoration-brand-green
-                    mr-2
-                    flex
-                    cursor-pointer
-                    items-center
-                    text-sm hover:underline
-                    "
-                    @click="editNews(code.id)"
+                  type="button"
+                  class="
+                    inline-flex items-center gap-2
+                    px-3 py-2 rounded-md
+                    bg-green-100 text-brand-green
+                    hover:bg-green-200
+                    active:bg-green-300
+                    transition-colors
+                    text-sm font-medium
+                  "
+                  @click="editNews(code.id)"
                 >
-                    <i class="ri-edit-line"></i> Edit
+                  <i class="ri-edit-line"></i>
+                  <span>Edit</span>
                 </button>
                 <button
-                    type="button"
-                    class="
-                    text-brand-red
-                    hover:text-brand-red
-                    hover:decoration-brand-red
-                    mr-2
-                    flex
-                    cursor-pointer
-                    items-center
-                    text-sm hover:underline
-                    "
-                    @click="removeNews(code.id)"
+                  type="button"
+                  class="
+                    inline-flex items-center gap-2
+                    px-3 py-2 rounded-md
+                    bg-red-100 text-brand-red
+                    hover:bg-red-200
+                    active:bg-red-300
+                    transition-colors
+                    text-sm font-medium
+                  "
+                  @click="removeNews(code.id)"
                 >
-                    <i class="ri-delete-bin-5-line"></i> Remove
+                  <i class="ri-delete-bin-5-line"></i>
+                  <span>Remove</span>
                 </button>
-                </div>
+              </div>
             </div>
-            </div>
+
+            <!-- Optional Thumbnail -->
             <div
-            v-if="showThumbnail"
-            class="w-full overflow-hidden border-l border-gray-200 md:w-1/4"
-        >
-            <img
+              v-if="showThumbnail"
+              class="absolute inset-0 z-0 hidden md:block"
+            >
+              <img
                 class="
-                mx-auto
-                cursor-pointer
-                object-cover
-                transition
-                duration-200
-                group-hover:scale-125
+                  absolute inset-0
+                  object-cover
+                  transition-transform duration-300
+                  group-hover:scale-110
                 "
                 :src="getMediaURL([])"
                 :alt="code.name"
-            />
+              />
             </div>
-        </article>
+          </article>
         </div>
       </div>
        <!-- showAdd modal component -->
@@ -580,6 +607,7 @@ import 'vue-croppa/dist/vue-croppa.css';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
+import BreadCrumbs from '~/components/BreadCrumbs.vue';
 import SearchBar from '~/components/SearchBar'
 import aosMixin from '@/mixins/aos';
 import currencyMixin from '@/mixins/currency';
@@ -590,6 +618,7 @@ export default {
   components: {
     BasePagination,
     SearchBar,
+    BreadCrumbs
   },
   mixins: [
     aosMixin,
