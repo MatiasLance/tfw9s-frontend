@@ -1,39 +1,8 @@
 <template>
   <div class="min-h-screen w-screen bg-[#1A1A1B] transition">
-    <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
-    >
-      <div
-        class="
-          col-span-12
-          text-center
-          sm:space-y-3
-          sm:text-left
-          lg:col-span-6
-          xl:mt-10"
-          data-aos="fade-right"
-      >
-        <span
-          class="
-            superheadline
-            flex flex-row
-            items-center
-            text-[1rem]
-            font-normal
-            text-white
-          "
-        >
-          <span class="font-medium">
-            <NuxtLink to="/">
-              <VBtn text color="white">Home</VBtn>
-            </NuxtLink>
-          </span>
-        </span>
-        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Admin
-        </h1>
-      </div>
+    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black shadow-md">
+      <!-- Breadcrumbs and Title -->
+      <BreadCrumbs title="Admin"/>
     </BaseHeader>
     <section class="mx-auto max-w-screen-xl gap-4">
       <div class="mb-4 w-full">
@@ -61,53 +30,102 @@
         <div v-if="adminTab.toUpperCase() === 'EVENTS'">
           <PartsList />
         </div>
-        <div v-if="adminTab.toUpperCase() === 'DRAWS'">        <DrawsComponent />
+        <div v-if="adminTab.toUpperCase() === 'DRAWS'">
+          <DrawsComponent />
         </div>
         <div
-          v-else
-          class="mb-5 grid gap-6 md:grid-cols-2
-          lg:grid-cols-3 xl:grid-cols-3"
+        v-else
+        class="
+        mb-5
+        grid
+        gap-6
+        px-6
+        md:px-0
+        md:grid-cols-2
+        lg:grid-cols-3
+        xl:grid-cols-3"
         >
-      <div v-for="(panel, key) in filteredPanels" :key="key">
-              <article
-                class="rounded border border-gray-200 bg-white shadow-sm"
-              >
-                <div class="p-5">
-                  <h2 class="text-lg font-semibold text-black">
-                    {{ panel.title }}
-                  </h2>
-                  <template v-if="panel.count !== -1">
-                    <small
-                    class="mb-1 font-bold  uppercase text-gray-400"
-                    >TOTAL</small>
-                    <div class="flex items-start">
-                      <h4
-                        class="mr-2 text-3xl font-bold"
-                        data-aos="fade-up"
-                      >
-                        {{ panel.count }}
-                      </h4>
-                    </div>
-                  </template>
+          <div v-for="(panel, key) in filteredPanels" :key="key">
+            <article
+              class="
+                group
+                rounded-lg border border-gray-200
+                bg-white
+                p-6
+                shadow-md
+                transition-all duration-300
+                hover:shadow-lg
+                hover:border-green-400
+              "
+            >
+              <!-- Title + Icon -->
+              <div class="mb-4 flex justify-center items-center gap-3">
+                <i :class="['ri-' + panel.icon, 'text-3xl']"></i>
+                <h2
+                  class="
+                  text-xl
+                  font-bold
+                  text-gray-800
+                  transition-colors
+                  group-hover:text-green-500"
+                >
+                  {{ panel.title }}
+                </h2>
+              </div>
 
-                  <hr class="my-4">
-                  <NuxtLink
-                    :to="panel.route"
-                    class="text-brand-black hover:text-brand-black"
+              <!-- Count Section -->
+              <template v-if="panel.count !== -1">
+                <div class="mb-4 rounded bg-green-50 px-3 py-2 text-center">
+                  <span 
+                  class="
+                  block
+                  text-xs
+                  font-bold
+                  uppercase
+                  tracking-wide
+                  text-green-600"
                   >
-                    <template v-if="panel.desc === 'Edit'">
-                      <i
-                        class="ri-pencil-line mr-1"
-                      ></i>
-                    </template>
-                    <template v-else>
-                      <i
-                        class="ri-corner-down-right-line mr-1"
-                      ></i>
-                    </template>
-                    {{ panel.desc }}
-                  </NuxtLink>
+                  Total
+                  </span>
+                  <span
+                  class="
+                  text-3xl
+                  font-extrabold
+                  text-green-700"
+                  >
+                    {{ panel.count }}
+                  </span>
                 </div>
+              </template>
+
+              <!-- Action Button -->
+              <div class="flex justify-center">
+                <NuxtLink
+                  :to="panel.route"
+                  class="
+                    mt-2
+                    inline-flex
+                    items-center
+                    gap-2
+                    rounded-full
+                    bg-green-100
+                    px-4
+                    py-2
+                    text-sm
+                    font-medium
+                    text-green-700
+                    transition
+                    hover:bg-green-200
+                  "
+                >
+                  <i :class="[
+                    panel.desc === 'Edit'
+                      ? 'ri-pencil-line'
+                      : 'ri-corner-down-right-line'
+                  ]"></i>
+                  {{ panel.desc }}
+                </NuxtLink>
+              </div>
             </article>
           </div>
         </div>
@@ -119,99 +137,105 @@
 <script>
 import PartsList from './parts-list.vue';
 import DrawsComponent from './draws-admin.vue';
+import BreadCrumbs from '~/components/BreadCrumbs.vue';
+
 export default {
-  components: { PartsList, DrawsComponent },
+  components: {
+    PartsList,
+    DrawsComponent,
+    BreadCrumbs
+  },
   data() {
     return {
       adminTab: 'events',
       panels: [
         {
           title: 'Merch Products',
-          icon: 'fas fa-shopping-cart',
+          icon: 'shopping-bag-line',
           route: '/admin/products',
           desc: 'See all products',
           count: 0,
         },
         {
           title: 'Merch Categories',
-          icon: 'fas fa-folder',
+          icon: 'product-hunt-line',
           route: '/admin/categories',
           desc: 'See all categories',
           count: 0
         },
         {
           title: 'Discount Codes',
-          icon: 'fas fa-dollar-sign',
+          icon: 'exchange-dollar-line',
           route: '/admin/discountcodes',
           desc: 'See all discount codes',
           count: 0
         },
         {
           title: 'News',
-          icon: 'fas fa-cog',
+          icon: 'newspaper-line',
           route: '/admin/news',
           desc: 'See all news',
           count: 0
         },
         {
           title: 'Partner Sponsor',
-          icon: 'fas fa-cog',
+          icon: 'service-line',
           route: '/admin/partner-sponsor',
           desc: 'See all Partner Sponsor',
           count: 0
         },
         {
           title: 'Tax',
-          icon: 'fas fa-cog',
+          icon: 'money-dollar-circle-line',
           route: '/admin/tax-setting',
           desc: 'Edit',
           count: -1
         },
         {
           title: 'Superadmin',
-          icon: 'fas fa-cog',
+          icon: 'admin-line',
           route: '/superadmin',
           desc: 'Proceed',
           count: -1
         },
         {
           title: 'Code of Conduct',
-          icon: 'fas fa-cog',
+          icon: 'sticky-note-line',
           route: '/admin/code-of-conduct',
           desc: 'Edit',
           count: -1
         },
         {
           title: 'Rules',
-          icon: 'fas fa-cog',
+          icon: 'forbid-line',
           route: '/admin/rules',
           desc: 'Edit',
           count: -1
         },
         {
           title: 'Insurance',
-          icon: 'fas fa-cog',
+          icon: 'shield-cross-line',
           route: '/admin/insurance',
           desc: 'Edit',
           count: -1
         },
         {
           title: 'FAQ',
-          icon: 'fas fa-cog',
+          icon: 'question-line',
           route: '/admin/faq',
           desc: 'Edit',
           count: -1
         },
         {
           title: 'Team Folder',
-          icon: 'fas fa-cog',
+          icon: 'folder-line',
           route: '/admin/teamfolder',
           desc: 'Edit',
           count: -1
         },
         {
           title: 'Home Page Info',
-          icon: 'fas fa-cog',
+          icon: 'home-gear-line',
           route: '/admin/home-page',
           desc: 'Edit',
           count: -1
