@@ -1,83 +1,107 @@
 <template>
   <div class="h-full  bg-[#1A1A1B]">
     <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-      <div
-        class="
-        space-y-3
-        px-6
-        text-left
-        sm:text-left
-        lg:col-span-6 lg:mt-10
-        xl:mt-10"
-        data-aos="fade-right"
-      >
-        <span
-          class="
-          superheadline
-          flex flex-row
-          items-center
-          pb-3
-          text-[1rem]
-          font-normal"
-        >
-          <span class="font-medium">
-            <NuxtLink to="/admin">
-              <VBtn text color="white">Admin</VBtn>
-            </NuxtLink>
-          </span>
-        </span>
-        <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-          Team Folder
-        </h1>
-      </div>
+      <!-- Breadcrumbs and Title -->
+      <BreadCrumbs title="Team Folder Setting"/>
     </BaseHeader>
 
     <div class="mx-auto max-w-screen-xl px-4 py-7">
       <div class="-mx-4 flex flex-wrap">
         <main class="w-full px-4">
           <div class="my-6 flex flex-wrap items-center justify-between gap-4">
-            <div
-            class="flex flex-wrap justify-start gap-2"
-            >
-              <button
-                type="button"
-                class="
-                w-full rounded-md
-                bg-gradient-to-br
-                from-[#5EE738] via-[#3e872a]
-                to-[#050505] p-1.5
-                text-center
-                font-semibold
-                text-white
-                sm:w-60"
+            <div class="flex flex-wrap justify-start gap-2">
+              <BaseButton
                 @click="openEditContentDialog"
+                class="
+                  group
+                  flex w-full items-center justify-center
+                  bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                  p-2.5
+                  font-semibold text-white
+                  transition-transform duration-200
+                  hover:scale-[1.02]
+                  sm:w-60
+                  shadow-md hover:shadow-lg
+                " 
               >
-                <span
+                <i
                   class="
-                  flex items-center
-                  justify-center gap-2"
-                  aria-hidden="true"
-                >
-                  <i class="ri-edit-2-fill"></i>
-                  <span class="pr-1">Edit</span>
+                  ri-edit-line mr-2
+                  text-lg transition-transform
+                  group-hover:rotate-90"
+                ></i>
+                <span>
+                  {{ contentData.title ? 'edit team folder': 'add team folder' }}
                 </span>
-              </button>
+              </BaseButton>
             </div>
           </div>
         </main>
       </div>
-      <section
-      class="col-span-1 overflow-x-scroll
-      overflow-y-hidden md:overflow-x-hidden text-white"
-      >
-      <h1 class=" pt-4 text-4xl font-bold">
-        {{ contentData.title }}
-      </h1>
-      <p class="py-4 link">
-        <span v-html="contentData.content"/>
+
+    <section
+      class="
+        col-span-1 overflow-x-scroll overflow-y-hidden
+        md:overflow-x-hidden bg-white p-6
+        rounded-lg shadow-md text-gray-900
+      "
+    >
+      <div class="prose max-w-none">
+        <!-- Title -->
+        <h1 class="text-3xl font-extrabold leading-tight text-gray-900 sm:text-4xl">
+          {{ contentData.title }}
+        </h1>
+
+        <!-- Content -->
+        <div
+        class="
+          mt-6 text-lg leading-relaxed text-gray-700
+          prose-a:text-brand-green prose-strong:text-gray-900
+          prose-img:rounded-md prose-img:max-w-full
+        "
+        >
+          <p v-html="contentData.content"></p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      v-if="contentData.title === ''"
+      class="
+        col-span-1
+        flex
+        flex-col
+        items-center
+        justify-center
+        rounded-xl
+        bg-gray-50
+        p-8
+        text-center
+        font-semibold
+        text-gray-600
+        shadow-inner
+        transition-all
+        duration-300
+        md:col-span-3
+        h-60"
+    >
+      <!-- Icon -->
+      <i class="
+      ri-folder-line
+      text-4xl text-green-500
+      mb-3 animate-pulse"
+      ></i>
+
+      <!-- Message -->
+      <h3 class="text-lg">
+        No Team Folder Available
+      </h3>
+      <p class="mt-1 text-sm text-gray-500">
+        Try adding some team folder or adjusting your search.
       </p>
     </section>
-    </div>
+  </div>
+
     <OModal
       :active="showEditContentModal"
       @close="closeEditContentDialog"
@@ -269,7 +293,6 @@ export default {
     },
     retrieveTeamFolder() {
       const id = 1;
-
       this.$axios
         .$get(`v1/teamfolder/${id}`)
         .then((response) => {

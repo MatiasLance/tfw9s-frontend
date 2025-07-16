@@ -241,7 +241,7 @@
 </template>
 
 <script>
-import debounce from 'lodash/debounce';
+import _debounce from 'lodash/debounce';
 import AddPlayersModal from '~/components/modals/AddPlayersModal.vue';
 import EditPlayersModal from '~/components/modals/EditPlayersModal.vue';
 import DeletePlayersModal from '~/components/modals/DeletePlayersModal.vue';
@@ -346,7 +346,7 @@ export default {
     },
   },
   mounted() {
-    this.debouncedSearch = debounce(this.retrievePlayers, 800);
+    this.debouncedSearch = _debounce(this.retrievePlayers, 800);
     this.retrievePlayers();
     this.retrieveAgeGroups();
     this.page = 1
@@ -503,7 +503,7 @@ export default {
           this.ageGroupList = []; 
         });
     },
-    retrievePlayers() {
+    retrievePlayers: _debounce(function () {
       if (this.isLoading) return;
       this.isLoading = true;
             
@@ -548,8 +548,7 @@ export default {
         .finally(() => {
           this.isLoading = false;
         });
-    }
-      
+    }, 100)     
   }
 }
 </script>

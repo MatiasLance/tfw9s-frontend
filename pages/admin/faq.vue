@@ -2,181 +2,185 @@
 <template>
     <div class="h-full  bg-[#1A1A1B]">
       <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-        <div
-          class="
-            space-y-3
-            px-6
-            text-left
-            sm:text-left
-            lg:col-span-6 lg:mt-10
-            xl:mt-10"
-          data-aos="fade-right"
-        >
-          <span
-            class="
-              superheadline
-              flex flex-row
-              items-center
-              pb-3
-              text-[1rem]
-              font-normal
-            "
-          >
-            <span class="font-medium">
-              <NuxtLink to="/admin">
-                <VBtn text color="white">Admin</VBtn>
-              </NuxtLink>
-            </span>
-          </span>
-          <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-            FAQ
-          </h1>
-        </div>
+        <!-- Breadcrumbs and Title -->
+        <BreadCrumbs title="FAQ Setting"/>
       </BaseHeader>
 
       <div class="mx-auto max-w-screen-xl px-4 py-7">
         <div class="-mx-4 flex flex-wrap">
           <main class="w-full px-4">
-            <div class="my-6 flex flex-wrap items-center justify-between gap-4">
-              <div
-                class="flex flex-wrap justify-start gap-2"
-              >
-              <button
-                type="button"
-                class="
-                  w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] p-1.5
-                  text-center
-                  font-semibold
-                  text-white
-                  sm:w-60"
-                @click="addFaq"
-              >
-                <span
-                class="
-                flex items-center
-                justify-center"
-                aria-hidden="true"
+            <div
+              class="
+              my-6 flex flex-wrap
+              items-center justify-between
+              gap-4 rounded-xl
+              bg-white p-5 shadow-md"
+            >
+              <!-- Left Section: Add News Button -->
+              <div class="flex flex-wrap justify-start gap-2">
+                <button
+                  type="button"
+                  class="
+                    group
+                    flex w-full items-center justify-center
+                    rounded-lg
+                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                    p-2.5
+                    font-semibold text-white
+                    transition-transform duration-200
+                    hover:scale-[1.02]
+                    sm:w-60
+                    shadow-md hover:shadow-lg"
+                  @click="addFaq"
                 >
-                  <i class="ri-add-line"></i>
-                  <span class="pr-1">Add Faq</span>
-                </span>
-              </button>
+                  <i
+                  class="
+                  ri-add-line mr-2
+                  text-lg transition-transform
+                  group-hover:rotate-90"
+                  ></i>
+                  <span>Add FAQ</span>
+                </button>
               </div>
+
+              <!-- Right Section: Search Bar -->
               <div class="w-full sm:w-80">
-              <form @submit.prevent="retrieveFaq">
-                <SearchBar v-model="query" />
-              </form>
-            </div>
+                <form @submit.prevent="retrieveFaq" class="relative">
+                  <SearchBar v-model="query"/>
+                </form>
+              </div>
             </div>
           </main>
         </div>
 
-        <section v-if="totalPages > 0" class="mb-8" data-aos="fade-up">
+        <section v-if="totalPages > 0" class="mb-10" data-aos="fade-up">
           <div
-            class="
-              flex flex-wrap items-center justify-around
-              gap-x-2
-              md:justify-between
-            "
+          class="
+          flex flex-wrap
+          items-center
+          justify-between gap-4
+          rounded-lg bg-white
+          px-6 py-4 text-black
+          shadow-md"
           >
-            <span class="flex items-center">
-              <p class="text-base leading-[2.5em] text-white">
-                Showing {{ from }}-{{ to }} of {{ totalItems }} results
-              </p>
-            </span>
-            <BasePagination
-              :active-page="page"
-              :total-pages="totalPages"
-              @change="setPage"
-            />
+            <!-- Showing Results Info -->
+            <div class="flex items-center space-x-2 text-sm md:text-base">
+              <i class="ri-information-line text-lg text-green-400"></i>
+              <span>
+                Showing <span class="font-semibold">{{ from }}</span>–
+                <span class="font-semibold">{{ to }}</span>
+                of <span class="font-semibold">{{ totalItems }}</span> results
+              </span>
+            </div>
+
+            <!-- Pagination Component -->
+            <div class="flex shrink-0">
+              <BasePagination
+                :active-page="page"
+                :total-pages="totalPages"
+                @change="setPage"
+              />
+            </div>
           </div>
         </section>
+
         <section
           v-if="totalPages === 0"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
-          >
-          No Faq Available
+          class="
+            col-span-1
+            flex
+            flex-col
+            items-center
+            justify-center
+            rounded-xl
+            bg-gray-50
+            p-8
+            text-center
+            font-semibold
+            text-gray-600
+            shadow-inner
+            transition-all
+            duration-300
+            md:col-span-3
+            h-60"
+        >
+          <!-- Icon -->
+          <i class="
+          ri-question-line
+          text-4xl text-green-500
+          mb-3 animate-pulse"
+          ></i>
+
+          <!-- Message -->
+          <h3 class="text-lg">
+            No FAQ Available
+          </h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Try adding some faq or adjusting your search.
+          </p>
         </section>
+
         <article class="mx-auto max-w-screen-xl gap-4">
-            <div class="grid grid-cols-1 gap-4">
-              <div
-                v-for="(faq, index) in faqList"
-                :key="index" class="group col-span-1 bg-[#212121]"
-                data-aos="fade-up"
-              >
-                <div
-                  class="
-                  grid grid-cols-1
-                  gap-4 md:grid-cols-6
-                  lg:grid-cols-6"
-                >
-                  <div
-                    class="
-                    col-span-1 p-4 md:col-span-3
-                    lg:col-span-4 lg:p-8"
-                  >
-                    <h3
+          <div class="grid grid-cols-1 gap-4">
+            <div
+              v-for="(faq, index) in faqList"
+              :key="index"
+              class="
+                group col-span-1 rounded-lg
+                bg-gray-200 p-4 transition
+                hover:bg-gray-100 md:p-6
+              "
+              data-aos="fade-up"
+            >
+              <div class="grid grid-cols-1">
+                <!-- Text Content -->
+                <div class="col-span-1 p-5 md:col-span-4 lg:col-span-4 lg:p-8">
+                  <h3 class="text-2xl font-semibold text-black">
+                    {{ faq.title }}
+                  </h3>
+
+                  <p class="mt-1 text-sm text-gray-500">
+                    {{ formattedDate(faq.updated_at) }}
+                  </p>
+
+                  <p class="mt-4 text-black line-clamp-3" v-html="faq.description"></p>
+
+                  <!-- Buttons (Right-aligned) -->
+                  <div class="mt-6 flex justify-end gap-4">
+                    <BaseButton
+                      @click="editFaq(faq.id)"
                       class="
-                      grid text-2xl font-semibold
-                      text-white sm:grid-cols-1"
+                        flex items-center gap-2 rounded-md
+                        border border-green-200
+                        bg-green-600 px-4 py-2
+                        text-sm font-medium
+                        text-white
+                        transition
+                        hover:bg-green-700
+                      "
                     >
-                      {{ faq.title }}
-                    </h3>
+                      <i class="ri-edit-line text-xl"></i> Edit
+                    </BaseButton>
 
-                    <p class="text-sm text-brand-slate">
-                        {{ formattedDate(faq.updated_at) }}
-                    </p>
-
-                    <p
-                      class="my-4 text-white line-clamp-3 link"
-                      v-html="faq.description"
-                    ></p>
-
-                    <div
-                      class="mt-8 flex flex-wrap justify-start gap-2"
-                      >
-                      <button
-                        type="button"
-                        class="
-                          text-brand-green
-                          hover:text-brand-green
-                          hover:decoration-brand-green
-                          mr-2
-                          flex
-                          cursor-pointer
-                          items-center
-                          text-sm hover:underline
-                          "
-                        @click="editFaq(faq.id)"
-                      >
-                        <i class="ri-edit-line"></i> Edit
-                      </button>
-                      <button
-                        type="button"
-                        class="
-                          text-brand-red
-                          hover:text-brand-red
-                          hover:decoration-brand-red
-                          mr-2
-                          flex
-                          cursor-pointer
-                          items-center
-                          text-sm hover:underline
-                          "
-                        @click="removeFaq(faq.id)"
-                      >
-                        <i class="ri-delete-bin-5-line"></i> Remove
-                      </button>
-                    </div>
+                    <BaseButton
+                    @click="removeFaq(faq.id)"
+                      class="
+                        flex items-center gap-2 rounded-md
+                        border border-red-200
+                        bg-red-600 px-4 py-2
+                        text-sm font-medium
+                        text-white
+                        transition
+                        hover:bg-red-700
+                      "
+                    >
+                      <i class="ri-delete-bin-5-line text-xl"></i> Remove
+                    </BaseButton>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
         </article>
       </div>
        <!-- showAdd modal component -->

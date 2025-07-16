@@ -168,6 +168,7 @@
 </template>
 
 <script>
+import _debounce from 'lodash/debounce';
 import AddTeamModal from '~/components/modals/AddTeamModal.vue';
 import EditTeamModal from '~/components/modals/EditTeamModal.vue';
 import DeleteTeamModal from '~/components/modals/DeleteTeamModal.vue';
@@ -264,6 +265,8 @@ export default {
     }
   
     this.retrieveTeams();
+    this.retrieveSeries();
+    this.retrieveAgeGroups();
   },
   methods: {
     matchField(id) {
@@ -341,7 +344,7 @@ export default {
       this.getTeams();
       this.getEvents();
     },
-    async retrieveTeams() {
+    retrieveTeams: _debounce(async function() {
       try {
         if (this.ageGroupList.length === 0 && this.totalItems > 0) {
           // Only log if expecting teams but no age groups
@@ -367,15 +370,14 @@ export default {
         this.Teams = response.data.teams.map(team => {
           const foundAgeGroup = this.ageGroupList.find(ag => ag.id === team.agegroup_id);
           const foundSeries = this.seriesList.find(s => s.id === team.series_id);
-          
           return {
             ...team,
             agegroup: foundAgeGroup ? 
               { name: foundAgeGroup.name, id: foundAgeGroup.id } : 
-              { name: `(ID: ${team.agegroup_id || 'N/A'})`, id: team.agegroup_id }, // Fallback
+              { name: 'N/A' }, // Fallback
             series: foundSeries ? 
               { name: foundSeries.name, id: foundSeries.id } :
-              { name: `(ID: ${team.series_id || 'N/A'})`, id: team.series_id }, // Fallback
+              { name: 'N/A' }, // Fallback
           };
         });
 
@@ -394,8 +396,7 @@ export default {
         this.totalItems = 0;
         this.totalPages = 0;
       }
-    },
-
+    }, 100),
     getRegionName(regionId) {
       const region = this.regionList.find(r => r.id === regionId);
       return region ? region.name : '';
@@ -426,8 +427,7 @@ export default {
       this.$axios
         .$get('v1/series')
         .then((response) => {
-          this.seriesList = response.data.series.filter(series =>
-            series.type !== 'weekly');
+          this.seriesList = response.data.series
         })
         .finally(() => {
           this.showVueTable = true;

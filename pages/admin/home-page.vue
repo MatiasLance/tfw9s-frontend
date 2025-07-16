@@ -1,67 +1,39 @@
 <template>
   <div class="h-full  bg-[#1A1A1B]">
     <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-      <div
-        class="
-        space-y-3
-        px-6
-        text-left
-        sm:text-left
-        lg:col-span-6 lg:mt-10
-        xl:mt-10"
-        data-aos="fade-right"
-      >
-        <span
-          class="
-          superheadline
-          flex flex-row
-          items-center
-          pb-3
-          text-[1rem]
-          font-normal"
-        >
-          <span class="font-medium">
-            <NuxtLink to="/admin">
-              <VBtn text color="white">Admin</VBtn>
-            </NuxtLink>
-          </span>
-        </span>
-        <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-          Home Page Information
-        </h1>
-      </div>
+      <!-- Breadcrumbs and Title -->
+      <BreadCrumbs title="Home Page Setting"/>
     </BaseHeader>
 
     <div class="mx-auto max-w-screen-xl px-4 py-7">
       <div class="-mx-4 flex flex-wrap">
         <main class="w-full px-4">
           <div class="my-6 flex flex-wrap items-center justify-between gap-4">
-            <div
-            class="flex flex-wrap justify-start gap-2"
-            >
-              <button
-                type="button"
-                class="
-                w-full rounded-md
-                bg-gradient-to-br
-                from-[#5EE738] via-[#3e872a]
-                to-[#050505] p-1.5
-                text-center
-                font-semibold
-                text-white
-                sm:w-60"
+            <div class="flex flex-wrap justify-start gap-2">
+              <BaseButton
                 @click="openEditContentDialog"
+                class="
+                  group
+                  flex w-full items-center justify-center
+                  bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                  p-2.5
+                  font-semibold text-white
+                  transition-transform duration-200
+                  hover:scale-[1.02]
+                  sm:w-60
+                  shadow-md hover:shadow-lg
+                " 
               >
-                <span
+                <i
                   class="
-                  flex items-center
-                  justify-center gap-2"
-                  aria-hidden="true"
-                >
-                  <i class="ri-edit-2-fill"></i>
-                  <span class="pr-1">Edit</span>
+                  ri-edit-line mr-2
+                  text-lg transition-transform
+                  group-hover:rotate-90"
+                ></i>
+                <span>
+                  Edit
                 </span>
-              </button>
+              </BaseButton>
             </div>
           </div>
         </main>
