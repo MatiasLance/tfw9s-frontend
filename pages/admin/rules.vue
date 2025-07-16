@@ -1,175 +1,205 @@
 <!-- eslint-disable max-len -->
 <template>
-  <div class="min-h-screen bg-[#1A1A1B]">
+  <div class="h-full bg-[#1A1A1B]">
     <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-      <div
-        class="
-          space-y-3
-          px-6
-          text-left
-          sm:text-left
-          lg:col-span-6 lg:mt-10
-          xl:mt-10
-        "
-      >
-        <span
-          class="
-            superheadline
-            flex flex-row
-            items-center
-            pb-3
-            text-[1rem]
-            font-normal
-          "
-        >
-          <span class="font-medium">
-            <NuxtLink to="/admin">
-              <VBtn text color="white">Admin</VBtn>
-            </NuxtLink>
-          </span>
-        </span>
-        <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-          Rules
-        </h1>
-      </div>
+      <!-- Breadcrumbs and Title -->
+      <BreadCrumbs title="Rules Setting"/>
     </BaseHeader>
+    
     <div class="mx-auto max-w-screen-xl px-4 py-7">
-      <div class="bg-[#1A1A1B]" data-aos="fade-up">
+      <div data-aos="fade-up">
         <section class="mx-auto max-w-screen-xl gap-4 p-4">
           <div class="grid grid-cols-1 gap-4">
+
             <div class="col-span-1 flex items-center">
               <button
-              type="button"
-              class="
-              w-full rounded-md
-              bg-gradient-to-br
-              from-[#5EE738] via-[#3e872a]
-              to-[#050505] py-1.5
-              text-center
-              font-semibold
-              text-white
-              sm:w-36"
-              @click="openAddContentDialog"
-            >
-              +
-            </button>
-            </div>
-            <div
-            v-if="totalPages > 0"
-            class="col-span-1 flex flex-wrap items-center
-            justify-around gap-x-2 md:justify-between"
-            data-aos="flip-up"
-            >
-              <span
-              class="font-medium text-white"
+                type="button"
+                class="
+                w-full rounded-md
+                bg-gradient-to-br
+                from-[#5EE738] via-[#3e872a]
+                to-[#050505] py-1.5
+                text-center
+                font-semibold
+                text-white
+                sm:w-36"
+                @click="openAddContentDialog"
               >
-              Showing {{ from }}-{{ to }} of {{ totalItems }} items
-              </span>
-              <VPagination
-                v-model="page"
-                :length="totalPages"
-                :total-visible="7"
-                class="text-white"
-                color="success"
-                dark
-                @change="setPage"
-                />
+                +
+              </button>
             </div>
-            <section
-            class="col-span-1 overflow-x-scroll
-            overflow-y-hidden md:overflow-x-hidden"
-            >
-              <div class="grid min-w-[640px] grid-cols-1 gap-2">
+
+            <section v-if="totalPages > 0" class="mb-10" data-aos="fade-up">
                 <div
-                v-for="(content, index) in ContentList"
-                :key="content.id"
-                class="col-span-1 p-4 text-white bg-[#212121]"
-                data-aos="fade-up" data-aos-offset="0"
+                class="
+                flex flex-wrap
+                items-center
+                justify-between gap-4
+                rounded-lg bg-white
+                px-6 py-4 text-black
+                shadow-md"
                 >
-                  <Form class="grid grid-cols-3 gap-2 p-2">
-                    <div class="col-span-3 font-semibold">
-                      {{ `Guideline ${index + 1}`}}
-                      <span v-if="content.isActive">
-                        <ActiveChip />
-                      </span>
-                    </div>
-                    <span class="col-span-3 indent-8 line-clamp-4 link"
-                    v-html="content.content"
+                  <!-- Showing Results Info -->
+                  <div class="flex items-center space-x-2 text-sm md:text-base">
+                    <i class="ri-information-line text-lg text-green-400"></i>
+                    <span>
+                      Showing <span class="font-semibold">{{ from }}</span>–
+                      <span class="font-semibold">{{ to }}</span>
+                      of <span class="font-semibold">{{ totalItems }}</span> results
+                    </span>
+                  </div>
+
+                  <!-- Pagination Component -->
+                  <div class="flex shrink-0">
+                    <BasePagination
+                      :active-page="page"
+                      :total-pages="totalPages"
+                      @change="setPage"
                     />
-                    <div class="col-span-3 flex justify-end gap-4">
-                      <div v-if="!content.isActive">
-                        <BaseButton
-                          class="
-                            max-w-full rounded-lg
-                            border border-gray-200
-                            bg-[#737373]
-                            py-2
-                            px-4
-                            text-white
-                            "
-                            @click="setActive(content.id)"
-                          >
-                          Set as Active
-                        </BaseButton>
-                      </div>
-                      <div v-else>
-                        <BaseButton
-                          class="
-                            max-w-full rounded-lg
-                            border border-gray-200
-                            bg-[#737373]
-                            py-2
-                            px-4
-                            text-white
-                            "
-                            @click="deactivate(content.id)"
-                          >
-                          Deactivate
-                        </BaseButton>
-                      </div>
-                      <BaseButton
+                  </div>
+                </div>
+              </section>
+
+            <section class="col-span-1 overflow-x-scroll md:overflow-x-hidden">
+              <div class="min-w-[640px] grid grid-cols-1 gap-4 md:gap-6">
+                <div
+                  v-for="(content, index) in ContentList"
+                  :key="content.id"
+                  class="
+                    rounded-lg border border-gray-200 bg-white p-5 shadow-sm
+                    transition duration-300 hover:border-green-500 hover:shadow-md
+                  "
+                  data-aos="fade-up"
+                  data-aos-offset="0"
+                >
+                <Form class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-3 sm:p-6">
+                  <!-- Title + Status -->
+                  <div class="col-span-3 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">
+                      Guideline {{ index + 1 }}
+                    </h3>
+                    <span v-if="content.isActive">
+                      <ActiveChip />
+                    </span>
+                  </div>
+
+                  <!-- Content Preview -->
+                  <div class="col-span-3 line-clamp-4 text-gray-600" v-html="content.content"></div>
+
+                  <!-- Actions -->
+                  <div class="col-span-3 flex justify-end gap-3">
+                    <!-- Set as Active / Deactivate -->
+                    <BaseButton
+                      v-if="!content.isActive"
+                      @click="setActive(content.id)"
                       class="
-                        max-w-full rounded-lg
-                        border border-gray-200
-                        bg-[#4cbe5c]
-                        py-2
-                        px-4
-                        text-white
-                        "
-                        @click="openEditContentDialog(content)"
-                      >
-                        Edit
-                      </BaseButton>
-                      <BaseButton
+                        flex items-center gap-2 rounded-md
+                        border border-gray-300
+                        bg-gray-800 px-4 py-2
+                        text-sm font-medium
+                        text-gray-800
+                        transition
+                        hover:bg-gray-700
+                      "
+                    >
+                      <i class="ri-check-line text-white text-2xl"></i> Set as Active
+                    </BaseButton>
+
+                    <BaseButton
+                      v-else
+                      @click="deactivate(content.id)"
                       class="
-                        max-w-full rounded-lg
-                        border border-gray-200
-                        bg-[#fb0d2b]
-                        py-2
-                        px-4
+                        flex items-center gap-2 rounded-md
+                        border border-gray-300
+                        bg-gray-800 px-4 py-2
+                        text-sm font-medium
+                        text-gray-800
+                        transition
+                        hover:bg-gray-700
+                      "
+                    >
+                      <i class="ri-close-circle-line text-white text-2xl"></i> Deactivate
+                    </BaseButton>
+
+                    <!-- Edit -->
+                    <BaseButton
+                      @click="openEditContentDialog(content)"
+                      class="
+                        flex items-center gap-2 rounded-md
+                        border border-green-200
+                        bg-green-600 px-4 py-2
+                        text-sm font-medium
                         text-white
-                        "
-                        @click="openDeleteContentDialog(content)"
-                      >
-                        Delete
-                      </BaseButton>
-                    </div>
-                  </Form>
+                        transition
+                        hover:bg-green-700
+                      "
+                    >
+                      <i class="ri-edit-line text-white text-xl"></i> Edit
+                    </BaseButton>
+
+                    <!-- Delete -->
+                    <BaseButton
+                      @click="openDeleteContentDialog(content)"
+                      class="
+                        flex items-center gap-2 rounded-md
+                        border border-red-200
+                        bg-red-600 px-4 py-2
+                        text-sm font-medium
+                        text-white
+                        transition
+                        hover:bg-red-700
+                      "
+                    >
+                       <i class="ri-delete-bin-line text-white text-xl"></i> Delete
+                    </BaseButton>
+                  </div>
+                </Form>
                 </div>
               </div>
             </section>
+
             <section
-            v-if="totalPages=== 0"
-            class="col-span-1 flex h-60 items-center
-            justify-center font-semibold
-            text-[#555555] md:col-span-3"
+              v-if="totalPages === 0"
+              class="
+                col-span-1
+                flex
+                flex-col
+                items-center
+                justify-center
+                rounded-xl
+                bg-gray-50
+                p-8
+                text-center
+                font-semibold
+                text-gray-600
+                shadow-inner
+                transition-all
+                duration-300
+                md:col-span-3
+                h-60"
             >
-            No Rules Available
+              <!-- Icon -->
+              <i class="
+              ri-forbid-line
+              text-4xl text-green-500
+              mb-3 animate-pulse"
+              ></i>
+
+              <!-- Message -->
+              <h3 class="text-lg">
+                No Rules Available
+              </h3>
+              <p class="mt-1 text-sm text-gray-500">
+                Try adding some rules or adjusting your search.
+              </p>
             </section>
+
           </div>
         </section>
       </div>
     </div>
+
+    <!-- Add Modal -->
     <OModal
     :active="showAddContentModal"
     @close="closeAddContentDialog"
@@ -178,87 +208,81 @@
       ref="form" v-model="valid" lazy-validation
       class="p-2 md:p-4"
       >
-       <h3
-     class="
-     mb-3
-     font-bold"
-     >
-         Add Content
-       </h3>
-       <hr class="my-3  lg:w-[918px]"/>
-       <div class="grid grid-cols-1">
-         <div class="col-span-1">
-           <label for="headline" class="mb-1 block">
-             Content:
-           </label>
-           <Tiptap
-           id="content"
-           v-model="contentData.content"
-           />
-         </div>
-       </div>
-       <hr class="my-3  lg:w-[918px]"/>
-       <div class="block lg:flex lg:flex-auto lg:justify-end">
-         <button
-           type="button"
-           class="
-             my-2
-             inline-block
-             w-full
-             border border-transparent
-             bg-brand-green
-             py-3
-             px-5
-             text-center
-             font-bold
-             text-white
-             hover:bg-green-700
-             lg:mx-4 lg:w-48
-           "
-           :disabled="!valid"
-           @click="validate('Add')"
-         >
-           OK
-         </button>
-         <button
-           type="button"
-           class="
-             my-2
-             inline-block
-             w-full
-             border border-transparent
-             bg-brand-red
-             py-3
-             px-5
-             text-center
-             font-bold
-             text-white
-             hover:bg-[#B1271B]
-             lg:mx-4 lg:w-48
-           "
-           @click="closeAddContentDialog"
-         >
-           Cancel
-         </button>
-       </div>
+      <h3 class="mb-3 font-bold">
+        Add Content
+      </h3>
+      <hr class="my-3  lg:w-[918px]"/>
+      <div class="grid grid-cols-1">
+        <div class="col-span-1">
+          <label for="headline" class="mb-1 block">
+            Content:
+          </label>
+          <Tiptap
+          id="content"
+          v-model="contentData.content"
+          />
+        </div>
+      </div>
+      <hr class="my-3  lg:w-[918px]"/>
+      <div class="block lg:flex lg:flex-auto lg:justify-end">
+        <button
+          type="button"
+          class="
+            my-2
+            inline-block
+            w-full
+            border border-transparent
+            bg-brand-green
+            py-3
+            px-5
+            text-center
+            font-bold
+            text-white
+            hover:bg-green-700
+            lg:mx-4 lg:w-48
+          "
+          :disabled="!valid"
+          @click="validate('Add')"
+        >
+          OK
+        </button>
+        <button
+          type="button"
+          class="
+            my-2
+            inline-block
+            w-full
+            border border-transparent
+            bg-brand-red
+            py-3
+            px-5
+            text-center
+            font-bold
+            text-white
+            hover:bg-[#B1271B]
+            lg:mx-4 lg:w-48
+          "
+          @click="closeAddContentDialog"
+        >
+          Cancel
+        </button>
+      </div>
       </VForm>
-   </OModal>
-   <OModal
-   :active="showEditContentModal"
-   @close="closeEditContentDialog"
-   >
+  </OModal>
+
+  <!-- Edit Modal -->
+  <OModal
+  :active="showEditContentModal"
+  @close="closeEditContentDialog"
+  >
     <VForm
     ref="form" v-model="valid" lazy-validation
     class="p-2 md:p-4"
     >
-      <h3
-    class="
-    mb-3
-    font-bold"
-    >
+      <h3 class="mb-3 font-bold">
         Edit Content
       </h3>
-      <hr class="my-3  lg:w-[918px]"/>
+      <hr class="my-3 lg:w-[918px]"/>
       <div class="grid grid-cols-1">
         <div class="col-span-1">
           <label for="headline" class="mb-1 block">
@@ -316,71 +340,69 @@
       </div>
     </VForm>
   </OModal>
+
+  <!-- Delete Modal -->
   <OModal
   :active="showDeleteContentModal"
   @close="closeDeleteContentDialog"
   >
-   <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-     <h3
-   class="
-   mb-3
-   font-bold"
-   >
-       Delete Content
-     </h3>
-     <hr class="my-3  lg:w-[918px]"/>
-     <div class="grid grid-cols-1">
-       <div class="col-span-1">
-         <label for="headline" class="mb-1 block">
+  <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
+    <h3 class="mb-3 font-bold">
+      Delete Content
+    </h3>
+    <hr class="my-3  lg:w-[918px]"/>
+    <div class="grid grid-cols-1">
+      <div class="col-span-1">
+        <label for="headline" class="mb-1 block">
           <span>Are you sure you want to delete this guideline</span>
-         </label>
-       </div>
-     </div>
-     <hr class="my-3  lg:w-[918px]"/>
-     <div class="block lg:flex lg:flex-auto lg:justify-end">
-       <button
-         type="button"
-         class="
-           my-2
-           inline-block
-           w-full
-           border border-transparent
-           bg-brand-green
-           py-3
-           px-5
-           text-center
-           font-bold
-           text-white
-           hover:bg-green-700
-           lg:mx-4 lg:w-48
-         "
-         @click="DeleteContent"
-       >
-         OK
-       </button>
-       <button
-         type="button"
-         class="
-           my-2
-           inline-block
-           w-full
-           border border-transparent
-           bg-brand-red
-           py-3
-           px-5
-           text-center
-           font-bold
-           text-white
-           hover:bg-[#B1271B]
-           lg:mx-4 lg:w-48
-         "
-         @click="closeDeleteContentDialog"
-         >
-         Cancel
-       </button>
-     </div>
-   </div>
- </OModal>
+        </label>
+      </div>
+    </div>
+    <hr class="my-3  lg:w-[918px]"/>
+    <div class="block lg:flex lg:flex-auto lg:justify-end">
+      <button
+        type="button"
+        class="
+          my-2
+          inline-block
+          w-full
+          border border-transparent
+          bg-brand-green
+          py-3
+          px-5
+          text-center
+          font-bold
+          text-white
+          hover:bg-green-700
+          lg:mx-4 lg:w-48
+        "
+        @click="DeleteContent"
+      >
+        OK
+      </button>
+      <button
+        type="button"
+        class="
+          my-2
+          inline-block
+          w-full
+          border border-transparent
+          bg-brand-red
+          py-3
+          px-5
+          text-center
+          font-bold
+          text-white
+          hover:bg-[#B1271B]
+          lg:mx-4 lg:w-48
+        "
+        @click="closeDeleteContentDialog"
+        >
+        Cancel
+      </button>
+    </div>
+  </div>
+</OModal>
   </div>
 </template>
 
@@ -417,7 +439,7 @@ export default {
           return 'Name is required.'
         },
         value => {
-          if (value?.length <= 10) {
+          if (value.length <= 10) {
             return true
           }
 

@@ -131,6 +131,17 @@
                     solo
                     />
                   </div>
+                  <div class="col-span-1" hidden>
+                    <label for="teamname" class="mb-1 block">
+                      Discount Code
+                    </label>
+                    <VTextField
+                    id="text"
+                    v-model="TeamData.discount_codes_id"
+                    type="text"
+                    solo
+                    />
+                  </div>
                   <div class="col-span-1 md:col-span-2" hidden>
                     <label for="photo" class="mb-1 block">
                         Image upload:
@@ -410,6 +421,7 @@ export default {
       formData.append('manager_name', this.TeamData.manager_name);
       formData.append('manager_mobile', this.TeamData.manager_mobile);
       formData.append('manager_email', this.TeamData.manager_email);
+      formData.append('discount_code_id', this.TeamData.discount_codes_id);
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i]);

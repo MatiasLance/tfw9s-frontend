@@ -106,14 +106,7 @@
             </div>
           </div>
         </section>
-        <section
-          v-if="totalPages === 0"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
-          >
-          No Discount Code Available
-        </section>
+
         <section
           v-if="totalPages === 0"
           class="
@@ -149,6 +142,7 @@
             Try adding some discount code or adjusting your search.
           </p>
         </section>
+        
         <div
           class="
           grid grid-cols-1 gap-x-0

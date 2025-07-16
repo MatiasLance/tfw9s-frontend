@@ -119,6 +119,7 @@
             Try adding some news or adjusting your search.
           </p>
         </section>
+        
         <article class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
           <div class="grid grid-cols-1 gap-6">
             <div
