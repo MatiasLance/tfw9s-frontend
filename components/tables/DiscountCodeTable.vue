@@ -44,10 +44,10 @@
                     {{ `${row['name']}` }}
                   </template>
                   <template v-else-if="column.name == 'Discount Amount'">
-                    {{ row.discount_code['amountapplied'] }}
+                    {{ row['discount_code'].amountapplied }}
                   </template>
                   <template v-else-if="column.name == 'Discount Code'">
-                    {{ row.discount_code['code'] }}
+                    {{ row['discount_code'].code }}
                   </template>
                 </slot>
             </td>
@@ -63,7 +63,7 @@ export default {
   props: {
     columns: {
       type: [ Array, Object ],
-      required: true
+      default: () => ({}),
     },
     data: {
       type: Array,

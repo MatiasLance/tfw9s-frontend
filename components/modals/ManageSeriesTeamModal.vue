@@ -20,7 +20,7 @@
                     solo
                     />
                   </div>
-                  <div class="col-span-2 md:col-span-1">
+                  <div class="col-span-1">
                     <div class="col-span-1">
                       <label for="selectagegroup" class="mb-1 block">
                         Age Group:
@@ -154,14 +154,14 @@
                     </label>
                     <template>
                       <VSelect
+                        ref="discountSelect"
                         v-model="TeamData.discount_codes_id"
                         :items="formatDiscountCode"
                         density="comfortable"
                         @update:menu="onMenuOpen"
-                        ref="discountSelect"
                       >
-                        <template v-slot:append-item v-if="loading">
-                          <div class="text-center py-2 text-gray-500">
+                        <template v-if="loading" #append-item>
+                          <div class="py-2 text-center text-gray-500">
                             Loading...
                           </div>
                         </template>

@@ -1,6 +1,6 @@
 <template>
 <Modal :active="active" @close="closeDialog">
-  <section class="min-h-40 w-full flex flex-col p-2 sm:p-4 gap-2">
+  <section class="flex min-h-40 w-full flex-col gap-2 p-2 sm:p-4">
     <!-- Header -->
     <h3 class="text-brand-black font-bold">
       {{ team.name }}'s Players
@@ -10,39 +10,41 @@
     <!-- Loading Spinner -->
     <div v-if="playerLoading"
     class="
-    flex items-center
-    justify-center py-4
-    flex-grow"
+    flex grow
+    items-center justify-center
+    py-4"
     >
       <VProgressCircular size="80" width="8" indeterminate color="green" />
     </div>
 
     <!-- Player Grid -->
-    <div v-else class="flex-grow overflow-y-auto">
+    <div v-else class="grow overflow-y-auto">
       <div v-if="players && players.length > 0">
         <!-- Pagination Row -->
-        <div class="flex flex-wrap items-center justify-between gap-x-2 mb-4">
+        <!--
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-x-2">
           <span class="font-medium text-white">
-            Showing {{ from }}-{{ to }} of {{ totalItems }} items
+          Showing {{ from }}-{{ to }} of {{ totalItems }} items
           </span>
           <VPagination
-            v-model="page"
-            :length="totalPages"
-            color="success"
-            :total-visible="7"
-            class="text-white"
-            dark
-            @change="quickFetch"
+          v-model="page"
+          :length="totalPages"
+          color="success"
+          :total-visible="7"
+          class="text-white"
+          dark
+          @change="quickFetch"
           />
-        </div>
+          </div> 
+        -->
 
         <!-- Grid of Player Cards -->
-        <div class="grid gap-4 grid-cols-1 md:grid-cols-2 md:gap-6">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
           <PlayerCardView
             v-for="player in players"
+            :id="player.card"
             :key="player.id"
             :player="player"
-            :id="player.card"
           />
         </div>
       </div>
@@ -67,13 +69,13 @@
     </div>
 
     <!-- Sticky Bottom Button -->
-    <div class="mt-4 pt-2 border-t border-gray-600">
+    <div class="mt-4 border-t border-gray-600 pt-2">
       <VBtn
         color="green"
         class="
-        rounded-md
-        py-2 font-semibold
-        w-full transition
+        w-full
+        rounded-md py-2
+        font-semibold transition
         hover:brightness-125"
         :loading="generating"
         dark
@@ -130,7 +132,6 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.playerLoading = true;
-          this.retrieveTeamPlayers(this.team);
           this.quickFetch()
         } else {
           this.playerLoading = false;
@@ -161,10 +162,10 @@ export default {
       const params = {
         q: this.query,
         sort: 'a_to_z',
-        page: 1,
+        page: this.page,
         team: team.id,
         // eslint-disable-next-line camelcase
-        per_page: Math.max(
+        maxPlayersPerPage: Math.max(
           Number(team.registered_players_count) || 0,
           Number(team.player_limit) || 0
         )
