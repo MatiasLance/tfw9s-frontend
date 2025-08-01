@@ -92,6 +92,17 @@
           :player="player"
           @image-click="openEditImageModal(player)"
           />
+            <VBtn
+            v-if="player.data"
+            color="green"
+            class="rounded-md py-2 font-semibold transition hover:brightness-125"
+            :loading="generating"
+            block
+            dark
+            @click="savePlayerImage(player)"
+            >
+             Save Image
+            </VBtn> 
           <!--
             <VBtn
             color="green"
@@ -203,23 +214,13 @@ export default {
       generating: false,
     };
   },
-  watch: {
-    $route() {
-      this.retrieveTransaction(this.$route.query.key);
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth',
-      });
-    }
-  },
   mounted() {
     this.retrieveTransaction(this.$route.query.key);
   },
   methods: {
     openEditImageModal(player) {
       // Image Upload modal disable for now until further notice
-      // this.showUploadModal = true;
+      this.showUploadModal = true;
       this.selected = { ...player };
     },
     retrieveTransaction(key) {
@@ -376,8 +377,20 @@ export default {
         .finally(() => {
           this.generating = false
         })
-    }
+    },
+    savePlayerImage(player) {
+      const formData = new FormData();
+      formData.append('photo', player.data, 'photo.jpg');
 
+      this.$axios
+        .$post(`v1/players/savemedia/${player.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then((response) => {
+          this.retrieveTransaction(this.$route.query.key);
+        })
+        .catch((error) => {
+          console.error('Error uploading image:', error);
+        });
+    },
   },
 };
 </script>

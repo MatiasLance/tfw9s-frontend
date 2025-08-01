@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen w-screen bg-[#1A1A1B] transition">
-    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black shadow-md">
+    <BaseHeader class="from-brand-green to-brand-black bg-gradient-to-r shadow-md">
       <!-- Breadcrumbs and Title -->
       <BreadCrumbs title="Admin"/>
     </BaseHeader>
@@ -40,8 +40,8 @@
         grid
         gap-6
         px-6
-        md:px-0
         md:grid-cols-2
+        md:px-0
         lg:grid-cols-3
         xl:grid-cols-3"
         >
@@ -54,12 +54,12 @@
                 p-6
                 shadow-md
                 transition-all duration-300
-                hover:shadow-lg
                 hover:border-green-400
+                hover:shadow-lg
               "
             >
               <!-- Title + Icon -->
-              <div class="mb-4 flex justify-center items-center gap-3">
+              <div class="mb-4 flex items-center justify-center gap-3">
                 <i :class="['ri-' + panel.icon, 'text-3xl']"></i>
                 <h2
                   class="

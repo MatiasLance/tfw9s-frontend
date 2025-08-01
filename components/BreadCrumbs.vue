@@ -2,11 +2,11 @@
     <div class="px-6 py-8 sm:py-12 lg:px-8">
         <!-- Breadcrumbs -->
         <div class="mb-4 flex items-center space-x-2 text-sm text-white">
-            <NuxtLink to="/" class="hover:underline">
+            <NuxtLink to="/" class="text-white hover:underline">
                 Home
             </NuxtLink>
             <span>›</span>
-            <NuxtLink to="/admin" class="hover:underline">
+            <NuxtLink to="/admin" class="text-white hover:underline">
                 Admin
             </NuxtLink>
         </div>
@@ -18,5 +18,12 @@
 </template>
 
 <script>
-export default { props: { title: String } }
+export default {
+  props: {
+    title: {
+      type: String,
+      default: ''
+    },
+  } 
+}
 </script>

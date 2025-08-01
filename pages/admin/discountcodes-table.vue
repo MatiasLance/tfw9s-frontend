@@ -89,6 +89,7 @@
           </div>
         </section>
         <DiscountCodeTable
+        v-if="discountCodeData && discountCodeData.length > 0"
         :columns="columnsName"
         :data="discountCodeData"
         />
@@ -140,6 +141,7 @@ export default {
         page: this.totalPages,
         type: this.activePage,
         maxSeriesPerPage: this.totalItems,
+        withDiscounts: true,
       };
 
       Object.keys(query).forEach((key) => {

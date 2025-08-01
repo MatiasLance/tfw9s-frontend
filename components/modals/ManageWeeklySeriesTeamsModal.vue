@@ -1,26 +1,51 @@
 <template>
   <OModal :active="active" full-screen @close="closeDialog">
     <div
-    class="z-50 flex min-h-dvh w-full flex-col gap-2 rounded bg-[#1A1A1B] p-2 sm:w-full sm:p-4"
+    class="z-50 flex h-dvh w-full flex-col gap-2 rounded bg-[#1A1A1B] p-2 sm:w-full sm:p-4"
     >
       <h3 class="pt-8 font-bold text-white">
           Manage Series Teams
       </h3>
       <hr class="my-2"/>
-      <div class="flex w-full items-center">
+      <div class="mb-2 flex w-full items-center gap-2">
+        <input
+          v-model="searchQuery"
+          type="text"
+          class="
+            block
+            flex-1
+            appearance-none
+            rounded-md
+            border border-gray-200
+            bg-gray-100
+            px-3
+            py-1.5
+            font-normal
+            outline-inherit
+            hover:border-gray-400
+            focus:border-gray-400
+            focus:bg-white
+            focus:outline-none
+            focus:ring-0
+          "
+          placeholder="Search..."
+          @input="search"
+        >
         <button
         type="button"
         class="
+        whitespace-nowrap
         rounded-md
-        bg-gradient-to-br
-        from-[#5EE738] via-[#3e872a]
-        to-[#050505] px-4 py-1.5
+        bg-gradient-to-br from-[#5EE738]
+        via-[#3e872a] to-[#050505] px-3
+        py-1.5
         text-center
-        font-semibold
-        text-white"
+        font-medium
+        text-white
+        "
         @click="openManageTeamModal([])"
         >
-          Insert New Team
+          Insert
         </button>
       </div>
       <div
@@ -53,18 +78,17 @@
             :key="team.id"
             class="relative flex items-center gap-2
             rounded-md bg-[#212121] p-4 text-white"
-            data-aos="fade-up" data-aos-offset="0"
             > 
               <!-- Color Selection Bar -->
               <article
               class="absolute right-2 top-2 flex w-full max-w-[350px] justify-end"
               >
                 <div
-                class="relative mb-2 text-left"
+                class="relative mb-2 flex flex-col text-left"
                 > 
                   <button
                   type="button"
-                  class="w-full rounded px-1  text-right text-xs
+                  class="w-full rounded px-1  text-right text-sm
                   text-gray-400 transition hover:text-gray-300"
                   @click="openPlayersCardModal(team)"
                   @blur="selectedTeamId = null"
@@ -127,21 +151,49 @@
               alt="Team Logo"
               class="size-20 object-cover"
               />
-              <article class="flex flex-1 flex-col gap-1">
+              <article class="flex flex-1 flex-col">
                 <span class="font-semibold">
                   {{ team.name }}
                 </span>
-                <p>
+                <p class="text-sm">
                   Age Group: {{ team.agegroup.name }}
                 </p>
-                <p class="flex items-center space-x-2">
-                  <span>Discounted:</span>
-                  <span v-html="team.discount_codes_id !== 0 
-                    ? '<i class=\'ri-checkbox-circle-line text-2xl text-green-500\'></i>' 
-                    : '<i class=\'ri-close-circle-line text-2xl text-red-500\'></i>'">
+                <p class="my-2 flex items-center space-x-2 text-sm">
+                  <span
+                  class="rounded border px-2 py-1 text-right text-xs
+                  text-white transition"
+                  :class="team.discount_codes_id?'visible':'invisible'"
+                  >
+                    Discounted <i class="ri-price-tag-3-line"></i>
                   </span>
                 </p>
                 <span class="flex flex-wrap justify-end gap-2">
+                    <button
+                    type="button"
+                    class="
+                      max-w-full rounded
+                      border border-gray-200
+                      bg-[#3f51b5]
+                      px-3
+                      py-1.5
+                      text-sm
+                      uppercase
+                      text-white
+                      "
+                      @click="copyRegistrationLink(team)"
+                    >
+                      <p
+                      v-if="teamUrlGenerating === team.id"
+                      class="animate-spin"
+                      >
+                        <i class="ri-loader-2-line"/>
+                      </p>
+                      <p
+                      v-else
+                      >
+                        <i class="ri-links-line"/>
+                      </p>
+                    </button>
                     <button
                     type="button"
                     class="
@@ -193,6 +245,7 @@
         <VBtn
         depressed
         dark
+        small
         color="primary"
         class="custom-btn w-full md:w-[185px] lg:w-[185px]"
         :loading="sending"
@@ -201,13 +254,26 @@
           Notify Teams
         </VBtn>
         <VBtn
-        depressed
-        color="error"
+        outlined
+        small
+        color="amber"
         class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-        @click="closeDialog"
+        :loading="generating"
+        @click="generateTeamLinks(selected.id)"
         >
-          Close
+          Generate Links
         </VBtn>
+        <!--
+          <VBtn
+          depressed
+          small
+          color="error"
+          class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+          @click="closeDialog"
+          >
+          Close
+          </VBtn> 
+        -->
       </div>
     </div>
     <SeriesPlayersCardModal
@@ -241,13 +307,16 @@ import DeleteTeamModal from './DeleteTeamModal.vue';
 import SeriesPlayersCardModal from './SeriesPlayersCardModal.vue';
 import currencyMixin from '@/mixins/currency/handlesCurrency';
 import handlesMedia from '@/mixins/shop/handlesMedia';
+import handleXLSX from '@/mixins/utilities/handleXLSX';
 
 export default {
   name: 'ManageWeeklySeriesTeamsModal',
   components: {
     ManageSeriesTeamModal, DeleteTeamModal, SeriesPlayersCardModal 
   },
-  mixins: [ currencyMixin, handlesMedia ],
+  mixins: [
+    currencyMixin, handlesMedia, handleXLSX 
+  ],
   props: {
     active: {
       type: Boolean,
@@ -264,6 +333,7 @@ export default {
   },
   data() {
     return {
+      searchQuery: '',
       from: 0,
       to: 0,
       page: 1,
@@ -273,6 +343,7 @@ export default {
       seriesTeams: [],
       isLoading: true,
       sending: false,
+      generating: false,
       showManageTeamModal: false,
       showDeleteTeamModal: false,
       showPlayersCardModal: false,
@@ -281,6 +352,7 @@ export default {
       selectedPlayer: [],
       playerLoading: false,
       players: [],
+      teamUrlGenerating: null
     }
   },
   computed: {
@@ -309,6 +381,11 @@ export default {
     },
   },
   methods: {
+    search: _debounce(function() {
+      if (this.active) {
+        this.retrieveSeriesTeams();
+      }
+    }, 500),
     quickFetch: _debounce(function() {
       if (this.active) {
         this.retrieveSeriesTeams();
@@ -407,6 +484,66 @@ export default {
         })
         .finally(() => {
           this.sending = false;
+        })
+    },
+    generateTeamLinks(id) {
+      this.generating = true;
+      this.$axios
+        .$post(`v1/series/teamlinks/${id}`)
+        .then((response) => {
+          this.exportToXLSX(response.data.teamLinks, `${this.selected.name} - Team Links`)
+        })
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: 'Team links generated successfully...',
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.message,
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        })
+        .finally(() => {
+          this.generating = false;
+        })
+    },
+    copyRegistrationLink(team) {
+      this.teamUrlGenerating = team.id;
+      this.$axios
+        .$get(`v1/teams/link/${team.id}`)
+        .then((response) => {
+          const teamUrl = response.data.url;
+          navigator.clipboard.writeText(teamUrl);
+          this.$oruga.notification.open({
+            message: 'Registration URL copied to clipboard...',
+            variant: 'success',
+            duration: 3000,
+            position: 'bottom',
+            queue: true,
+            dangerouslyUseHTMLString: true,
+          });
+        })
+        .catch(err => {
+          console.error('Url generation failed:', err);
+          this.$oruga.notification.open({
+            message: 'Failed to generate registration URL',
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true,
+            dangerouslyUseHTMLString: true,
+          });
+        })
+        .finally(() => {
+          this.teamUrlGenerating = null;
         })
     },
     openManageTeamModal(team) {
