@@ -299,8 +299,8 @@
               id="name"
               v-model="item.price"
               label="Enter Price"
-              :rules="rules"
               type="number"
+              :rules="rules"
               step=".01"
               min="0.00"
               solo
@@ -319,8 +319,7 @@
               <VTextField
               id="name"
               v-model="item.saleprice"
-              label="Enter Price"
-              :rules="rules"
+              label="Enter Sale Price"
               type="number"
               step=".01"
               min="0.00"
@@ -357,52 +356,78 @@
               />
             </div>
             <div class="col-span-1 mb-4 md:col-span-2">
-              <div class="flex items-center justify-between">
-                <label class="mb-1 block"> Category: </label>
+              <!-- Header Section -->
+              <div class="flex items-center justify-between mb-2">
+                <label class="block font-semibold text-brand-black">Category:</label>
                 <button
                   type="button"
                   class="
-                    flex
-                    items-center
-                    justify-center
-                    border border-solid border-brand-black
-                    bg-brand-black
-                    px-4
-                    py-2
+                    flex items-center gap-2
+                    px-4 py-2
+                    rounded-md
+                    border border-brand-green
+                    bg-gradient-to-r from-brand-green to-brand-black
                     text-white
+                    shadow-md
+                    transition-colors
+                    hover:from-brand-black hover:to-brand-green
+                    focus:outline-none focus:ring focus:ring-brand-green
                   "
                   @click="addCategoryPicker"
                 >
-                  <i class="ri-add-fill"></i>
-                  Add Category
+                  <i class="ri-add-fill ri-lg"></i>
+                  <span>
+                    Add Category
+                  </span>
                 </button>
               </div>
-              <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+
+              <!-- Selected Categories Section -->
+              <div
+                v-if="multipleCategoryBuffer.length > 0"
+                class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mt-2"
+              >
                 <div
-                  v-for="categoryPickerIndex in multipleCategoryBuffer"
-                  :key="categoryPickerIndex"
-                  class="flex justify-center gap-1 relative"
+                  v-for="(index) in multipleCategoryBuffer"
+                  :key="index"
+                  class="flex items-center gap-2 relative bg-gray-50 rounded-lg p-2 shadow-sm"
                 >
                   <InfiniteCategories
-                    :ref="`categoryPicker-${categoryPickerIndex}`"
+                    :ref="`categoryPicker-${index}`"
                     :options="categories"
-                    :lineage="categoryLineages[categoryPickerIndex-1]"
+                    :lineage="categoryLineages[index - 1]"
+                    class="flex-grow"
                   />
+
+                  <!-- Close Button -->
                   <button
                     type="button"
                     class="
-                      my-4
-                      h-6 w-6
-                      text-brand-black
-                      hover:bg-brand-black
-                      hover:text-white
-                      absolute
+                      absolute top-0 right-0
+                      h-7 w-7 flex items-center justify-center
+                      rounded-full
+                      bg-brand-red text-white
+                      hover:bg-red-700
+                      transition-colors
+                      shadow
+                      focus:outline-none focus:ring focus:ring-brand-red
                     "
-                    @click="removeCategoryPicker(categoryPickerIndex)"
+                    @click="removeCategoryPicker(index)"
+                    aria-label="Remove Category"
                   >
-                    <div class="ri-close-fill ri-lg"></div>
+                    <i class="ri-close-fill ri-lg"></i>
                   </button>
                 </div>
+              </div>
+
+              <!-- Placeholder for No Categories -->
+              <div
+                v-else
+                class="bg-gray-100 rounded-lg p-4 text-center text-brand-black"
+              >
+                <p>
+                  No categories selected. Click "Add Category" to start.
+                </p>
               </div>
             </div>
             <div class="col-span-1">
@@ -1309,25 +1334,7 @@ export default {
   },
   methods: {
     validate(type) {
-      if (!this.$refs.form.validate()) {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Fill out all required fields',
-          position: 'bottom',
-          variant: 'danger',
-          queue: true,
-        });
-        return false;
-      } else if (this.item.description === '<p></p>') {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Fill out description fields',
-          position: 'bottom',
-          variant: 'danger',
-          queue: true,
-        });
-        return false;
-      } else if (type === 'Add') {
+      if (type === 'Add') {
         this.create()
         return true;
       } else if (type === 'Edit') {
@@ -1615,7 +1622,7 @@ export default {
       form.append('name', this.item.name)
       form.append('stock', this.item.stock)
       form.append('price', this.item.price)
-      form.append('salePrice', this.item.saleprice)
+      form.append('salePrice', this.item.saleprice ? this.item.saleprice : 0)
       form.append('description', this.item.description)
       form.append('isFeatured', this.item.is_featured)
       form.append('isHideOutOfStock', this.item.isHideOutOfStock)
@@ -1708,7 +1715,7 @@ export default {
       form.append('name', this.item.name)
       form.append('stock', this.item.stock)
       form.append('price', this.item.price)
-      form.append('salePrice', this.item.saleprice)
+      form.append('salePrice', this.item.saleprice ? this.item.saleprice : 0)
       form.append('description', this.item.description)
       form.append('isFeatured', this.item.is_featured)
       form.append('isHideOutOfStock', this.item.isHideOutOfStock)

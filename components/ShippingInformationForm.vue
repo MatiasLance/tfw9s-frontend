@@ -114,7 +114,105 @@
         />
       </div>
     </div>
-    <div class="grid gap-x-3 md:grid-cols-3">
+
+    <div class="grid gap-x-6 gap-y-4 lg:grid-cols-2 mb-[20px]">
+      <label
+        class="
+          flex items-center gap-4
+          p-4
+          border-2 border-gray-200 rounded-lg
+          bg-white
+          cursor-pointer
+          hover:border-brand-green hover:shadow-md
+          transition-all duration-200
+          focus-within:border-brand-green focus-within:shadow-md
+        "
+        :class="{ 'border-brand-green shadow-md': shipOption === 'delivery' }"
+      >
+        <div
+          class="
+            flex-shrink-0 w-5 h-5
+            border-2 border-gray-400 rounded-full
+            flex items-center justify-center
+            transition-colors duration-200
+          "
+          :class="{
+            'border-brand-green': shipOption === 'delivery',
+            'bg-brand-green': shipOption === 'delivery'
+          }"
+        >
+          <div
+            v-if="shipOption === 'delivery'"
+            class="w-2.5 h-2.5 rounded-full bg-white"
+          ></div>
+        </div>
+
+        <div class="flex flex-col">
+          <span class="font-semibold text-gray-800">Ship To My Address</span>
+          <span class="text-sm text-gray-500">We'll deliver to your registered address</span>
+        </div>
+
+        <input
+          v-model="shipOption"
+          type="radio"
+          value="delivery"
+          class="sr-only"
+          name="shipOption"
+          aria-label="Ship to my address"
+        />
+      </label>
+
+      <label
+        class="
+          flex items-center gap-4
+          p-4
+          border-2 border-gray-200 rounded-lg
+          bg-white
+          cursor-pointer
+          hover:border-brand-green hover:shadow-md
+          transition-all duration-200
+          focus-within:border-brand-green focus-within:shadow-md
+        "
+        :class="{ 'border-brand-green shadow-md': shipOption === 'pickup' }"
+      >
+        <div
+          class="
+            flex-shrink-0 w-5 h-5
+            border-2 border-gray-400 rounded-full
+            flex items-center justify-center
+            transition-colors duration-200
+          "
+          :class="{
+            'border-brand-green': shipOption === 'pickup',
+            'bg-brand-green': shipOption === 'pickup'
+          }"
+        >
+          <div
+            v-if="shipOption === 'pickup'"
+            class="w-2.5 h-2.5 rounded-full bg-white"
+          ></div>
+        </div>
+
+        <div class="flex flex-col">
+          <span class="font-semibold text-gray-800">Pickup From Event</span>
+          <span class="text-sm text-gray-500">Collect your order at the event venue</span>
+        </div>
+
+        <input
+          v-model="shipOption"
+          type="radio"
+          value="pickup"
+          class="sr-only"
+          name="shipOption"
+          aria-label="Pickup from event"
+        />
+      </label>
+    </div>
+
+    <div
+    v-if="shipOption === 'delivery'"
+    class="grid gap-x-3 md:grid-cols-3"
+    >
       <div class="mb-4 md:col-span-2">
         <label class="mb-1 block">
           Address
@@ -273,6 +371,7 @@ export default {
       remarks: '',
       hasAgreedToTerms: false,
       showTermsModal: false,
+      shipOption: ''
     }
   },
   computed: {
@@ -289,9 +388,10 @@ export default {
         lastName: this.lastName,
         phoneNumber: this.phoneNumber,
         email: this.email,
+        shipOption: this.shipOption,
         address: this.address,
         postCode: this.postCode,
-        remarks: this.remarks,
+        remarks: this.remarks
       })
     }
   }

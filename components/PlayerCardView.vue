@@ -53,7 +53,6 @@
         </div>
       </div>
       <div
-      v-if="player.registration_id"
       class="
       flex-none
       bg-green-600
@@ -67,22 +66,41 @@
       >
         REGISTERED PLAYER
       </div>
-      <div
-      v-else
-      class="
-      flex-none
-      bg-green-600
-      p-2
-      text-center
-      text-sm
-      uppercase
-      font-bold
-      tracking-widest
-      text-white
-      sm:text-xl"
-      >
+      <!--
+        <div
+        v-if="player.registration_id"
+        class="
+        flex-none
+        bg-green-600
+        p-2
+        text-center
+        text-sm
+        font-bold
+        tracking-widest
+        text-white
+        sm:text-xl"
+        >
+        REGISTERED PLAYER
+        </div>
+      -->
+      <!--
+        <div
+        v-else
+        class="
+        flex-none
+        bg-green-600
+        p-2
+        text-center
+        text-sm
+        uppercase
+        font-bold
+        tracking-widest
+        text-white
+        sm:text-xl"
+        >
         full sponsorship covered
-      </div>
+        </div>
+      -->
     </article>
   </div>
 </template>
