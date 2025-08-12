@@ -66,41 +66,6 @@
       >
         REGISTERED PLAYER
       </div>
-      <!--
-        <div
-        v-if="player.registration_id"
-        class="
-        flex-none
-        bg-green-600
-        p-2
-        text-center
-        text-sm
-        font-bold
-        tracking-widest
-        text-white
-        sm:text-xl"
-        >
-        REGISTERED PLAYER
-        </div>
-      -->
-      <!--
-        <div
-        v-else
-        class="
-        flex-none
-        bg-green-600
-        p-2
-        text-center
-        text-sm
-        uppercase
-        font-bold
-        tracking-widest
-        text-white
-        sm:text-xl"
-        >
-        full sponsorship covered
-        </div>
-      -->
     </article>
   </div>
 </template>
@@ -128,7 +93,7 @@ export default {
       const mm = String(date.getMonth() + 1).padStart(2, '0');
       const dd = String(date.getDate()).padStart(2, '0');
       const yy = String(date.getFullYear()).slice();
-      return `${mm}/${dd}/${yy}`;
+      return `${dd}/${mm}/${yy}`;
     },
   }
 }
