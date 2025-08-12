@@ -133,7 +133,6 @@ export default {
   methods: {
     retrieveToggleTaxControl() {
       const id = 1;
-      // todo: check endpoint
       const endpoint = `v1/toogletax/retrieve/${id}`
       this.$axios
         .$get(endpoint)

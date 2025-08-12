@@ -129,21 +129,6 @@
                   </div>
                   <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
-                      <label for="teamname">
-                        Team Name *
-                      </label>
-                      <VSelect
-                        v-model="player.teamName"
-                        :items="team"
-                        label="Choose Team"
-                        :rules="rules"
-                        solo
-                        >
-                      </VSelect>
-                    </div>
-                  </div>  
-                  <div class="col-span-2 md:col-span-1">
-                    <div class="col-span-1">
                       <label for="selectagegroup" class="mb-1 block">
                         Age Group *
                       </label>
@@ -157,6 +142,21 @@
                       </VSelect>
                     </div>
                   </div>
+                  <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-1">
+                      <label for="teamname">
+                        Team Name *
+                      </label>
+                      <VSelect
+                        v-model="player.teamName"
+                        :items="team"
+                        label="Choose Team"
+                        :rules="rules"
+                        solo
+                        >
+                      </VSelect>
+                    </div>
+                  </div>  
                 </div>
                 <div class="col-span-1 md:col-span-2">
                   <ImageUpload

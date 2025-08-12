@@ -33,7 +33,7 @@
         v-if="paymentMethod === 'paypal'"
         id="paypal-payment-form"
         class="payment-module p-10"
-        :cart-total="overallTotal"
+        :cart-total="overAllTotal"
         :discount-code="discountcode"
         @active-step="activeStepPrev"
         />
@@ -49,7 +49,7 @@
       <SquareCheckout
         v-if="paymentMethod === 'square'"
         class="payment-module p-10"
-        :cart-total="overallTotal"
+        :cart-total="overAllTotal"
         @active-step="activeStepPrev"
       />
     </div>
@@ -158,6 +158,19 @@
           <span>Tax Amount:</span>
           <span>{{ formatCurrency(taxAmount) }}</span>
         </li>
+        <!-- Shipping Fee -->
+         <li
+        v-if="shippingInformation.shipOption === 'pickup'"
+        class="mb-1 flex justify-between"
+        >
+          <span>Shipping:</span>
+          <span>FREE</span>
+        </li>
+        <li v-else class="mb-1 flex justify-between">
+          <span>Shipping:</span>
+          <span>{{ formatCurrency(10) }}</span>
+        </li>
+        <!-- End of Shipping Fee Section -->
         <li v-if="isDiscountCodeMatch"
         class="mb-1 flex justify-center border-t pt-3"
         >
@@ -171,7 +184,7 @@
         >
           <span>Total price:</span>
           <span class="font-bold text-gray-900">
-            {{ formatCurrency(overallTotal) }}
+            {{ formatCurrency(overAllTotal) }}
           </span>
         </li>
       </ul>
@@ -215,7 +228,7 @@ export default {
         total: 0,
         taxamount: 0,
       },
-      overallTotal: 0,
+      overAllTotal: 0,
       newSubTotal: 0,
       showPaypal: true,
       showSquare: false,
@@ -310,13 +323,12 @@ export default {
   methods: {
     setOriginalAmount() {
       this.originalAmount.subtotal = this.subtotal
-      this.originalAmount.total = this.overallTotal
+      this.originalAmount.total = this.overAllTotal
       this.taxAmount = this.subtotal * (this.tax/100);
       this.originalAmount.taxamount = this.taxAmount
     },
     retrieveToggleTaxControl() {
       const id = 1;
-      // todo: check endpoint
       const endpoint = `v1/toogletax/retrieve/${id}`
       this.$axios
         .$get(endpoint)
@@ -397,13 +409,13 @@ for this code.
                   .multiply(1 - this.discountRate);
 
                 if (this.isGSTInclusive) {
-                // If GST is inclusive, overallTotal is the discounted subtotal
-                  this.overallTotal = this.newSubTotal.value;
+                // If GST is inclusive, overAllTotal is the discounted subtotal
+                  this.overAllTotal = this.newSubTotal.value;
                 } else {
                 // If GST is exclusive, add GST to the discounted subtotal
                   const taxPercent = this.tax
                   const gstAmount = this.newSubTotal.multiply(taxPercent / 100);
-                  this.overallTotal = this.newSubTotal.add(gstAmount).value;
+                  this.overAllTotal = this.newSubTotal.add(gstAmount).value;
                 }
                 this.$store.commit('cart/setSubtotal', this.newSubTotal)
                 this.$oruga.notification.open({
@@ -459,7 +471,7 @@ for this code.
         this.$store.commit('cart/setGst', this.originalAmount.gst)
         this.$store.commit('cart/setTotal', this.originalAmount.total)
         this.$store.commit('cart/setTaxAmount', this.originalAmount.taxamount)
-        this.overallTotal = this.originalAmount.total
+        this.overAllTotal = this.originalAmount.total
         this.isDiscountCodeMatch = false
         this.initialize()
       }, 1000)
@@ -469,7 +481,7 @@ for this code.
       this.$store.commit('cart/setGst', this.originalAmount.gst)
       this.$store.commit('cart/setTotal', this.originalAmount.total)
       this.$store.commit('cart/setTaxAmount', this.originalAmount.taxamount)
-      this.overallTotal = this.originalAmount.total
+      this.overAllTotal = this.originalAmount.total
       this.isDiscountCodeMatch = false
       this.$emit('active-step', stepNo)
     },
@@ -477,26 +489,19 @@ for this code.
       this.isLoading = true
       const items = this.$store.state.cart.cart
       const metadata = this.shippingInformation
-      const discounted = this.isDiscountCodeMatch
       const discountcode = this.discountcode
-      const paymentIntent = this.paymentIntent
-      // eslint-disable-next-line camelcase
-      const payment_method = this.paymentMethod
+
       this.$axios
         .$post('v1/orders/calculation', {
           items,
           metadata,
-          // eslint-disable-next-line camelcase
-          payment_method,
-          paymentIntent,
-          discounted,
           discountcode
         })
         .then((response) => {
           this.activeStep = 2
-          this.$store.commit('cart/setTotal', response.OverallTotal/100);
-          const productcost = response.OverallTotal/100;
-          this.overallTotal = productcost;
+          this.$store.commit('cart/setTotal', response.overAllTotal/100);
+          const toPrice = response.overAllTotal/100;
+          this.overAllTotal = toPrice;
         })
         .finally(() => {
           this.isLoading = false
