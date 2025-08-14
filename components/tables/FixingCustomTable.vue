@@ -71,7 +71,7 @@
                       {{ row.team1.name }}
                   </template>
                   <template v-else-if="column.name === 'team2'">
-                      {{ row.team2.name }}
+                      {{ row.team2 === null ? 'Bye' : row.team2.name }}
                   </template>
                   <template v-else-if="column.name !== 'time'">
                     {{ row[column.name] }}

@@ -426,6 +426,14 @@ export default {
       formData.append('coach', JSON.stringify(coachData));
       formData.append('manager', JSON.stringify(managerData));
       formData.append('type', this.TeamData.type || 'default');
+      /**
+       * Append discount code ID, defaulting to 0
+       * In this team page the discount code id is not used. So a default value of 0 is set.
+       * Discount code ID will be set in the series page.
+       * This is to prevent the API from throwing an error
+       * when the discount code ID is not provided.
+       */
+      formData.append('discount_code_id', 0);
 
       for (let i = 0; i < this.imgList.length; i++) {
         formData.append('photo[]', this.imgList[i], 'gymThumbnail.png');

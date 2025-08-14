@@ -186,6 +186,20 @@
                       This match is already submitted.
                     </span>
                   </div>
+                  <div class="absolute top-2 left-[15px] mb-[20px] flex items-center gap-2 z-10">
+                    <VCheckbox
+                      v-model="Event.isBye"
+                      color="primary"
+                      hide-details
+                      class="ma-0 pa-0"
+                    />
+                    <label
+                      class="text-sm font-medium text-gray-800 cursor-pointer -ml-[15px]"
+                      @click="Event.isBye = !Event.isBye"
+                    >
+                      Bye
+                    </label>
+                  </div>
                   <button
                     v-if="!matchBuffer.submitted"
                     type="button"
@@ -208,6 +222,7 @@
                     :region="Event.region_id"
                     :series="Event.series_id"
                     :agegroup="Event.agegroup_id"
+                    :isBye="Event.isBye"
                     @update-event="updateMatch(matchIndex, $event)"
                   />
                 </div>
@@ -529,7 +544,7 @@ export default {
         formData.append(`matches[${i}][time]`, this.matchTime);
         formData.append(`matches[${i}][field_id]`, match.field_id);
         formData.append(`matches[${i}][team1]`, match.team1.id);
-        formData.append(`matches[${i}][team2]`, match.team2.id);
+        formData.append(`matches[${i}][team2]`, this.Event.isBye ? 0: match.team2.id);
       }
       this.$axios
         .$post(`v1/events/${this.Event.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })

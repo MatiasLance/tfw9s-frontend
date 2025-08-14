@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-6 space-y-4">
     <div class="col-span-1">
       <label for="field" class="mb-1 block">
         Field:
@@ -46,9 +46,8 @@
       v-model="matchData.team2.id"
       :items="filteredTeam2"
       label="Choose Team 2"
-      :rules="rules"
       solo
-      :disabled="isMatchAlreadySubmitted"
+      :disabled="isMatchAlreadySubmitted || isBye"
       >
         <template #prepend-item>
           <div class="sticky-search-bar px-3">
@@ -76,12 +75,16 @@ export default {
       required: true,
     },
     series: {
-      type: String,
+      type: Number,
       required: true,
     },
     agegroup: {
-      type: String,
+      type: Number,
       required: true,
+    },
+    isBye: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -95,14 +98,14 @@ export default {
         // eslint-disable-next-line camelcase
         field_id: this.match.field_id || '',
         time: this.match.time,
-        team1: this.match.team1 || '',
-        team2: this.match.team2|| '',
+        team1: this.match.team1 ? this.match.team1 : { id: 0 },
+        team2: this.match.team2 ? this.match.team2 : { id: 1 },
       },
     }
   },
   computed: {
     formattedTeam() {
-      return this.teamList
+      const teams = this.teamList
         .filter(
           team => team.agegroup_id === this.agegroup &&
           team.series_id === this.series
@@ -112,6 +115,11 @@ export default {
           value: team.id,
           event: team.event_id
         }));
+
+      return [
+        { text: 'Bye', value: 0 },
+        ...teams
+      ];
     },
     formattedField() {
       return this.fieldList.map(field =>
@@ -140,14 +148,24 @@ export default {
         this.$emit('update-event', newMatch);
       },
       deep: true
-    },
-    match: {
-      immediate: true,
-      handler(newMatch) {
-        this.matchData = newMatch
-      }
     }
   },
+  created() {
+    this.syncMatchToData();
+  },
+  methods: {
+    syncMatchToData() {
+      const { match } = this;
+      this.matchData = {
+        id: match.id || null,
+        // eslint-disable-next-line camelcase
+        field_id: match.field_id || null,
+        time: match.time,
+        team1: match.team1 ? { id: match.team1.id } : null,
+        team2: match.team2 ? { id: match.team2.id } : { id: 0 },
+      };
+    }
+  }
 }
 
 </script>

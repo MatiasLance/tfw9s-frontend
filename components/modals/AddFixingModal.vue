@@ -127,14 +127,29 @@
               <!-- data Map -->
                 <div
                   class="
-                  relative
-                  h-auto
-                  w-full
-                  rounded-lg
-                  border-2
-                  border-[#CCCCCC]
-                  p-4"
+                    relative
+                    h-auto
+                    w-full
+                    rounded-lg
+                    border-2
+                    border-[#CCCCCC]
+                    p-4
+                  "
                 >
+                  <div class="absolute top-2 left-[15px] mb-[20px] flex items-center gap-2 z-10">
+                    <VCheckbox
+                      v-model="Event.isBye"
+                      color="primary"
+                      hide-details
+                      class="ma-0 pa-0"
+                    />
+                    <label
+                      class="text-sm font-medium text-gray-800 cursor-pointer -ml-[15px]"
+                      @click="Event.isBye = !Event.isBye"
+                    >
+                      Bye
+                    </label>
+                  </div>
                   <button
                     type="button"
                     class="
@@ -142,17 +157,23 @@
                       right-2
                       top-2
                       h-6 w-6
+                      flex items-center justify-center
                       text-brand-black
                       hover:bg-brand-black hover:text-white
+                      rounded-full
+                      transition
                     "
                     @click="removeMatch(matchIndex)"
+                    aria-label="Remove match"
                   >
-                    <div class="ri-close-fill ri-lg"></div>
+                    <i class="ri-close-fill ri-lg"></i>
                   </button>
-                  <div>
+
+                  <div class="mt-6 space-y-4">
+                    <!-- Field -->
                     <div class="col-span-1">
-                      <label for="field" class="mb-1 block">
-                        Field:
+                      <label for="field" class="mb-1 block text-sm font-medium text-gray-700">
+                        Field
                       </label>
                       <VSelect
                         v-model="matchBuffer.field_id"
@@ -162,12 +183,13 @@
                         label="Choose Field"
                         :rules="rules"
                         solo
-                      >
-                      </VSelect>
+                      />
                     </div>
+
+                    <!-- Team 1 -->
                     <div class="col-span-1">
-                      <label for="match_team1" class="mb-1 block">
-                          Team 1:
+                      <label for="match_team1" class="mb-1 block text-sm font-medium text-gray-700">
+                        Team 1
                       </label>
                       <VSelect
                         v-model="matchBuffer.team1"
@@ -178,12 +200,13 @@
                         :rules="rules"
                         solo
                         :disabled="isTeamSelectionDisabled"
-                      >
-                      </VSelect>
+                      />
                     </div>
+
+                    <!-- Team 2 -->
                     <div class="col-span-1">
-                      <label for="match_team1" class="mb-1 block">
-                          Team 2:
+                      <label for="match_team2" class="mb-1 block text-sm font-medium text-gray-700">
+                        Team 2
                       </label>
                       <VSelect
                         v-model="matchBuffer.team2"
@@ -193,9 +216,8 @@
                         label="Choose Team 2"
                         :rules="rules"
                         solo
-                        :disabled="isTeamSelectionDisabled"
-                      >
-                      </VSelect>
+                        :disabled="isTeamSelectionDisabled || Event.isBye"
+                      />
                     </div>
                   </div>
                 </div>
@@ -538,7 +560,7 @@ export default {
         formData.append(`matches[${i}][time]`, this.matchTime);
         formData.append(`matches[${i}][field_id]`, match.field_id);
         formData.append(`matches[${i}][team1]`, match.team1);
-        formData.append(`matches[${i}][team2]`, match.team2);
+        formData.append(`matches[${i}][team2]`, this.Event.isBye ? 0: match.team2);
       }
       this.$axios
         .$post('v1/events', formData, { headers: { 'Content-Type': 'multipart/form-data' } })

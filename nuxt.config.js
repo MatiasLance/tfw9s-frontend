@@ -188,6 +188,13 @@ export default {
         autoprefixer: {},
         ...(process.env.ENVIRONMENT === 'production' ? { cssnano: {} } : {})
       }
+    },
+    babel: {
+      plugins: [
+        process.env.ENVIRONMENT === 'production'
+          ? 'transform-remove-console'
+          : ''
+      ].filter(Boolean)
     }
   },
 }
