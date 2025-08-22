@@ -13,14 +13,14 @@
           </PaymentTab>
         -->
         <PaymentTab
-          v-if="showStripe"
+          v-if="stripeEnabled"
           :active="paymentMethod === 'stripe'"
           @click="setAsPaymentMethod('stripe')"
         >
           Credit Card
         </PaymentTab>
         <PaymentTab
-          v-if="showSquare"
+          v-if="afterpayEnabled"
           :active="paymentMethod === 'afterpay'"
           @click="paymentMethod = 'afterpay'"
         >
@@ -40,7 +40,7 @@
       -->
 
       <StripeCheckout
-        v-if="paymentMethod === 'stripe'"
+        v-if="paymentMethod === 'stripe' && stripeEnabled"
         class="payment-module gap-3 text-gray-600"
         :series="series"
         :seriestype="seriestype"
@@ -49,7 +49,7 @@
       />
 
       <AfterPayCheckout
-        v-if="paymentMethod === 'afterpay'"
+        v-if="paymentMethod === 'afterpay' && afterpayEnabled"
         class="payment-module p-10"
         :series="series"
         :seriestype="seriestype"
@@ -159,7 +159,9 @@ export default {
       ResponseMessage2: '',
       showTaxInfo: true,
       subTotal: 0,
-      taxAmount: 0
+      taxAmount: 0,
+      stripeEnabled: false,
+      afterpayEnabled: false
     };
   },
   computed: {
@@ -212,11 +214,36 @@ export default {
     this.retrieveToggleTaxControl();
     this.$store.commit('order/setPaymentMethod', this.paymentMethod)
     this.initialize()
+    this.listOfPaymentSetting();
     setTimeout(() => {
       this.setOriginalAmount()
+      this.$nextTick(() => {
+        if (this.stripeEnabled) {
+          this.setAsPaymentMethod('stripe')
+        } else {
+          this.setAsPaymentMethod('afterpay')
+        }
+      })
     }, 2000);
   },
   methods: {
+    listOfPaymentSetting() {
+      this.$axios
+        .$get(`v1/payment/setting/`)
+        .then((response) => {
+          this.stripeEnabled = response.stripe_enabled
+          this.afterpayEnabled = response.afterpay_enabled
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            message: err.message,
+            duration: 5000,
+            variant: 'danger',
+            queue: true,
+            position: 'bottom'
+          })
+        })
+    },
     setOriginalAmount() {
       this.originalAmount.subtotal = this.subtotal
       this.originalAmount.total = this.overallTotal

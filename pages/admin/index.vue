@@ -240,6 +240,13 @@ export default {
           desc: 'Edit',
           count: -1
         },
+        {
+          title: 'Payment',
+          icon: 'bank-card-2-line',
+          route: '/admin/payment-setting',
+          desc: 'Manage',
+          count: -1
+        },
       ]
     };
   },
@@ -253,7 +260,7 @@ export default {
       case 'MASTER':
         return this.panels.filter(panel => {
           return [
-            'News', 'Partner Sponsor', 'Tax', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info'
+            'News', 'Partner Sponsor', 'Tax', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info', 'Payment'
           ].includes(panel.title)
         })
       case 'DRAWS':
