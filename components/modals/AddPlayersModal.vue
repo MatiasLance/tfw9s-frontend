@@ -202,10 +202,6 @@ export default {
       type: Boolean,
       required: true
     },
-    agegroup: {
-      type: Array,
-      required: true
-    },
     initialRegionId: {
       type: String,
       default: null
@@ -245,10 +241,6 @@ export default {
       get() {
         return `${this.phoneCode}${this.phoneDigits}`
       },
-    },
-    formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
     },
     formattedSeries() {
       return this.seriesList.map(series =>
@@ -391,6 +383,8 @@ export default {
     closeDialog() {
       this.$emit('close')
       this.reset()
+      this.team = []
+      this.ageGroup = []
     },
     reset() {
       this.contact = {}
@@ -510,7 +504,6 @@ export default {
         .$get(`v1/series?${queryString}`)
         .then((response) => {
           this.seriesList = response.data.series;
-          this.teamList = response.data.series
         })
     }
   }

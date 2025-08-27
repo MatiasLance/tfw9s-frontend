@@ -138,14 +138,14 @@
                 >
                   <div class="absolute top-2 left-[15px] mb-[20px] flex items-center gap-2 z-10">
                     <VCheckbox
-                      v-model="Event.isBye"
+                      v-model="matchBuffer.isBye"
                       color="primary"
                       hide-details
                       class="ma-0 pa-0"
                     />
                     <label
                       class="text-sm font-medium text-gray-800 cursor-pointer -ml-[15px]"
-                      @click="Event.isBye = !Event.isBye"
+                      @click="matchBuffer.isBye = !matchBuffer.isBye"
                     >
                       Bye
                     </label>
@@ -216,7 +216,7 @@
                         label="Choose Team 2"
                         :rules="rules"
                         solo
-                        :disabled="isTeamSelectionDisabled || Event.isBye"
+                        :disabled="isTeamSelectionDisabled || matchBuffer.isBye"
                       />
                     </div>
                   </div>
@@ -399,6 +399,7 @@ export default {
           field_id: null,
           team1: [],
           team2: [],
+          isBye: false
         }
       ],
       rules: [ value => !!value || 'Required' ],
@@ -560,7 +561,7 @@ export default {
         formData.append(`matches[${i}][time]`, this.matchTime);
         formData.append(`matches[${i}][field_id]`, match.field_id);
         formData.append(`matches[${i}][team1]`, match.team1);
-        formData.append(`matches[${i}][team2]`, this.Event.isBye ? 0: match.team2);
+        formData.append(`matches[${i}][team2]`, match.isBye ? 0: match.team2);
       }
       this.$axios
         .$post('v1/events', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
@@ -595,6 +596,7 @@ export default {
         field_id: null,
         team1: null,
         team2: null,
+        isBye: false
       });
     },
     updateMatch(matchIndex, newMatch) {

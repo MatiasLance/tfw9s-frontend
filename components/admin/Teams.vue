@@ -3,23 +3,40 @@
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-4">
         <div class="grid grid-cols-1 gap-4">
-          <div class="col-span-1 flex items-center">
-            <button
-            type="button"
-            class="
-            w-full rounded-md
-            bg-gradient-to-br
-            from-[#5EE738] via-[#3e872a]
-            to-[#050505] py-1.5
-            text-center
-            font-semibold
-            text-white
-            sm:w-36"
-            @click="openAddTeamDialog"
+          <div
+          class="
+          col-span-1 flex flex-col md:flex-row
+          lg:flex-row justify-between
+          items-center space-x-3
+          space-y-3
+          sm:space-y-3
+          sm:space-x-3"
           >
-            +
-          </button>
+              <button
+              type="button"
+              class="
+              w-full rounded-md
+              bg-gradient-to-br
+              from-[#5EE738] via-[#3e872a]
+              to-[#050505] py-1.5
+              text-center
+              font-semibold
+              text-white
+              sm:w-36"
+              @click="openAddTeamDialog"
+            >
+              +
+            </button>
+            
+            <YearFilter
+              v-model="selectedYear"
+              :start-year="2020"
+              :end-year="2050"
+              @year-change="handleYearChange"
+              class="flex-1 max-w-xs"
+            />
           </div>
+
           <div
           v-if="totalPages > 0"
           class="col-span-1 flex flex-wrap items-center
@@ -129,12 +146,55 @@
             </div>
             </section>
           <section
-          v-if="totalPages === 0"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
+            v-if="totalPages === 0"
+            class="col-span-1 md:col-span-3 flex flex-col
+            items-center justify-center
+            h-60 text-center px-6"
           >
-          No Teams Available
+            <div class="mb-3 text-gray-400">
+              <i class="ri-team-line text-4xl md:text-5xl" />
+            </div>
+
+            <h3 class="text-lg font-semibold text-gray-700 mb-1">
+              No Teams Available
+            </h3>
+
+            <!-- Description -->
+            <p class="text-sm text-gray-500 mb-4 max-w-xs">
+              There are no teams to display yet. Create a new team to get started.
+            </p>
+
+            <!-- Action Button -->
+            <button
+              type="button"
+              class="
+                inline-flex
+                items-center
+                px-4
+                py-2
+                rounded-md
+                bg-gradient-to-br
+                from-[#5EE738]
+                via-[#3e872a]
+                to-[#050505]
+                text-white
+                text-sm
+                font-medium
+                shadow-sm
+                hover:from-[#4ec82a]
+                hover:via-[#336a20]
+                transition-all
+                duration-200
+                focus:outline-none
+                focus:ring-2
+                focus:ring-offset-2
+                focus:ring-green-500
+              "
+              @click="openAddTeamDialog"
+            >
+              <i class="ri-add-line mr-1.5" />
+              <span>Add Your First Team</span>
+            </button>
           </section>
         </div>
       </section>
@@ -169,6 +229,7 @@
 
 <script>
 import _debounce from 'lodash/debounce';
+import YearFilter from '~/components/YearFilter.vue';
 import AddTeamModal from '~/components/modals/AddTeamModal.vue';
 import EditTeamModal from '~/components/modals/EditTeamModal.vue';
 import DeleteTeamModal from '~/components/modals/DeleteTeamModal.vue';
@@ -176,7 +237,8 @@ export default {
   components: {
     AddTeamModal,
     EditTeamModal,
-    DeleteTeamModal
+    DeleteTeamModal,
+    YearFilter
   },
   props: {
     // eslint-disable-next-line vue/prop-name-casing
@@ -196,6 +258,7 @@ export default {
   },
   data() {
     return {
+      selectedYear: new Date().getFullYear(),
       selectedData: ({}),
       showAddTeamModal: false,
       showEditTeamModal: false,
@@ -269,6 +332,12 @@ export default {
     this.retrieveAgeGroups();
   },
   methods: {
+    handleYearChange(year) {
+      this.selectedYear = year;
+      this.query = year;
+      this.retrieveTeams();
+      console.log('Year updated:', year);
+    },
     matchField(id) {
       const fieldData = this.FieldList.find(field => field.id === id);
       return fieldData ? fieldData.name : '';

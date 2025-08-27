@@ -102,15 +102,16 @@
                   </div>
                   <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
-                      <label for="teamname">
-                        Team Name *
+                      <label for="selectseries" class="mb-1 block">
+                        Select Series *
                       </label>
                       <VSelect
-                        v-model="SeriesData.teamId"
-                        :items="formattedTeam"
-                        label="Choose Team"
+                        v-model="SeriesData.seriesID"
+                        :items="formattedSeries"
+                        label="Choose Series"
                         :rules="rules"
                         solo
+                        @change="handleSelectChangeSeries"
                         >
                       </VSelect>
                     </div>
@@ -132,7 +133,7 @@
                       </label>
                       <VSelect
                         v-model="SeriesData.agegroup_id"
-                        :items="formattedAgeGroup"
+                        :items="ageGroup"
                         label="Choose Age Group"
                         :rules="rules"
                         solo
@@ -142,13 +143,13 @@
                   </div>
                   <div class="col-span-2 md:col-span-1">
                     <div class="col-span-1">
-                      <label for="selectseries" class="mb-1 block">
-                        Select Series *
+                      <label for="teamname">
+                        Team Name *
                       </label>
                       <VSelect
-                        v-model="SeriesData.seriesID"
-                        :items="formattedSeries"
-                        label="Choose Series"
+                        v-model="SeriesData.teamId"
+                        :items="team"
+                        label="Choose Team"
                         :rules="rules"
                         solo
                         >
@@ -203,10 +204,6 @@ export default {
       type: Boolean,
       required: true
     },
-    agegroup: {
-      type: Array,
-      required: true
-    },
     series: {
       type: Object,
       default: () => ({}),
@@ -225,6 +222,8 @@ export default {
       phoneCode: '+61',
       phoneDigits: '',
       selectedDate: '',
+      team: [],
+      ageGroup: [],
     }
   },
   computed: {
@@ -233,10 +232,6 @@ export default {
         return `${this.phoneCode}${this.phoneDigits}`
       },
     },
-    formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
-    },
     formattedSeries() {
       return this.seriesList.map(series =>
         ({
@@ -244,11 +239,7 @@ export default {
           ${this.capitalizeFirstLetter(series.type)} Series`,
           value: series.id
         }));
-    },
-    formattedTeam() {
-      return this.teamList.map(team =>
-        ({ text: team.name, value: team.id }));
-    },
+    }
   },
   watch: {
     active: {
@@ -278,10 +269,30 @@ export default {
     },
   },
   created() {
-    this.retrieveSeries();
-    this.retrieveTeams();
+    this.listOfSeriesData();
   },
   methods: {
+    handleSelectChangeSeries(value) {
+      this.retrieveSeries(value)
+    },
+    retrieveSeries(id) { 
+      this.$axios
+        .$get(`v1/series/${id}`)
+        .then((response) => {
+          this.team = response.data.series.team.map(team => ({
+            text: team.name,
+            value: team.id
+          }))
+          this.ageGroup = response.data.series.team.map(team => ({
+            text: team.agegroup.name,
+            value: team.agegroup.id
+          })
+          )
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
     capitalizeFirstLetter(val) {
       return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     },
@@ -376,6 +387,8 @@ export default {
     closeDialog() {
       this.$emit('close')
       this.reset()
+      this.team = []
+      this.ageGroup = []
     },
     reset() {
       this.SeriesData = []
@@ -474,7 +487,7 @@ export default {
     handleImageRemoveCreate() {
       this.showGenerateCreatedImageBtn = false;
     },
-    retrieveSeries() {
+    listOfSeriesData() {
       const query = {
         q: this.query,
         sort: 'a_to_z',
@@ -493,29 +506,9 @@ export default {
         .$get(`v1/series?${queryString}`)
         .then((response) => {
           this.seriesList = response.data.series;
+          this.teamList = response.data.series
         })
-    },
-    retrieveTeams() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/teams?${queryString}`)
-        .then((response) => {
-          this.teamList = response.data.teams;
-        })
-    },
+    }
   }
 }
 </script>

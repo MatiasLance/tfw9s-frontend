@@ -253,7 +253,9 @@
                     </BaseButton>
                   </div>
                   <BaseButton
-                    v-show="ActiveTab === 'weekly' || ActiveTab === 'coast'"
+                    v-show="ActiveTab === 'weekly'
+                    || ActiveTab === 'coast'
+                    || ActiveTab === 'tournament'"
                     class="
                     max-w-full rounded-lg
                     border border-gray-200
