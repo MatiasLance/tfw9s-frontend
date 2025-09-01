@@ -142,6 +142,7 @@
                       color="primary"
                       hide-details
                       class="ma-0 pa-0"
+                      @click="matchBuffer.team2 = []"
                     />
                     <label
                       class="text-sm font-medium text-gray-800 cursor-pointer -ml-[15px]"

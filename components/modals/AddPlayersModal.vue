@@ -367,8 +367,7 @@ export default {
 
       this.$axios
         .$post('/v1/players', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then((response) => {
-          console.log(response)
+        .then(() => {
           this.reset();
           this.$emit('confirm')
         })

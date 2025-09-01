@@ -100,6 +100,7 @@
             :TeamList="TeamList"
             :EventList="EventList"
             :AgeGroupList="AgeGroupList"
+            :PlayersList="PlayersList"
             :getSeries="retrieveSeries"
             :getEvents="retrieveEvents"
             />

@@ -268,6 +268,19 @@
                     Manage Teams
                   </BaseButton>
                   <BaseButton
+                    v-if="ActiveTab === 'coast' && data.name.toLowerCase().includes('tuggerah')"
+                    class="
+                      max-w-full rounded-lg
+                      border border-gray-200
+                      bg-[#737373]
+                      px-4
+                      py-2
+                      "
+                    @click="openAddPlayerDialog"
+                  >
+                    Add Player
+                  </BaseButton>
+                  <BaseButton
                     v-show="ActiveTab === 'tournament' || ActiveTab === 'coast'"
                   class="
                     max-w-full rounded-lg
@@ -322,6 +335,13 @@
       </div>
     </section>
   </div>
+  <AddPlayersModal
+  :active="showAddPlayersModal"
+  :agegroup="AgeGroupList"
+  :teams="PlayersList"
+  @close="closeAddPlayerDialog"
+  @confirm="confirmAddedPlayer"
+  />
   <AddSeriesModal
   :active="showAddSeriesModal"
   :agegroup="AgeGroupList"
@@ -368,6 +388,7 @@
 </template>
 
 <script>
+import AddPlayersModal from '~/components/modals/AddPlayersModal.vue';
 import AddSeriesModal from '~/components/modals/AddSeriesModal.vue';
 import EditSeriesModal from '~/components/modals/EditSeriesModal.vue';
 import DeleteSeriesModal from '~/components/modals/DeleteSeriesModal.vue';
@@ -376,6 +397,7 @@ import ManageWeeklySeriesTeamsModal from '~/components/modals/ManageWeeklySeries
 import EditThumbnailModal from '~/components/modals/EditThumbnailModal.vue';
 export default {
   components: {
+    AddPlayersModal,
     AddSeriesModal,
     ManageTeamLimitModal,
     ManageWeeklySeriesTeamsModal,
@@ -407,6 +429,10 @@ export default {
       type: Function,
       required: true,
     },
+    PlayersList: {
+      type: Array,
+      required: true
+    },
   },
   data() {
     return {
@@ -423,6 +449,7 @@ export default {
         { text: 'Tournaments', value: 'tournament' },
         { text: 'Central Coast', value: 'coast' },
       ],
+      showAddPlayersModal: false,
       showAddSeriesModal: false,
       showEditSeriesModal: false,
       showEditThumbnailModal: false,
@@ -504,7 +531,7 @@ export default {
       }));
 
       return formattedYears;
-    },
+    }
   },
   watch: {
     ActiveTab: {
@@ -524,6 +551,9 @@ export default {
     },
   },
   methods: {
+    openAddPlayerDialog() {
+      this.showAddPlayersModal = true
+    },
     openAddSeriesDialog() {
       this.showAddSeriesModal = true
     },
@@ -538,6 +568,9 @@ export default {
       this.selected = { ...data }
       this.showWeeklyTeamsModal = true
     },
+    closeAddPlayerDialog() {
+      this.showAddPlayersModal = false
+    },
     closeEditThumbnailDialog() {
       this.showEditThumbnailModal = false
     },
@@ -551,9 +584,20 @@ export default {
       this.selected = []
       this.showWeeklyTeamsModal = false
     },
+    confirmAddedPlayer() {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Player Added',
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      })
+      this.showAddPlayersModal = false
+    },
     AddSeries(data) {
       this.seriesList.unshift(data);
       this.showAddSeriesModal = false;
+      this.showAddPlayersModal = false
       this.retrieveSeries();
       this.getSeries();
       this.getEvents();
