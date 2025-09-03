@@ -142,12 +142,26 @@
                 </div>
                 <div></div>
                 <div
+                v-if="match.team2"
                   class="col-span-2 flex text-lg
                   font-medium text-slate-600"
                 >
                   <span class="h-44 flex-1 p-4 transition sm:h-52 md:h-60">
                     <img
                     :src="getMediaURL(match.team2.media[0])"
+                    alt="Team 2 logo"
+                    class="size-full object-contain"
+                    />
+                  </span>
+                </div>
+                <div
+                v-else
+                  class="col-span-2 flex text-lg
+                  font-medium text-slate-600"
+                >
+                  <span class="h-44 flex-1 p-4 transition sm:h-52 md:h-60">
+                    <img
+                    src="~/assets/images/tfw9s.png"
                     alt="Team 2 logo"
                     class="size-full object-contain"
                     />
@@ -166,10 +180,18 @@
                   VS
                 </div>
                 <div
+                v-if="match.team2"
                 class="col-span-2 text-center text-sm font-semibold text-white
                 md:text-lg lg:truncate lg:whitespace-nowrap lg:text-xl"
                   >
                   {{ match.team2.name }}
+                </div>
+                <div
+                v-else
+                class="col-span-2 text-center text-sm font-semibold text-white
+                md:text-lg lg:truncate lg:whitespace-nowrap lg:text-xl"
+                  >
+                  Bye
                 </div>
                 <div v-if="match.submit"
                 class="relative col-span-5 flex justify-center
@@ -296,7 +318,7 @@ export default {
       selectedYear: null,
       AgeGroupList: [],
       EventList: [],
-      MatchList: [],
+      matchList: [],
       isLoaded: false,
       from: 0,
       to: 0,
@@ -365,10 +387,10 @@ export default {
       const searchTerm = this.searchTeamName.toLowerCase().trim();
 
       if (!searchTerm) {
-        return this.MatchList;
+        return this.matchList;
       }
 
-      return this.MatchList.filter(match => {
+      return this.matchList.filter(match => {
 
         const team1Name = match.team1.name.toLowerCase() || '';
         const team2Name = match.team2.name.toLowerCase() || '';
@@ -618,7 +640,8 @@ export default {
               })
             };
           });
-          this.MatchList = EventList.flatMap(data => data.eventmatch);
+          this.matchList = EventList.flatMap(data => data.eventmatch);
+          console.log(this.matchList)
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;

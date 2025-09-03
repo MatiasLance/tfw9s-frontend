@@ -108,14 +108,28 @@
                 </div>
                 <div></div>
                 <div
+                v-if="match.team2"
                   class="col-span-2 flex text-lg
                   font-medium text-slate-600"
                 >
-                  <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
+                  <span class="h-44 flex-1 p-4 transition sm:h-52 md:h-60">
                     <img
                     :src="getMediaURL(match.team2.media[0])"
                     alt="Team 2 logo"
-                    class="h-full w-full object-contain"
+                    class="size-full object-contain"
+                    />
+                  </span>
+                </div>
+                <div
+                v-else
+                  class="col-span-2 flex text-lg
+                  font-medium text-slate-600"
+                >
+                  <span class="h-44 flex-1 p-4 transition sm:h-52 md:h-60">
+                    <img
+                    src="~/assets/images/tfw9s.png"
+                    alt="Team 2 logo"
+                    class="size-full object-contain"
                     />
                   </span>
                 </div>
@@ -132,10 +146,18 @@
                   VS
                 </div>
                 <div
-                class="col-span-2 text-center text-sm md:text-lg font-semibold
-                text-white lg:truncate lg:whitespace-nowrap lg:text-xl"
+                v-if="match.team2"
+                class="col-span-2 text-center text-sm font-semibold text-white
+                md:text-lg lg:truncate lg:whitespace-nowrap lg:text-xl"
                   >
                   {{ match.team2.name }}
+                </div>
+                <div
+                v-else
+                class="col-span-2 text-center text-sm font-semibold text-white
+                md:text-lg lg:truncate lg:whitespace-nowrap lg:text-xl"
+                  >
+                  Bye
                 </div>
                 <div v-if="match.submit"
                 class="col-span-5 text-2xl text-white font-semibold
