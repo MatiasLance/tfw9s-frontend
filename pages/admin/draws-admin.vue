@@ -315,7 +315,7 @@ export default {
       selectedYear: null,
       FieldList: [],
       EventList: [],
-      MatchList: [],
+      matchList: [],
       isLoaded: false,
       from: 0,
       to: 0,
@@ -405,10 +405,10 @@ export default {
       const searchTerm = this.searchTeamName.toLowerCase().trim();
 
       if (!searchTerm) {
-        return this.MatchList;
+        return this.matchList;
       }
 
-      return this.MatchList.filter(match => {
+      return this.matchList.filter(match => {
 
         const team1Name = match.team1.name.toLowerCase() || '';
         const team2Name = match.team2.name.toLowerCase() || '';
@@ -656,7 +656,7 @@ export default {
               })
             };
           });
-          this.MatchList = EventList.flatMap(data => data.eventmatch);
+          this.matchList = EventList.flatMap(data => data.eventmatch);
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
