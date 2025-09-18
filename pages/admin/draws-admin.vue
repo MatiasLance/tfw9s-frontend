@@ -73,9 +73,37 @@
             </div>
           </div>
         </div>
-        <div class="col-span-3">
+        <section v-if="totalPages > 0" class="col-span-3 mb-8">
+          <div class="
+              flex flex-wrap items-center justify-around
+              gap-x-2
+              lg:justify-between
+            "
+            data-aos="flip-up"
+            data-aos-offset="0"
+          >
+            <span class="text-base leading-[2.5em] text-white">
+              Showing {{ from }}-{{ to }} of {{ totalItems }} results
+            </span>
+            <BasePagination
+              :active-page="page"
+              :total-pages="totalPages"
+              @change="setPage"
+            />
+          </div>
+        </section>
+        <div v-if="isLoading" class="col-span-3 text-center">
+          <VProgressCircular
+              :size="150"
+              :width="15"
+              color="green"
+              indeterminate
+            >
+            </VProgressCircular>
+        </div>
+        <div v-else class="col-span-3">
           <section
-            v-if="totalPages > 0"
+            v-if="totalPages > 0 && !isLoading"
             class="grid w-full grid-cols-1 gap-4 md:grid-cols-2"
           >
             <div
@@ -200,7 +228,7 @@
           </section>
           <!-- No draws section -->
            <section
-            v-if="filteredMatchList.length === 0"
+            v-if="totalPages.length === 0 && !isLoading"
             class="
             col-span-3 flex flex-col
             items-center justify-center
@@ -323,6 +351,7 @@ export default {
       perPage: 10,
       totalPages: 0,
       totalItems: 0,
+      isLoading: false
     }
   },
   computed: {
@@ -463,7 +492,6 @@ export default {
           this.retrieveEventMatch();
         } else if (this.isLoaded) {
           this.team = []
-          this.totalPages = 0
         }
       },
       immediate: true,
@@ -577,10 +605,12 @@ export default {
       return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`;
     },
     retrieveEvents() {
+      this.isLoading = true
       const query = {
         q: this.query,
         sort: 'a_to_z',
         page: this.page,
+        maxEventsPerPage: 12
       };
 
       Object.keys(query).forEach((key) => {
@@ -595,15 +625,18 @@ export default {
         .$get(`v1/events?${queryString}`)
         .then((response) => {
           this.EventList = response.data.events;
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
+          this.isLoading = false
         })
-        .finally(() => {
-          this.retrieveEventMatch();
-        });
     },
     retrieveFields() {
       const query = {
         q: this.query,
         page: this.page,
+        maxEventsPerPage: 12
       };
 
       Object.keys(query).forEach((key) => {
@@ -627,6 +660,7 @@ export default {
         /* eslint-disable camelcase */
         field_id: this.selectedField,
         year: this.selectedYear,
+        maxEventsPerPage: 12
       };
 
       Object.keys(query).forEach((key) => {
@@ -657,15 +691,19 @@ export default {
             };
           });
           this.matchList = EventList.flatMap(data => data.eventmatch);
-          this.totalItems = response.data.total_items;
-          this.totalPages = response.data.last_page;
-          this.from = response.data.from;
-          this.to = response.data.to;
+          // this.totalItems = response.data.total_items;
+          // this.totalPages = response.data.last_page;
+          // this.from = response.data.from;
+          // this.to = response.data.to;
         })
         .finally(() => {
           this.isLoaded = true;
         });
     },
+    setPage(page) {
+      this.page = page;
+      this.retrieveEvents();
+    }
   }
 }
 </script>

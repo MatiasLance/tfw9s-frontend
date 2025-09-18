@@ -138,6 +138,7 @@
                         label="Choose Age Group"
                         :rules="rules"
                         solo
+                        @change="handleSelectAgeGroup"
                         >
                       </VSelect>
                     </div>
@@ -234,6 +235,8 @@ export default {
       },
       team: [],
       ageGroup: [],
+      allTeams: [],
+      selectedAgeGroup: null
     }
   },
   computed: {
@@ -258,23 +261,53 @@ export default {
     handleSelectChangeSeries(value) {
       this.retrieveSeries(value)
     },
-    retrieveSeries(id) { 
+    handleSelectAgeGroup(value) {
+      this.selectedAgeGroup = value;
+
+      if (!this.selectedAgeGroup || !Array.isArray(this.allTeams)) {
+        this.team = [];
+        return;
+      }
+
+      this.team = this.allTeams
+        .filter(team => Number(team.agegroup_id) === Number(this.selectedAgeGroup))
+        .map(team => ({
+          text: team.name,
+          value: team.id
+        }));
+    },
+    retrieveSeries(id) {
       this.$axios
         .$get(`v1/series/${id}`)
         .then((response) => {
-          this.team = response.data.series.team.map(team => ({
-            text: team.name,
-            value: team.id
-          }))
-          this.ageGroup = response.data.series.team.map(team => ({
-            text: team.agegroup.name,
-            value: team.agegroup.id
-          })
-          )
+          const series = response.data && response.data.series ? response.data.series : null;
+
+          if (!series || !Array.isArray(series.team)) {
+            this.allTeams = [];
+            this.team = [];
+            this.ageGroup = [];
+            return;
+          }
+
+          this.allTeams = series.team;
+
+          const uniqueAgeGroups = new Map();
+          series.team.forEach(team => {
+            if (team.agegroup) {
+              const { id, name } = team.agegroup;
+              uniqueAgeGroups.set(id, { text: name, value: id });
+            }
+          });
+          this.ageGroup = Array.from(uniqueAgeGroups.values());
+
+          this.handleSelectAgeGroup(this.selectedAgeGroup);
         })
         .catch((error) => {
-          console.log(error)
-        })
+          console.error('Error fetching series:', error);
+          this.allTeams = [];
+          this.team = [];
+          this.ageGroup = [];
+        });
     },
     capitalizeFirstLetter(val) {
       return String(val).charAt(0).toUpperCase() + String(val).slice(1);
