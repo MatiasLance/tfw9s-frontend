@@ -133,7 +133,7 @@
                       </label>
                       <VSelect
                         v-model="SeriesData.agegroup_id"
-                        :items="ageGroup"
+                        :items="formattedAgeGroup"
                         label="Choose Age Group"
                         :rules="rules"
                         solo
@@ -148,7 +148,7 @@
                       </label>
                       <VSelect
                         v-model="SeriesData.teamId"
-                        :items="team"
+                        :items="formattedTeam"
                         label="Choose Team"
                         :rules="rules"
                         solo
@@ -217,6 +217,7 @@ export default {
       imgListEdit: [],
       seriesList: [],
       teamList: [],
+      ageGroupList: [],
       SeriesData: { agegroup_id: null },
       rules: [ value => !!value || 'Required' ],
       phoneCode: '+61',
@@ -224,6 +225,7 @@ export default {
       selectedDate: '',
       team: [],
       ageGroup: [],
+      loading: false
     }
   },
   computed: {
@@ -239,6 +241,20 @@ export default {
           ${this.capitalizeFirstLetter(series.type)} Series`,
           value: series.id
         }));
+    },
+    formattedTeam() {
+      return this.teamList.map(team =>
+        ({
+          text: `${this.capitalizeFirstLetter(team.name)}`,
+          value: team.id
+        }));
+    },
+    formattedAgeGroup() {
+      return this.ageGroupList.map(ageGroup =>
+        ({
+          text: `${this.capitalizeFirstLetter(ageGroup.name)}`,
+          value: ageGroup.id
+        }));
     }
   },
   watch: {
@@ -249,12 +265,16 @@ export default {
           this.SeriesData.agegroup_id = this.series.agegroup_id || null;
           this.SeriesData.teamId = this.series.team_id || null;
           this.SeriesData.seriesID = this.series.series_id || null;
-          this.imgUrlEdit = this.series.media.map((x) =>
+          this.imgUrlEdit = (this.series.media || []).map((x) =>
             `${this.$config.baseURL}/storage/${x.path}`
           );
-          this.imgListEdit = this.series.media.map((x) => x.hash);
+          this.imgListEdit = (this.series.media || []).map((x) => x.hash);
           this.selectedDate = this.series.dob ? new Date(this.series.dob) : null;
-          this.phoneDigits = this.SeriesData.phone_number.replace(/^\+61/, '') || '';
+          this.phoneDigits = (this.SeriesData.phone_number || '').replace(/^\+61/, '') || '';
+
+          if (this.SeriesData.seriesID) {
+            this.retrieveSeries(this.SeriesData.seriesID);
+          }
         }
       },
       immediate: true,
@@ -273,26 +293,68 @@ export default {
   },
   methods: {
     handleSelectChangeSeries(value) {
+      if (!value) {
+        this.teamList = []
+        this.ageGroupList = []
+        return
+      }
       this.retrieveSeries(value)
     },
-    retrieveSeries(id) { 
+
+    retrieveSeries(id) {
+      if (!id) {
+        this.teamList = []
+        this.ageGroupList = []
+        return
+      }
+
+      this.loading = true
       this.$axios
         .$get(`v1/series/${id}`)
         .then((response) => {
-          this.team = response.data.series.team.map(team => ({
-            text: team.name,
-            value: team.id
-          }))
-          this.ageGroup = response.data.series.team.map(team => ({
-            text: team.agegroup.name,
-            value: team.agegroup.id
-          })
-          )
+          const series = response && response.data && response.data.series ?
+            response.data.series : null
+
+          const teams = (series && Array.isArray(series.team)) ? series.team : []
+
+
+          this.teamList = teams
+
+          const agegroups = teams.flatMap(t => t.agegroup ? [ t.agegroup ] : [])
+
+          const deduped = []
+          const seen = new Set()
+          for (const ag of agegroups) {
+            if (!ag || ag.id == null) continue
+            if (!seen.has(ag.id)) {
+              seen.add(ag.id)
+              deduped.push(ag)
+            }
+          }
+          this.ageGroupList = deduped
+
+          if (this.SeriesData && this.SeriesData.teamId) {
+            const foundTeam = this.teamList.find(t => t.id === this.SeriesData.teamId)
+            if (!foundTeam) {
+              this.SeriesData.teamId = null
+            }
+          }
+
+          if (this.SeriesData && this.SeriesData.agegroup_id) {
+            const foundAge = this.ageGroupList.find(a => a.id === this.SeriesData.agegroup_id)
+            if (!foundAge) {
+              this.SeriesData.agegroup_id = null
+            }
+          }
         })
         .catch((error) => {
-          console.log(error)
+          console.error('Failed to retrieve series:', error)
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
+
     capitalizeFirstLetter(val) {
       return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     },
@@ -301,15 +363,10 @@ export default {
     },
     DatePickerToSQL(datestring) {
       if (!datestring) return '';
-  
-      // Create a new Date object (handles both Date objects and strings)
       const d = new Date(datestring);
-  
-      // Format the date components
       const year = d.getFullYear();
       const month = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
-  
       return `${year}-${month}-${day}`;
     },
     validate() {
@@ -330,6 +387,7 @@ export default {
           variant: 'danger',
           queue: true,
         });
+        return false;
       } else if (this.SeriesData.description === '<p></p>') {
         this.$oruga.notification.open({
           duration: 5000,
@@ -391,11 +449,15 @@ export default {
       this.ageGroup = []
     },
     reset() {
-      this.SeriesData = []
+      this.SeriesData = { agegroup_id: null }
       this.selectedDate = null;
       this.imgList = []
       this.imgUrl = []
+      this.imgListEdit = []
+      this.imgUrlEdit = []
       this.showGenerateCreatedImageBtn = false
+      this.teamList = []
+      this.ageGroupList = []
     },
     handleCroppaFileSizeExceed(file) {
       this.$oruga.notification.open({
@@ -505,13 +567,24 @@ export default {
       this.$axios
         .$get(`v1/series?${queryString}`)
         .then((response) => {
-          this.seriesList = response.data.series;
-          this.teamList = response.data.series
+          const series = (response && response.data && response.data.series) ?
+            response.data.series : [];
+          this.seriesList = series;
+          this.teamList = series.flatMap(s => s.team || []);
+          this.ageGroupList = this.teamList.flatMap(t => t.agegroup ? [ t.agegroup ] : []);
+
+          if (this.SeriesData && this.SeriesData.seriesID) {
+            this.retrieveSeries(this.SeriesData.seriesID)
+          }
+        })
+        .catch((err) => {
+          console.error('Failed to fetch series list:', err)
         })
     }
   }
 }
 </script>
+
 
 <style scoped>
 .croppa-container {
