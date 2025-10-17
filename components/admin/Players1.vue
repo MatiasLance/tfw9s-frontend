@@ -403,15 +403,16 @@ export default {
     },
     formatDate(date) {
       if (!date) return "N/A"; // Handle null/undefined
-        const d = new Date(date);
-        return d.toLocaleDateString('en-GB'); // Formats as DD/MM/YYYY
-        // OR for custom format:
-        // return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+      const d = new Date(date);
+      return d.toLocaleDateString('en-GB'); // Formats as DD/MM/YYYY
+      // OR for custom format:
+      // return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
     },
-        // ... (keep existing methods)
-      getAgeGroupName(agegroup_id) {
-        const group = this.ageGroupList.find(g => g.id === agegroup_id);
-        return group ? group.name : 'Unknown';
+    // ... (keep existing methods)
+    /* eslint-disable camelcase */
+    getAgeGroupName(agegroup_id) {
+      const group = this.ageGroupList.find(g => g.id === agegroup_id);
+      return group ? group.name : 'Unknown';
     },
     openEditPlayersDialog(data) {
       this.selecetedData = data

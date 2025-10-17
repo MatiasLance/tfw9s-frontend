@@ -219,7 +219,7 @@ export default {
           this.imgListEdit.push(blob);
         },
       );
-
+      
       this.myEditCroppa.refresh()
     },
     /** REMOVE IMAGE IN IMGURL AND IMGLIST */

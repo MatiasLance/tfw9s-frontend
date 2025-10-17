@@ -135,6 +135,11 @@ export default {
       type: [ String ],
       required: true
     },
+    price: {
+      type: [ Number, String ],
+      required: true,
+      default: 0
+    }
   },
   data() {
     return {
