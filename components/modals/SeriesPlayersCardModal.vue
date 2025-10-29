@@ -20,24 +20,6 @@
     <!-- Player Grid -->
     <div v-else class="grow overflow-y-auto">
       <div v-if="players && players.length > 0">
-        <!-- Pagination Row -->
-        <!--
-          <div class="mb-4 flex flex-wrap items-center justify-between gap-x-2">
-          <span class="font-medium text-white">
-          Showing {{ from }}-{{ to }} of {{ totalItems }} items
-          </span>
-          <VPagination
-          v-model="page"
-          :length="totalPages"
-          color="success"
-          :total-visible="7"
-          class="text-white"
-          dark
-          @change="quickFetch"
-          />
-          </div> 
-        -->
-
         <!-- Grid of Player Cards -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
           <PlayerCardView

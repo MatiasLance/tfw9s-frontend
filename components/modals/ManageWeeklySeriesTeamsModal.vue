@@ -184,14 +184,40 @@
                     >
                       <p
                       v-if="teamUrlGenerating === team.id"
-                      class="animate-spin"
                       >
-                        <i class="ri-loader-2-line"/>
+                        <i class="ri-clipboard-line"></i>
+                        link copied
                       </p>
                       <p
                       v-else
                       >
-                        <i class="ri-links-line"/>
+                        <i class="ri-file-copy-line"></i>
+                        copy link
+                      </p>
+                    </button>
+                    <button
+                    type="button"
+                    class="
+                      max-w-full rounded
+                      border border-gray-200
+                      bg-[#1e4573]
+                      px-3
+                      py-1.5
+                      text-sm
+                      uppercase
+                      text-white
+                      "
+                      @click="sendLinkViaSms(team)"
+                    >
+                      <p
+                      v-if="teamUrlGeneratingPerID === team.id"
+                      >
+                        <i class="ri-send-plane-line animate-pulse"/>
+                        sending link...
+                      </p>
+                      <p v-else>
+                        <i class="ri-send-plane-line"></i>
+                        send link via sms
                       </p>
                     </button>
                     <button
@@ -263,17 +289,6 @@
         >
           Generate Links
         </VBtn>
-        <!--
-          <VBtn
-          depressed
-          small
-          color="error"
-          class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-          @click="closeDialog"
-          >
-          Close
-          </VBtn> 
-        -->
       </div>
     </div>
     <SeriesPlayersCardModal
@@ -352,7 +367,8 @@ export default {
       selectedPlayer: [],
       playerLoading: false,
       players: [],
-      teamUrlGenerating: null
+      teamUrlGenerating: null,
+      teamUrlGeneratingPerID: null,
     }
   },
   computed: {
@@ -543,7 +559,41 @@ export default {
           });
         })
         .finally(() => {
-          this.teamUrlGenerating = null;
+          setTimeout(() => {
+            this.teamUrlGenerating = null;
+          }, 500)
+        })
+    },
+    sendLinkViaSms(team) {
+      this.teamUrlGeneratingPerID = team.id;
+      const payload = { id: team.id };
+      this.$axios
+        .$post('v1/sms/sendSMSNotification', payload)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: response.message,
+            variant: 'success',
+            duration: 3000,
+            position: 'bottom',
+            queue: true,
+            dangerouslyUseHTMLString: true,
+          });
+        })
+        .catch(err => {
+          console.error('Url generation failed:', err);
+          this.$oruga.notification.open({
+            message: 'Failed to send sms',
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true,
+            dangerouslyUseHTMLString: true,
+          });
+        })
+        .finally(() => {
+          setTimeout(() => {
+            this.teamUrlGeneratingPerID = null;
+          }, 500)
         })
     },
     openManageTeamModal(team) {

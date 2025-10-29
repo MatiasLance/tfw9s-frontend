@@ -44,16 +44,16 @@
 
       <div class="flex flex-col gap-4 p-2 md:flex-row">
         <template v-if="activeStep === 1">
-          <template v-if="seriestype === 'weekly'">
+          <template
+            v-if="seriestype === 'weekly' || seriestype === 'coast'"
+          >
             <IndividualInformationForm
               :is-loading="isStepperLoading"
               :price="price"
               @submit="toPayStep"
             />
           </template>
-          <template
-            v-if="seriestype === 'tournament' || seriestype === 'coast'"
-          >
+          <template v-if="seriestype === 'tournament'">
             <TeamInformationForm
               :is-loading="isStepperLoading"
               :price="price"
