@@ -189,7 +189,6 @@
                   'border-gray-300 hover:border-gray-400'
                 ]"
                 @blur="validateField('dateOfBirth')"
-                @change="calculateAgeGroup"
               />
             </div>
             <p v-if="errors.dateOfBirth" class="text-sm text-red-600 flex items-center">
@@ -374,12 +373,42 @@
                 ]"
                 placeholder="Enter parent's contact number"
                 @blur="validateField('parentContact')"
-                @input="formatPhoneNumber"
               />
             </div>
             <p v-if="errors.parentContact" class="text-sm text-red-600 flex items-center">
               <i class="ri-error-warning-line mr-1"></i>
               {{ errors.parentContact }}
+            </p>
+          </div>
+
+           <!-- Parent Email -->
+          <div class="grid grid-cols-1 gap-2">
+            <label for="parentEmail" class="text-sm font-medium text-gray-700">
+              Parent Email *
+            </label>
+            <div class="relative">
+              <i class="ri-mail-line absolute left-3 top-1/2
+              transform -translate-y-1/2 text-gray-400"
+              ></i>
+              <input
+                id="parentEmail"
+                v-model="form.parentEmail"
+                type="email"
+                required
+                :class="[
+                  'w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm',
+                  'focus:outline-none focus:ring-2 focus:ring-blue-500',
+                  'focus:border-transparent transition-all',
+                  errors.parentEmail ? 'border-red-500 bg-red-50' :
+                  'border-gray-300 hover:border-gray-400'
+                ]"
+                placeholder="Enter parent's email address"
+                @blur="validateField('parentEmail')"
+              />
+            </div>
+            <p v-if="errors.parentEmail" class="text-sm text-red-600 flex items-center">
+              <i class="ri-error-warning-line mr-1"></i>
+              {{ errors.parentEmail }}
             </p>
           </div>
         </div>
@@ -424,15 +453,19 @@ export default {
   data() {
     return {
       form: {
-        teamName: 'Thunderbolts U12', // Example auto-populated data
-        ageGroup: 'U12', // Example auto-populated data
+        teamName: '',
+        teamID: null,
+        ageGroup: '',
+        ageGroupID: null,
+        seriesID: null,
         firstName: '',
         lastName: '',
         dateOfBirth: '',
         photo: null,
         parentFirstName: '',
         parentLastName: '',
-        parentContact: ''
+        parentContact: '',
+        parentEmail: ''
       },
       errors: {
         teamName: '',
@@ -443,7 +476,8 @@ export default {
         photo: '',
         parentFirstName: '',
         parentLastName: '',
-        parentContact: ''
+        parentContact: '',
+        parentEmail: ''
       },
       dragOver: false,
       photoPreview: null,
@@ -452,44 +486,40 @@ export default {
     }
   },
   mounted() {
-    // You can call an API here to get the team and age group data
-    // this.fetchTeamData()
+    const token = this.$route.query.token
+    if (token) {
+      this.fetchTeamData(token)
+    }
   },
   methods: {
-    // Example method to fetch team data from an API
-    async fetchTeamData() {
+    async fetchTeamData(key) {
       try {
-        const response = await this.$axios.get('/api/team-info')
-        console.log(response)
-        // this.form.teamName = response.data.teamName
-        // this.form.ageGroup = response.data.ageGroup
-      } catch (error) {
-        console.error('Error fetching team data:', error)
-      }
-    },
+        const response = await this.$axios.$get(`v1/series/token/${key}`)
+        this.team = response.data.team || [];
 
-    // Method to calculate age group based on date of birth
-    calculateAgeGroup() {
-      if (!this.form.dateOfBirth) return
-      
-      const dob = new Date(this.form.dateOfBirth)
-      const today = new Date()
-      let age = today.getFullYear() - dob.getFullYear()
-      
-      // Adjust age if birthday hasn't occurred this year
-      const monthDiff = today.getMonth() - dob.getMonth()
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-        age--
+        const registered = this.team.registered_players_count || 0;
+        const limit = this.team.player_limit || 0;
+        
+        this.isPlayerLimitReached = registered >= limit
+
+        if (this.isPlayerLimitReached) {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Player Registration Limit Reached',
+            position: 'bottom',
+            variant: 'info',
+            queue: true,
+          });
+        }
+
+        this.form.teamName = this.team.name
+        this.form.teamID = this.team.id
+        this.form.ageGroup = this.team.agegroup.name
+        this.form.ageGroupID = this.team.agegroup_id
+        this.form.seriesID = this.team.series.id
+      } catch (error) {
+        console.error('Error fetching team data:', error);
       }
-      
-      // Determine age group
-      if (age < 8) this.form.ageGroup = 'U8'
-      else if (age < 10) this.form.ageGroup = 'U10'
-      else if (age < 12) this.form.ageGroup = 'U12'
-      else if (age < 14) this.form.ageGroup = 'U14'
-      else if (age < 16) this.form.ageGroup = 'U16'
-      else if (age < 18) this.form.ageGroup = 'U18'
-      else this.form.ageGroup = 'U19+'
     },
 
     validateField(field) {
@@ -549,29 +579,35 @@ export default {
         if (!this.form.parentContact.trim()) {
           this.errors.parentContact = 'Parent contact number is required'
         } else {
-          const phoneRegex = /^\+?[1-9][\d]{0,15}$/
           const cleanPhone = this.form.parentContact.replace(/\D/g, '')
-          if (!phoneRegex.test(cleanPhone) || cleanPhone.length < 10) {
-            this.errors.parentContact = 'Please enter a valid phone number'
+          let phoneToValidate = cleanPhone
+          
+          if (cleanPhone.startsWith('0')) {
+            phoneToValidate = '61' + cleanPhone.substring(1)
+          }
+          
+          const australianMobileRegex = /^61[4-5]\d{8}$/  // 61 + 4/5 + 8 digits
+          const australianLandlineRegex = /^61[2-8]\d{8}$/ // 61 + 2-8 + 8 digits
+          
+          if (phoneToValidate.length < 9) {
+            this.errors.parentContact = 'Please enter a valid Australian phone number'
+          } else if (!australianMobileRegex.test(phoneToValidate) &&
+          !australianLandlineRegex.test(phoneToValidate)) {
+            this.errors.parentContact = 'Please enter a valid Australian mobile or landline number'
           }
         }
         break
-      }
-    },
 
-    formatPhoneNumber() {
-      // Basic phone number formatting - you can enhance this based on your needs
-      let phone = this.form.parentContact.replace(/\D/g, '')
-      if (phone.length > 10) {
-        phone = phone.substring(0, 10)
-      }
-      if (phone.length >= 6) {
-        this.form.parentContact = `(${phone.substring(0, 3)})
-        ${phone.substring(3, 6)}-${phone.substring(6)}`
-      } else if (phone.length >= 3) {
-        this.form.parentContact = `(${phone.substring(0, 3)}) ${phone.substring(3)}`
-      } else {
-        this.form.parentContact = phone
+      case 'parentEmail':
+        if (!this.form.parentEmail.trim()) {
+          this.errors.parentEmail = 'Parent email is required'
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          if (!emailRegex.test(this.form.parentEmail)) {
+            this.errors.parentEmail = 'Please enter a valid email address'
+          }
+        }
+        break
       }
     },
     
@@ -589,20 +625,17 @@ export default {
     },
     
     processFile(file) {
-      // Reset previous file
       this.form.photo = null
       this.photoPreview = null
       this.errors.photo = ''
       
       if (!file) return
       
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         this.errors.photo = 'Please select an image file'
         return
       }
       
-      // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
         this.errors.photo = 'File size must be less than 5MB'
         return
@@ -610,7 +643,6 @@ export default {
       
       this.form.photo = file
       
-      // Create preview
       const reader = new FileReader()
       reader.onload = (e) => {
         this.photoPreview = e.target.result
@@ -631,13 +663,13 @@ export default {
         'dateOfBirth',
         'parentFirstName',
         'parentLastName',
-        'parentContact'
+        'parentContact',
+        'parentEmail'
       ]
       fieldsToValidate.forEach(field => {
         this.validateField(field)
       })
       
-      // Check if there are any errors
       const hasErrors = Object.values(this.errors).some(error => error !== '')
       if (hasErrors) {
         this.$emit('error', 'Please fix the form errors before submitting')
@@ -648,25 +680,27 @@ export default {
       this.showSuccess = false
       
       try {
-        // Prepare form data for submission
         const formData = new FormData()
-        Object.keys(this.form).forEach(key => {
-          if (key === 'photo' && this.form.photo) {
-            formData.append(key, this.form.photo)
-          } else if (this.form[key] !== null) {
-            formData.append(key, this.form[key])
-          }
-        })
+        formData.append('teamID', this.form.teamID)
+        formData.append('agegroupID', this.form.ageGroupID)
+        formData.append('player_firstname', this.form.firstName)
+        formData.append('player_lastname', this.form.lastName)
+        formData.append('dob', this.form.dateOfBirth)
+        formData.append('contact_firstname', this.parentFirstName)
+        formData.append('contact_lastname', this.form.parentLastName)
+        formData.append('phone_number', this.form.parentContact)
+        formData.append('email', this.form.parentEmail)
+        formData.append('photo[]', this.form.photo)
+        formData.append('description', '');
+        formData.append('seriesID', this.form.seriesID);
         
-        // Emit the form data to parent component
-        const response = await this.$emit('submit', formData)
+        const response = await this.$axios.$post('/v1/players',
+          formData, { headers: { 'Content-Type': 'multipart/form-data' } })
 
         console.log(response)
         
-        // Show success message
         this.showSuccess = true
         
-        // Reset form after delay (but keep team name and age group)
         setTimeout(() => {
           this.resetForm()
           this.showSuccess = false
@@ -680,7 +714,6 @@ export default {
     },
     
     resetForm() {
-      // Reset all fields except teamName and ageGroup
       const teamName = this.form.teamName
       const ageGroup = this.form.ageGroup
       
@@ -693,7 +726,8 @@ export default {
         photo: null,
         parentFirstName: '',
         parentLastName: '',
-        parentContact: ''
+        parentContact: '',
+        parentEmail: ''
       }
       this.errors = {
         teamName: '',
@@ -704,7 +738,8 @@ export default {
         photo: '',
         parentFirstName: '',
         parentLastName: '',
-        parentContact: ''
+        parentContact: '',
+        parentEmail: ''
       }
       this.photoPreview = null
       if (this.$refs.fileInput) {

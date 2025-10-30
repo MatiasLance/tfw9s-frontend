@@ -564,8 +564,8 @@ export default {
     // eslint-disable-next-line camelcase
     retrieveEvents() {
       const query = {
+        sort: 'latest',
         q: this.query,
-        sort: 'a_to_z',
         page: this.page,
       };
 
@@ -588,6 +588,7 @@ export default {
     },
     retrieveAgeGroups() {
       const query = {
+        sort: 'latest',
         q: this.query,
         page: this.page,
       };
