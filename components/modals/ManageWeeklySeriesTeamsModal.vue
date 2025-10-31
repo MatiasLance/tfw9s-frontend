@@ -234,6 +234,7 @@
                       "
                       @click="openManageTeamModal(team)"
                     >
+                      <i class="ri-pencil-line"></i>
                       Update
                     </button>
                     <button
@@ -250,6 +251,7 @@
                       "
                       @click="openDeleteTeamModal(team)"
                     >
+                      <i class="ri-delete-bin-line"></i>
                       Delete
                     </button>
                 </span>
@@ -277,6 +279,7 @@
         :loading="sending"
         @click="notifyTeams(selected.id)"
         >
+        <i class="ri-notification-line"></i>
           Notify Teams
         </VBtn>
         <VBtn
@@ -287,6 +290,7 @@
         :loading="generating"
         @click="generateTeamLinks(selected.id)"
         >
+        <i class="ri-links-line"></i>
           Generate Links
         </VBtn>
       </div>

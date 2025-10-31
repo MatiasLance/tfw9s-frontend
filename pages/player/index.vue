@@ -448,8 +448,12 @@
 </template>
 
 <script>
+import validationMixin from '../../mixins/player/validation';
+import uploadFile from '../../mixins/player/uploadFile';
+
 export default {
   name: 'index',
+  mixins: [ validationMixin, uploadFile ],
   data() {
     return {
       form: {
@@ -496,6 +500,7 @@ export default {
       try {
         const response = await this.$axios.$get(`v1/series/token/${key}`)
         this.team = response.data.team || [];
+        console.log(this.team)
 
         const registered = this.team.registered_players_count || 0;
         const limit = this.team.player_limit || 0;
@@ -520,140 +525,6 @@ export default {
       } catch (error) {
         console.error('Error fetching team data:', error);
       }
-    },
-
-    validateField(field) {
-      this.errors[field] = ''
-      
-      switch (field) {          
-      case 'firstName':
-        if (!this.form.firstName.trim()) {
-          this.errors.firstName = 'First name is required'
-        } else if (this.form.firstName.trim().length < 2) {
-          this.errors.firstName = 'First name must be at least 2 characters'
-        }
-        break
-          
-      case 'lastName':
-        if (!this.form.lastName.trim()) {
-          this.errors.lastName = 'Last name is required'
-        } else if (this.form.lastName.trim().length < 2) {
-          this.errors.lastName = 'Last name must be at least 2 characters'
-        }
-        break
-          
-      case 'dateOfBirth':
-        if (!this.form.dateOfBirth) {
-          this.errors.dateOfBirth = 'Date of birth is required'
-        } else {
-          const dob = new Date(this.form.dateOfBirth)
-          const today = new Date()
-          const minDate = new Date()
-          minDate.setFullYear(today.getFullYear() - 100) // Max 100 years old
-              
-          if (dob > today) {
-            this.errors.dateOfBirth = 'Date of birth cannot be in the future'
-          } else if (dob < minDate) {
-            this.errors.dateOfBirth = 'Please enter a valid date of birth'
-          }
-        }
-        break
-
-      case 'parentFirstName':
-        if (!this.form.parentFirstName.trim()) {
-          this.errors.parentFirstName = 'Parent first name is required'
-        } else if (this.form.parentFirstName.trim().length < 2) {
-          this.errors.parentFirstName = 'Parent first name must be at least 2 characters'
-        }
-        break
-
-      case 'parentLastName':
-        if (!this.form.parentLastName.trim()) {
-          this.errors.parentLastName = 'Parent last name is required'
-        } else if (this.form.parentLastName.trim().length < 2) {
-          this.errors.parentLastName = 'Parent last name must be at least 2 characters'
-        }
-        break
-
-      case 'parentContact':
-        if (!this.form.parentContact.trim()) {
-          this.errors.parentContact = 'Parent contact number is required'
-        } else {
-          const cleanPhone = this.form.parentContact.replace(/\D/g, '')
-          let phoneToValidate = cleanPhone
-          
-          if (cleanPhone.startsWith('0')) {
-            phoneToValidate = '61' + cleanPhone.substring(1)
-          }
-          
-          const australianMobileRegex = /^61[4-5]\d{8}$/  // 61 + 4/5 + 8 digits
-          const australianLandlineRegex = /^61[2-8]\d{8}$/ // 61 + 2-8 + 8 digits
-          
-          if (phoneToValidate.length < 9) {
-            this.errors.parentContact = 'Please enter a valid Australian phone number'
-          } else if (!australianMobileRegex.test(phoneToValidate) &&
-          !australianLandlineRegex.test(phoneToValidate)) {
-            this.errors.parentContact = 'Please enter a valid Australian mobile or landline number'
-          }
-        }
-        break
-
-      case 'parentEmail':
-        if (!this.form.parentEmail.trim()) {
-          this.errors.parentEmail = 'Parent email is required'
-        } else {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-          if (!emailRegex.test(this.form.parentEmail)) {
-            this.errors.parentEmail = 'Please enter a valid email address'
-          }
-        }
-        break
-      }
-    },
-    
-    handleFileSelect(event) {
-      const file = event.target.files[0]
-      this.processFile(file)
-    },
-    
-    handleFileDrop(event) {
-      event.preventDefault()
-      this.dragOver = false
-      
-      const file = event.dataTransfer.files[0]
-      this.processFile(file)
-    },
-    
-    processFile(file) {
-      this.form.photo = null
-      this.photoPreview = null
-      this.errors.photo = ''
-      
-      if (!file) return
-      
-      if (!file.type.startsWith('image/')) {
-        this.errors.photo = 'Please select an image file'
-        return
-      }
-      
-      if (file.size > 5 * 1024 * 1024) {
-        this.errors.photo = 'File size must be less than 5MB'
-        return
-      }
-      
-      this.form.photo = file
-      
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        this.photoPreview = e.target.result
-      }
-      reader.readAsDataURL(file)
-    },
-    
-    removePhoto() {
-      this.form.photo = null
-      this.photoPreview = null
-      this.$refs.fileInput.value = ''
     },
     
     async handleSubmit() {
@@ -686,7 +557,7 @@ export default {
         formData.append('player_firstname', this.form.firstName)
         formData.append('player_lastname', this.form.lastName)
         formData.append('dob', this.form.dateOfBirth)
-        formData.append('contact_firstname', this.parentFirstName)
+        formData.append('contact_firstname', this.form.parentFirstName)
         formData.append('contact_lastname', this.form.parentLastName)
         formData.append('phone_number', this.form.parentContact)
         formData.append('email', this.form.parentEmail)
