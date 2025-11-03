@@ -13,7 +13,7 @@
              class="bg-brand-grey-4
              whitespace-nowrap
              px-4 py-2 text-center align-middle
-             text-[20px] font-semibold text-[#555555]"
+             text-[16px] font-semibold text-[#555555]"
             >
               {{ column.name !=  'id' ? column.label:'' }}
             </th>
@@ -30,7 +30,7 @@
              :key="column.name"
              class="whitespace-nowrap border-slate-500
              text-center align-middle
-             text-[16px] text-black"
+             text-[14px] text-black"
              :class="column.name === 'action'?
              'bg-transparent':'bg-white  border p-2 px-4'"
             >

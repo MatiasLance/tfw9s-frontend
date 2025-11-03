@@ -4,7 +4,7 @@
       <!-- Breadcrumbs and Title -->
       <BreadCrumbs title="Admin"/>
     </BaseHeader>
-    <section class="mx-auto max-w-screen-xl gap-4">
+    <section class="mx-auto max-w-full gap-4">
       <div class="mb-4 w-full">
         <VTabs
           v-model="adminTab"

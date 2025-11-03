@@ -1,12 +1,7 @@
 <template>
-    <div class="
-    block
-    w-full
-    overflow-x-auto"
-    >
+    <div class="overflow-x-auto">
       <table
-      class="w-full table-auto border-collapse
-      items-center bg-transparent"
+      class="table-auto w-full border-collapse bg-transparent"
       >
         <thead>
           <tr>
@@ -17,7 +12,7 @@
              class="bg-brand-grey-4
              whitespace-nowrap
              px-4 py-2 text-center align-middle
-             text-[20px] font-semibold text-[#555555]"
+             text-[16px] font-semibold text-[#555555]"
             >
               {{ column.label }}
             </th>
@@ -34,7 +29,7 @@
              :key="column.name"
              class="whitespace-nowrap border-slate-500
              text-center align-middle
-             text-[16px] text-black"
+             text-[14px] text-black"
              :class="column.name === 'action'?
              'bg-transparent':'bg-white  border p-2 px-4'"
              @click="column.name !== 'action'&&!row.submit?

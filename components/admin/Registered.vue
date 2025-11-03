@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
-      <section class="mx-auto max-w-screen-xl gap-4 p-4">
+      <section class="mx-auto max-w-full gap-4 p-4">
         <div
           class="grid grid-cols-1 gap-4 md:grid-cols-3"
           data-aos="fade-up"

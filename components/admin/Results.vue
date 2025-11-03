@@ -3,30 +3,31 @@
   <div>
     <div class="bg-[#1A1A1B]" data-aos="fade-up">
       <section
-      class="mx-auto max-w-screen-xl gap-4 p-4
+      class="mx-auto max-w-full gap-4 p-4
       grid grid-cols-1 md:grid-cols-3"
       >
           <div class="flex flex-col">
-            <div class="flex items-center justify-between">
-              <span
-                class="text-lg
-                font-bold
-                text-[#555555]"
-                >
-                Select Date
-              </span>
-              <span
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <i class="ri-calendar-check-line text-lg text-[#555555]"></i>
+                <span class="text-lg font-bold text-[#555555]">
+                  Select Date
+                </span>
+              </div>
+              
+              <button
+              type="button"
                 v-if="dateFilter"
-                class="cursor-pointer
-                text-xs
-                text-red-400
-                hover:text-sm
-                hover:text-red-500
-                "
                 @click="clearDate"
-                >
-                Clear
-              </span>
+                class="flex items-center gap-2 px-3 py-1 rounded-full
+                cursor-pointer bg-red-50 text-red-500 hover:bg-red-100
+                hover:text-red-600 transition-all duration-200 group"
+              >
+                <i class="ri-close-line text-sm group-hover:scale-110"></i>
+                <span class="text-xs font-semibold">
+                  Clear Filter
+                </span>
+              </button>
             </div>
             <ODatepicker
               v-model="dateFilter"
@@ -105,7 +106,7 @@
             />
         </section>
           <section
-          v-if="MatchList.length === 0"
+          v-if="MatchList.length === 0 && !isLoading"
           class="col-span-1 flex h-60 items-center
           justify-center font-semibold
           text-[#555555] md:col-span-3"

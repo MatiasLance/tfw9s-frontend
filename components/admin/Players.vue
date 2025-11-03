@@ -1,7 +1,7 @@
 <template>
   <div>
   <div class="bg-[#1A1A1B]" data-aos="fade-up">
-    <section class="mx-auto max-w-screen-xl gap-4 p-4">
+    <section class="mx-auto max-w-full gap-4 p-4">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
         <div class="col-span-2 flex items-center md:col-span-3">
           <button
@@ -55,154 +55,211 @@
             placeholder="Search"
           >
         </div>
+
         <div
-        v-if="totalPages > 0"
-        class="col-span-3 flex flex-wrap items-center justify-around
-        gap-x-2 md:justify-between"
-        data-aos="flip-up" data-aos-once="true"
+          v-if="totalPages > 0"
+          class="col-span-3 flex flex-col items-center justify-between
+          gap-4 bg-white backdrop-blur-sm rounded-xl
+          p-4 sm:flex-row sm:gap-6"
+          data-aos="flip-up" 
+          data-aos-once="true"
         >
-          <span
-          class="font-medium text-white"
-          >
-          Showing {{ from }}-{{ to }} of {{ totalItems }} items
-          </span>
+          <div class="flex items-center space-x-2">
+            <span class="text-sm font-medium text-black">
+              Showing 
+              <span class="font-semibold text-black">{{ from }}-{{ to }}</span> 
+              of 
+              <span class="font-semibold text-black">{{ totalItems }}</span> 
+              {{ totalItems === 1 ? 'item' : 'items' }}
+            </span>
+          </div>
+
           <VPagination
             v-model="page"
             :length="totalPages"
             color="success"
             :total-visible="7"
-            class="text-white"
+            class="text-black"
             dark
             @update:modelValue="page = $event"
             />
         </div>
-    <section class="col-span-3">
-      <div class="overflow-x-auto">
-      <div class="inline-block min-w-full text-center">
-          <div 
-            v-if="totalItems  > 0"
-            class="flex min-w-[1200px] pr-24 md:w-auto"
-            data-aos="flip-up"
-          >
-            <span
-              class="flex-1 px-4 py-2 text-center align-middle
-              text-[20px] font-semibold text-[#555555]   "
-            >
-              Contact Name
-            </span>
-            <span
-              class="flex-1 px-4 py-2 text-center align-middle
-              text-[20px] font-semibold text-[#555555]   "
-            >
-              Phone Number
-            </span>
-            <span
-              class="flex-1 px-4 py-2 text-center align-middle
-              text-[20px] font-semibold text-[#555555]  "
-            >
-              Email
-            </span>
-            <span
-              class="flex-1 px-4 py-2 text-center align-middle
-              text-[20px] font-semibold text-[#555555]  "
-            >
-              Player Name
-            </span>
-            <span
-              class="flex-1 px-4 py-2 text-center align-middle
-              text-[20px] font-semibold text-[#555555] "
-            >
-              Team
-            </span>
-            <span
-              class="flex-1 px-4 py-2 text-center align-middle
-              text-[20px] font-semibold text-[#555555] "
-            >
-              Date of Birth
-            </span>
-            <span 
-              class="flex-1 px-4 py-2 text-center align-middle
-              text-[20px] font-semibold text-[#555555] "
-            >
-              Age Group
-            </span>
-          </div>
-            <div
-              v-for="(data) in Players"
-              :key="data.id" class="col-span-1 mb-0.5 gap-0"
-              data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="0"  data-aos-once="true"
+
+        <section class="col-span-3">
+          <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+          <div class="min-w-[1000px]">
+              <div 
+                v-if="totalItems > 0"
+                class="grid grid-cols-[1fr_1fr_1.5fr_1.5fr_1.5fr_1fr_1fr_80px]
+                items-center bg-gray-50 px-4"
+                data-aos="flip-up"
               >
-                <div class="flex min-w-[640px] items-center justify-center">
-                  <input
-                  :value="data.contact_firstname + ' ' + data.contact_lastname"
-                  placeholder="Enter Contact First Name"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.phone_number"
-                  placeholder="Enter Phone Number"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.email"
-                  placeholder="Enter Email"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.name"
-                  placeholder="Enter Team"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.team_name"
-                  placeholder="Enter Field"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.dobGB"
-                  placeholder="Enter Birth Date"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.agegroup"
-                  placeholder="Enter Age Group"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <i
-                  class="ri-pencil-fill px-4 text-xl text-white"
-                  @click="openEditPlayersDialog(data)"
-                  />
-                  <i
-                  class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                  @click="openDeletePlayersDialog(data)"
-                  />
+                <span class="
+                flex-1 px-4 py-3 text-center text-sm font-semibold
+                text-gray-700 uppercase tracking-wider"
+                >
+                  Contact Name
+                </span>
+                <span class="
+                flex-1 px-4 py-3 text-center text-sm font-semibold
+                text-gray-700 uppercase tracking-wider"
+                >
+                  Phone Number
+                </span>
+                <span class="
+                flex-1 px-4 py-3 text-center text-sm font-semibold
+                text-gray-700 uppercase tracking-wider"
+                >
+                  Email
+                </span>
+                <span class="
+                flex-1 px-4 py-3 text-center text-sm font-semibold
+                text-gray-700 uppercase tracking-wider"
+                >
+                  Player Name
+                </span>
+                <span class="
+                flex-1 px-4 py-3 text-center text-sm font-semibold
+                text-gray-700 uppercase tracking-wider"
+                >
+                  Team
+                </span>
+                <span class="
+                flex-1 px-4 py-3 text-center text-sm font-semibold
+                text-gray-700 uppercase tracking-wider"
+                >
+                  Date of Birth
+                </span>
+                <span class="
+                flex-1 px-4 py-3 text-center text-sm font-semibold
+                text-gray-700 uppercase tracking-wider"
+                >
+                  Age Group
+                </span>
+              </div>
+                <div
+                  v-for="(data) in Players"
+                  :key="data.id" 
+                  class="grid grid-cols-[1fr_1fr_1.5fr_1.5fr_1.5fr_1fr_1fr_80px]
+                  items-center border-b border-gray-100 px-4 hover:bg-gray-50
+                  transition-colors duration-200"
+                  data-aos="flip-down" 
+                  data-aos-duration="500"
+                  data-aos-offset="0"  
+                  data-aos-once="true"
+                  >
+                    <div class="px-3 py-3">
+                      <input
+                      :value="data.contact_firstname + ' ' + data.contact_lastname"
+                      placeholder="Enter Contact First Name"
+                      hide-details
+                      :disabled="true"
+                      class="w-full border-0 bg-transparent p-0 text-sm text-gray-900
+                      text-center focus:ring-0 focus:outline-none disabled:opacity-100
+                      disabled:cursor-default truncate"
+                      />
+                    </div>
+
+                    <div class="px-3 py-3">
+                      <input
+                      v-model="data.phone_number"
+                      placeholder="Enter Phone Number"
+                      hide-details
+                      :disabled="true"
+                      class="w-full border-0 bg-transparent p-0 text-sm text-gray-900
+                      text-center focus:ring-0 focus:outline-none disabled:opacity-100
+                      disabled:cursor-default truncate"
+                      />
+                    </div>
+
+                    <div class="px-3 py-3">
+                      <input
+                      v-model="data.email"
+                      placeholder="Enter Email"
+                      hide-details
+                      :disabled="true"
+                      class="w-full border-0 bg-transparent p-0 text-sm text-gray-900
+                      text-center focus:ring-0 focus:outline-none disabled:opacity-100
+                      disabled:cursor-default truncate"
+                      />
+                    </div>
+
+                    <div class="px-3 py-3">
+                      <input
+                      v-model="data.name"
+                      placeholder="Enter Team"
+                      hide-details
+                      :disabled="true"
+                      class="w-full border-0 bg-transparent p-0 text-sm text-gray-900
+                      text-center focus:ring-0 focus:outline-none disabled:opacity-100
+                      disabled:cursor-default truncate"
+                      />
+                    </div>
+
+                    <div class="px-3 py-3">
+                      <input
+                      v-model="data.team_name"
+                      placeholder="Enter Field"
+                      hide-details
+                      :disabled="true"
+                      class="w-full border-0 bg-transparent p-0 text-sm text-gray-900
+                      text-center focus:ring-0 focus:outline-none disabled:opacity-100
+                      disabled:cursor-default truncate"
+                      />
+                    </div>
+
+                    <div class="px-3 py-3">
+                      <input
+                      v-model="data.dobGB"
+                      placeholder="Enter Birth Date"
+                      hide-details
+                      :disabled="true"
+                      class="w-full border-0 bg-transparent p-0 text-sm text-gray-900
+                      text-center focus:ring-0 focus:outline-none disabled:opacity-100
+                      disabled:cursor-default truncate"
+                      />
+                    </div>
+
+                    <div class="px-3 py-3">
+                      <input
+                      v-model="data.agegroup"
+                      placeholder="Enter Age Group"
+                      hide-details
+                      :disabled="true"
+                      class="w-full border-0 bg-transparent p-0 text-sm text-gray-900
+                      text-center focus:ring-0 focus:outline-none disabled:opacity-100
+                      disabled:cursor-default truncate"
+                      />
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex w-20 items-center justify-center space-x-2 px-4 py-3">
+                      <button
+                        type="button"
+                        @click="openEditPlayersDialog(data)"
+                        class="rounded p-1 text-green-600 transition-colors
+                        hover:bg-green-50 focus:outline-none
+                        focus:ring-2 focus:ring-green-500"
+                        title="Edit Player"
+                      >
+                        <i class="ri-pencil-fill text-lg"></i>
+                      </button>
+                      <button
+                        type="button"
+                        @click="openDeletePlayersDialog(data)"
+                        class="rounded p-1 text-red-600 transition-colors
+                        hover:bg-red-50 focus:outline-none
+                        focus:ring-2 focus:ring-red-500"
+                        title="Delete Player"
+                      >
+                        <i class="ri-delete-bin-fill text-lg"></i>
+                      </button>
+                    </div>
+
+                  </div>
+                  </div>
                 </div>
-              </div>
-              </div>
-            </div>
-          </section>
+              </section>
           <section
           v-if="totalItems === 0"
           class="col-span-1 flex h-60 items-center
