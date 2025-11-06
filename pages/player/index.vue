@@ -500,7 +500,6 @@ export default {
       try {
         const response = await this.$axios.$get(`v1/series/token/${key}`)
         this.team = response.data.team || [];
-        console.log(this.team)
 
         const registered = this.team.registered_players_count || 0;
         const limit = this.team.player_limit || 0;
@@ -565,10 +564,8 @@ export default {
         formData.append('description', '');
         formData.append('seriesID', this.form.seriesID);
         
-        const response = await this.$axios.$post('/v1/players',
+        await this.$axios.$post('/v1/players',
           formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-
-        console.log(response)
         
         this.showSuccess = true
         
