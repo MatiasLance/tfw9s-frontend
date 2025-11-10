@@ -501,7 +501,7 @@ export default {
         const response = await this.$axios.$get(`v1/series/token/${key}`)
         this.team = response.data.team || [];
 
-        const registered = this.team.registered_players_count || 0;
+        const registered = this.team.players_count || 0;
         const limit = this.team.player_limit || 0;
         
         this.isPlayerLimitReached = registered >= limit

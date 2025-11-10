@@ -93,7 +93,9 @@
                   @click="openPlayersCardModal(team)"
                   @blur="selectedTeamId = null"
                   >
-                    {{ team.registered_players_count }} / {{ team.player_limit }}
+                    {{ containsCentralCoast(team.series.name) ? team.player_count :
+                    team.registered_players_count }}
+                    / {{ team.player_limit }}
                   </button>
                   <!-- Basic Themes -->
                   <div
@@ -271,6 +273,21 @@
       <hr class="my-3"/>
       <div class="flex flex-col justify-end gap-2 md:flex-row">
         <VBtn
+        v-if="hasCentralCoast"
+        depressed
+        dark
+        small
+        color="primary"
+        class="custom-btn w-full md:w-[185px] lg:w-[185px]"
+        :loading="sending"
+        @click="notifyTeamsForCC(selected.id)"
+        >
+        <i class="ri-notification-line"></i>
+          Notify Teams
+        </VBtn>
+
+        <VBtn
+        v-else
         depressed
         dark
         small
@@ -282,6 +299,7 @@
         <i class="ri-notification-line"></i>
           Notify Teams
         </VBtn>
+
         <VBtn
         outlined
         small
@@ -373,12 +391,19 @@ export default {
       players: [],
       teamUrlGenerating: null,
       teamUrlGeneratingPerID: null,
+      seriesName: null
     }
   },
   computed: {
     formattedAgeGroup() {
       return this.agegroup.map(agegroup =>
         ({ text: agegroup.name, value: agegroup.id }));
+    },
+    hasCentralCoast() {
+      if (!this.seriesName || typeof this.seriesName !== 'string') {
+        return false
+      }
+      return this.seriesName.toLowerCase().includes('central coast')
     },
   },
   watch: {
@@ -400,7 +425,14 @@ export default {
       immediate: true,
     },
   },
+  mounted() {
+    this.retrieveSeriesTeams();
+  },
   methods: {
+    containsCentralCoast(name) {
+      if (!name) return false
+      return name.toLowerCase().includes('central coast')
+    },
     search: _debounce(function() {
       if (this.active) {
         this.retrieveSeriesTeams();
@@ -438,6 +470,10 @@ export default {
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
+
+          for (let i = 0; i < this.seriesTeams.length; i++) {
+            this.seriesName = this.seriesTeams[i].series.name
+          }
         })
         .finally(() => {
           this.isLoading = false;
@@ -484,6 +520,32 @@ export default {
       this.sending = true;
       this.$axios
         .$post(`v1/series/notify/${id}`)
+        .then((response) => {
+          this.$oruga.notification.open({
+            message: 'Email notification sent...',
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+        })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.message,
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        })
+        .finally(() => {
+          this.sending = false;
+        })
+    },
+    notifyTeamsForCC(id) {
+      this.sending = true;
+      this.$axios
+        .$post(`v1/series/notify.teams/${id}`)
         .then((response) => {
           this.$oruga.notification.open({
             message: 'Email notification sent...',
