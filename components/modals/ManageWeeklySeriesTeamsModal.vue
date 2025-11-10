@@ -93,9 +93,7 @@
                   @click="openPlayersCardModal(team)"
                   @blur="selectedTeamId = null"
                   >
-                    {{ containsCentralCoast(team.series.name) ? team.player_count :
-                    team.registered_players_count }}
-                    / {{ team.player_limit }}
+                    {{ team.registered_players_count }} / {{ team.player_limit }}
                   </button>
                   <!-- Basic Themes -->
                   <div
@@ -429,10 +427,6 @@ export default {
     this.retrieveSeriesTeams();
   },
   methods: {
-    containsCentralCoast(name) {
-      if (!name) return false
-      return name.toLowerCase().includes('central coast')
-    },
     search: _debounce(function() {
       if (this.active) {
         this.retrieveSeriesTeams();

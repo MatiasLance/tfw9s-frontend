@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="player && player.id && player.registration_id !== null"
     class="card-ratio relative flex w-full max-w-[500px] flex-col overflow-hidden
     rounded-xl border border-gray-200 bg-white text-gray-800 shadow-md"
   >
@@ -13,7 +14,6 @@
 
     <article class="z-10 flex flex-1 flex-col">
       <div
-      v-if="player && player.id"
       class="relative flex size-full flex-1 gap-2 px-6 py-2 sm:px-10"
       >
         <div
