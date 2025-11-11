@@ -74,137 +74,193 @@
             @change="setPage"
             />
         </div>
+
         <section
-        class="col-span-1 overflow-y-hidden overflow-x-scroll
-        md:col-span-3 md:overflow-x-hidden"
+          class="col-span-1 overflow-y-hidden overflow-x-scroll
+          md:col-span-3 md:overflow-x-hidden"
         >
           <div
-          v-if="seriesList && seriesList.length > 0"
-          class="grid min-w-[640px] grid-cols-1 gap-2"
+            v-if="seriesList && seriesList.length > 0"
+            class="grid min-w-[640px] grid-cols-1 gap-6"
           >
             <div
-            v-for="data in seriesList"
-            :key="data.id"
-            class="col-span-1 bg-[#212121] p-4 text-white"
-            data-aos="fade-up" data-aos-offset="0"
+              v-for="data in seriesList"
+              :key="data.id"
+              class="col-span-1 overflow-hidden rounded-2xl bg-gradient-to-br
+              from-gray-900 via-green-900 to-gray-800 p-6 text-white
+              shadow-2xl transition-all duration-300 hover:scale-105
+              hover:shadow-green-500/20 border-2 border-green-600/30"
+              data-aos="fade-up" data-aos-offset="0"
             >
-              <Form class="grid w-full grid-cols-3 gap-2 p-2">
-                <div class="col-span-2 font-semibold">
-                  {{ data.name}}
-                </div>
-                <div class="col-span-1 text-right font-medium">
-                  {{ DateRange(data.start, data.end) }}
-                </div>
-                <span class="col-span-3 line-clamp-4"
-                  v-html="data.description"
-                >
-                </span>
-                <span class="col-span-3 line-clamp-4">
-                  {{ `Location: ${data.address || 'Unknown'}`}}
-                </span>
-                <div class="col-span-3 flex justify-end gap-4">
-                  <div v-if="!data.is_paused">
-                    <BaseButton
-                      class="
-                        max-w-full rounded-lg
-                        border border-gray-200
-                        bg-[#737373]
-                        px-4
-                        py-2
-                        text-white
-                      "
-                      @click="pauseSeries(data.id)"
-                    >
-                      Pause
-                    </BaseButton>
+              <!-- Header Section -->
+              <div class="mb-4 flex items-start justify-between">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-3">
+                    <!-- Status Indicator -->
+                    <div class="flex items-center gap-2">
+                      <div 
+                        :class="[
+                          'size-3 rounded-full ring-2 ring-white',
+                          data.is_paused ? 'bg-amber-500' : 'bg-green-500'
+                        ]"
+                      ></div>
+                      <span 
+                        :class="[
+                          'text-sm font-semibold',
+                          data.is_paused ? 'text-amber-300' : 'text-green-300'
+                        ]"
+                      >
+                        {{ data.is_paused ? 'Paused' : 'Active' }}
+                      </span>
+                    </div>
+                    
+                    <!-- Series Name -->
+                    <h3 class="text-xl font-bold text-white truncate flex-1">
+                      {{ data.name }}
+                    </h3>
                   </div>
-                  <div v-if="data.is_paused">
-                    <BaseButton
-                      class="
-                        max-w-full rounded-lg
-                        border border-gray-200
-                        bg-[#737373]
-                        px-4
-                        py-2
-                        text-white
-                      "
-                      @click="resumeSeries(data.id)"
-                    >
-                      Resume
-                    </BaseButton>
+                  
+                  <!-- Date Range -->
+                  <div class="mt-2 flex items-center gap-2 text-green-300">
+                    <i class="ri-calendar-event-line text-sm"></i>
+                    <span class="text-sm font-medium">
+                      {{ DateRange(data.start, data.end) }}
+                    </span>
                   </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="flex gap-2">
+                  <!-- Pause/Resume Toggle -->
+                  <button
+                    type="button"
+                    v-if="!data.is_paused"
+                    @click="pauseSeries(data.id)"
+                    class="flex items-center gap-1 rounded-full bg-amber-500/20
+                    px-3 py-1.5 text-xs font-semibold text-amber-300 transition-all
+                    hover:bg-amber-500/30 hover:shadow-lg"
+                    title="Pause Series"
+                  >
+                    <i class="ri-pause-circle-line"></i>
+                    Pause
+                  </button>
+                  <button
+                    type="button"
+                    v-if="data.is_paused"
+                    @click="resumeSeries(data.id)"
+                    class="flex items-center gap-1 rounded-full bg-green-500/20
+                    px-3 py-1.5 text-xs font-semibold text-green-300 transition-all
+                    hover:bg-green-500/30 hover:shadow-lg"
+                    title="Resume Series"
+                  >
+                    <i class="ri-play-circle-line"></i>
+                    Resume
+                  </button>
+                </div>
+              </div>
+
+              <!-- Content Section -->
+              <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <!-- Description & Location -->
+                <div class="col-span-1 lg:col-span-2 space-y-4">
+                  <!-- Description -->
+                  <div class="rounded-xl bg-black/30 p-4 backdrop-blur-sm">
+                    <div class="flex items-center gap-2 mb-2">
+                      <i class="ri-file-text-line text-green-400"></i>
+                      <span class="text-sm font-semibold text-green-300">
+                        About this Series
+                      </span>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed line-clamp-3"
+                      v-html="data.description">
+                    </p>
+                  </div>
+
+                  <!-- Location -->
+                  <div class="flex items-center gap-3 rounded-xl bg-black/30 p-4
+                  backdrop-blur-sm">
+                    <i class="ri-map-pin-2-line text-xl text-green-400"></i>
+                    <div>
+                      <p class="text-sm font-semibold text-green-300">
+                        Location
+                      </p>
+                      <p class="text-gray-200">
+                        {{ data.address || 'Location not specified' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="col-span-1 lg:col-span-1 space-y-3">
+                  <!-- Manage Teams -->
                   <BaseButton
-                    v-show="ActiveTab === 'weekly'
-                    || ActiveTab === 'coast'
+                    v-show="ActiveTab === 'weekly' || ActiveTab === 'coast' 
                     || ActiveTab === 'tournament'"
-                    class="
-                    max-w-full rounded-lg
-                    border border-gray-200
-                    bg-[#737373]
-                    px-4
-                    py-2
-                    "
+                    class="w-full justify-center rounded-xl bg-blue-600/90 px-4 py-3
+                    text-sm font-semibold text-white transition-all hover:bg-blue-500
+                    hover:shadow-lg hover:scale-105"
                     @click="openWeeklyTeamsDialog(data)"
                   >
+                    <i class="ri-team-line mr-2"></i>
                     Manage Teams
                   </BaseButton>
+
+                  <!-- Add Player (Tuggerah Specific) -->
                   <BaseButton
                     v-if="ActiveTab === 'coast' && data.name.toLowerCase().includes('tuggerah')"
-                    class="
-                      max-w-full rounded-lg
-                      border border-gray-200
-                      bg-[#737373]
-                      px-4
-                      py-2
-                      "
+                    class="w-full justify-center rounded-xl bg-purple-600/90 px-4 py-3
+                    text-sm font-semibold text-white transition-all hover:bg-purple-500
+                    hover:shadow-lg hover:scale-105"
                     @click="openAddPlayerDialog"
                   >
+                    <i class="ri-user-add-line mr-2"></i>
                     Add Player
                   </BaseButton>
+
+                  <!-- Team Limit -->
                   <BaseButton
                     v-show="ActiveTab === 'tournament' || ActiveTab === 'coast'"
-                  class="
-                    max-w-full rounded-lg
-                    border border-gray-200
-                    bg-[#737373]
-                    px-4
-                    py-2
-                    "
+                    class="w-full justify-center rounded-xl bg-amber-600/90 px-4 py-3
+                    text-sm font-semibold text-white transition-all hover:bg-amber-500
+                    hover:shadow-lg hover:scale-105"
                     @click="openTeamLimitDialog(data)"
                   >
+                    <i class="ri-group-line mr-2"></i>
                     Team Limit
                   </BaseButton>
+
+                  <!-- Edit Series -->
                   <BaseButton
-                  class="
-                    max-w-full rounded-lg
-                    border border-gray-200
-                    bg-[#4cbe5c]
-                    px-4
-                    py-2
-                    text-white
-                    "
+                    class="w-full justify-center rounded-xl bg-green-600/90 px-4 py-3
+                    text-sm font-semibold text-white transition-all hover:bg-green-500
+                    hover:shadow-lg hover:scale-105"
                     @click="openEditSeriesDialog(data)"
                   >
-                    Edit
+                    <i class="ri-pencil-line mr-2"></i>
+                    Edit Series
                   </BaseButton>
+
+                  <!-- Delete Series -->
                   <BaseButton
-                  class="
-                    max-w-full rounded-lg
-                    border border-gray-200
-                    bg-[#fb0d2b]
-                    px-4
-                    py-2
-                    text-white
-                    "
+                    class="w-full justify-center rounded-xl bg-red-600/90 px-4 py-3
+                    text-sm font-semibold text-white transition-all hover:bg-red-500
+                    hover:shadow-lg hover:scale-105"
                     @click="openDeleteSeriesDialog(data)"
                   >
-                    Delete
+                    <i class="ri-delete-bin-line mr-2"></i>
+                    Delete Series
                   </BaseButton>
                 </div>
-              </Form>
+              </div>
+
+              <!-- Rugby Field Decoration -->
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r
+              from-transparent via-green-500 to-transparent opacity-50"></div>
             </div>
           </div>
         </section>
+
         <section
         v-if="totalPages === 0"
         class="col-span-1 flex h-60 items-center

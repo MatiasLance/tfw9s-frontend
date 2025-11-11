@@ -86,6 +86,25 @@
             <div class="absolute left-0 top-1/2 h-8 w-3 -translate-y-1/2
             bg-white/20 rounded-r-lg"></div>
             
+            <!-- Paid Status Badge -->
+            <div v-if="team.is_team_registered" class="absolute left-4 top-4">
+              <span class="flex items-center gap-1 rounded-full bg-gradient-to-r
+              from-green-500 to-emerald-600 px-3 py-1.5 text-xs font-bold
+              text-white shadow-lg">
+                <i class="ri-checkbox-circle-line text-sm"></i>
+                Paid
+              </span>
+            </div>
+
+            <div v-else class="absolute left-4 top-4">
+              <span class="flex items-center gap-1 rounded-full bg-gradient-to-r
+              from-green-500 to-emerald-600 px-3 py-1.5 text-xs font-bold
+              text-white shadow-lg">
+                <i class="ri-checkbox-circle-line text-sm"></i>
+                Manually Added by Admin
+              </span>
+            </div>
+            
             <!-- Player Count Badge -->
             <article class="absolute right-4 top-4">
               <div class="relative">
@@ -149,7 +168,7 @@
             </article>
 
             <!-- Team Content -->
-            <div class="flex items-start gap-4">
+            <div class="flex items-start gap-4 pt-8"> <!-- Added pt-8 for spacing -->
               <!-- Team Logo -->
               <div class="relative">
                 <img
@@ -163,9 +182,10 @@
               </div>
 
               <!-- Team Info -->
-              <article class="flex flex-1 flex-col space-y-3">
-                <div>
-                  <h3 class="text-lg font-bold text-white">
+              <article class="flex flex-1 flex-col space-y-3 min-w-0"> <!-- Added min-w-0 -->
+                <div class="min-w-0"> <!-- Added for text truncation -->
+                  <h3 class="text-lg font-bold text-white truncate" 
+                      :title="team.name"> <!-- Added truncate and title -->
                     {{ team.name }}
                   </h3>
                   <p class="text-sm text-green-300">
@@ -174,13 +194,26 @@
                   </p>
                 </div>
 
-                <!-- Discount Badge -->
-                <div v-if="team.discount_codes_id" class="inline-flex">
-                  <span class="rounded-full bg-amber-500/20 px-3 py-1 text-xs
-                  font-semibold text-amber-300 ring-1 ring-amber-500/30">
-                    <i class="ri-price-tag-3-line mr-1"></i>
-                    Special Offer
-                  </span>
+                <!-- Status Badges Row -->
+                <div class="flex flex-wrap gap-2">
+                  <!-- Discount Badge -->
+                  <div v-if="team.discount_codes_id" class="inline-flex">
+                    <span class="rounded-full bg-amber-500/20 px-3 py-1 text-xs
+                    font-semibold text-amber-300 ring-1 ring-amber-500/30">
+                      <i class="ri-price-tag-3-line mr-1"></i>
+                      Special Offer
+                    </span>
+                  </div>
+
+                  <!-- Payment Status Badge (Alternative position) -->
+                  <div v-if="team.is_team_registered" class="inline-flex md:hidden">
+                    <span class="rounded-full bg-gradient-to-r from-green-500
+                    to-emerald-600 px-3 py-1 text-xs font-semibold text-white
+                    shadow-lg">
+                      <i class="ri-checkbox-circle-line mr-1"></i>
+                      Paid
+                    </span>
+                  </div>
                 </div>
 
                 <!-- Action Buttons -->
