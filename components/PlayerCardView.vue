@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="player && player.id && player.registration_id !== null"
+    v-if="player && player.id"
     class="card-ratio relative flex w-full max-w-[500px] flex-col overflow-hidden
     rounded-xl border border-gray-200 bg-white text-gray-800 shadow-md"
   >
@@ -55,8 +55,8 @@
       <div
       class="
       flex-none
-      bg-green-600
       p-2
+      bg-green-600
       text-center
       text-sm
       font-bold

@@ -93,7 +93,8 @@
                   @click="openPlayersCardModal(team)"
                   @blur="selectedTeamId = null"
                   >
-                    {{ team.registered_players_count }} / {{ team.player_limit }}
+                    {{ team.player_count + team.registered_players_count }} /
+                    {{ team.player_limit }}
                   </button>
                   <!-- Basic Themes -->
                   <div
@@ -271,21 +272,6 @@
       <hr class="my-3"/>
       <div class="flex flex-col justify-end gap-2 md:flex-row">
         <VBtn
-        v-if="hasCentralCoast"
-        depressed
-        dark
-        small
-        color="primary"
-        class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-        :loading="sending"
-        @click="notifyTeamsForCC(selected.id)"
-        >
-        <i class="ri-notification-line"></i>
-          Notify Teams
-        </VBtn>
-
-        <VBtn
-        v-else
         depressed
         dark
         small
@@ -514,32 +500,6 @@ export default {
       this.sending = true;
       this.$axios
         .$post(`v1/series/notify/${id}`)
-        .then((response) => {
-          this.$oruga.notification.open({
-            message: 'Email notification sent...',
-            variant: 'success',
-            duration: 5000,
-            position: 'bottom',
-            queue: true,
-          });
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: err.message,
-            position: 'bottom',
-            variant: 'danger',
-            queue: true,
-          });
-        })
-        .finally(() => {
-          this.sending = false;
-        })
-    },
-    notifyTeamsForCC(id) {
-      this.sending = true;
-      this.$axios
-        .$post(`v1/series/notify.teams/${id}`)
         .then((response) => {
           this.$oruga.notification.open({
             message: 'Email notification sent...',

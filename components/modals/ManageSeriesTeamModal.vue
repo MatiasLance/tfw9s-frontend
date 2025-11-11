@@ -473,7 +473,6 @@ export default {
         });
     },
     onMenuOpen(isOpen) {
-      console.log(isOpen)
       if (isOpen && this.discountCode.length > 0 && this.hasMore) {
         this.$nextTick(() => {
           const selectComponent = this.$refs.discountSelect;

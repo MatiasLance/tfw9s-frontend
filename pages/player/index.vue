@@ -42,6 +42,31 @@
     class="w-full my-24 mx-auto max-w-screen-xl bg-white rounded-lg
     shadow-md overflow-hidden"
     >
+      <!-- Registration Status Badge -->
+      <div class="px-6 pt-6">
+        <div 
+          :class="[
+            'inline-flex items-center px-4 py-3 rounded-full border-2 transition-all duration-300',
+            'animate-pulse-subtle shadow-lg transform hover:scale-105',
+            registrationStatus.class
+          ]"
+        >
+          <i 
+            :class="registrationStatus.icon" 
+            class="text-lg mr-2"
+          ></i>
+          <span class="text-sm font-semibold">
+            {{ registrationStatus.text }}
+          </span>
+          <div 
+            v-if="!isPlayerLimitReached"
+            class="ml-2 px-2 py-1 rounded-full bg-white bg-opacity-20 text-xs font-bold"
+          >
+            {{ currentPlayers }}/{{ maxPlayers }}
+          </div>
+        </div>
+      </div>
+
       <!-- Form Content -->
       <div class="p-6 grid grid-cols-1 gap-6">
         <!-- Team Name (Read-only) -->
@@ -417,14 +442,14 @@
         <div class="grid grid-cols-1 gap-4">
           <button
             type="submit"
-            :disabled="isSubmitting"
+            :disabled="isSubmitting || isPlayerLimitReached"
             :class="[
               'w-full py-3 px-4 border border-transparent rounded-lg',
               'shadow-sm text-sm font-medium text-white focus:outline-none',
               'focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
               'transition-all grid grid-cols-auto-1fr gap-2',
               'items-center justify-center',
-              isSubmitting ? 'bg-gray-400 cursor-not-allowed' :
+              isSubmitting || isPlayerLimitReached ? 'bg-gray-400 cursor-not-allowed' :
               'bg-[#4cbe5c] hover:bg-green-700 transform hover:-translate-y-0.5'
             ]"
           >
@@ -448,6 +473,7 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
 import validationMixin from '../../mixins/player/validation';
 import uploadFile from '../../mixins/player/uploadFile';
 
@@ -486,7 +512,41 @@ export default {
       dragOver: false,
       photoPreview: null,
       isSubmitting: false,
-      showSuccess: false
+      showSuccess: false,
+    }
+  },
+  computed: {
+    ...mapGetters('player', [
+      'currentPlayerCount',
+      'maxPlayerCount',
+      'isPlayerLimitReached'
+    ]),
+    currentPlayers() {
+      return this.currentPlayerCount
+    },
+    maxPlayers() {
+      return this.maxPlayerCount
+    },
+    registrationStatus() {
+      if (this.isPlayerLimitReached) {
+        return {
+          class: 'bg-gradient-to-r from-red-500 to-red-600 border-red-600 text-white',
+          icon: 'ri-close-circle-line',
+          text: 'Registration Full - Waitlist Available'
+        };
+      } else if (this.currentPlayersCount >= this.maxPlayerCount * 0.8) {
+        return {
+          class: 'bg-gradient-to-r from-orange-500 to-orange-600 border-orange-600 text-white',
+          icon: 'ri-alert-line',
+          text: 'Almost Full - Register Soon!'
+        };
+      } else {
+        return {
+          class: 'bg-gradient-to-r from-green-500 to-green-600 border-green-600 text-white',
+          icon: 'ri-checkbox-circle-line',
+          text: 'Registration Open'
+        };
+      }
     }
   },
   mounted() {
@@ -496,25 +556,21 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('player', [
+      'SET_CURRENT_PLAYER_COUNT',
+      'SET_MAX_PLAYER_COUNT'
+    ]),
     async fetchTeamData(key) {
       try {
         const response = await this.$axios.$get(`v1/series/token/${key}`)
         this.team = response.data.team || [];
 
-        const registered = this.team.players_count || 0;
-        const limit = this.team.player_limit || 0;
-        
-        this.isPlayerLimitReached = registered >= limit
+        const currentPlayers = this.team.player_count +
+        this.team.registered_players_count || 0;
+        const maxPlayers = this.team.player_limit || 0;
 
-        if (this.isPlayerLimitReached) {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Player Registration Limit Reached',
-            position: 'bottom',
-            variant: 'info',
-            queue: true,
-          });
-        }
+        this.SET_CURRENT_PLAYER_COUNT(currentPlayers)
+        this.SET_MAX_PLAYER_COUNT(maxPlayers)
 
         this.form.teamName = this.team.name
         this.form.teamID = this.team.id
@@ -566,6 +622,8 @@ export default {
         
         await this.$axios.$post('/v1/players',
           formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+
+        this.SET_CURRENT_PLAYER_COUNT(this.currentPlayerCount + 1)
         
         this.showSuccess = true
         
@@ -575,7 +633,7 @@ export default {
         }, 3000)
         
       } catch (error) {
-        this.$emit('error', 'Failed to submit form: ' + error.message)
+        console.error('error', 'Failed to submit form: ' + error.message)
       } finally {
         this.isSubmitting = false
       }
@@ -621,5 +679,24 @@ export default {
 <style scoped>
 .grid-cols-auto-1fr {
   grid-template-columns: auto 1fr;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+* {
+  transition-property: color, background-color, border-color, transform, opacity;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>

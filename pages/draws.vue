@@ -257,7 +257,7 @@
 
         <div class="col-span-3">
           <section
-            v-if="totalPages > 0"
+            v-if="totalPages > 0 && isLoaded"
             class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2"
           >
             <div
@@ -497,7 +497,7 @@
                   <div class="flex items-center justify-between text-xs text-gray-400">
                     <div class="flex items-center space-x-2">
                       <i class="ri-football-line"></i>
-                      <span>Soccer Match</span>
+                      <span>Match</span>
                     </div>
                     <div class="flex items-center space-x-1">
                       <div class="
@@ -515,7 +515,7 @@
 
           <!-- Empty State -->
           <section
-            v-if="filteredMatchList.length === 0"
+            v-if="totalPages === 0"
             class="col-span-1 flex h-80 items-center justify-center 
             md:col-span-3"
             data-aos="fade-up"
@@ -537,6 +537,72 @@
             </div>
           </section>
         </div>
+
+        <!-- Loading indicator -->
+        <section v-if="!isLoaded">
+          <div class="fixed inset-0 flex items-center justify-center bg-gray-900/80 z-50">
+            <div class="text-center">
+              <!-- Rugby Ball Spinner -->
+              <div class="relative">
+                <!-- Outer Ring -->
+                <div class="
+                  w-20 h-20 border-4 border-green-500/30 
+                  rounded-full animate-spin
+                "></div>
+                
+                <!-- Rugby Ball -->
+                <div class="
+                  absolute inset-0 flex items-center justify-center
+                ">
+                  <div class="
+                    w-12 h-8 bg-gradient-to-r from-green-500 to-emerald-600 
+                    rounded-full relative transform -rotate-45
+                    animate-bounce
+                  ">
+                    <!-- Rugby Ball Details -->
+                    <div class="
+                      absolute inset-1 bg-green-700 rounded-full 
+                      border-2 border-green-300
+                    "></div>
+                    <div class="
+                      absolute top-1/2 left-0 right-0 h-0.5 
+                      bg-green-300 transform -translate-y-1/2
+                    "></div>
+                    <div class="
+                      absolute top-1/2 left-1/3 w-1 h-2 
+                      bg-green-300 transform -translate-y-1/2
+                    "></div>
+                    <div class="
+                      absolute top-1/2 right-1/3 w-1 h-2 
+                      bg-green-300 transform -translate-y-1/2
+                    "></div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Loading Text -->
+              <p class="mt-6 text-lg font-semibold text-green-400 animate-pulse">
+                Loading tfw9s Draws...
+              </p>
+              
+              <!-- Subtle Dots -->
+              <div class="flex justify-center space-x-1 mt-4">
+                <div class="
+                  w-2 h-2 bg-green-500 rounded-full 
+                  animate-bounce delay-0
+                "></div>
+                <div class="
+                  w-2 h-2 bg-green-500 rounded-full 
+                  animate-bounce delay-150
+                "></div>
+                <div class="
+                  w-2 h-2 bg-green-500 rounded-full 
+                  animate-bounce delay-300
+                "></div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   </div>
@@ -942,6 +1008,7 @@ export default {
         })
     },
     retrieveEventMatch() {
+      this.isLoaded = false
       const query = {
         sort: 'latest',
         region: this.selectedRegion,

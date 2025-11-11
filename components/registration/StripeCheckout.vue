@@ -85,8 +85,7 @@ export default {
       const metadata = this.registrationInformation;
       let endpoint = ''
 
-      if (this.seriestype === 'weekly' ||
-      this.seriestype === 'coast') {
+      if (this.seriestype === 'weekly') {
         endpoint = '/v1/tournament/indiv/checkout'
       } else {
         endpoint = '/v1/tournament/team/checkout'

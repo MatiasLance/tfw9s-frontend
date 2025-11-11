@@ -109,9 +109,7 @@ export default {
     async checkoutViaSquare() {
       const result = await this.card.tokenize()
       let endpoint = ''
-      if (this.seriestype === 'weekly' ||
-        this.seriestype === 'coast'
-      ) {
+      if (this.seriestype === 'weekly') {
         endpoint = '/v1/tournament/indiv/checkout'
       } else {
         endpoint = '/v1/tournament/team/checkout'

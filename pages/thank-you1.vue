@@ -216,9 +216,7 @@ export default {
         this.status = 'loading'
         let endpoint = ''
 
-        if (this.$route.query.seriesType === 'weekly' ||
-          this.$route.query.seriesType === 'coast'
-        ) {
+        if (this.$route.query.seriesType === 'weekly') {
           endpoint = '/v1/tournament/indiv/verify'
         } else {
           endpoint = '/v1/tournament/team/verify'

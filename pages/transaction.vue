@@ -42,7 +42,7 @@
           </VCarouselItem>
           <VCarouselItem
             v-if="photos.length === 0"
-            src="http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg"
+            src="https://i.imgur.com/jJNXPBf.jpeg"
             cover
           >
             <span
