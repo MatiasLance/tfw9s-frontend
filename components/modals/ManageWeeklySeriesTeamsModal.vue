@@ -68,207 +68,226 @@
           @change="quickFetch"
           />
       </div>
+
       <section
-      v-if="totalPages && totalPages > 0"
-      class="flex-1 overflow-y-auto"
+        v-if="totalPages && totalPages > 0"
+        class="flex-1 overflow-y-auto"
       >
-        <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <div
-            v-for="(team) in seriesTeams"
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div
+            v-for="team in seriesTeams"
             :key="team.id"
-            class="relative flex items-center gap-2
-            rounded-md bg-[#212121] p-4 text-white"
-            > 
-              <!-- Color Selection Bar -->
-              <article
-              class="absolute right-2 top-2 flex w-full max-w-[350px] justify-end"
-              >
-                <div
-                class="relative mb-2 flex flex-col text-left"
-                > 
-                  <button
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-br
+            from-green-900 via-gray-900 to-gray-800 p-6 text-white
+            shadow-2xl transition-all duration-300 hover:scale-105
+            hover:shadow-green-500/20 border-2 border-green-600/30"
+          > 
+            <!-- Rugby Jersey Stripe Design -->
+            <div class="absolute left-0 top-1/2 h-8 w-3 -translate-y-1/2
+            bg-white/20 rounded-r-lg"></div>
+            
+            <!-- Player Count Badge -->
+            <article class="absolute right-4 top-4">
+              <div class="relative">
+                <button
                   type="button"
-                  class="w-full rounded px-1  text-right text-sm
-                  text-gray-400 transition hover:text-gray-300"
+                  class="flex items-center gap-1 rounded-full bg-green-600/90
+                  px-3 py-1.5 text-xs font-bold text-white transition-all
+                  hover:bg-green-500 hover:shadow-lg"
                   @click="openPlayersCardModal(team)"
                   @blur="selectedTeamId = null"
-                  >
+                >
+                  <i class="ri-team-line text-sm"></i>
+                  <span class="font-mono">
                     {{ team.player_count + team.registered_players_count }} /
                     {{ team.player_limit }}
-                  </button>
-                  <!-- Basic Themes -->
+                  </span>
+                </button>
+
+                <!-- Players Dropdown -->
+                <div
+                  id="dropdown-menu"
+                  class="ring/5 absolute right-0 top-full z-30 mt-2 max-h-80
+                  w-48 divide-y divide-gray-100 overflow-y-auto rounded-xl
+                  bg-white shadow-2xl ring-1 ring-black/5"
+                  :class="team.id === selectedTeamId ? 'block' : 'hidden'"
+                >
                   <div
-                    id="dropdown-menu"
-                    class="ring/5 absolute right-0 top-full z-30 mt-2 max-h-80 w-full min-w-[200px]
-                    divide-y divide-gray-100 overflow-y-auto rounded-md bg-white shadow-lg ring-1
-                    ring-black drop-shadow-lg"
-                    :class="team.id === selectedTeamId?'block':'hidden'"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="menu-button"
-                  >
-                    <div
                     v-if="playerLoading"
-                    class="flex items-center justify-center py-4"
-                    >
-                      <VProgressCircular
-                      size="80"
-                      width="8"
+                    class="flex items-center justify-center py-6"
+                  >
+                    <VProgressCircular
+                      size="60"
+                      width="4"
                       indeterminate
                       color="green"
-                      />
-                    </div>
-                    <div
+                    />
+                  </div>
+                  <div
                     v-else-if="players && players.length > 0"
-                    class="w-full py-1" role="none"
+                    class="w-full py-2"
+                  >
+                    <a
+                      v-for="player in players"
+                      :key="player.id"
+                      class="flex items-center gap-3 px-4 py-2 text-sm font-medium
+                      text-gray-700 transition-all hover:bg-green-50 hover:text-green-700"
+                      @mousedown="openPlayerCardModal(player)"
                     >
-                      <a
-                        v-for="player in players"
-                        :key="player.id"
-                        class="flex items-start justify-start gap-2 p-2 text-sm
-                        font-medium text-gray-700 transition hover:bg-gray-200"
-                        role="menuitem"
-                        @mousedown="openPlayerCardModal(player)"
-                      >
+                      <i class="ri-user-3-line text-green-600"></i>
                       {{ player.name }}
-                      </a>
-                    </div>
-                    <div
-                    v-else
-                    class="w-full py-1" role="none"
-                    >
-                      <a
-                        class="flex items-center justify-center gap-2 px-2 py-6 text-sm
-                        font-medium text-gray-700 transition hover:bg-gray-200"
-                      >
-                        No Players Found
-                      </a>
-                    </div>
+                    </a>
+                  </div>
+                  <div v-else class="w-full py-6 text-center">
+                    <p class="text-sm text-gray-500">
+                      <i class="ri-user-search-line text-lg"></i>
+                      No Players
+                    </p>
                   </div>
                 </div>
-              </article>
-              <img
-              :src="getMediaURL(team.media[0])"
-              alt="Team Logo"
-              class="size-20 object-cover"
-              />
-              <article class="flex flex-1 flex-col">
-                <span class="font-semibold">
-                  {{ team.name }}
-                </span>
-                <p class="text-sm">
-                  Age Group: {{ team.agegroup.name }}
-                </p>
-                <p class="my-2 flex items-center space-x-2 text-sm">
-                  <span
-                  class="rounded border px-2 py-1 text-right text-xs
-                  text-white transition"
-                  :class="team.discount_codes_id?'visible':'invisible'"
-                  >
-                    Discounted <i class="ri-price-tag-3-line"></i>
+              </div>
+            </article>
+
+            <!-- Team Content -->
+            <div class="flex items-start gap-4">
+              <!-- Team Logo -->
+              <div class="relative">
+                <img
+                  :src="getMediaURL(team.media[0])"
+                  alt="Team Logo"
+                  class="size-16 rounded-xl object-cover shadow-lg ring-2
+                  ring-green-500/50"
+                />
+                <div class="absolute -bottom-1 -right-1 size-3 rounded-full
+                bg-green-500 ring-2 ring-white"></div>
+              </div>
+
+              <!-- Team Info -->
+              <article class="flex flex-1 flex-col space-y-3">
+                <div>
+                  <h3 class="text-lg font-bold text-white">
+                    {{ team.name }}
+                  </h3>
+                  <p class="text-sm text-green-300">
+                    <i class="ri-user-star-line mr-1"></i>
+                    {{ team.agegroup.name }}
+                  </p>
+                </div>
+
+                <!-- Discount Badge -->
+                <div v-if="team.discount_codes_id" class="inline-flex">
+                  <span class="rounded-full bg-amber-500/20 px-3 py-1 text-xs
+                  font-semibold text-amber-300 ring-1 ring-amber-500/30">
+                    <i class="ri-price-tag-3-line mr-1"></i>
+                    Special Offer
                   </span>
-                </p>
-                <span class="flex flex-wrap justify-end gap-2">
-                    <button
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                  <!-- Copy Link -->
+                  <button
                     type="button"
-                    class="
-                      max-w-full rounded
-                      border border-gray-200
-                      bg-[#3f51b5]
-                      px-3
-                      py-1.5
-                      text-sm
-                      uppercase
-                      text-white
-                      "
-                      @click="copyRegistrationLink(team)"
-                    >
-                      <p
-                      v-if="teamUrlGenerating === team.id"
-                      >
-                        <i class="ri-clipboard-line"></i>
-                        link copied
-                      </p>
-                      <p
-                      v-else
-                      >
-                        <i class="ri-file-copy-line"></i>
-                        copy link
-                      </p>
-                    </button>
-                    <button
+                    class="flex items-center justify-center gap-1 rounded-xl
+                    bg-blue-600/90 px-3 py-2 text-xs font-semibold text-white
+                    transition-all hover:bg-blue-500 hover:shadow-lg"
+                    @click="copyRegistrationLink(team)"
+                  >
+                    <i 
+                      :class="teamUrlGenerating === team.id ? 
+                      'ri-check-line animate-bounce' : 'ri-link'" 
+                      class="text-sm"
+                    ></i>
+                    {{ teamUrlGenerating === team.id ? 'Copied!' : 'Link' }}
+                  </button>
+
+                  <!-- SMS Link -->
+                  <button
                     type="button"
-                    class="
-                      max-w-full rounded
-                      border border-gray-200
-                      bg-[#1e4573]
-                      px-3
-                      py-1.5
-                      text-sm
-                      uppercase
-                      text-white
-                      "
-                      @click="sendLinkViaSms(team)"
-                    >
-                      <p
-                      v-if="teamUrlGeneratingPerID === team.id"
-                      >
-                        <i class="ri-send-plane-line animate-pulse"/>
-                        sending link...
-                      </p>
-                      <p v-else>
-                        <i class="ri-send-plane-line"></i>
-                        send link via sms
-                      </p>
-                    </button>
-                    <button
+                    class="flex items-center justify-center gap-1 rounded-xl
+                    bg-purple-600/90 px-3 py-2 text-xs font-semibold text-white
+                    transition-all hover:bg-purple-500 hover:shadow-lg"
+                    @click="sendLinkViaSms(team)"
+                  >
+                    <i 
+                      :class="teamUrlGeneratingPerID === team.id ?
+                      'ri-send-plane-fill animate-pulse' : 'ri-send-plane-line'" 
+                      class="text-sm"
+                    ></i>
+                    {{ teamUrlGeneratingPerID === team.id ? 'Sending...' : 'SMS' }}
+                  </button>
+
+                  <!-- Update -->
+                  <button
                     type="button"
-                    class="
-                      max-w-full rounded
-                      border border-gray-200
-                      bg-[#4cbe5c]
-                      px-3
-                      py-1.5
-                      text-sm
-                      uppercase
-                      text-white
-                      "
-                      @click="openManageTeamModal(team)"
-                    >
-                      <i class="ri-pencil-line"></i>
-                      Update
-                    </button>
-                    <button
+                    class="flex items-center justify-center gap-1 rounded-xl
+                    bg-green-600/90 px-3 py-2 text-xs font-semibold text-white
+                    transition-all hover:bg-green-500 hover:shadow-lg"
+                    @click="openManageTeamModal(team)"
+                  >
+                    <i class="ri-pencil-line text-sm"></i>
+                    Edit
+                  </button>
+
+                  <!-- Delete -->
+                  <button
                     type="button"
-                    class="
-                      max-w-full rounded
-                      border border-gray-200
-                      bg-[#fb0d2b]
-                      px-3
-                      py-1.5
-                      text-sm
-                      uppercase
-                      text-white
-                      "
-                      @click="openDeleteTeamModal(team)"
-                    >
-                      <i class="ri-delete-bin-line"></i>
-                      Delete
-                    </button>
-                </span>
-                
+                    class="flex items-center justify-center gap-1 rounded-xl
+                    bg-red-600/90 px-3 py-2 text-xs font-semibold text-white
+                    transition-all hover:bg-red-500 hover:shadow-lg"
+                    @click="openDeleteTeamModal(team)"
+                  >
+                    <i class="ri-delete-bin-line text-sm"></i>
+                    Remove
+                  </button>
+                </div>
               </article>
             </div>
+
+            <!-- Rugby Field Background Pattern -->
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r
+            from-transparent via-green-500 to-transparent opacity-50"></div>
+          </div>
         </div>
       </section>
+
       <section
-      v-else
-      class="flex h-60 flex-1 items-center
-      justify-center font-semibold
-      text-[#555555] md:col-span-3"
+        v-else
+        class="relative flex flex-1 flex-col items-center justify-center
+        py-16 px-4 text-center md:col-span-3 overflow-hidden
+        bg-gradient-to-br from-green-50 to-gray-100"
       >
-      No Teams Available
+        <!-- Rugby Field Pattern -->
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute left-1/4 top-0 h-full w-0.5 bg-green-500"></div>
+          <div class="absolute left-3/4 top-0 h-full w-0.5 bg-green-500"></div>
+          <div class="absolute left-0 top-1/4 h-0.5 w-full bg-green-500"></div>
+          <div class="absolute left-0 top-3/4 h-0.5 w-full bg-green-500"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10">
+          <div class="mb-6 flex justify-center">
+            <div class="flex size-20 items-center justify-center rounded-full
+            bg-white shadow-lg border border-green-200">
+              <i class="ri-football-line text-3xl text-green-600"></i>
+            </div>
+          </div>
+
+          <h3 class="mb-3 text-2xl font-bold text-gray-800">
+            Ready to Play?
+          </h3>
+          
+          <p class="mb-8 text-gray-600 max-w-md leading-relaxed">
+            The field is set but no teams are registered yet. 
+            <span class="font-semibold text-green-600">
+              Create your first rugby team
+            </span> 
+            and kick off the competition!
+          </p>
+        </div>
       </section>
+
       <hr class="my-3"/>
       <div class="flex flex-col justify-end gap-2 md:flex-row">
         <VBtn
