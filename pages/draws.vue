@@ -1,14 +1,16 @@
 <template>
-  <div class="min-h-screen w-screen bg-[#1A1A1B]">
+  <div class="min-h-screen bg-[#1A1A1B]">
     <BaseHeader
-    class="from-brand-green to-brand-black mx-auto
-    max-w-screen-xl gap-4 bg-gradient-to-r lg:px-8"
+      class="mx-auto max-w-full gap-4
+      bg-gradient-to-br from-green-900 via-brand-green to-green-800
+      background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
+      lg:px-8"
     >
       <div
         class="
           col-span-12
           text-center
-          lg:col-span-6
+          lg:col-span-3
           lg:space-y-3
           lg:text-left
           xl:mt-10"
@@ -35,10 +37,11 @@
         </h1>
       </div>
     </BaseHeader>
-    <section class="mx-auto max-w-screen-xl gap-4 p-7">
+
+    <section class="mx-auto max-w-screen-xl gap-4 px-4 py-6">
       <div class="grid grid-cols-3 gap-2">
         
-        <div class="col-span-3 p-2" data-aos="fade-up">
+        <div class="col-span-3 py-2" data-aos="fade-up">
           <!-- Enhanced Filter Container -->
           <div class="
             rounded-2xl bg-gradient-to-br from-green-50 to-green-100 
@@ -410,7 +413,7 @@
                           {{ doubleDigitFormat(match.team1_score) }}
                         </div>
                         <div class="text-xs text-gray-400 mt-1">
-                          Goals
+                          Points
                         </div>
                       </div>
                       
@@ -430,7 +433,7 @@
                           {{ doubleDigitFormat(match.team2_score) }}
                         </div>
                         <div class="text-xs text-gray-400 mt-1">
-                          Goals
+                          Points
                         </div>
                       </div>
                     </div>

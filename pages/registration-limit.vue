@@ -1,8 +1,11 @@
 <template>
     <div class="min-h-full bg-[#1A1A1B]">
       <BaseHeader
-        class="mx-auto max-w-screen-xl gap-4
-        bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+        class="mx-auto max-w-full gap-4
+        bg-gradient-to-br from-green-900 via-brand-green to-green-800
+        background: radial-gradient(ellipse at center,
+        rgba(120, 200, 100, 0.2) 0%, transparent 70%)
+        lg:px-8"
       >
         <div
           class="
@@ -38,31 +41,34 @@
   
       <div class="my-24 mx-auto max-w-screen-xl bg-[#1A1A1B] p-8 text-center">
         <div class="bg-white p-8 rounded-lg shadow-lg">
-          <h2 class="text-2xl font-bold mb-4">Registration Full</h2>
+          <h2 class="text-2xl font-bold mb-4">
+            Registration Full
+          </h2>
           <p class="mb-4">
-            Sorry, registration for "{{ $route.query.seriesName }}" has reached its maximum capacity of 
+            Sorry, registration for "{{ $route.query.seriesName }}"
+            has reached its maximum capacity of 
             {{ $route.query.maxRegistrations }} participants.
           </p>
-          <p class="mb-6">Please check back later or contact us for more information.</p>
+          <p class="mb-6">
+            Please check back later or contact us for more information.
+          </p>
           <NuxtLink to="/">
-            <VBtn color="black" dark>Return to Home</VBtn>
+            <VBtn color="black" dark>
+              Return to Home
+            </VBtn>
           </NuxtLink>
         </div>
       </div>
     </div>
-  </template>
+</template>
   
-  <script>
-  import BaseHeader from '~/components/base/BaseHeader';
-  
-  export default {
-    components: {
-      BaseHeader
-    },
-    head() {
-      return {
-        title: 'Registration Limit Reached'
-      };
-    }
-  };
-  </script>
+<script>
+import BaseHeader from '~/components/base/BaseHeader';
+
+export default {
+  components: { BaseHeader },
+  head() {
+    return { title: 'Registration Limit Reached' }
+  }
+};
+</script>

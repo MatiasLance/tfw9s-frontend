@@ -1,6 +1,11 @@
 <template>
   <div class="h-full">
-    <BaseHeader class="from-brand-green to-brand-black bg-gradient-to-r">
+    <BaseHeader
+      class="mx-auto max-w-full gap-4
+      bg-gradient-to-br from-green-900 via-brand-green to-green-800
+      background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
+      lg:px-8"
+    >
       <div
         class="
           col-span-12

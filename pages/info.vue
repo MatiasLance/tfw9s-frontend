@@ -1,8 +1,10 @@
 <template>
-  <div class="w-screen min-h-screen bg-[#1A1A1B]">
+  <div class="min-h-screen bg-[#1A1A1B]">
     <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    class="mx-auto max-w-full gap-4 relative overflow-hidden
+    bg-gradient-to-br from-green-900 via-brand-green to-green-800
+    background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
+    lg:px-8"
     >
       <div
         class="
@@ -34,7 +36,7 @@
         </h1>
       </div>
     </BaseHeader>
-    <section class="mx-auto max-w-screen-xl gap-4 p-6">
+    <section class="mx-auto max-w-screen-xl gap-4 py-6">
       <div class="grid grid-cols-1 gap-4">
         <span class="col-span-1 mx-4">
           <VueSlickCarousel

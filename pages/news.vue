@@ -2,8 +2,10 @@
 <template>
   <div class="min-h-screen  bg-[#1A1A1B]">
     <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+      class="mx-auto max-w-full gap-4 relative overflow-hidden
+      bg-gradient-to-br from-green-900 via-brand-green to-green-800
+      background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
+      lg:px-8"
     >
       <div
         class="
@@ -12,7 +14,8 @@
           lg:space-y-3
           lg:text-left
           lg:col-span-6
-          xl:mt-10"
+          xl:mt-10
+          relative z-10"
           data-aos="fade-right"
       >
         <span
@@ -37,7 +40,7 @@
       </div>
     </BaseHeader>
 
-    <div class="mx-auto max-w-screen-xl px-4 py-7">
+    <div class="mx-auto max-w-screen-xl px-4 py-6">
       <div class="-mx-4 flex flex-wrap">
         <main class="w-full px-4">
           <div class="my-6 flex flex-wrap items-center justify-end gap-4">

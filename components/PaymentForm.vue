@@ -500,7 +500,7 @@ for this code.
         .then((response) => {
           this.activeStep = 2
           this.$store.commit('cart/setTotal', response.overAllTotal/100);
-          const toPrice = response.overAllTotal/100;
+          const toPrice = response.overAllTotal;
           this.overAllTotal = toPrice;
         })
         .finally(() => {

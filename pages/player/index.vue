@@ -1,8 +1,10 @@
 <template>
 <div class="min-h-full bg-[#1A1A1B]">
-<BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    <BaseHeader
+      class="mx-auto max-w-full gap-4
+      bg-gradient-to-br from-green-900 via-brand-green to-green-800
+      background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
+      lg:px-8"
     >
       <div
         class="
@@ -121,7 +123,7 @@
           </div>
           <p class="text-xs text-gray-500 flex items-center">
             <i class="ri-information-line mr-1"></i>
-            Age group is automatically determined
+            Age group is automatically assigned
           </p>
         </div>
 
@@ -306,138 +308,6 @@
           </div>
         </div>
 
-        <!-- Parent/Guardian Information Section -->
-        <div class="border-t border-gray-200 pt-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <i class="ri-parent-line mr-2 text-green-500"></i>
-            Parent/Guardian Information
-          </h3>
-          
-          <!-- Parent First Name -->
-          <div class="grid grid-cols-1 gap-2">
-            <label for="parentFirstName" class="text-sm font-medium text-gray-700">
-              Parent First Name *
-            </label>
-            <div class="relative">
-              <i class="ri-user-3-line absolute left-3 top-1/2
-              transform -translate-y-1/2 text-gray-400"
-              ></i>
-              <input
-                id="parentFirstName"
-                v-model="form.parentFirstName"
-                type="text"
-                required
-                :class="[
-                  'w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm',
-                  'focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  'focus:border-transparent transition-all',
-                  errors.parentFirstName ? 'border-red-500 bg-red-50' :
-                  'border-gray-300 hover:border-gray-400'
-                ]"
-                placeholder="Enter parent's first name"
-                @blur="validateField('parentFirstName')"
-              />
-            </div>
-            <p v-if="errors.parentFirstName" class="text-sm text-red-600 flex items-center">
-              <i class="ri-error-warning-line mr-1"></i>
-              {{ errors.parentFirstName }}
-            </p>
-          </div>
-
-          <!-- Parent Last Name -->
-          <div class="grid grid-cols-1 gap-2">
-            <label for="parentLastName" class="text-sm font-medium text-gray-700">
-              Parent Last Name *
-            </label>
-            <div class="relative">
-              <i class="ri-user-3-line absolute left-3 top-1/2
-              transform -translate-y-1/2 text-gray-400"
-              ></i>
-              <input
-                id="parentLastName"
-                v-model="form.parentLastName"
-                type="text"
-                required
-                :class="[
-                  'w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm',
-                  'focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  'focus:border-transparent transition-all',
-                  errors.parentLastName ? 'border-red-500 bg-red-50' :
-                  'border-gray-300 hover:border-gray-400'
-                ]"
-                placeholder="Enter parent's last name"
-                @blur="validateField('parentLastName')"
-              />
-            </div>
-            <p v-if="errors.parentLastName" class="text-sm text-red-600 flex items-center">
-              <i class="ri-error-warning-line mr-1"></i>
-              {{ errors.parentLastName }}
-            </p>
-          </div>
-
-          <!-- Parent Contact Number -->
-          <div class="grid grid-cols-1 gap-2">
-            <label for="parentContact" class="text-sm font-medium text-gray-700">
-              Parent Contact Number *
-            </label>
-            <div class="relative">
-              <i class="ri-phone-line absolute left-3 top-1/2
-              transform -translate-y-1/2 text-gray-400"
-              ></i>
-              <input
-                id="parentContact"
-                v-model="form.parentContact"
-                type="tel"
-                required
-                :class="[
-                  'w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm',
-                  'focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  'focus:border-transparent transition-all',
-                  errors.parentContact ? 'border-red-500 bg-red-50' :
-                  'border-gray-300 hover:border-gray-400'
-                ]"
-                placeholder="Enter parent's contact number"
-                @blur="validateField('parentContact')"
-              />
-            </div>
-            <p v-if="errors.parentContact" class="text-sm text-red-600 flex items-center">
-              <i class="ri-error-warning-line mr-1"></i>
-              {{ errors.parentContact }}
-            </p>
-          </div>
-
-           <!-- Parent Email -->
-          <div class="grid grid-cols-1 gap-2">
-            <label for="parentEmail" class="text-sm font-medium text-gray-700">
-              Parent Email *
-            </label>
-            <div class="relative">
-              <i class="ri-mail-line absolute left-3 top-1/2
-              transform -translate-y-1/2 text-gray-400"
-              ></i>
-              <input
-                id="parentEmail"
-                v-model="form.parentEmail"
-                type="email"
-                required
-                :class="[
-                  'w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm',
-                  'focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  'focus:border-transparent transition-all',
-                  errors.parentEmail ? 'border-red-500 bg-red-50' :
-                  'border-gray-300 hover:border-gray-400'
-                ]"
-                placeholder="Enter parent's email address"
-                @blur="validateField('parentEmail')"
-              />
-            </div>
-            <p v-if="errors.parentEmail" class="text-sm text-red-600 flex items-center">
-              <i class="ri-error-warning-line mr-1"></i>
-              {{ errors.parentEmail }}
-            </p>
-          </div>
-        </div>
-
         <!-- Submit Button -->
         <div class="grid grid-cols-1 gap-4">
           <button
@@ -492,10 +362,6 @@ export default {
         lastName: '',
         dateOfBirth: '',
         photo: null,
-        parentFirstName: '',
-        parentLastName: '',
-        parentContact: '',
-        parentEmail: ''
       },
       errors: {
         teamName: '',
@@ -504,10 +370,6 @@ export default {
         lastName: '',
         dateOfBirth: '',
         photo: '',
-        parentFirstName: '',
-        parentLastName: '',
-        parentContact: '',
-        parentEmail: ''
       },
       dragOver: false,
       photoPreview: null,
@@ -534,7 +396,7 @@ export default {
           icon: 'ri-close-circle-line',
           text: 'Registration Full - Waitlist Available'
         };
-      } else if (this.currentPlayersCount >= this.maxPlayerCount * 0.8) {
+      } else if (this.currentPlayers >= this.maxPlayers * 0.8) {
         return {
           class: 'bg-gradient-to-r from-orange-500 to-orange-600 border-orange-600 text-white',
           icon: 'ri-alert-line',
@@ -587,10 +449,6 @@ export default {
         'firstName',
         'lastName',
         'dateOfBirth',
-        'parentFirstName',
-        'parentLastName',
-        'parentContact',
-        'parentEmail'
       ]
       fieldsToValidate.forEach(field => {
         this.validateField(field)
@@ -612,10 +470,6 @@ export default {
         formData.append('player_firstname', this.form.firstName)
         formData.append('player_lastname', this.form.lastName)
         formData.append('dob', this.form.dateOfBirth)
-        formData.append('contact_firstname', this.form.parentFirstName)
-        formData.append('contact_lastname', this.form.parentLastName)
-        formData.append('phone_number', this.form.parentContact)
-        formData.append('email', this.form.parentEmail)
         formData.append('photo[]', this.form.photo)
         formData.append('description', '');
         formData.append('seriesID', this.form.seriesID);
@@ -650,10 +504,6 @@ export default {
         lastName: '',
         dateOfBirth: '',
         photo: null,
-        parentFirstName: '',
-        parentLastName: '',
-        parentContact: '',
-        parentEmail: ''
       }
       this.errors = {
         teamName: '',
@@ -662,10 +512,6 @@ export default {
         lastName: '',
         dateOfBirth: '',
         photo: '',
-        parentFirstName: '',
-        parentLastName: '',
-        parentContact: '',
-        parentEmail: ''
       }
       this.photoPreview = null
       if (this.$refs.fileInput) {

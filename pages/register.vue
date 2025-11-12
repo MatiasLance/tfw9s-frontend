@@ -1,8 +1,10 @@
 <template>
   <div class="min-h-full bg-[#1A1A1B]">
     <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
+    class="mx-auto max-w-full gap-4 relative overflow-hidden
+    bg-gradient-to-br from-green-900 via-brand-green to-green-800
+    background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
+    lg:px-8"
     >
       <div
         class="

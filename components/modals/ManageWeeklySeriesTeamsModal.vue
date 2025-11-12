@@ -218,13 +218,13 @@
 
                 <!-- Action Buttons -->
                 <div class="grid grid-cols-2 gap-2 pt-2">
-                  <!-- Copy Link -->
+                  <!-- Copy Link for Team and Individual -->
                   <button
                     type="button"
                     class="flex items-center justify-center gap-1 rounded-xl
                     bg-blue-600/90 px-3 py-2 text-xs font-semibold text-white
                     transition-all hover:bg-blue-500 hover:shadow-lg"
-                    @click="copyRegistrationLink(team)"
+                    @click="copyTeamAndIndividualRegistrationLink(team)"
                   >
                     <i 
                       :class="teamUrlGenerating === team.id ? 
@@ -232,6 +232,22 @@
                       class="text-sm"
                     ></i>
                     {{ teamUrlGenerating === team.id ? 'Copied!' : 'Link' }}
+                  </button>
+
+                   <!-- Copy Link for Player Registration -->
+                  <button
+                    type="button"
+                    class="items-center justify-center gap-1 rounded-xl
+                    bg-blue-600/90 px-3 py-2 text-xs font-semibold text-white
+                    transition-all hover:bg-blue-500 hover:shadow-lg hidden"
+                    @click="copyPlayerRegistrationLink(team)"
+                  >
+                    <i 
+                      :class="playerRegistrationUrlGenerating === team.id ? 
+                      'ri-check-line animate-bounce' : 'ri-link'" 
+                      class="text-sm"
+                    ></i>
+                    {{ playerRegistrationUrlGenerating === team.id ? 'Copied!' : 'Link' }}
                   </button>
 
                   <!-- SMS Link -->
@@ -427,7 +443,8 @@ export default {
       players: [],
       teamUrlGenerating: null,
       teamUrlGeneratingPerID: null,
-      seriesName: null
+      seriesName: null,
+      playerRegistrationUrlGenerating: null
     }
   },
   computed: {
@@ -603,7 +620,7 @@ export default {
           this.generating = false;
         })
     },
-    copyRegistrationLink(team) {
+    copyTeamAndIndividualRegistrationLink(team) {
       this.teamUrlGenerating = team.id;
       this.$axios
         .$get(`v1/teams/link/${team.id}`)
@@ -611,7 +628,7 @@ export default {
           const teamUrl = response.data.url;
           navigator.clipboard.writeText(teamUrl);
           this.$oruga.notification.open({
-            message: 'Registration URL copied to clipboard...',
+            message: 'URL copied to clipboard...',
             variant: 'success',
             duration: 3000,
             position: 'bottom',
@@ -622,7 +639,40 @@ export default {
         .catch(err => {
           console.error('Url generation failed:', err);
           this.$oruga.notification.open({
-            message: 'Failed to generate registration URL',
+            message: 'Failed to generate URL',
+            variant: 'danger',
+            duration: 3000,
+            position: 'bottom',
+            queue: true,
+            dangerouslyUseHTMLString: true,
+          });
+        })
+        .finally(() => {
+          setTimeout(() => {
+            this.teamUrlGenerating = null;
+          }, 500)
+        })
+    },
+    copyPlayerRegistrationLink(team) {
+      this.playerRegistrationUrlGenerating = team.id;
+      this.$axios
+        .$get(`v1/teams/player/registration/link/${team.id}`)
+        .then((response) => {
+          const teamUrl = response.data.url;
+          navigator.clipboard.writeText(teamUrl);
+          this.$oruga.notification.open({
+            message: 'Player Registration URL copied to clipboard...',
+            variant: 'success',
+            duration: 3000,
+            position: 'bottom',
+            queue: true,
+            dangerouslyUseHTMLString: true,
+          });
+        })
+        .catch(err => {
+          console.error('Url generation failed:', err);
+          this.$oruga.notification.open({
+            message: 'Failed to generate player registration URL',
             variant: 'danger',
             duration: 3000,
             position: 'bottom',

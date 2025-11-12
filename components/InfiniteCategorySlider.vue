@@ -1,39 +1,44 @@
 <template>
   <div>
-    <VueSlickCarousel
-      v-if="options.length > 0"
-      :key="`carousel-${currentCategory || 'all'}-${options.length}`"
-      class="mb-4"
+    <VueSlickCarousel 
+      class="mb-4" 
       v-bind="slickSettings"
     >
-      <div :key="'all'">
+      <!-- All Categories Option -->
+      <div>
         <ShopCategory
           :selected="currentCategory === null"
-          @click="categorySelectedEventHandler(null)"
+          @click="handleCategorySelect(null)"
         >
           All
         </ShopCategory>
       </div>
+      
+      <!-- Category Options -->
       <div
         v-for="category in options"
-        :key="`cat-${category.id}`"
+        :key="category.id"
       >
         <ShopCategory
-          :selected="isSelected(category)"
-          @click="categorySelectedEventHandler(category)"
+          :selected="isCategorySelected(category)"
+          @click="handleCategorySelect(category)"
         >
           {{ category.name }}
         </ShopCategory>
       </div>
     </VueSlickCarousel>
-    <InfiniteCategorySlider
-      v-if="selected &&
-      selected.children && selected.children.length > 0 &&
-      isCurrentSelectionValid()"
-      ref="childSlider"
-      :options="selected.children"
-      @selection-changed="handleChildSelection"
-    />
+
+    <!-- Child Categories Slider -->
+    <div 
+      v-if="shouldShowChildSlider"
+      class="child-slider-container"
+    >
+      <InfiniteCategorySlider
+        ref="childSlider"
+        :options="selectedCategory.children"
+        @click="$emit('click', getFinalSelectedCategory())"
+      />
+    </div>
   </div>
 </template>
 
@@ -45,12 +50,12 @@ import VueSlickCarousel from 'vue-slick-carousel'
 import ShopCategory from '~/components/ShopCategory'
 import categoryList from '~/mixins/shop/categories'
 
-// Slick Carousel Settings
+// Carousel settings - easier to modify
 const slickSettings = {
   arrows: true,
   rows: 1,
   slidesToShow: 5,
-  slidesToScroll: 1,
+  slidesToScroll: 2,
   speed: 500,
   swipe: true,
   swipeToSlide: true,
@@ -69,15 +74,15 @@ const slickSettings = {
       settings: {
         slidesToShow: 2,
         slidesToScroll: 1,
-        initialSlide: 3,
+        initialSlide: 2,
         infinite: true,
       }
     },
     {
       breakpoint: 480,
       settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
+        slidesToShow: 2,
+        slidesToScroll: 2,
         infinite: true,
       }
     },
@@ -94,124 +99,169 @@ const slickSettings = {
 
 export default {
   name: 'InfiniteCategorySlider',
+  
   components: {
     VueSlickCarousel,
     ShopCategory
   },
+  
   mixins: [ categoryList ],
+  
   props: {
     options: {
       type: Array,
-      required: true
-    }
+      required: true,
+      default: () => [] // Safer default
+    },
   },
+  
   data() {
     return {
       currentCategory: null,
-      slickSettings
+      slickSettings: { ...slickSettings } // Clone to avoid shared reference
     }
   },
+  
   computed: {
-    selected: {
-      get() {
-        if (this.currentCategory !== null) {
-          return this.findCategory(this.currentCategory)
-        }
+    /**
+     * Get the currently selected category object
+     */
+    selectedCategory() {
+      if (this.currentCategory === null) {
         return null
-      },
-      set(value) {
-        this.currentCategory = value != null && value.id != null ? value.id : null
       }
-    }
-  },
-  watch: {
-    options: {
-      handler() {
-        if (this.selected && !this.isCurrentSelectionValid()) {
-          this.currentCategory = null
-        }
-      },
-      immediate: true
-    }
-  },
-  activated() {
-    if (this.selected && !this.isCurrentSelectionValid()) {
-      this.currentCategory = null
-    }
+      return this.findCategoryById(this.currentCategory)
+    },
 
-    this.$nextTick(() => {
-      this.$forceUpdate()
-    })
+    /**
+     * Check if we should display the child slider
+     */
+    shouldShowChildSlider() {
+      if (!this.selectedCategory) return false
+      
+      const hasChildren = this.selectedCategory.children && 
+                         this.selectedCategory.children.length > 0
+      const isCurrentCategoryValid = this.isCurrentCategoryInOptions()
+      
+      return hasChildren && isCurrentCategoryValid
+    }
   },
+  
   methods: {
-    findCategory(id, categories = null) {
-      if (!categories) categories = this.categories
-
-      for (const category of categories) {
-        if (category.id === id) {
+    /**
+     * Find a category by ID in the category tree
+     */
+    findCategoryById(targetId, categories = null) {
+      const searchCategories = categories || this.categories
+      
+      for (const category of searchCategories) {
+        // Check current category
+        if (category.id === targetId) {
           return category
-        } else if (category.children && category.children.length > 0) {
-          const found = this.findCategory(id, category.children)
-          if (found) return found
+        }
+        
+        // Recursively search children
+        if (category.children && category.children.length > 0) {
+          const foundInChildren = this.findCategoryById(targetId, category.children)
+          if (foundInChildren) {
+            return foundInChildren
+          }
         }
       }
-      return null
+      
+      return null // Category not found
     },
-    isCurrentSelectionValid() {
-      if (!this.selected) return false
-      return this.options.some(opt => opt.id === this.selected.id)
-    },
-    isSelected(category) {
-      return this.selected !== null && category.id === this.selected.id
-    },
-    getSelected() {
-      if (!this.selected) return null
 
-      if (
-        Array.isArray(this.selected.children) &&
-        this.selected.children.length > 0 &&
-        this.isCurrentSelectionValid()
-      ) {
-        const childSlider = this.$refs.childSlider
-        if (childSlider && typeof childSlider.getSelected === 'function') {
-          const childSelected = childSlider.getSelected()
-          if (childSelected) return childSelected
+    /**
+     * Check if a category is currently selected
+     */
+    isCategorySelected(category) {
+      return this.selectedCategory && 
+             category.id === this.selectedCategory.id
+    },
+
+    /**
+     * Verify current category exists in current options
+     */
+    isCurrentCategoryInOptions() {
+      if (!this.selectedCategory) return false
+      
+      return this.options.some(category => 
+        category.id === this.selectedCategory.id
+      )
+    },
+
+    /**
+     * Get the final selected category (handles nested selections)
+     */
+    getFinalSelectedCategory() {
+      if (!this.selectedCategory) return null
+
+      // Check if we have a child slider with a selection
+      if (this.shouldShowChildSlider && this.$refs.childSlider) {
+        const childSelection = this.$refs.childSlider.getFinalSelectedCategory()
+        if (childSelection) {
+          return childSelection
         }
       }
 
-      return this.selected
+      return this.selectedCategory
     },
-    categorySelectedEventHandler(category) {
-      const newId = category != null && category.id != null ? category.id : null
-      const oldId = this.currentCategory
 
-      // Prevent duplicate emits
-      if (newId === oldId) return
-
-      this.currentCategory = newId
-
+    /**
+     * Handle category selection with clear naming
+     */
+    handleCategorySelect(category) {
+      // Set the current category
+      this.currentCategory = category ? category.id : null
+      
+      // Emit the selection after DOM update
       this.$nextTick(() => {
-        const selection = this.getSelected()
-        this.$emit('selection-changed', selection)
+        const finalSelection = this.getFinalSelectedCategory()
+        this.$emit('click', finalSelection)
       })
     },
-    handleChildSelection(selection) {
-      this.$emit('selection-changed', selection)
+
+    /**
+     * Reset selection - useful for parent components
+     */
+    resetSelection() {
+      this.currentCategory = null
+      if (this.$refs.childSlider) {
+        this.$refs.childSlider.resetSelection()
+      }
+    },
+
+    /**
+     * Get current selection state - for debugging
+     */
+    getSelectionState() {
+      return {
+        currentCategory: this.currentCategory,
+        selectedCategory: this.selectedCategory,
+        hasChildSlider: !!this.$refs.childSlider,
+        childSelection: this.$refs.childSlider ? 
+          this.$refs.childSlider.getSelectionState() : null
+      }
     }
   }
 }
 </script>
 
-<style>
-.slick-prev:before,
+<style scoped>
+.child-slider-container {
+  margin-top: 1rem;
+}
+
+/* Carousel arrow styling */
+.slick-prev:before, 
 .slick-next:before {
   color: #1a1d18 !important;
   font-size: 1.15rem;
-  height: 3fr;
-  width: 3fr;
 }
 
-.selected {
+/* Selected state styling - more specific */
+.shop-category.selected {
   background: #1a1d18;
   color: #ffffff;
   border: 1px solid transparent;
