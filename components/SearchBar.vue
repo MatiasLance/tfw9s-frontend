@@ -12,16 +12,20 @@
         w-full
         min-w-0 flex-auto
         rounded-l-xl
-        border border-solid border-gray-300
-        bg-white bg-clip-padding
+        border-2 border-solid border-gray-600
+        bg-gray-700 bg-clip-padding
         text-base
         font-normal
-        text-gray-700
-        transition
+        text-gray-100
+        transition-all
+        duration-300
         ease-in-out
-        focus:bg-white focus:text-gray-700 focus:outline-none
+        placeholder-gray-400
+        focus:border-green-500 focus:bg-gray-600 
+        focus:text-gray-50 focus:outline-none
+        focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
       "
-      placeholder="Search"
+      placeholder="Search tournaments..."
       aria-label="Search"
       aria-describedby="button-addon2"
       @input="$emit('input', $event.target.value)"
@@ -33,20 +37,23 @@
         h-12
         items-center
         rounded-r-xl
-        bg-brand-black
+        bg-gradient-to-r from-green-500 to-green-600
         py-2.5
         px-6
         text-xs
-        font-medium
+        font-bold
         uppercase leading-tight
-        text-white
-        shadow-md
-        transition
-        duration-150
+        text-gray-50
+        shadow-lg
+        transition-all
+        duration-300
         ease-in-out
-        hover:bg-brand-yellow hover:shadow-lg
-        focus:bg-brand-grey focus:shadow-lg focus:outline-none focus:ring-0
-        active:bg-brand-grey active:shadow-lg
+        hover:from-green-600 hover:to-green-700 
+        hover:shadow-green-500/50 hover:scale-105
+        focus:from-green-600 focus:to-green-700 
+        focus:shadow-lg focus:outline-none focus:ring-2 
+        focus:ring-green-500 focus:ring-opacity-50
+        active:from-green-700 active:scale-95
       "
       type="submit"
     >

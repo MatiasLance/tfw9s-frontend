@@ -1,340 +1,157 @@
 <template>
-  <div class="min-h-screen bg-[#1A1A1B]">
+  <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
+    <!-- Enhanced Header -->
     <BaseHeader
-    class="mx-auto max-w-full gap-4 relative overflow-hidden
-    bg-gradient-to-br from-green-900 via-brand-green to-green-800
-    background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
-    lg:px-8"
+      class="mx-auto max-w-full gap-4 relative overflow-hidden
+      bg-gradient-to-br from-green-900 via-green-700 to-gray-900
+      lg:px-8"
     >
+      <!-- Animated Rugby Field Background -->
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-1/4 left-0 w-full h-1 bg-white/30 
+                    animate-pulse"></div>
+        <div class="absolute top-1/2 left-0 w-full h-1 bg-white/40 
+                    animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-3/4 left-0 w-full h-1 bg-white/30 
+                    animate-pulse" style="animation-delay: 2s;"></div>
+      </div>
+
       <div
-        class="
-          col-span-12
-          text-center
-          sm:space-y-3
-          sm:text-left
-          lg:col-span-6
-          xl:mt-10"
+        class="col-span-12 text-center sm:space-y-3 sm:text-left
+               lg:col-span-6 xl:mt-10 relative z-10"
         data-aos="fade-right"
       >
-        <span
-          class="
-            superheadline flex flex-row
-            items-center
-            text-[1rem]
-            font-normal
-            text-white
-          "
+        <span class="superheadline flex flex-row items-center text-[1rem]
+                    font-normal text-white"
         >
           <span class="font-medium">
             <NuxtLink to="/">
-              <VBtn text color="white">Home</VBtn>
+              <VBtn text color="white" class="hover:scale-105 transition-transform">
+                <i class="ri-home-4-line mr-2"></i>Home
+              </VBtn>
             </NuxtLink>
           </span>
         </span>
-        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Registration
+        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl
+                   bg-gradient-to-r from-green-400 to-white bg-clip-text 
+                   drop-shadow-lg"
+        >
+          🏉 Tournaments
         </h1>
       </div>
     </BaseHeader>
-    <section class="mx-auto max-w-screen-xl gap-4 py-6">
-      <div class="grid grid-cols-1 gap-4">
+
+    <!-- Main Content -->
+    <section class="mx-auto max-w-screen-xl gap-4 py-8 px-4">
+      <div class="grid grid-cols-1 gap-6">
+        
+        <!-- Sporty Tab Navigation -->
         <span class="col-span-1">
-          <VueSlickCarousel
-            v-bind="slickSettings"
-            draggable
-            focus-on-select
-            >
-            <div
-              v-for="tab in tabs"
-              :key="tab.name" class="px-2"
-            >
+          <VueSlickCarousel v-bind="slickSettings" draggable focus-on-select>
+            <div v-for="tab in tabs" :key="tab.name" class="px-2">
               <button
                 type="button"
-                class="
-                w-full
-                rounded-md
-                py-1.5
-                text-center
-                font-semibold
-                "
+                class="w-full rounded-xl py-3 text-center font-bold 
+                       transition-all duration-300 transform hover:scale-105 
+                       shadow-lg border-2"
                 :class="(activeTab == tab.name)
-                ? `from-40% via-95% to-100%
-                    bg-gradient-to-br
-                    from-[#5EE738]
-                    via-[#3e872a]
-                    to-[#050505]
-                    text-white`
-                :
-                'bg-[#212121] text-[#555555]'"
+                  ? `bg-gradient-to-r from-green-500 to-green-600 
+                     border-green-400 text-white shadow-green-500/50
+                     hover:from-green-600 hover:to-green-700`
+                  : `bg-gradient-to-r from-gray-800 to-gray-900 
+                     border-gray-600 text-gray-300 hover:border-green-500
+                     hover:text-white`"
                 @click="setTab(tab.name)"
               >
+                <i :class="tab.icon" class="mr-2"></i>
                 {{ tab.Label }}
               </button>
             </div>
           </VueSlickCarousel>
         </span>
-        <div class="grid grid-cols-1 gap-4 px-4 md:grid-cols-3">
+
+        <!-- Filters Section -->
+        <div class="grid grid-cols-1 gap-6 p-4 md:grid-cols-3 
+                    bg-gradient-to-br from-gray-800 to-gray-900 
+                    rounded-2xl shadow-2xl border border-gray-700"
+        >
+          <!-- Date Filter -->
           <div class="flex flex-col">
-            <div class="flex items-center justify-between">
-              <span
-                class="text-lg
-                font-bold
-                text-[#555555]"
-                >
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-lg font-bold text-white flex items-center">
+                <i class="ri-calendar-2-line mr-2 text-green-400"></i>
                 Select Date
               </span>
               <span
                 v-if="dateFilter"
-                class="cursor-pointer
-                text-xs
-                text-red-400
-                hover:text-sm
-                hover:text-red-500
-                "
+                class="cursor-pointer text-sm text-red-400 
+                       hover:text-red-300 transition-colors flex items-center"
                 @click="clearDate"
-                >
-                Clear
+              >
+                <i class="ri-close-line mr-1"></i>Clear
               </span>
             </div>
             <ODatepicker
               v-model="dateFilter"
               placeholder="Click to select..."
               icon="calendar"
-              class="rounded bg-white"
+              class="rounded-xl bg-gray-700 border-gray-600 
+                     text-white focus:ring-2 focus:ring-green-500 
+                     focus:border-transparent"
               :events="EventDates"
-            >
-            </ODatepicker>
+            />
           </div>
+
+          <!-- Search Filter -->
           <div class="flex flex-col md:col-start-3">
-            <span
-              class="text-lg
-              font-bold
-              text-[#555555]"
-              >
+            <span class="text-lg font-bold text-white mb-3 flex items-center">
+              <i class="ri-search-line mr-2 text-green-400"></i>
               Search Tournaments
             </span>
-            <OInput
-            v-model="query"
-            type="text"
-            placeholder="Search..."
-          />
+            <div class="relative">
+              <i class="ri-search-line absolute left-3 top-1/2 
+                        transform -translate-y-1/2 text-green-400
+                        z-10 pointer-events-none"
+              ></i>
+              <OInput
+                v-model="query"
+                type="text"
+                placeholder="Search tournaments..."
+                class="!pl-10 rounded-xl bg-gray-700 border-gray-600 
+                      text-white placeholder-gray-400 
+                      focus:ring-2 focus:ring-green-500 
+                      focus:border-transparent w-full"
+              />
+            </div>
           </div>
         </div>
-        <span
-          v-if="activeTab == 'weekly'"
-          class="col-span-1 p-4 text-white"
-          data-aos="fade-up"
-          data-aos-offset="0"
-        >
-        <article
-          class="grid w-full grid-cols-1
-          gap-4 pt-2 md:grid-cols-2 lg:grid-cols-3"
-          >
-            <div
-              v-for="(item, index) in filteredWeekly"
-              :key="item.id"
-              class="group relative shrink-0 snap-center rounded
-              border-2 border-double border-[#4cbe5c] bg-[#212121] backdrop-blur"
-              data-aos="zoom-in"
-              data-aos-once="true"
-              :data-aos-delay="`${index}00`"
-            >
-              <img
-                class="z-0 h-full w-full object-cover transition"
-                :src="getMediaURL(item.media[0], 'temp')"
-                alt="Series Image"
-              />
-              <div class="absolute right-0 top-0 z-10 rounded-bl-xl
-                bg-black p-2 pl-4 font-semibold text-white"
-              >
-                {{ DateRange(item.start, item.end) }}
-              </div>
-              <div class="absolute bottom-0 z-10 w-full
-                bg-black bg-opacity-75 p-2 pl-4 transition"
-              >
-              <div class="flex flex-col">
-                <span class="font-semibold text-white">
-                  {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
-                </span>
-              </div>
-                <span
-                  class="transform-translate line-clamp-3 h-0 w-full origin-left
-                  text-left text-sm text-white
-                  opacity-0 transition-all group-hover:h-16 group-hover:opacity-100"
-                  v-html="item.description"
-                />
-                <div class="mt-2 text-center">
-                  <span
-                    class="line-clamp-1 h-0 w-full cursor-pointer
-                    text-sm font-medium text-white opacity-0
-                    transition-all group-hover:h-6 group-hover:opacity-100"
-                    @click="ViewArticle(item.id)"
-                  >
-                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
-                      See more
-                    </span>
-                    <span
-                      class="inline-block transform transition-transform"
-                    >
-                      <i class="ri-arrow-right-s-line align-middle"></i>
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </article>
-          <section
-            v-if="filteredWeekly.length === 0"
-            class="col-span-1 flex h-60 items-center
-            justify-center font-semibold
-            text-[#555555] md:col-span-3"
-            >
-            No   Competitions Available
-          </section>
+
+        <!-- Tournament Cards -->
+        <span v-if="activeTab == 'weekly'" class="col-span-1" 
+              data-aos="fade-up" data-aos-offset="0">
+          <TournamentGrid 
+            :items="filteredWeekly" 
+            type="competitions"
+            @view-article="ViewArticle"
+          />
         </span>
-        <span
-          v-if="activeTab == 'tournament'"
-          class="col-span-1 p-4 text-white"
-          data-aos="fade-up"
-          data-aos-offset="0"
-        >
-        <article
-          class="grid w-full grid-cols-1
-          gap-4 pt-2 md:grid-cols-2 lg:grid-cols-3"
-          >
-            <div
-              v-for="(item, index) in filteredTournament"
-              :key="item.id"
-              class="group relative shrink-0 snap-center rounded
-              border-2 border-double border-[#4cbe5c] bg-[#212121] backdrop-blur"
-              data-aos="zoom-in"
-              data-aos-once="true"
-              :data-aos-delay="`${index}00`"
-            >
-              <img
-                class="z-0 h-full w-full object-cover transition"
-                :src="getMediaURL(item.media[0], 'temp')"
-                alt="Series Image"
-              />
-              <div class="absolute right-0 top-0 z-10 rounded-bl-xl
-                bg-black p-2 pl-4 font-semibold text-white"
-              >
-                {{ DateRange(item.start, item.end) }}
-              </div>
-              <div class="absolute bottom-0 z-10 w-full
-                bg-black bg-opacity-75 p-2 pl-4 transition"
-              >
-                <div class="flex flex-col">
-                  <span class="font-semibold text-white">
-                    {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
-                  </span>
-                </div>
-                <span
-                  class="transform-translate line-clamp-3 h-0 w-full origin-left
-                  text-left text-sm text-white
-                  opacity-0 transition-all group-hover:h-16 group-hover:opacity-100"
-                  v-html="item.description"
-                />
-                <div class="mt-2 text-center">
-                  <span
-                    class="line-clamp-1 h-0 w-full cursor-pointer
-                    text-sm font-medium text-white opacity-0
-                    transition-all group-hover:h-6 group-hover:opacity-100"
-                    @click="ViewArticle(item.id)"
-                  >
-                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
-                      See more
-                    </span>
-                    <span
-                      class="inline-block transform transition-transform"
-                    >
-                      <i class="ri-arrow-right-s-line align-middle"></i>
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </article>
-          <section
-            v-if="filteredTournament.length === 0"
-            class="col-span-1 flex h-60 items-center
-            justify-center font-semibold
-            text-[#555555] md:col-span-3"
-            >
-            No Tournaments Available
-          </section>
+
+        <span v-if="activeTab == 'tournament'" class="col-span-1" 
+              data-aos="fade-up" data-aos-offset="0">
+          <TournamentGrid 
+            :items="filteredTournament" 
+            type="tournaments"
+            @view-article="ViewArticle"
+          />
         </span>
-        <span
-          v-if="activeTab == 'coast'"
-          class="col-span-1 p-4 text-white"
-          data-aos="fade-up"
-          data-aos-offset="0"
-        >
-          <article
-          class="grid w-full grid-cols-1
-          gap-4 pt-2 md:grid-cols-2 lg:grid-cols-3"
-          >
-            <div
-              v-for="(item, index) in filteredCentral"
-              :key="item.id"
-              class="group relative shrink-0 snap-center rounded
-              border-2 border-double border-[#4cbe5c] bg-[#212121] backdrop-blur"
-              data-aos="zoom-in"
-              data-aos-once="true"
-              :data-aos-delay="`${index}00`"
-            >
-              <img
-                class="z-0 h-full w-full object-cover transition"
-                :src="getMediaURL(item.media[0], 'temp')"
-                alt="Series Image"
-              />
-              <div class="absolute right-0 top-0 z-10 rounded-bl-xl
-                bg-black p-2 pl-4 font-semibold text-white"
-              >
-                {{ DateRange(item.start, item.end) }}
-              </div>
-              <div class="absolute bottom-0 z-10 w-full
-                bg-black bg-opacity-75 p-2 pl-4 transition"
-              >
-                <div class="flex flex-col">
-                  <span class="font-semibold text-white">
-                    {{ item.name }} - {{ formatCurrencyFromCent(item.price) }}
-                  </span>
-                </div>
-                <span
-                  class="transform-translate line-clamp-3 h-0 w-full origin-left
-                  text-left text-sm text-white
-                  opacity-0 transition-all group-hover:h-16 group-hover:opacity-100"
-                  v-html="item.description"
-                />
-                <div class="mt-2 text-center">
-                  <span
-                    class="line-clamp-1 h-0 w-full cursor-pointer
-                    text-sm font-medium text-white opacity-0
-                    transition-all group-hover:h-6 group-hover:opacity-100"
-                    @click="ViewArticle(item.id)"
-                  >
-                    <span class="duration-300 ease-in-out hover:text-[#5EE738]">
-                      See more
-                    </span>
-                    <span
-                      class="inline-block transform transition-transform"
-                    >
-                      <i class="ri-arrow-right-s-line align-middle"></i>
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </article>
-          <section
-            v-if="filteredCentral.length === 0"
-            class="col-span-1 flex h-60 items-center
-            justify-center font-semibold
-            text-[#555555] md:col-span-3"
-            >
-            No Central Coast Available
-          </section>
+
+        <span v-if="activeTab == 'coast'" class="col-span-1" 
+              data-aos="fade-up" data-aos-offset="0">
+          <TournamentGrid 
+            :items="filteredCentral" 
+            type="central coast"
+            @view-article="ViewArticle"
+          />
         </span>
       </div>
     </section>

@@ -1,169 +1,155 @@
 <template>
   <div
-    class="
-      group
-      flex
-      w-full
-      flex-col
-      items-start
-      border-2
-      transition
-      duration-200
-      hover:shadow-xl
-    "
+    class="group flex w-full flex-col items-start rounded-2xl 
+           bg-gradient-to-br from-gray-50 to-white shadow-lg 
+           border-2 border-green-200 transition-all duration-300 
+           hover:shadow-2xl hover:border-green-400 hover:scale-105"
   >
-    <div class="flex w-full items-center justify-center overflow-hidden">
+    <!-- Product Image -->
+    <div class="flex w-full items-center justify-center overflow-hidden 
+                rounded-t-2xl bg-gradient-to-br from-green-100 
+                to-gray-100 p-4">
       <img
-        class="
-          cursor-pointer
-          object-cover
-          transition
-          duration-200
-          group-hover:scale-125
-        "
-        :src="path"
+        class="cursor-pointer object-cover transition-all 
+               duration-500 group-hover:scale-110 
+               group-hover:rotate-1 h-48 w-48"
+        :src="getMediaURL(path)"
         :alt="name"
       />
     </div>
 
-    <div
-      class="flex w-full flex-col items-start space-y-1 p-3 lg:space-y-3"
-    >
-      <div class="grid grid-cols-1">
+    <!-- Product Content -->
+    <div class="flex w-full flex-col items-start space-y-3 p-4">
+      
+      <!-- Categories -->
+      <div class="grid grid-cols-1 gap-1">
         <div
           v-for="category in categories"
           :key="category.id"
           class="flex items-center justify-start"
         >
-          <span class="flex items-center pr-1 text-[16px]">
-            <i class="ri-price-tag-3-line text-[#1a1d18]"></i>
+          <span class="flex items-center pr-2 text-green-600">
+            <i class="ri-price-tag-3-line text-sm"></i>
           </span>
           <span
-            class="
-              break-words
-              text-start text-xs
-              selection:bg-[#1a1d18] selection:text-white
-              hover:text-[#00000080]
-            "
+            class="text-xs font-medium text-gray-600 
+                   transition-colors duration-200 
+                   hover:text-green-700"
           >
             {{ category.name }}
           </span>
         </div>
       </div>
-      <h3
-        class="
-          break-words text-sm
-          selection:bg-[#1a1d18]
-          selection:text-white md:text-lg
-        "
-      >
-        <NuxtLink :to="'/product/?id=' + uid">
+
+      <!-- Product Name -->
+      <h3 class="w-full">
+        <NuxtLink :to="'/product/?id=' + uid" class="block">
           <span
-            class="
-              font-montserrat
-              whitespace-normal
-              font-bold transition duration-200
-              hover:text-[#1a1d18]
-            "
+            class="font-bold text-gray-900 text-lg leading-tight 
+                   transition-colors duration-200 
+                   hover:text-green-700 line-clamp-2"
           >
             {{ name }}
           </span>
         </NuxtLink>
       </h3>
-      <div class="mt-2"></div>
-      <span class="w-9 border-t-2 border-slate-600"></span>
-      <div class="mb-8 h-7">
-        <span class="pt-2 pb-4 text-[18px] font-bold text-gray-900">
-          <span v-if="isOnSale">
-            <span v-if="isRrp">RRP</span>
-            <span
-              v-if="saleprice
-              && saleprice > 0"
-              class="text-red-500 line-through"
-            >
-              {{ formatCurrency(price) }}
-            </span>
+
+      <!-- Price Section -->
+      <div class="w-full space-y-2">
+        <div class="h-px w-12 bg-gradient-to-r from-green-400 
+                    to-transparent"></div>
+        
+        <!-- Regular Price -->
+        <div class="flex items-center gap-2">
+          <span 
+            v-if="isOnSale && isRrp" 
+            class="text-xs font-bold text-gray-500 uppercase"
+          >
+            RRP
           </span>
-          <span v-else>
+          <span
+            v-if="isOnSale && saleprice && saleprice > 0"
+            class="text-lg font-bold text-red-500 line-through"
+          >
             {{ formatCurrency(price) }}
           </span>
-        </span>
-        <div>
-          <span class="text-brand-green pt-2 pb-4 text-[18px] font-bold">
-            <span
-              v-if="isOnSale && saleprice
-              && saleprice > 0 && saleprice < price"
-            >SALE {{ formatCurrency(saleprice) }}</span>
+          <span v-else class="text-xl font-bold text-gray-900">
+            {{ formatCurrency(price) }}
+          </span>
+        </div>
+
+        <!-- Sale Price -->
+        <div v-if="isOnSale && saleprice && saleprice > 0 
+                   && saleprice < price">
+          <span class="text-2xl font-bold text-green-600 
+                       bg-gradient-to-r from-green-100 to-transparent 
+                       px-2 py-1 rounded-lg">
+            SALE {{ formatCurrency(saleprice) }}
           </span>
         </div>
       </div>
 
-      <VBtn
-        dark
-        large
-        color="black"
-        class="
-          relative
-          cursor-pointer
-          rounded-lg
-          py-2
-          text-xs
-          leading-3 text-white
-          transition
-          duration-300
-          hover:shadow-[#1a1d18]/50
-          sm:px-3
-          lg:px-7
-          lg:py-5
-          lg:text-base
-        "
+      <!-- Action Button -->
+      <button
+        type="button"
         @click="viewItem"
+        class="w-full rounded-xl bg-gradient-to-r from-green-500 
+               to-green-600 px-6 py-3 text-sm font-bold text-white 
+               shadow-lg transition-all duration-300 transform 
+               hover:from-green-600 hover:to-green-700 
+               hover:scale-105 hover:shadow-green-500/50 
+               active:scale-95 flex items-center justify-center gap-2"
       >
-        View item
-      </VBtn>
+        <i class="ri-eye-line"></i>
+        View Product
+      </button>
 
-      <span
-        class="pl-availability flex flex-col
-        items-start justify-start space-x-1 py-3"
-      >
+      <!-- Stock Status -->
+      <div class="w-full">
         <template v-if="stock > 0">
-          <div class="flex space-x-1">
-            <i class="ri-check-line text-green-500"></i>
-            <span class="mt-1 text-sm font-bold uppercase">
-              In Stock
+          <div class="flex items-center gap-2 rounded-lg 
+                      bg-green-50 px-3 py-2 border border-green-200">
+            <i class="ri-checkbox-circle-line text-green-500"></i>
+            <span class="text-sm font-bold text-green-700 uppercase">
+              In Stock ✅
             </span>
           </div>
         </template>
+        
         <template v-else>
           <template v-if="showOutOfStock">
-            <div class="ml-1 flex space-x-1">
-              <i class="ri-forbid-line text-red-500"></i>
-              <span class="mt-1 text-sm font-bold uppercase">
-                Out of stock
+            <div class="flex items-center gap-2 rounded-lg 
+                        bg-red-50 px-3 py-2 border border-red-200">
+              <i class="ri-close-circle-line text-red-500"></i>
+              <span class="text-sm font-bold text-red-700 uppercase">
+                Out of Stock
               </span>
             </div>
           </template>
+          
           <template v-if="hasVariants">
-            <div class="flex space-x-1">
-              <i class="ri-check-line text-green-500"></i>
-              <span class="mt-1 text-sm font-bold uppercase">
-                Variants In Stock
+            <div class="flex items-center gap-2 rounded-lg 
+                        bg-blue-50 px-3 py-2 border border-blue-200">
+              <i class="ri-checkbox-circle-line text-blue-500"></i>
+              <span class="text-sm font-bold text-blue-700 uppercase">
+                Variants Available
               </span>
             </div>
           </template>
         </template>
-      </span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import currencyMixin from '~/mixins/currency';
+import handlesMedia from '~/mixins/shop/handlesMedia'
 
 const CURRENCY_CODE = 'AUD'
 
 export default {
-  mixins: [ currencyMixin ],
+  mixins: [ currencyMixin, handlesMedia ],
   props: {
     uid: {
       type: Number,

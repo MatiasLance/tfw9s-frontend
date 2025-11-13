@@ -48,7 +48,7 @@
         >
         <div class="mt-6">
         <img
-        :src="contentimage"
+        :src="getMediaURL(contentimage)"
         class="h-auto w-auto"
         >
         </div>

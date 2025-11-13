@@ -1,39 +1,42 @@
 <template>
   <div class="min-h-screen bg-[#1A1A1B]">
+    <!-- Enhanced Header -->
     <BaseHeader
-      class="mx-auto max-w-full gap-4
-      bg-gradient-to-br from-green-900 via-brand-green to-green-800
-      background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
+      class="mx-auto max-w-full gap-4 relative overflow-hidden
+      bg-gradient-to-br from-green-900 via-green-700 to-gray-900
       lg:px-8"
     >
+      <!-- Animated Rugby Field Background -->
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-1/4 left-0 w-full h-1 bg-white/30 
+                    animate-pulse"></div>
+        <div class="absolute top-1/2 left-0 w-full h-1 bg-white/40 
+                    animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-3/4 left-0 w-full h-1 bg-white/30 
+                    animate-pulse" style="animation-delay: 2s;"></div>
+      </div>
+
       <div
-        class="
-          col-span-12
-          text-center
-          lg:col-span-3
-          lg:space-y-3
-          lg:text-left
-          xl:mt-10"
-          data-aos="fade-right"
+        class="col-span-12 text-center sm:space-y-3 sm:text-left
+               lg:col-span-6 xl:mt-10 relative z-10"
+        data-aos="fade-right"
       >
-        <span
-          class="
-            superheadline
-            flex flex-row
-            items-center
-            text-[1rem]
-            font-normal
-            text-white
-          "
+        <span class="superheadline flex flex-row items-center text-[1rem]
+                    font-normal text-white"
         >
           <span class="font-medium">
             <NuxtLink to="/">
-              <VBtn text color="white">Home</VBtn>
+              <VBtn text color="white" class="hover:scale-105 transition-transform">
+                <i class="ri-home-4-line mr-2"></i>Home
+              </VBtn>
             </NuxtLink>
           </span>
         </span>
-        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Draws
+        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl
+                   bg-gradient-to-r from-green-400 to-white bg-clip-text 
+                   drop-shadow-lg"
+        >
+          🏉 Draws
         </h1>
       </div>
     </BaseHeader>
@@ -227,32 +230,6 @@
                     @click:clear="searchTeamName = ''"
                   />
                 </div>
-              </div>
-            </div>
-
-            <!-- Active Filters Indicator -->
-            <div 
-              v-if="hasActiveFilters" 
-              class="
-                mt-6 rounded-lg bg-green-100 border border-green-300 p-3
-              "
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2 text-green-700">
-                  <i class="ri-filter-3-fill"></i>
-                  <span class="text-sm font-medium">Active Filters</span>
-                </div>
-                <button
-                type="button"
-                  @click="clearAllFilters"
-                  class="
-                    flex items-center space-x-1 text-xs text-green-600 
-                    hover:text-green-800 transition-colors duration-300
-                  "
-                >
-                  <i class="ri-close-line"></i>
-                  <span>Clear All</span>
-                </button>
               </div>
             </div>
           </div>
@@ -540,81 +517,23 @@
             </div>
           </section>
         </div>
-
-        <!-- Loading indicator -->
-        <section v-if="!isLoaded">
-          <div class="fixed inset-0 flex items-center justify-center bg-gray-900/80 z-50">
-            <div class="text-center">
-              <!-- Rugby Ball Spinner -->
-              <div class="relative">
-                <!-- Outer Ring -->
-                <div class="
-                  w-20 h-20 border-4 border-green-500/30 
-                  rounded-full animate-spin
-                "></div>
-                
-                <!-- Rugby Ball -->
-                <div class="
-                  absolute inset-0 flex items-center justify-center
-                ">
-                  <div class="
-                    w-12 h-8 bg-gradient-to-r from-green-500 to-emerald-600 
-                    rounded-full relative transform -rotate-45
-                    animate-bounce
-                  ">
-                    <!-- Rugby Ball Details -->
-                    <div class="
-                      absolute inset-1 bg-green-700 rounded-full 
-                      border-2 border-green-300
-                    "></div>
-                    <div class="
-                      absolute top-1/2 left-0 right-0 h-0.5 
-                      bg-green-300 transform -translate-y-1/2
-                    "></div>
-                    <div class="
-                      absolute top-1/2 left-1/3 w-1 h-2 
-                      bg-green-300 transform -translate-y-1/2
-                    "></div>
-                    <div class="
-                      absolute top-1/2 right-1/3 w-1 h-2 
-                      bg-green-300 transform -translate-y-1/2
-                    "></div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Loading Text -->
-              <p class="mt-6 text-lg font-semibold text-green-400 animate-pulse">
-                Loading tfw9s Draws...
-              </p>
-              
-              <!-- Subtle Dots -->
-              <div class="flex justify-center space-x-1 mt-4">
-                <div class="
-                  w-2 h-2 bg-green-500 rounded-full 
-                  animate-bounce delay-0
-                "></div>
-                <div class="
-                  w-2 h-2 bg-green-500 rounded-full 
-                  animate-bounce delay-150
-                "></div>
-                <div class="
-                  w-2 h-2 bg-green-500 rounded-full 
-                  animate-bounce delay-300
-                "></div>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </section>
+    <!-- Loading indicator -->
+    <LoadingAnimation
+    :is-loading="!isLoaded"
+    loading-title="Draws"
+    />
   </div>
 </template>
 
 <script>
+import LoadingAnimation from '~/components/loading/LoadingAnimation.vue';
 import handlesMedia from '~/mixins/shop/handlesMedia';
+
 export default {
   mixins: [ handlesMedia ],
+  components: { LoadingAnimation },
   data() {
     return {
       pageSEO: {

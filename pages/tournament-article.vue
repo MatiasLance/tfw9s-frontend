@@ -1,182 +1,216 @@
 <template>
-  <div class="flex min-h-screen w-screen items-center bg-[#1A1A1B] text-white">
+  <div class="flex min-h-screen w-screen items-center bg-gradient-to-br 
+              from-gray-900 to-gray-950 text-white">
+    
+    <!-- Sporty Loading State -->
     <section
-    v-if="isLoading"
-    class="flex w-full h-[70vh] items-center justify-center"
+      v-if="isLoading"
+      class="flex w-full h-[70vh] items-center justify-center"
     >
-      <VProgressCircular
-        :size="150"
-        :width="15"
-        color="green"
-        indeterminate
-      >
-      </VProgressCircular>
+      <div class="text-center">
+        <div class="relative mb-8">
+          <div class="h-20 w-12 rounded-full bg-green-600 
+                      animate-bounce shadow-lg mx-auto">
+            <div class="absolute left-1/2 top-1/2 h-16 w-10 
+                        -translate-x-1/2 -translate-y-1/2 
+                        rounded-full bg-white/20"></div>
+            <div class="absolute left-1/2 top-3 h-1 w-8 
+                        -translate-x-1/2 bg-white/40"></div>
+            <div class="absolute left-1/2 bottom-3 h-1 w-8 
+                        -translate-x-1/2 bg-white/40"></div>
+          </div>
+        </div>
+        <p class="text-lg font-bold text-green-400 uppercase 
+                  tracking-wider animate-pulse">
+          Loading Tournament...
+        </p>
+      </div>
     </section>
-    <div
-    v-else
-    class=""
-    >
-      <div
-        class="
-        grid
-        h-auto
-        w-screen
-        grid-cols-1
-        gap-4
-        p-2
-        sm:p-6
-        md:grid-cols-6
-        md:p-10"
-      >
+
+    <!-- Main Content -->
+    <div v-else class="w-full">
+      <div class="grid h-auto w-screen grid-cols-1 gap-6 p-4 
+                  sm:p-6 md:grid-cols-6 md:p-8 lg:p-12">
+        
+        <!-- Image Gallery Section -->
         <div class="md:col-span-4">
-          <div v-if="photos.length !== 0" class="grid grid-cols-3 gap-4">
-            <div id="img-container" class="col-span-3">
+          <div v-if="photos.length !== 0" class="grid grid-cols-1 gap-4">
+            <!-- Main Image -->
+            <div class="col-span-1 rounded-2xl overflow-hidden 
+                        shadow-2xl border-2 border-green-500/30">
               <InnerImageZoom
                 :src="activeImageURL"
                 :zoom-src="activeImageURL"
                 zoom-type="hover"
+                class="w-full h-full object-cover"
               />
             </div>
-            <div class="col-span-3">
-              <template v-if="photos.length > 1">
-                <VueSlickCarousel v-bind="imageCarouselSettings">
-                  <div
-                    v-for="photo in photos"
-                    :key="photo.id"
+            
+            <!-- Thumbnail Carousel -->
+            <div class="col-span-1" v-if="photos.length > 1">
+              <VueSlickCarousel v-bind="imageCarouselSettings">
+                <div v-for="photo in photos" :key="photo.id">
+                  <button
+                    type="button"
+                    @click="setActiveMedia(photo)"
+                    :class="[
+                      'mx-1 inline-block rounded-xl border-2 p-2',
+                      'transition-all duration-300 transform hover:scale-110',
+                      activeImageURL === getMediaURL(photo) 
+                        ? 'border-green-500 bg-green-500/20 shadow-lg' 
+                        : 'border-gray-600 hover:border-green-400'
+                    ]"
                   >
-                    <a
-                      :href="`${$config.baseURL}/storage/${photo.path}`"
-                      class="hover:border-brand-green mx-1
-                      inline-block border border-gray-200 p-1
-                      px-1 py-2 text-center"
-                      @click.prevent="setActiveMedia(photo)"
+                    <img
+                      class="h-12 w-16 object-cover rounded-lg"
+                      :src="getMediaURL(photo)"
+                      :alt="`Tournament thumbnail - ${photo.id}`"
                     >
-                      <img
-                        class="h-12 w-16"
-                        :src="getMediaURL(photo)"
-                        :alt="`Product thumbnail - ${photo.id}`"
-                      >
-                    </a>
-                  </div>
-                </VueSlickCarousel>
-              </template>
+                  </button>
+                </div>
+              </VueSlickCarousel>
             </div>
           </div>
-          <div class="flex items-center justify-center">
+          
+          <!-- Fallback Image -->
+          <div v-if="photos.length === 0" class="flex items-center 
+                      justify-center rounded-2xl bg-gradient-to-br 
+                      from-gray-800 to-gray-900 border-2 
+                      border-dashed border-gray-600 p-8">
             <img
-            v-if="photos.length === 0"
               src="~/assets/images/kidsplaying.jpg"
-              cover
+              class="rounded-xl shadow-lg max-h-96 object-cover"
+              alt="Rugby tournament"
             />
           </div>
         </div>
-        <div
-          class="
-          col-span-1
-          flex flex-col
-          items-center
-          md:col-span-2"
-        >
-        <div
-          class="mx-auto w-full
-          max-w-screen-xl p-[1rem] font-semibold"
-        >
-          <span class="text-xl md:text-3xl">
-            {{article.name}}
-          </span>
-          <p class="text-brand-slate text-base md:text-lg">
-            {{ DateRange(formattedDate(article.start),
-              formattedDate(article.end)) }}
-          </p>
-          <p class="text-brand-slate text-base md:text-lg">
-           Age: {{ article.ageGroup.name || '' }}
-          </p>
+
+        <!-- Tournament Details Section -->
+        <div class="col-span-1 flex flex-col items-center md:col-span-2">
+          <div class="mx-auto w-full max-w-screen-xl p-4 
+                      bg-gradient-to-br from-gray-800 to-gray-900 
+                      rounded-2xl shadow-2xl border border-gray-700">
+            
+            <!-- Tournament Header -->
+            <div class="mb-6 text-center">
+              <h1 class="text-2xl md:text-4xl font-bold text-white 
+                         bg-gradient-to-r from-green-400 to-white 
+                         bg-clip-text mb-2">
+                {{ article.name }}
+              </h1>
+              <div class="space-y-2">
+                <p class="text-green-300 text-sm flex items-center 
+                          justify-center">
+                  <i class="ri-calendar-line mr-2"></i>
+                  {{ DateRange(formattedDate(article.start), 
+                    formattedDate(article.end)) }}
+                </p>
+                <!-- Dynamic Address -->
+                <p v-if="article.address" class="text-blue-300 text-sm 
+                           flex items-center justify-center text-wrap">
+                  <i class="ri-map-pin-line mr-2"></i>
+                  {{ article.address }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-6 text-center">
+              <div class="inline-flex items-center gap-2 
+                          bg-gradient-to-r from-yellow-500 to-yellow-600 
+                          px-6 py-3 rounded-2xl shadow-lg">
+                <i class="ri-money-dollar-circle-fill text-xl 
+                          text-gray-900"></i>
+                <span class="text-2xl md:text-3xl font-bold text-gray-900">
+                  {{ formatCurrencyFromCent(article.price) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <article class="mb-6">
+              <h3 class="text-lg font-bold text-white mb-3 
+                         flex items-center">
+                <i class="ri-information-line mr-2 text-green-400"></i>
+                Tournament Details
+              </h3>
+              <div class="h-48 overflow-y-auto rounded-xl 
+                          bg-gray-700/50 p-4 border border-gray-600">
+                <p class="text-gray-200 text-sm leading-relaxed"
+                   v-html="article.description"
+                />
+              </div>
+            </article>
+
+            <!-- Action Buttons -->
+            <div class="space-y-4">
+              <!-- Register Button -->
+              <div v-if="!article.pause && article.type !== 'weekly'" 
+                   class="flex justify-center">
+                <NuxtLink
+                  :to="{
+                    path: '/register/?id=' + article.id,
+                    query: {
+                      series: article.name,
+                      price: article.price,
+                    }
+                  }"
+                  class="w-full"
+                >
+                  <button
+                    type="button"
+                    class="w-full rounded-2xl bg-gradient-to-r 
+                           from-green-500 to-green-600 px-8 py-4 
+                           text-lg font-bold text-white shadow-2xl 
+                           transition-all duration-300 transform 
+                           hover:from-green-600 hover:to-green-700 
+                           hover:scale-105 hover:shadow-green-500/50 
+                           active:scale-95 flex items-center 
+                           justify-center gap-2"
+                  >
+                    <i class="ri-user-add-line"></i>
+                    Register Now
+                  </button>
+                </NuxtLink>
+              </div>
+
+              <!-- Event Unavailable -->
+              <div v-if="article.pause" 
+                   class="flex justify-center">
+                <div class="rounded-2xl bg-gradient-to-r 
+                            from-red-500 to-red-600 px-6 py-4 
+                            text-center shadow-lg">
+                  <p class="text-lg font-bold text-white 
+                            flex items-center justify-center gap-2">
+                    <i class="ri-close-circle-line"></i>
+                    Event Unavailable
+                  </p>
+                </div>
+              </div>
+
+              <!-- Back Button -->
+              <div class="flex justify-center">
+                <NuxtLink to="/tournaments" class="w-full">
+                  <button
+                    type="button"
+                    class="w-full rounded-2xl bg-gradient-to-r 
+                           from-gray-700 to-gray-800 px-8 py-4 
+                           text-lg font-semibold text-gray-300 
+                           border-2 border-gray-600 transition-all 
+                           duration-300 transform hover:from-gray-600 
+                           hover:to-gray-700 hover:text-white 
+                           hover:scale-105 hover:border-gray-500 
+                           active:scale-95 flex items-center 
+                           justify-center gap-2"
+                  >
+                    <i class="ri-arrow-left-line"></i>
+                    Back to Tournaments
+                  </button>
+                </NuxtLink>
+              </div>
+            </div>
+          </div>
         </div>
-        <div
-          class="article-context mx-auto w-full
-          max-w-screen-xl px-[1rem] text-xl
-          font-bold md:text-4xl"
-        >
-          {{ formatCurrencyFromCent(article.price) }}
-        </div>
-        <article
-          class="article-description mx-auto
-          mb-4 h-[200px] w-full max-w-screen-xl
-          overflow-y-scroll text-wrap p-[1rem]"
-        >
-          <p
-            class="my-4 text-sm text-white md:text-lg"
-            v-html="article.description"
-          />
-        </article>
-        <div v-if="!article.pause && article.type !== 'weekly'"
-          class="mb-4 flex w-full justify-center"
-        >
-          <NuxtLink
-            :to="{
-              path: '/register/?id=' + article.id,
-            query: {
-              series: article.name,
-              price: article.price,
-            }
-            }"
-          >
-            <button
-              type="button"
-              class="
-              col-span-1 inline-block
-              w-[250px] select-none rounded-lg
-              border
-              border-transparent
-              bg-gradient-to-tr
-              from-[#5EE738]
-              via-[#3e872a]
-              to-[#050505]
-              px-6
-              py-2
-              text-center text-xl
-              font-semibold
-              text-white
-              transition
-              hover:brightness-125"
-            >
-              Register Now
-            </button>
-          </NuxtLink>
-        </div>
-        <div
-        v-if="article.pause"
-        class="mb-4 flex w-full justify-center text-lg
-        font-semibold text-red-400"
-        >
-          Event Unavailable
-        </div>
-        <div class="mb-4 flex w-full justify-center">
-          <NuxtLink :to="'/tournaments'">
-            <button
-              type="button"
-              class="
-              inline-block
-              w-[250px]
-              rounded-lg
-              border-2 border-[#414141]
-              bg-[#212121]
-              px-4
-              py-3
-              text-center
-              text-lg font-medium
-              text-[#999999]
-              shadow-sm
-              transition
-              hover:bg-[#414141]
-              hover:text-white
-            "
-            >
-              Back to Tournaments
-            </button>
-          </NuxtLink>
-        </div>
-       </div>
       </div>
     </div>
   </div>

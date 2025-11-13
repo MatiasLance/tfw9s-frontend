@@ -1,39 +1,42 @@
 <template>
   <div class="min-h-screen w-screen bg-[#1A1A1B]">
+    <!-- Enhanced Header -->
     <BaseHeader
-    class="mx-auto max-w-full gap-4 relative overflow-hidden
-    bg-gradient-to-br from-green-900 via-brand-green to-green-800
-    background: radial-gradient(ellipse at center, rgba(120, 200, 100, 0.2) 0%, transparent 70%)
-    lg:px-8"
+      class="mx-auto max-w-full gap-4 relative overflow-hidden
+      bg-gradient-to-br from-green-900 via-green-700 to-gray-900
+      lg:px-8"
     >
+      <!-- Animated Rugby Field Background -->
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-1/4 left-0 w-full h-1 bg-white/30 
+                    animate-pulse"></div>
+        <div class="absolute top-1/2 left-0 w-full h-1 bg-white/40 
+                    animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-3/4 left-0 w-full h-1 bg-white/30 
+                    animate-pulse" style="animation-delay: 2s;"></div>
+      </div>
+
       <div
-        class="
-          col-span-12
-          text-center
-          sm:space-y-3
-          sm:text-left
-          lg:col-span-6
-          xl:mt-10"
-          data-aos="fade-right"
+        class="col-span-12 text-center sm:space-y-3 sm:text-left
+               lg:col-span-6 xl:mt-10 relative z-10"
+        data-aos="fade-right"
       >
-        <span
-          class="
-            superheadline
-            flex flex-row
-            items-center
-            text-[1rem]
-            font-normal
-            text-white
-          "
+        <span class="superheadline flex flex-row items-center text-[1rem]
+                    font-normal text-white"
         >
           <span class="font-medium">
             <NuxtLink to="/">
-              <VBtn text color="white">Home</VBtn>
+              <VBtn text color="white" class="hover:scale-105 transition-transform">
+                <i class="ri-home-4-line mr-2"></i>Home
+              </VBtn>
             </NuxtLink>
           </span>
         </span>
-        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Ladders
+        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl
+                   bg-gradient-to-r from-green-400 to-white bg-clip-text 
+                   drop-shadow-lg"
+        >
+          🏉 Ladders
         </h1>
       </div>
     </BaseHeader>
@@ -104,43 +107,7 @@
           </span>
 
           <section
-            v-if="isLoading"
-            class="flex min-h-[400px] items-center justify-center"
-          >
-            <div class="text-center">
-              <!-- Animated Rugby Ball -->
-              <div class="relative mb-8">
-                <div class="h-20 w-12 rounded-full bg-green-600 
-                            animate-[bounce_1s_ease-in-out_infinite] 
-                            shadow-lg">
-                  <div class="absolute left-1/2 top-1/2 h-16 w-10 
-                              -translate-x-1/2 -translate-y-1/2 
-                              rounded-full bg-white/20"></div>
-                  <div class="absolute left-1/2 top-3 h-1 w-8 
-                              -translate-x-1/2 bg-white/40"></div>
-                  <div class="absolute left-1/2 bottom-3 h-1 w-8 
-                              -translate-x-1/2 bg-white/40"></div>
-                </div>
-              </div>
-              
-              <!-- Loading Text -->
-              <p class="text-lg font-bold text-green-800 uppercase 
-                        tracking-wider animate-pulse">
-                Loading Match Data...
-              </p>
-              
-              <!-- Progress Bar -->
-              <div class="mt-4 h-2 w-48 overflow-hidden rounded-full 
-                          bg-gray-200 mx-auto">
-                <div class="h-full w-1/2 bg-green-500 rounded-full 
-                            animate-[slide_2s_ease-in-out_infinite]">
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section
-            v-else-if="allTeamStats.length === 0 && !isLoading"
+            v-if="allTeamStats.length === 0 && !isLoading"
             class="col-span-1 flex h-80 flex-col items-center
                   justify-center rounded-2xl bg-gradient-to-br
                   from-green-50 to-gray-100 p-8 text-center
@@ -187,7 +154,10 @@
               class="border"
             />
           </section>
-
+          <LoadingAnimation
+          :is-loading="isLoading"
+          loading-title="Ladders"
+          />
         </div>
       </div>
     </section>
@@ -196,25 +166,26 @@
 
 <script>
 import VueTable from '~/components/tables/VueTable.vue';
+import LoadingAnimation from '~/components/loading/LoadingAnimation.vue';
 
-// Constants - optimized for faster access
+// Pre-computed constants to avoid runtime calculations
 const MATCH_ROUND_OPTIONS = Object.freeze([
   { text: 'Overall Standings', value: null },
   { text: 'Round', value: 'round' },
   { text: 'Semi', value: 'semi' },
   { text: 'Final', value: 'final' },
-  ...Array.from({ length: 4 }, (_, i) => 
-    [
-      'a',
-      'b',
-      'c',
-      'd'
-    ].map(pool => [
-      { text: `Pool ${pool.toUpperCase()} Round`, value: `pool_${pool}_round` },
-      { text: `Pool ${pool.toUpperCase()} Semi`, value: `pool_${pool}_semi` },
-      { text: `Pool ${pool.toUpperCase()} Grand Final`, value: `pool_${pool}_grand_final` }
-    ])
-  ).flat(2)
+  { text: 'Pool A Round', value: 'pool_a_round' },
+  { text: 'Pool B Round', value: 'pool_b_round' },
+  { text: 'Pool C Round', value: 'pool_c_round' },
+  { text: 'Pool D Round', value: 'pool_d_round' },
+  { text: 'Pool A Semi', value: 'pool_a_semi' },
+  { text: 'Pool B Semi', value: 'pool_b_semi' },
+  { text: 'Pool C Semi', value: 'pool_c_semi' },
+  { text: 'Pool D Semi', value: 'pool_d_semi' },
+  { text: 'Pool A Grand Final', value: 'pool_a_grand_final' },
+  { text: 'Pool B Grand Final', value: 'pool_b_grand_final' },
+  { text: 'Pool C Grand Final', value: 'pool_c_grand_final' },
+  { text: 'Pool D Grand Final', value: 'pool_d_grand_final' }
 ]);
 
 const DATA_COLUMNS = Object.freeze([
@@ -230,16 +201,31 @@ const DATA_COLUMNS = Object.freeze([
   { name: 'points', label: 'Points' },
 ]);
 
-const AGE_GROUPS = Object.freeze([
-  '12 Years Below', '13 to 15', '16 to 18', '19 to 24', '25 and above'
-]);
+// Simple cache with size limit
+const createCache = (maxSize = 50) => {
+  const cache = new Map();
+  return {
+    get(key) {
+      return cache.get(key)
+    },
+    set(key, value) {
+      if (cache.size >= maxSize) {
+        const firstKey = cache.keys().next().value;
+        cache.delete(firstKey);
+      }
+      cache.set(key, value);
+    },
+    clear() {
+      cache.clear()
+    }
+  };
+};
 
-// Memoization cache
-const memoized = new Map();
+const cache = createCache();
 
 export default {
   name: 'ladders',
-  components: { VueTable },
+  components: { VueTable, LoadingAnimation },
   
   data() {
     return {
@@ -261,7 +247,8 @@ export default {
       totalItems: 0,
       from: 0,
       to: 0,
-      initialLoad: false 
+      initialLoad: false,
+      pendingRequests: new Set()
     }
   },
 
@@ -275,42 +262,46 @@ export default {
 
     formattedEvents() {
       const cacheKey = `formattedEvents-${this.events.length}`;
-      if (memoized.has(cacheKey)) return memoized.get(cacheKey);
+      const cached = cache.get(cacheKey);
+      if (cached) return cached;
 
-      const result = this.events
-        .map(event => {
-          if (!event.event_date) return null;
-          
-          const ageGroupName = (event.agegroup && event.agegroup.name) ? event.agegroup.name : '';
-          const eventName = event.name || '';
-          const date = new Date(event.event_date);
-          
-          if (isNaN(date)) return null;
+      const result = [];
+      for (let i = 0; i < this.events.length; i++) {
+        const event = this.events[i];
+        if (!event.event_date) continue;
+        
+        const ageGroupName = (event.agegroup && event.agegroup.name) ?
+          event.agegroup.name : '';
+        const eventName = event.name || '';
+        const date = new Date(event.event_date);
+        
+        if (isNaN(date.getTime())) continue;
 
-          return {
-            text: `${eventName} ${this.replaceUnderWithU(ageGroupName)}`,
-            value: event.id,
-            agegroup: event.agegroup_id,
-            series: (event.eventmatch && event.eventmatch.map(em => 
-              (em.team1 && em.team1.series_id)
-            )) || [],
-            date,
-          };
-        })
-        .filter(Boolean);
+        const series = (event.eventmatch && Array.isArray(event.eventmatch)) ?
+          event.eventmatch.map(em => (em.team1 && em.team1.series_id)).filter(Boolean) :
+          [];
 
-      memoized.set(cacheKey, result);
+        result.push({
+          text: `${eventName} ${this.replaceUnderWithU(ageGroupName)}`,
+          value: event.id,
+          agegroup: event.agegroup_id,
+          series,
+          date,
+        });
+      }
+
+      cache.set(cacheKey, result);
       return result;
     },
 
     formattedAgeGroup() {
-      return (this.ageGroupList || []).map(agegroup => 
+      return this.ageGroupList.map(agegroup => 
         ({ text: agegroup.name, value: agegroup.id })
       );
     },
 
     formattedSeries() {
-      return (this.seriesList || []).map(series => 
+      return this.seriesList.map(series => 
         ({ text: series.name, value: series.id })
       );
     },
@@ -321,72 +312,83 @@ export default {
       }
 
       const cacheKey = `filteredEvents-${this.selectedYear}-
-      ${this.selectedAgeGroup}-${this.selectedSeries}`;
-      if (memoized.has(cacheKey)) return memoized.get(cacheKey);
+        ${this.selectedAgeGroup}-${this.selectedSeries}`;
+      const cached = cache.get(cacheKey);
+      if (cached) return cached;
 
       const result = this.formattedEvents.filter(event => {
         const yearMatch = event.date.getFullYear() === this.selectedYear;
         const ageGroupMatch = event.agegroup === this.selectedAgeGroup;
         
         return this.selectedSeries ?
-          yearMatch && ageGroupMatch && event.series.includes(this.selectedSeries) :
+          yearMatch && ageGroupMatch && event.series.includes(this.selectedSeries):
           yearMatch && ageGroupMatch;
       });
 
-      memoized.set(cacheKey, result);
+      cache.set(cacheKey, result);
       return result;
     },
 
     filteredRound() {
       if (!this.team.length) {
-        return [ MATCH_ROUND_OPTIONS[ 0 ] ];
+        return [ MATCH_ROUND_OPTIONS[0] ];
       }
 
-      const cacheKey = `filteredRound-${this.team.length}-${this.team.map(t => t.round).join(',')}`;
-      if (memoized.has(cacheKey)) return memoized.get(cacheKey);
+      const cacheKey = `filteredRound-${this.team.length}`;
+      const cached = cache.get(cacheKey);
+      if (cached) return cached;
 
-      const rounds = this.team.map(team => team.round).filter(Boolean);
-      const uniqueRounds = [ null, ...new Set(rounds) ];
+      const rounds = new Set();
+      for (let i = 0; i < this.team.length; i++) {
+        if (this.team[i].round) {
+          rounds.add(this.team[i].round);
+        }
+      }
+      
+      const uniqueRounds = [ null, ...rounds ];
       const result = MATCH_ROUND_OPTIONS.filter(option =>
         uniqueRounds.includes(option.value)
       );
 
-      memoized.set(cacheKey, result);
+      cache.set(cacheKey, result);
       return result;
     },
 
     filteredTeamsByRound() {
       if (!this.selectedRound) return this.team;
       
-      const cacheKey = `filteredTeams-${this.selectedRound}-${this.team.length}`;
-      if (memoized.has(cacheKey)) return memoized.get(cacheKey);
+      const cacheKey = `filteredTeams-${this.selectedRound}`;
+      const cached = cache.get(cacheKey);
+      if (cached) return cached;
 
       const result = this.team.filter(team => {
         return team.event && team.event.round === this.selectedRound;
       });
-      memoized.set(cacheKey, result);
+      cache.set(cacheKey, result);
       return result;
     },
 
     formattedYears() {
       const cacheKey = `formattedYears-${this.events.length}`;
-      if (memoized.has(cacheKey)) return memoized.get(cacheKey);
+      const cached = cache.get(cacheKey);
+      if (cached) return cached;
 
-      const years = this.events
-        .map(event => {
-          if (!event.event_date) return null;
+      const years = new Set();
+      for (let i = 0; i < this.events.length; i++) {
+        const event = this.events[i];
+        if (event.event_date) {
           const year = new Date(event.event_date).getFullYear();
-          return isNaN(year) ? null : year;
-        })
-        .filter(Boolean);
+          if (!isNaN(year)) years.add(year);
+        }
+      }
 
-      const uniqueYears = [ ...new Set(years) ].sort((a, b) => b - a);
+      const uniqueYears = Array.from(years).sort((a, b) => b - a);
       const result = uniqueYears.map(year => ({
         text: `Year ${year}`,
         value: year
       }));
 
-      memoized.set(cacheKey, result);
+      cache.set(cacheKey, result);
       return result;
     },
 
@@ -396,10 +398,6 @@ export default {
 
     matchRoundOption() {
       return MATCH_ROUND_OPTIONS;
-    },
-
-    ageGroup() {
-      return AGE_GROUPS;
     }
   },
 
@@ -413,15 +411,9 @@ export default {
       immediate: true
     },
 
-    selectedYear() {
-      this.handleFilterChangeDebounced();
-    },
-    selectedAgeGroup() {
-      this.handleFilterChangeDebounced();
-    }, 
-    selectedSeries() {
-      this.handleFilterChangeDebounced();
-    },
+    selectedYear: 'handleFilterChangeDebounced',
+    selectedAgeGroup: 'handleFilterChangeDebounced', 
+    selectedSeries: 'handleFilterChangeDebounced',
 
     selectedRound() {
       this.calculateAllTeamStats();
@@ -430,17 +422,16 @@ export default {
 
   created() {
     this.initializeData();
-    this.$once('hook:beforeDestroy', () => memoized.clear());
   },
 
   methods: {
     async initializeData() {
       this.isLoading = true;
       try {
+        await this.retrieveEvents();
         await Promise.allSettled([
           this.retrieveAgeGroups(),
-          this.retrieveSeries(), 
-          this.retrieveEvents()
+          this.retrieveSeries(),
         ]);
       } catch (error) {
         console.error('Error initializing data:', error);
@@ -457,7 +448,7 @@ export default {
       }
 
       const eventDate = new Date(firstEvent.event_date);
-      if (isNaN(eventDate)) return;
+      if (isNaN(eventDate.getTime())) return;
 
       this.selectedYear = eventDate.getFullYear();
       this.selectedAgeGroup = firstEvent.agegroup_id;
@@ -467,23 +458,23 @@ export default {
       const team1 = firstMatch && firstMatch.team1;
       this.selectedSeries = team1 && team1.series_id;
       
-      // Set initial load flag and make the first API call
       this.initialLoad = true;
       this.retrieveTeamPosition();
     },
 
     handleFilterChangeDebounced() {
-      if (this._debounceTimer) clearTimeout(this._debounceTimer);
-      
+      clearTimeout(this._debounceTimer);
       this._debounceTimer = setTimeout(() => {
-        // Allow initial load and subsequent filter changes
         if (this.initialLoad || this.isLoaded) {
           this.handleFilterChange();
         }
-      }, 300);
+      }, 200);
     },
 
     handleFilterChange() {
+      this.pendingRequests.forEach(controller => controller.abort());
+      this.pendingRequests.clear();
+
       this.isLoading = true;
       this.page = 1;
       this.selectedRound = null;
@@ -491,32 +482,29 @@ export default {
     },
 
     getUniqueTeamIds() {
-      const cacheKey = `uniqueTeamIds-${this.filteredTeamsByRound.length}`;
-      if (memoized.has(cacheKey)) return memoized.get(cacheKey);
+      const teams = this.filteredTeamsByRound;
+      const cacheKey = `uniqueTeamIds-${teams.length}`;
+      const cached = cache.get(cacheKey);
+      if (cached) return cached;
 
-      const result = [ ...new Set(this.filteredTeamsByRound.map(event => event.team_id)) ];
-      memoized.set(cacheKey, result);
+      const teamIds = new Set();
+      for (let i = 0; i < teams.length; i++) {
+        teamIds.add(teams[i].team_id);
+      }
+      const result = Array.from(teamIds);
+      
+      cache.set(cacheKey, result);
       return result;
     },
 
     calculateTeamStats(teamId) {
-      const teamEvents = this.filteredTeamsByRound.filter(event => event.team_id === teamId);
+      const teamEvents = this.filteredTeamsByRound.filter(event => 
+        event.team_id === teamId
+      );
       if (teamEvents.length === 0) return null;
-
-      const stats = teamEvents.reduce((acc, event) => ({
+      
+      const stats = {
         /* eslint-disable camelcase */
-        team_id: teamId,
-        team: event.team,
-        played: acc.played + (event.win + event.loss + event.draw),
-        win: acc.win + event.win,
-        loss: acc.loss + event.loss,
-        draw: acc.draw + event.draw,
-        for: acc.for + event.for,
-        against: acc.against + event.against,
-        difference: acc.difference + (event.for - event.against),
-        points: acc.points + event.points,
-      }),
-      {
         team_id: teamId,
         team: teamEvents[0].team,
         played: 0,
@@ -527,36 +515,51 @@ export default {
         against: 0,
         difference: 0,
         points: 0,
-      });
+      };
+
+      for (let i = 0; i < teamEvents.length; i++) {
+        const event = teamEvents[i];
+        stats.played += event.win + event.loss + event.draw;
+        stats.win += event.win;
+        stats.loss += event.loss;
+        stats.draw += event.draw;
+        stats.for += event.for;
+        stats.against += event.against;
+        stats.difference += (event.for - event.against);
+        stats.points += event.points;
+      }
 
       return stats;
     },
 
     calculateAllTeamStats() {
       const uniqueTeamIds = this.getUniqueTeamIds();
-      const stats = uniqueTeamIds
-        .map(teamId => this.calculateTeamStats(teamId))
-        .filter(Boolean);
+      const stats = [];
+      
+      for (let i = 0; i < uniqueTeamIds.length; i++) {
+        const teamStats = this.calculateTeamStats(uniqueTeamIds[i]);
+        if (teamStats) stats.push(teamStats);
+      }
 
-      const sortedData = stats.sort((a, b) => {
+      stats.sort((a, b) => {
         if (b.points !== a.points) return b.points - a.points;
         if (b.difference !== a.difference) return b.difference - a.difference;
         return a.team.localeCompare(b.team);
       });
 
-      this.allTeamStats = sortedData.map((team, index) => ({
+      // Update reactively in one operation
+      this.allTeamStats = stats.map((team, index) => ({
         ...team,
         pos: index + 1,
       }));
     },
 
     replaceUnderWithU(str) {
-      if (!str) return '';
-      return str.replace(/^Under \b/, 'U');
+      return str ? str.replace(/^Under \b/, 'U') : '';
     },
 
     buildQueryParams(additionalParams = {}) {
-      const baseParams = {
+      const params = {
         q: this.query,
         sort: 'points', 
         page: this.page,
@@ -565,23 +568,31 @@ export default {
         ...additionalParams
       };
 
-      // Remove null/undefined values efficiently
-      Object.keys(baseParams).forEach(key => {
-        if (baseParams[key] == null) {
-          delete baseParams[key];
+      // Build URLSearchParams directly for better performance
+      const searchParams = new URLSearchParams();
+      Object.keys(params).forEach(key => {
+        if (params[key] != null) {
+          searchParams.append(key, params[key]);
         }
       });
 
-      return new URLSearchParams(baseParams).toString();
+      return searchParams.toString();
     },
 
     async retrieveTeamPosition() {
+      // Create abort controller for this request
+      const controller = new AbortController();
+      this.pendingRequests.add(controller);
+
       this.isLoading = true;
       
       try {
         const queryString = this.buildQueryParams();
-        const response = await this.$axios.$get(`v1/teampositions?${queryString}`);
+        const response = await this.$axios.$get(`v1/teampositions?${queryString}`,
+          { signal: controller.signal }
+        );
         
+        // Process data in batches for large datasets
         this.team = response.data.teamPositions.map((team, index) => ({
           ...team,
           team: (team.team && team.team.name) || 'Unknown Team',
@@ -596,10 +607,13 @@ export default {
         
         this.calculateAllTeamStats();
       } catch (error) {
-        console.error('Error retrieving team positions:', error);
+        if (error.name !== 'CanceledError') {
+          console.error('Error retrieving team positions:', error);
+        }
       } finally {
+        this.pendingRequests.delete(controller);
         this.isLoaded = true;
-        this.initialLoad = false; // Reset initial load flag
+        this.initialLoad = false;
         this.isLoading = false;
       }
     },
@@ -651,9 +665,11 @@ export default {
   },
 
   beforeDestroy() {
-    // Clean up any timeouts
     clearTimeout(this._debounceTimer);
-    memoized.clear();
+    // Abort all pending requests
+    this.pendingRequests.forEach(controller => controller.abort());
+    this.pendingRequests.clear();
+    cache.clear();
   }
 }
 </script>

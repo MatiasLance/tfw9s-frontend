@@ -128,7 +128,6 @@
           "
           v-bind="$attrs"
         >
-          <!-- todo: add saleprice prop after :price -->
           <ManageItemThumbnailView
             v-for="product in MerchItems"
             :key="product.id"
@@ -162,6 +161,7 @@
           No Merch Available
         </section>
       </div>
+
       <OModal
        :active="showAddMerchVariantModal"
        @close="showAddMerchVariantModal = false"
@@ -240,889 +240,543 @@
         </VForm>
       </OModal>
 
-       <!-- showAdd modal component -->
-       <OModal
-       :active="showAddMerchItemModal"
-       @close="showAddMerchItemModal = false"
-       >
-       <VForm
-        ref="form" v-model="valid" lazy-validation
-        class="p-2 md:p-4"
+       <!-- Add Merch Modal component -->
+        <OModal
+          :active="showAddMerchItemModal"
+          @close="showAddMerchItemModal = false"
+          class="rugby-modal"
         >
-          <h3
-            class="
-            mb-3
-            font-bold"
+          <VForm
+            ref="form" 
+            v-model="valid" 
+            lazy-validation
+            class="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-green-50 rounded-xl"
           >
-            Add Merch Item
-          </h3>
-          <hr class="my-3">
-          <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <!-- Header with Rugby Theme -->
+            <div class="flex items-center mb-6 pb-4 border-b-2 border-green-600">
+              <div class="rugby-icon mr-3 w-10 h-10 bg-green-600 rounded-full 
+                          flex items-center justify-center shadow-lg">
+                <i class="ri-t-shirt-line text-gray-50 text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-gray-800 
+                        bg-clip-text text-transparent">
+                Add Rugby Merch
+              </h3>
+            </div>
+
+            <!-- Product Details Grid -->
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <!-- Product Name -->
+              <div class="col-span-1">
+                <label for="productname" class="mb-2 block font-semibold text-gray-700">
+                  <i class="ri-price-tag-3-line mr-2 text-green-600"></i>
+                  Product Name:
+                </label>
+                <VTextField
+                  id="name"
+                  v-model="item.name"
+                  label="Enter Product Name"
+                  :rules="rules"
+                  type="text"
+                  solo
+                  class="rugby-input"
+                />
+              </div>
+
+              <!-- Stock -->
+              <div class="col-span-1">
+                <label for="productstock" class="mb-2 block font-semibold text-gray-700">
+                  <i class="ri-stack-line mr-2 text-green-600"></i>
+                  Stock:
+                </label>
+                <VTextField
+                  id="stock"
+                  v-model="item.stock"
+                  label="Enter Stock"
+                  :rules="rules"
+                  type="number"
+                  min="0"
+                  solo
+                  class="rugby-input"
+                />
+              </div>
+
+              <!-- Price -->
+              <div class="col-span-1">
+                <label for="productprice" class="mb-2 flex justify-between
+                font-semibold text-gray-700"
+                >
+                  <span><i class="ri-money-dollar-circle-line mr-2 text-green-600"></i>
+                    Price:
+                  </span>
+                  <span class="font-bold text-green-700 bg-green-100 px-3 py-1 rounded-lg">
+                    {{ formatCurrency(item.price) }}
+                  </span>
+                </label>
+                <VTextField
+                  id="price"
+                  v-model="item.price"
+                  label="Enter Price"
+                  :rules="rules"
+                  type="number"
+                  step=".01"
+                  min="0.00"
+                  solo
+                  class="rugby-input"
+                />
+              </div>
+
+              <!-- Sale Price -->
+              <div class="col-span-1">
+                <label for="productsaleprice" class="mb-2 flex justify-between
+                font-semibold text-gray-700"
+                >
+                  <span><i class="ri-discount-percent-line mr-2 text-green-600"></i>
+                    Sale Price:
+                  </span>
+                  <span class="font-bold text-red-600 bg-red-100 px-3 py-1 rounded-lg">
+                    {{ formatCurrency(item.saleprice) }}
+                  </span>
+                </label>
+                <VTextField
+                  id="saleprice"
+                  v-model="item.saleprice"
+                  label="Enter Sale Price"
+                  type="number"
+                  step=".01"
+                  min="0.00"
+                  solo
+                  class="rugby-input"
+                />
+              </div>
+
+              <!-- Description -->
+              <div class="col-span-1 md:col-span-2">
+                <label for="productdescription" class="mb-2 block font-semibold text-gray-700">
+                  <i class="ri-file-text-line mr-2 text-green-600"></i>
+                  Description:
+                </label>
+                <Tiptap
+                  id="content"
+                  v-model="item.description"
+                  class="rugby-editor"
+                />
+              </div>
+
+              <!-- Categories Section -->
+              <div class="col-span-1 md:col-span-2">
+                <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                  <div class="flex items-center justify-between mb-4">
+                    <label class="block font-semibold text-gray-700">
+                      <i class="ri-folder-line mr-2 text-green-600"></i>
+                      Categories:
+                    </label>
+                    <button
+                      type="button"
+                      class="flex items-center gap-2 bg-green-600 hover:bg-green-700 
+                            text-gray-50 font-semibold px-4 py-2 rounded-lg 
+                            transition-all duration-200 transform hover:scale-105 
+                            shadow-md"
+                      @click="addCategoryPicker"
+                    >
+                      <i class="ri-add-fill"></i>
+                      Add Category
+                    </button>
+                  </div>
+
+                  <!-- Selected Categories -->
+                  <div v-if="multipleCategoryBuffer.length > 0" 
+                      class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div
+                      v-for="(index) in multipleCategoryBuffer"
+                      :key="index"
+                      class="flex items-center gap-2 bg-gray-50 rounded-lg p-3 
+                            border border-gray-200 group hover:border-green-300 
+                            transition-colors duration-200"
+                    >
+                      <InfiniteCategories
+                        :ref="`categoryPicker-${index}`"
+                        :options="categories"
+                        :lineage="categoryLineages[index - 1]"
+                        class="flex-grow"
+                      />
+                      <button
+                        type="button"
+                        class="w-8 h-8 flex items-center justify-center bg-red-500 
+                              hover:bg-red-600 text-gray-50 rounded-full 
+                              transition-all duration-200 transform hover:scale-110 
+                              shadow-sm"
+                        @click="removeCategoryPicker(index)"
+                      >
+                        <i class="ri-close-line text-sm"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Empty State -->
+                  <div
+                    v-else
+                    class="bg-gray-100 rounded-lg p-6 text-center border-2 
+                          border-dashed border-gray-300"
+                  >
+                    <i class="ri-folder-open-line text-3xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-600 font-medium">
+                      No categories selected
+                    </p>
+                    <p class="text-gray-500 text-sm mt-1">
+                      Add categories to organize your rugby merch
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Toggle Switches -->
+              <div class="col-span-1 md:col-span-2">
+                <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                  <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                    <i class="ri-toggle-line mr-2 text-green-600"></i>
+                    Product Settings
+                  </h4>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label class="rugby-toggle">
+                      <input
+                        v-model="item.is_featured"
+                        type="checkbox"
+                        class="rugby-checkbox"
+                      />
+                      <span class="rugby-toggle-slider"></span>
+                      <span class="ml-3 font-medium text-gray-700">Featured Item</span>
+                    </label>
+
+                    <label class="rugby-toggle">
+                      <input
+                        v-model="item.isHideOutOfStock"
+                        type="checkbox"
+                        class="rugby-checkbox"
+                      />
+                      <span class="rugby-toggle-slider"></span>
+                      <span class="ml-3 font-medium text-gray-700">Out of Stock</span>
+                    </label>
+
+                    <label class="rugby-toggle">
+                      <input
+                        v-model="item.is_on_sale"
+                        type="checkbox"
+                        class="rugby-checkbox"
+                      />
+                      <span class="rugby-toggle-slider"></span>
+                      <span class="ml-3 font-medium text-gray-700">On Sale</span>
+                    </label>
+
+                    <label class="rugby-toggle">
+                      <input
+                        v-model="item.show_rrp"
+                        type="checkbox"
+                        class="rugby-checkbox"
+                      />
+                      <span class="rugby-toggle-slider"></span>
+                      <span class="ml-3 font-medium text-gray-700">Show RRP</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Image Upload -->
+              <div class="col-span-1 md:col-span-2">
+                <ImageUpload
+                  @update-image="updateImage"
+                />
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col lg:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                class="flex-1 lg:flex-none bg-green-600 hover:bg-green-700 
+                      text-gray-50 font-bold py-3 px-6 rounded-lg 
+                      transition-all duration-200 transform hover:scale-105 
+                      disabled:opacity-50 disabled:cursor-not-allowed 
+                      disabled:transform-none shadow-lg"
+                :disabled="!valid"
+                @click="validate('Add')"
+              >
+                <i class="ri-check-double-line mr-2"></i>
+                Add Rugby Merch
+              </button>
+              <button
+                type="button"
+                class="flex-1 lg:flex-none bg-gray-500 hover:bg-gray-600 
+                      text-gray-50 font-bold py-3 px-6 rounded-lg 
+                      transition-all duration-200 transform hover:scale-105 
+                      shadow-lg"
+                @click="close"
+              >
+                <i class="ri-close-line mr-2"></i>
+                Cancel
+              </button>
+            </div>
+          </VForm>
+        </OModal>
+
+      <!-- Show Edit Merch -->
+      <OModal
+        :active="showEditMerchItemModal"
+        @close="showEditMerchItemModal = false"
+        class="rugby-modal"
+      >
+        <VForm
+          ref="form" 
+          v-model="valid" 
+          lazy-validation
+          class="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl"
+        >
+          <!-- Header with Rugby Theme -->
+          <div class="flex items-center mb-4 pb-3 border-b-2 border-green-600">
+            <div class="rugby-ball-icon mr-3 w-8 h-8 bg-green-600
+            rounded-full flex items-center justify-center"
+            >
+              <i class="ri-t-shirt-line text-white text-lg"></i>
+            </div>
+            <h3 class="text-2xl font-bold bg-gradient-to-r from-green-600
+            to-gray-800 bg-clip-text text-transparent"
+            >
+              Edit Rugby Merch
+            </h3>
+          </div>
+
+          <!-- Product Details Grid -->
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <!-- Product Name -->
             <div class="col-span-1">
-              <label for="productname" class="mb-1 block">
+              <label for="productname" class="mb-2 block font-semibold text-gray-700">
+                <i class="ri-price-tag-3-line mr-2 text-green-600"></i>
                 Product Name:
               </label>
               <VTextField
-              id="name"
-              v-model="item.name"
-              label="Enter Product Name"
-              :rules="rules"
-              type="text"
-              solo
+                id="name"
+                v-model="item.name"
+                label="Enter Product Name"
+                :rules="rules"
+                type="text"
+                solo
+                class="rugby-input"
               />
+              <div class="text-xs text-gray-500 mt-1">
+                {{ item.name ? `${item.name.length}/80` : '0/80' }}
+              </div>
             </div>
+
+            <!-- Stock -->
             <div class="col-span-1">
-              <label for="productstock" class="mb-1 block">
+              <label for="productstock" class="mb-2 block font-semibold text-gray-700">
+                <i class="ri-stack-line mr-2 text-green-600"></i>
                 Stock:
               </label>
               <VTextField
-              id="name"
-              v-model="item.stock"
-              label="Enter Stock"
-              :rules="rules"
-              type="number"
-              min="0"
-              solo
+                id="stock"
+                v-model="item.stock"
+                label="Enter Stock"
+                :rules="rules"
+                type="number"
+                min="0"
+                solo
+                class="rugby-input"
               />
             </div>
+
+            <!-- Price Fields -->
             <div class="col-span-1">
-              <label
-              for="productprice"
-              class="mb-1 flex justify-between"
+              <label for="productprice" class="mb-2 flex justify-between
+              font-semibold text-gray-700"
               >
-                <p>Price: </p>
-                <span class="font-semibold">
+                <span><i class="ri-money-dollar-circle-line mr-2 text-green-600"></i>Price:</span>
+                <span class="font-bold text-green-700 bg-green-100 px-2 py-1 rounded">
                   {{ formatCurrency(item.price) }}
                 </span>
               </label>
               <VTextField
-              id="name"
-              v-model="item.price"
-              label="Enter Price"
-              type="number"
-              :rules="rules"
-              step=".01"
-              min="0.00"
-              solo
+                id="price"
+                v-model="item.price"
+                label="Enter Price"
+                :rules="rules"
+                type="number"
+                step=".01"
+                min="0.00"
+                solo
+                class="rugby-input"
               />
             </div>
+
             <div class="col-span-1">
-              <label
-              for="productprice"
-              class="mb-1 flex justify-between"
+              <label for="productsaleprice" class="mb-2 flex justify-between
+              font-semibold text-gray-700"
               >
-                <p>Sale Price: </p>
-                <span class="font-semibold">
+                <span><i class="ri-discount-percent-line mr-2 text-green-600"></i>
+                  Sale Price:
+                </span>
+                <span class="font-bold text-red-600 bg-red-100 px-2 py-1 rounded">
                   {{ formatCurrency(item.saleprice) }}
                 </span>
               </label>
               <VTextField
-              id="name"
-              v-model="item.saleprice"
-              label="Enter Sale Price"
-              type="number"
-              step=".01"
-              min="0.00"
-              solo
+                id="saleprice"
+                v-model="item.saleprice"
+                label="Enter Sale Price"
+                type="number"
+                step=".01"
+                min="0.00"
+                solo
+                class="rugby-input"
               />
             </div>
-            <div class="col-span-1 md:col-span-2" hidden>
-              <label for="selectfield" class="mb-1 block">
-                Tags:
-              </label>
-              <VSelect
-              v-model="tags"
-              :items="filteredTags"
-              label="Choose Tags"
-              :rules="rules"
-              chips
-              multiple
-              solo
-              >
-                <template #prepend-item>
-                  <div class="sticky-search-bar px-3">
-                    <SearchBar v-model="tagQuery" />
-                  </div>
-                </template>
-              </VSelect>
-            </div>
+
+            <!-- Description -->
             <div class="col-span-1 md:col-span-2">
-              <label for="productdescription" class="mb-1 block">
+              <label for="productdescription" class="mb-2 block
+              font-semibold text-gray-700"
+              >
+                <i class="ri-file-text-line mr-2 text-green-600"></i>
                 Description:
               </label>
               <Tiptap
-              id="content"
-              v-model="item.description"
+                id="content"
+                v-model="item.description"
+                class="rugby-editor"
               />
+              <div class="text-xs text-gray-500 mt-1">
+                {{ item.description ? `${item.description.length}/80` : '0/80' }}
+              </div>
             </div>
+
+            <!-- Categories Section -->
             <div class="col-span-1 mb-4 md:col-span-2">
-              <!-- Header Section -->
-              <div class="flex items-center justify-between mb-2">
-                <label class="block font-semibold text-brand-black">Category:</label>
+              <div class="flex items-center justify-between mb-3">
+                <label class="block font-semibold text-gray-700">
+                  <i class="ri-folder-line mr-2 text-green-600"></i>
+                  Categories:
+                </label>
                 <button
                   type="button"
-                  class="
-                    flex items-center gap-2
-                    px-4 py-2
-                    rounded-md
-                    border border-brand-green
-                    bg-gradient-to-r from-brand-green to-brand-black
-                    text-white
-                    shadow-md
-                    transition-colors
-                    hover:from-brand-black hover:to-brand-green
-                    focus:outline-none focus:ring focus:ring-brand-green
-                  "
+                  class="flex items-center justify-center bg-green-600 hover:bg-green-700
+                  text-white font-semibold px-4 py-2 rounded-lg
+                  transition-all duration-200 transform hover:scale-105"
                   @click="addCategoryPicker"
                 >
-                  <i class="ri-add-fill ri-lg"></i>
-                  <span>
-                    Add Category
-                  </span>
+                  <i class="ri-add-fill mr-2"></i>
+                  Add Category
                 </button>
               </div>
-
-              <!-- Selected Categories Section -->
-              <div
-                v-if="multipleCategoryBuffer.length > 0"
-                class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mt-2"
-              >
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
                 <div
-                  v-for="(index) in multipleCategoryBuffer"
-                  :key="index"
-                  class="flex items-center gap-2 relative bg-gray-50 rounded-lg p-2 shadow-sm"
+                  v-for="categoryPickerIndex in multipleCategoryBuffer"
+                  :key="categoryPickerIndex"
+                  class="flex items-center gap-2 bg-white p-3 rounded-lg border border-gray-200"
                 >
                   <InfiniteCategories
-                    :ref="`categoryPicker-${index}`"
+                    :ref="`categoryPicker-${categoryPickerIndex}`"
                     :options="categories"
-                    :lineage="categoryLineages[index - 1]"
-                    class="flex-grow"
+                    :lineage="categoryLineages[categoryPickerIndex-1]"
                   />
-
-                  <!-- Close Button -->
                   <button
                     type="button"
-                    class="
-                      absolute top-0 right-0
-                      h-7 w-7 flex items-center justify-center
-                      rounded-full
-                      bg-brand-red text-white
-                      hover:bg-red-700
-                      transition-colors
-                      shadow
-                      focus:outline-none focus:ring focus:ring-brand-red
-                    "
-                    @click="removeCategoryPicker(index)"
-                    aria-label="Remove Category"
+                    class="w-8 h-8 flex items-center justify-center
+                    bg-gray-100 hover:bg-red-500
+                    hover:text-white text-gray-600 rounded-full
+                    transition-colors duration-200"
+                    @click="removeCategoryPicker(categoryPickerIndex)"
                   >
-                    <i class="ri-close-fill ri-lg"></i>
+                    <i class="ri-close-line"></i>
                   </button>
                 </div>
               </div>
+            </div>
 
-              <!-- Placeholder for No Categories -->
-              <div
-                v-else
-                class="bg-gray-100 rounded-lg p-4 text-center text-brand-black"
-              >
-                <p>
-                  No categories selected. Click "Add Category" to start.
-                </p>
-              </div>
-            </div>
-            <div class="col-span-1">
-              <div
-              class="
-              flex flex-col
-              sm:flex-row
-              sm:space-x-2"
-              >
-                <label
-                  class="
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    bg-transparent p-3
-                    hover:border-brand-black
-                    hover:bg-slate-100
-                  "
-                  >
-                  <span>
-                    <input
-                      v-model="item.is_featured"
-                      name="approvalStatus"
-                      type="checkbox"
-                      class="
-                      form-checkbox
-                      h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
-                    />
-                  </span>
-                  <span class="px-2">Featured</span>
-                </label>
-              </div>
-            </div>
-            <div class="col-span-1">
-              <div
-              class="
-              flex flex-col
-              sm:flex-row
-              sm:space-x-2"
-              >
-                <label
-                  class="
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    bg-transparent p-3
-                    hover:border-brand-black
-                    hover:bg-slate-100
-                  "
-                  >
-                  <span>
-                    <input
-                      v-model="item.isHideOutOfStock"
-                      name="approvalStatus"
-                      type="checkbox"
-                      class="
-                      form-checkbox
-                      h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
-                    />
-                  </span>
-                  <span class="px-2">Out of Stock</span>
-                </label>
-              </div>
-            </div>
-            <div class="col-span-1">
-              <div
-              class="
-              flex flex-col
-              sm:flex-row
-              sm:space-x-2"
-              >
-                <label
-                  class="
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    bg-transparent p-3
-                    hover:border-brand-black
-                    hover:bg-slate-100
-                  "
-                  >
-                  <span>
-                    <input
-                      v-model="item.is_on_sale"
-                      name="approvalStatus"
-                      type="checkbox"
-                      class="
-                      form-checkbox
-                      h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
-                    />
-                  </span>
-                  <span class="px-2">On Sale</span>
-                </label>
-              </div>
-            </div>
-            <div class="col-span-1">
-              <div
-              class="
-              flex flex-col
-              sm:flex-row
-              sm:space-x-2"
-              >
-                <label
-                  class="
-                    flex
-                    w-full
-                    cursor-pointer border
-                    border-gray-200
-                    bg-transparent p-3
-                    hover:border-brand-black
-                    hover:bg-slate-100
-                  "
-                  >
-                  <span>
-                    <input
-                      v-model="item.show_rrp"
-                      name="approvalStatus"
-                      type="checkbox"
-                      class="
-                      form-checkbox
-                      h-4 w-4 bg-gray-200 text-brand-black
-                      focus:ring-brand-black"
-                    />
-                  </span>
-                  <span class="px-2">Show RRP</span>
-                </label>
-              </div>
-            </div>
+            <!-- Toggle Switches -->
             <div class="col-span-1 md:col-span-2">
-              <ImageUpload
-                @update-image="updateImage"
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4
+              bg-white rounded-lg border border-gray-200"
+              >
+                <label class="rugby-toggle">
+                  <input
+                    v-model="item.is_featured"
+                    type="checkbox"
+                    class="rugby-checkbox"
+                  />
+                  <span class="rugby-toggle-slider"></span>
+                  <span class="ml-3 font-medium text-gray-700">Featured</span>
+                </label>
+
+                <label class="rugby-toggle">
+                  <input
+                    v-model="item.isHideOutOfStock"
+                    type="checkbox"
+                    class="rugby-checkbox"
+                  />
+                  <span class="rugby-toggle-slider"></span>
+                  <span class="ml-3 font-medium text-gray-700">Out of Stock</span>
+                </label>
+
+                <label class="rugby-toggle">
+                  <input
+                    v-model="item.is_on_sale"
+                    type="checkbox"
+                    class="rugby-checkbox"
+                  />
+                  <span class="rugby-toggle-slider"></span>
+                  <span class="ml-3 font-medium text-gray-700">On Sale</span>
+                </label>
+
+                <label class="rugby-toggle">
+                  <input
+                    v-model="item.show_rrp"
+                    type="checkbox"
+                    class="rugby-checkbox"
+                  />
+                  <span class="rugby-toggle-slider"></span>
+                  <span class="ml-3 font-medium text-gray-700">Show RRP</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="col-span-1 md:col-span-2">
+              <ImageUploadEdit
+                :imglistedit="imgListEdit"
+                :imgurledit="imgUrlEdit"
+                @update-image-edit="updateImageEdit"
               />
             </div>
           </div>
-          <hr class="my-3">
-          <div class="block lg:flex lg:flex-auto lg:justify-end">
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col lg:flex-row gap-3 mt-6 pt-4 border-t border-gray-200">
             <button
               type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-green
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-green-700
-                lg:mx-4 lg:w-48
-              "
+              class="flex-1 lg:flex-none bg-green-600 hover:bg-green-700 text-white
+              font-bold py-3 px-6 rounded-lg transition-all duration-200
+              transform hover:scale-105 disabled:opacity-50
+              disabled:cursor-not-allowed disabled:transform-none"
               :disabled="!valid"
-              @click="validate('Add')"
+              @click="validate('Edit')"
             >
-              OK
+              <i class="ri-check-line mr-2"></i>
+              Confirm Changes
             </button>
             <button
               type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-red
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-[#B1271B]
-                lg:mx-4 lg:w-48
-              "
-              @click="close"
+              class="flex-1 lg:flex-none bg-gray-500 hover:bg-gray-600
+              text-white font-bold py-3 px-6 rounded-lg transition-all
+              duration-200 transform hover:scale-105"
+              @click="closeEdit"
             >
+              <i class="ri-close-line mr-2"></i>
               Cancel
             </button>
           </div>
         </VForm>
       </OModal>
-      <!-- Show Edit News -->
-      <OModal
-      :active="showEditMerchItemModal"
-      @close="showEditMerchItemModal = false"
-    >
-      <VForm
-        ref="form" v-model="valid" lazy-validation
-        class="p-2 md:p-4"
-        >
-        <h3 class="text-swd-red mb-3 font-bold">
-          Edit Product Item
-        </h3>
-        <hr class="my-3">
-        <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-          <div class="col-span-1">
-            <label for="productname" class="mb-1 block">
-              Product Name:
-            </label>
-            <VTextField
-            id="name"
-            v-model="item.name"
-            label="Enter Product Name"
-            :rules="rules"
-            type="text"
-            solo
-            />
-          </div>
-          <div class="col-span-1">
-            <label for="productstock" class="mb-1 block">
-              Stock:
-            </label>
-            <VTextField
-            id="name"
-            v-model="item.stock"
-            label="Enter Stock"
-            :rules="rules"
-            type="number"
-            min="0"
-            solo
-            />
-          </div>
-          <div class="col-span-1">
-            <label
-            for="productprice"
-            class="mb-1 flex justify-between"
-            >
-              <p>Price: </p>
-              <span class="font-semibold">
-                {{ formatCurrency(item.price) }}
-              </span>
-            </label>
-            <VTextField
-            id="name"
-            v-model="item.price"
-            label="Enter Price"
-            :rules="rules"
-            type="number"
-            step=".01"
-            min="0.00"
-            solo
-            />
-          </div>
-          <div class="col-span-1">
-            <label
-            for="productprice"
-            class="mb-1 flex justify-between"
-            >
-              <p>Sale Price: </p>
-              <span class="font-semibold">
-                {{ formatCurrency(item.saleprice) }}
-              </span>
-            </label>
-            <VTextField
-            id="name"
-            v-model="item.saleprice"
-            label="Enter Price"
-            :rules="rules"
-            type="number"
-            step=".01"
-            min="0.00"
-            solo
-            />
-          </div>
-          <div class="col-span-1 md:col-span-2" hidden>
-            <label for="selectfield" class="mb-1 block">
-              Tags:
-            </label>
-            <VSelect
-            v-model="tags"
-            :items="filteredTags"
-            label="Choose Tags"
-            :rules="rules"
-            chips
-            multiple
-            solo
-            >
-              <template #prepend-item>
-                <div class="sticky-search-bar px-3">
-                  <SearchBar v-model="tagQuery" />
-                </div>
-              </template>
-            </VSelect>
-          </div>
-          <div class="col-span-1 md:col-span-2">
-            <label for="productdescription" class="mb-1 block">
-              Description:
-            </label>
-            <Tiptap
-            id="content"
-            v-model="item.description"
-            />
-          </div>
-          <div class="col-span-1 mb-4 md:col-span-2">
-            <div class="flex items-center justify-between">
-              <label class="mb-1 block"> Category: </label>
-              <button
-                type="button"
-                class="
-                  flex
-                  items-center
-                  justify-center
-                  border border-solid border-brand-black
-                  bg-brand-black
-                  px-4
-                  py-2
-                  text-white
-                "
-                @click="addCategoryPicker"
-              >
-                <i class="ri-add-fill"></i>
-                Add Category
-              </button>
-            </div>
-            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-              <div
-                v-for="categoryPickerIndex in multipleCategoryBuffer"
-                :key="categoryPickerIndex"
-                class="flex justify-center gap-1"
-              >
-                <InfiniteCategories
-                  :ref="`categoryPicker-${categoryPickerIndex}`"
-                  :options="categories"
-                  :lineage="categoryLineages[categoryPickerIndex-1]"
-                />
-                <button
-                  type="button"
-                  class="
-                    my-4
-                    h-6 w-6
-                    text-brand-black
-                    hover:bg-brand-black hover:text-white
-                  "
-                  @click="removeCategoryPicker(categoryPickerIndex)"
-                >
-                  <div class="ri-close-fill ri-lg"></div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="col-span-1">
-            <div
-            class="
-            flex flex-col
-            sm:flex-row
-            sm:space-x-2"
-            >
-              <label
-                class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
-                  hover:border-brand-black
-                  hover:bg-slate-100
-                "
-                >
-                <span>
-                  <input
-                    v-model="item.is_featured"
-                    name="approvalStatus"
-                    type="checkbox"
-                    class="
-                    form-checkbox
-                    h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
-                  />
-                </span>
-                <span class="px-2">Featured</span>
-              </label>
-            </div>
-          </div>
-          <div class="col-span-1">
-            <div
-            class="
-            flex flex-col
-            sm:flex-row
-            sm:space-x-2"
-            >
-              <label
-                class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
-                  hover:border-brand-black
-                  hover:bg-slate-100
-                "
-                >
-                <span>
-                  <input
-                    v-model="item.isHideOutOfStock"
-                    name="approvalStatus"
-                    type="checkbox"
-                    class="
-                    form-checkbox
-                    h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
-                  />
-                </span>
-                <span class="px-2">Out of Stock</span>
-              </label>
-            </div>
-          </div>
-          <div class="col-span-1">
-            <div
-            class="
-            flex flex-col
-            sm:flex-row
-            sm:space-x-2"
-            >
-              <label
-                class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
-                  hover:border-brand-black
-                  hover:bg-slate-100
-                "
-                >
-                <span>
-                  <input
-                    v-model="item.is_on_sale"
-                    name="approvalStatus"
-                    type="checkbox"
-                    class="
-                    form-checkbox
-                    h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
-                  />
-                </span>
-                <span class="px-2">On Sale</span>
-              </label>
-            </div>
-          </div>
-          <div class="col-span-1">
-            <div
-            class="
-            flex flex-col
-            sm:flex-row
-            sm:space-x-2"
-            >
-              <label
-                class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
-                  hover:border-brand-black
-                  hover:bg-slate-100
-                "
-                >
-                <span>
-                  <input
-                    v-model="item.show_rrp"
-                    name="approvalStatus"
-                    type="checkbox"
-                    class="
-                    form-checkbox
-                    h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
-                  />
-                </span>
-                <span class="px-2">Show RRP</span>
-              </label>
-            </div>
-          </div>
-          <div class="col-span-1 md:col-span-2">
-            <ImageUploadEdit
-              :imglistedit="imgListEdit"
-              :imgurledit="imgUrlEdit"
-              @update-image-edit="updateImageEdit"
-              />
-          </div>
-        </div>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-800
-              lg:mx-4 lg:w-48
-            "
-            :disabled="!valid"
-            @click="validate('Edit')"
-          >
-            Confirm
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-            "
-            @click="closeEdit"
-          >
-            Cancel
-          </button>
-        </div>
-      </VForm>
-    </OModal>
 
-    <OModal
-      :active="showAddVariant"
-      @close="showAddVariant = false"
-    >
-      <div class="w-full rounded bg-white p-2 sm:w-[500px] sm:p-4">
-        <h3 class="text-swd-red mb-3 font-bold">
-          Add Variant
-        </h3>
-        <hr class="my-3">
-        <div v-if="variantList.length > 0">
-          <div
-            class="col-span-1 mb-2"
-            v-for="variant in variantList"
-            :key="variant.id"
-          >
-            <div
-            class="
-            flex flex-col
-            sm:flex-row
-            sm:space-x-2"
-            >
-              <label
-                class="
-                  flex
-                  w-full
-                  cursor-pointer border
-                  border-gray-200
-                  bg-transparent p-3
-                  hover:border-brand-black
-                  hover:bg-slate-100
-                "
-                >
-                <span>
-                  <input
-                    v-model="checkedVariants"
-                    :value="variant.name"
-                    name="variantColor"
-                    type="checkbox"
-                    class="
-                    form-checkbox
-                    h-4 w-4 bg-gray-200 text-brand-black
-                    focus:ring-brand-black"
-                  />
-                </span>
-                <span class="px-2">{{ variant.name }}</span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div v-else>
-          <p class="my-10 text-center text-gray-500">
-            No variants available.
-          </p>
-        </div>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-800
-              lg:mx-4 lg:w-48
-            "
-            @click="confirmVariant(prodId)"
-          >
-            Confirm
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-            "
-             @click="closeAddVariant"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </OModal>
-
-    <OModal
-      :active="showShowVariant"
-      @close="showShowVariant = false"
-    >
-      <div class="w-full rounded bg-white p-2 sm:w-[500px] sm:p-4">
-        <h3 class="text-swd-red mb-3 font-bold">
-          Product Variant
-        </h3>
-        <hr class="my-3">
-        <div v-if="myVariantList.length > 0">
-          <div
-            class="col-span-1 mb-2"
-            v-for="variant in myVariantList"
-            :key="variant.id"
-          >
-            <div
-              class="flex flex-col sm:flex-row sm:space-x-2"
-            >
-              <label
-                class="flex justify-between w-full border
-                border-gray-200 bg-transparent p-3
-                hover:border-brand-black hover:bg-slate-100"
-              >
-                <span class="px-2">{{ variant.color }}</span>
-                <i
-                  class="cursor-pointer ri-delete-bin-5-line
-                  hover:text-red-500"
-                  @click="removeVariant(variant.id)"
-                ></i>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div v-else>
-          <p class="my-10 text-center text-gray-500">
-            No item variants available.
-          </p>
-        </div>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-              "
-            @click="closeShowVariant"
-            >
-            Close
-          </button>
-        </div>
-      </div>
-    </OModal>
     <!-- showRemoveProduct modal component -->
     <OModal
       :active="showRemoveMerchItemModal"
@@ -1991,6 +1645,66 @@ color: rgb(104, 104, 104) !important;
 
 .custom-btn {
   height: 50px !important;
+}
+
+.rugby-modal {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.rugby-input .v-text-field__slot {
+  border-radius: 8px;
+}
+
+.rugby-toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.rugby-checkbox {
+  display: none;
+}
+
+.rugby-toggle-slider {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  background: #d1d5db;
+  border-radius: 50px;
+  transition: all 0.3s;
+}
+
+.rugby-toggle-slider:before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  top: 3px;
+  left: 3px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.rugby-checkbox:checked + .rugby-toggle-slider {
+  background: #16a34a;
+}
+
+.rugby-checkbox:checked + .rugby-toggle-slider:before {
+  transform: translateX(24px);
+}
+
+.rugby-editor {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rugby-icon {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
 }
 </style>
 

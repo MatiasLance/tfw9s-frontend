@@ -10,18 +10,21 @@
               block
               w-full
               appearance-none
-              rounded-md
-              border border-gray-200
-              bg-gray-100
-              py-[13px]
-              px-[15px]
+              rounded-xl
+              border-2 border-gray-600
+              bg-gray-700
+              py-3
+              px-4
               font-normal
+              text-gray-100
               outline-inherit
-              hover:border-gray-400
-              focus:border-gray-400
-              focus:bg-white
-              focus:outline-none
-              focus:ring-0
+              transition-all
+              duration-300
+              placeholder-gray-400
+              hover:border-green-400
+              focus:border-green-500 focus:bg-gray-600 
+              focus:text-gray-50 focus:outline-none
+              focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
             "
             @change="emitUpdate(this)"
           >
@@ -29,6 +32,7 @@
               v-for="option in sortOptions"
               :key="option.value"
               :value="option.value"
+              class="bg-gray-700 text-gray-100"
             >
               {{ option.name }}
             </option>

@@ -1,302 +1,276 @@
 <template>
-  <div class="bg-[#1A1A1B] text-white">
-    <div class="container my-16">
-      <div class="block gap-4 md:grid md:grid-cols-12">
+  <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
+    <div class="container mx-auto px-4 py-8">
+      <div class="grid gap-8 md:grid-cols-12">
+        
+        <!-- Product Gallery -->
         <div class="product-gallery col-span-6">
-          <div class="grid grid-cols-3 gap-4">
-            <div id="img-container" class="col-span-3">
+          <div class="grid grid-cols-1 gap-4">
+            <!-- Main Image -->
+            <div class="col-span-1 rounded-2xl overflow-hidden 
+                        shadow-2xl border-2 border-green-500/30">
               <InnerImageZoom
                 :src="activeImageURL"
                 :zoom-src="activeImageURL"
                 zoom-type="hover"
+                class="w-full h-full object-cover"
               />
             </div>
-            <div class="col-span-3">
-              <template v-if="photos.length > 0">
-                <VueSlickCarousel v-bind="imageCarouselSettings">
-                  <div
-                    v-for="photo in photos"
-                    :key="photo.id"
+            
+            <!-- Thumbnail Carousel -->
+            <div class="col-span-1" v-if="photos.length > 0">
+              <VueSlickCarousel v-bind="imageCarouselSettings">
+                <div v-for="photo in photos" :key="photo.id">
+                  <button
+                    type="button"
+                    @click="setActiveMedia(photo)"
+                    @mouseover="setActiveMedia(photo)"
+                    :class="[
+                      'mx-1 inline-block rounded-xl border-2 p-2',
+                      'transition-all duration-300 transform hover:scale-110',
+                      activeImageURL === getMediaURL(photo) 
+                        ? 'border-green-500 bg-green-500/20 shadow-lg' 
+                        : 'border-gray-600 hover:border-green-400'
+                    ]"
                   >
-                    <a
-                      :href="`${$config.baseURL}/storage/${photo.path}`"
-                      class="mx-1 inline-block
-                      border border-gray-200 p-1 py-2
-                      px-1 text-center hover:border-brand-black"
-                      @click.prevent="setActiveMedia(photo)"
-                      @mouseover="setActiveMedia(photo)"
+                    <img
+                      class="h-14 w-14 object-cover rounded-lg"
+                      :src="getMediaURL(photo)"
+                      :alt="`Product thumbnail - ${photo.id}`"
                     >
-                      <img
-                        class="h-14 w-14"
-                        :src="getMediaURL(photo)"
-                        :alt="`Product thumbnail - ${photo.id}`"
-                      >
-                    </a>
-                  </div>
-                </VueSlickCarousel>
-              </template>
+                  </button>
+                </div>
+              </VueSlickCarousel>
             </div>
           </div>
         </div>
-        <div class="summary entry-summary col-span-6 md:p-[1rem]">
-          <header class="relative mb-[2em]">
-            <div>
-              <span
-                class="
-                  superheadline
-                  flex flex-row
-                  items-center
-                  gap-2
-                  pb-3
-                  text-[1rem]
-                  font-normal
-                "
-              >
+
+        <!-- Product Details -->
+        <div class="summary entry-summary col-span-6 p-6 
+                    bg-gradient-to-br from-gray-800 to-gray-900 
+                    rounded-2xl shadow-2xl border border-gray-700">
+          
+          <!-- Header -->
+          <header class="mb-8">
+            <!-- Categories -->
+            <div class="mb-4">
+              <span class="flex flex-row items-center gap-3 flex-wrap">
                 <span
                   v-for="category in product.categories"
                   :key="category.id"
-                  class="font-medium text-white"
+                  class="inline-flex items-center gap-1 px-3 py-1 
+                         rounded-full bg-green-500/20 border 
+                         border-green-500/30 text-green-300 text-sm"
                 >
-                  <i class="ri-price-tag-3-line text-white"></i>
-                  <span>{{ category.name }}</span>
+                  <i class="ri-price-tag-3-line text-xs"></i>
+                  {{ category.name }}
                 </span>
               </span>
             </div>
-            <h2 class="text-2xl md:text-4xl font-bold">
-              <span class="font-montserrat relative block text-inherit">
-                {{ product.name }}
-              </span>
+            
+            <!-- Product Name -->
+            <h2 class="text-3xl md:text-5xl font-bold 
+                       bg-gradient-to-r from-green-400 to-white 
+                       bg-clip-text text-transparent mb-4">
+              {{ product.name }}
             </h2>
           </header>
-          <p
-            class="
-              price
-              mb-[0.7em] pb-3
-              text-[3em]
-              font-bold
-              leading-[1]
-              tracking-tighter
-              text-white
-            "
-          >
-          <span class="amount text-2xl md:text-4xl">
-              <span v-if="!product.is_on_sale">
-                <span>
-                  {{ formatCurrency(product.price) }}
-                </span>
+
+          <!-- Price Section -->
+          <div class="mb-6">
+            <div class="flex items-center gap-4">
+              <!-- Regular Price -->
+              <span v-if="!product.is_on_sale" 
+                    class="text-4xl md:text-5xl font-bold text-white">
+                {{ formatCurrency(product.price) }}
               </span>
-              <span v-if="product.is_on_sale" class="flex">
+              
+              <!-- Sale Price -->
+              <span v-if="product.is_on_sale" class="flex items-center gap-4">
                 <span v-if="product.show_rrp"
-                class="font-medium text-white opacity-75
-                line-through mr-4 md:mr-8"
+                  class="text-2xl font-medium text-gray-400 line-through"
                 >
                   {{formatCurrency(product.price)}}
                 </span>
-                <span class="font-semibold text-brand-green">
-                   {{formatCurrency(product.saleprice)}}
+                <span class="text-4xl md:text-5xl font-bold text-green-400 
+                             bg-gradient-to-r from-green-500/20 to-transparent 
+                             px-4 py-2 rounded-2xl">
+                  {{formatCurrency(product.saleprice)}}
                 </span>
               </span>
-            </span>
-          </p>
-          <p
-            class="
-              price
-              mb-[0.5em]
-              text-[3em]
-              font-bold
-              leading-[1]
-              tracking-tighter
-              text-white
-            "
-          >
-          </p>
-          <div class="w-full">
-            <p
-              class="product-description my-12"
-              v-html="product.description"
-            ></p>
-            <p class="font-bold">
-              <template v-if="product.stock > 0">
-                <div class="flex space-x-1">
-                  <i class="ri-check-line text-green-500"></i>
-                  <span class="mt-1 text-sm font-bold uppercase">
-                    In Stock
+            </div>
+          </div>
+
+          <!-- Stock Status -->
+          <div class="mb-6">
+            <template v-if="product.stock > 0">
+              <div class="inline-flex items-center gap-2 rounded-xl 
+                          bg-green-500/20 px-4 py-2 border border-green-500/30">
+                <i class="ri-checkbox-circle-line text-green-400"></i>
+                <span class="text-sm font-bold text-green-300 uppercase">
+                  In Stock ✅
+                </span>
+              </div>
+            </template>
+            
+            <template v-else>
+              <template v-if="!product.isHideOutOfStock">
+                <div class="inline-flex items-center gap-2 rounded-xl 
+                            bg-red-500/20 px-4 py-2 border border-red-500/30">
+                  <i class="ri-close-circle-line text-red-400"></i>
+                  <span class="text-sm font-bold text-red-300 uppercase">
+                    Out of Stock
                   </span>
                 </div>
               </template>
-              <template v-else>
-                <template v-if="!product.isHideOutOfStock">
-                  <div class="ml-1 flex space-x-1">
-                    <i class="ri-forbid-line text-red-500"></i>
-                    <span class="mt-1 text-sm font-bold uppercase">
-                      Out of Stock
-                    </span>
-                  </div>
-                </template>
-                <template v-if="product.has_variants">
-                  <div class="flex space-x-1">
-                    <i class="ri-check-line text-green-500"></i>
-                    <span class="mt-1 text-sm font-bold uppercase">
-                      Variants In Stock
-                    </span>
-                  </div>
-                </template>
-              </template>
-            </p>
-          </div>
-          <div class="grid grid-cols-6 gap-6">
-            <div class="col-span-6">
-              <div
-                class="flex flex-col items-start justify-start gap-2"
-              >
-                <div class="my-4">
-                  <label class="my-auto mr-2 items-center">
-                    Quantity
-                  </label>
-                  <input
-                    v-model="quantity"
-                    type="number"
-                    class="
-                      my-auto
-                      h-14
-                      w-28
-                      border-transparent
-                      bg-[#333131]
-                      py-[13.008px]
-                      pl-[15px] text-lg
-                      focus:border-gray-500 focus:bg-[#535181] focus:ring-0
-                    "
-                    step="1"
-                    min="0"
-                    :max="product.stock"
-                    :disabled="!product.stock > 0"
-                    name="quantity"
-                    @keyup="handleHighStockValue"
-                  />
+              
+              <template v-if="product.has_variants">
+                <div class="inline-flex items-center gap-2 rounded-xl 
+                            bg-blue-500/20 px-4 py-2 border border-blue-500/30 
+                            mt-2">
+                  <i class="ri-checkbox-circle-line text-blue-400"></i>
+                  <span class="text-sm font-bold text-blue-300 uppercase">
+                    Variants Available
+                  </span>
                 </div>
-                <div class="flex items-center gap-4">
-                  <template v-if="product.has_variants">
-                    <BaseButton
-                      type="button"
-                      class="
-                        h-14
-                        w-full
-                        cursor-pointer
-                        rounded-lg border
-                        bg-brand-black
-                        py-4
-                        px-5
-                        font-bold
-                        leading-3
-                        text-white
-                        transition
-                        duration-300
-                        hover:shadow-[#1a1d18]/50
-                        lg:w-auto
-                      "
-                      @click="viewVariantSlider"
-                    >
-                      View Variants
-                    </BaseButton>
-                  </template>
-                  <template v-else>
+              </template>
+            </template>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-8">
+            <div class="rounded-xl bg-gray-700/30 p-4 border border-gray-600">
+              <p class="product-description text-gray-200 leading-relaxed"
+                 v-html="product.description"
+              ></p>
+            </div>
+          </div>
+
+          <!-- Quantity & Actions -->
+          <div class="space-y-6">
+            <!-- Quantity Selector -->
+            <div class="flex items-center gap-4">
+              <label class="text-lg font-semibold text-white">
+                Quantity
+              </label>
+              <input
+                v-model="quantity"
+                type="number"
+                class="h-12 w-24 rounded-xl border-2 border-gray-600 
+                       bg-gray-700 px-4 text-lg text-white focus:border-green-500 
+                       focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 
+                       transition-all"
+                step="1"
+                min="0"
+                :max="product.stock"
+                :disabled="!product.stock > 0"
+                name="quantity"
+                @keyup="handleHighStockValue"
+              />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-4">
+              <!-- Primary Action -->
+              <div class="flex gap-4">
+                <template v-if="product.has_variants">
+                  <button
+                    type="button"
+                    @click="viewVariantSlider"
+                    class="flex-1 rounded-2xl bg-gradient-to-r 
+                           from-blue-500 to-blue-600 px-8 py-4 
+                           text-lg font-bold text-white shadow-2xl 
+                           transition-all duration-300 transform 
+                           hover:from-blue-600 hover:to-blue-700 
+                           hover:scale-105 hover:shadow-blue-500/50 
+                           active:scale-95 flex items-center 
+                           justify-center gap-2"
+                  >
+                    <i class="ri-eye-line"></i>
+                    View Variants
+                  </button>
+                </template>
+                
+                <template v-else>
+                  <button
+                    type="button"
+                    :disabled="!product.stock > 0"
+                    @click="addToCart"
+                    class="flex-1 rounded-2xl bg-gradient-to-r 
+                           from-green-500 to-green-600 px-8 py-4 
+                           text-lg font-bold text-white shadow-2xl 
+                           transition-all duration-300 transform 
+                           hover:from-green-600 hover:to-green-700 
+                           hover:scale-105 hover:shadow-green-500/50 
+                           active:scale-95 flex items-center 
+                           justify-center gap-2 disabled:opacity-50 
+                           disabled:cursor-not-allowed"
+                  >
+                    <i class="ri-shopping-cart-2-line"></i>
+                    Add to Cart
+                  </button>
+                </template>
+
+                <!-- Back to Parent -->
+                <template v-if="product.parent !== null">
+                  <NuxtLink :to="`/product?id=${product.parent.id}`" 
+                            class="flex-1">
                     <button
                       type="button"
-                      class="
-                      flex w-48
-                      items-center justify-center
-                      rounded-lg
-                      bg-gradient-to-tr
-                      from-[#5EE738]
-                      via-[#3e872a]
-                      to-[#050505]
-                      text-white
-                      py-3
-                      px-4
-                      text-center
-                      text-lg
-                      font-medium
-                      shadow-sm
-                      hover:brightness-125
-                      transition
-                      "
-                      :disabled="!product.stock > 0"
-                      @click="addToCart"
+                      class="w-full rounded-2xl bg-gradient-to-r 
+                             from-gray-600 to-gray-700 px-8 py-4 
+                             text-lg font-semibold text-white 
+                             transition-all duration-300 transform 
+                             hover:from-gray-500 hover:to-gray-600 
+                             hover:scale-105 active:scale-95 
+                             flex items-center justify-center gap-2"
                     >
-                        <i class="ri-shopping-cart-2-line mr-2"></i>
-                        Add to Cart
-                  </button>
-                  </template>
-
-                  <template v-if="product.parent !== null">
-                    <NuxtLink :to="`/product?id=${product.parent.id}`">
-                      <BaseButton
-                        type="button"
-                        class="
-                          h-14
-                          w-full
-                          cursor-pointer
-                          rounded-lg border
-                          bg-brand-black
-                          py-4
-                          px-5
-                          font-bold
-                          leading-3
-                          text-white
-                          transition
-                          duration-300
-                          hover:shadow-[#1a1d18]/50
-                          lg:w-auto
-                        "
-                      >
-                        Back
-                      </BaseButton>
-                    </NuxtLink>
-                  </template>
-                </div>
-                <div class="col-span-6 lg:col-span-3">
-                  <NuxtLink :to="`/shop`">
-                    <span
-                      class="
-                        flex w-48
-                        items-center justify-center
-                        rounded-lg
-                        bg-[#212121] text-[#999999]
-                        py-3
-                        px-4
-                        text-center
-                        text-lg
-                        font-medium
-                        shadow-sm
-                        hover:text-white
-                        hover:bg-[#414141]
-                        transition
-                      "
-                    >
-                    <i class="ri-arrow-left-s-line mr-2"></i>
-                    <span>Back to shop</span>
-                    </span>
+                      <i class="ri-arrow-left-line"></i>
+                      Back
+                    </button>
                   </NuxtLink>
-                </div>
+                </template>
+              </div>
+
+              <!-- Back to Shop -->
+              <div>
+                <NuxtLink to="/shop">
+                  <button
+                    type="button"
+                    class="w-full rounded-2xl bg-gradient-to-r 
+                           from-gray-700 to-gray-800 px-8 py-4 
+                           text-lg font-semibold text-gray-300 
+                           border-2 border-gray-600 transition-all 
+                           duration-300 transform hover:from-gray-600 
+                           hover:to-gray-700 hover:text-white 
+                           hover:scale-105 hover:border-gray-500 
+                           active:scale-95 flex items-center 
+                           justify-center gap-2"
+                  >
+                    <i class="ri-arrow-left-line"></i>
+                    Back to Shop
+                  </button>
+                </NuxtLink>
               </div>
             </div>
           </div>
         </div>
-        <div class="product-description col-span-12 p-[1rem]"></div>
       </div>
-    </div>
-    <div
-      v-if="
-        (product !== null || (typeof product !== 'undefined')) &&
-        product.has_variants
-      "
-      ref="variantSlider"
-      class="mb-4 px-6"
-    >
-      <span class="mb-4 text-2xl font-bold">
-        Variants
-      </span>
-      <VariantSlider :variants="product.related" />
+
+      <!-- Variants Slider -->
+      <div
+        v-if="product && product.has_variants"
+        ref="variantSlider"
+        class="mt-12 p-6 bg-gradient-to-br from-gray-800 to-gray-900 
+               rounded-2xl shadow-2xl border border-gray-700"
+      >
+        <h3 class="text-2xl md:text-3xl font-bold text-white mb-6 
+                   bg-gradient-to-r from-green-400 to-white 
+                   bg-clip-text">
+          Available Variants
+        </h3>
+        <VariantSlider :variants="product.related" />
+      </div>
     </div>
   </div>
 </template>
@@ -309,7 +283,6 @@ import VueSlickCarousel from 'vue-slick-carousel';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
 import currencyMixin from '~/mixins/currency'
-import BaseButton from '~/components/base/BaseButton';
 import VariantSlider from '~/components/VariantSlider';
 
 const slickSettings = {
@@ -354,7 +327,6 @@ export default {
   components: {
     InnerImageZoom,
     VueSlickCarousel,
-    BaseButton,
     VariantSlider,
   },
   mixins: [

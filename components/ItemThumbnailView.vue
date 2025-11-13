@@ -1,127 +1,125 @@
 <template>
   <div
-    class="
-      group
-      flex
-      w-full
-      flex-col
-      items-start
-      rounded-lg
-      bg-[#212121]
-      transition
-      duration-200
-      hover:shadow-xl
-    "
+    class="group flex w-full flex-col items-start rounded-2xl 
+           bg-gradient-to-br from-gray-800 to-gray-900 
+           border-2 border-green-500/20 transition-all 
+           duration-300 hover:shadow-2xl hover:border-green-400 
+           hover:scale-105"
   >
-    <div class="flex w-full items-center justify-center overflow-hidden">
+    <!-- Product Image -->
+    <div class="flex w-full items-center justify-center overflow-hidden 
+                rounded-t-2xl bg-gradient-to-br from-green-900/30 
+                to-gray-800/50 p-6">
       <img
-        class="
-          h-64
-          cursor-pointer
-          object-cover
-          transition
-          duration-200
-          group-hover:scale-125
-        "
-        :src="path"
+        class="h-64 cursor-pointer object-contain transition-all 
+               duration-500 group-hover:scale-110"
+        :src="getMediaURL(path)"
         :alt="name"
       />
     </div>
 
-    <div
-      class="flex w-full flex-col items-start space-y-1 p-3 lg:space-y-3"
-    >
-      <div class="grid grid-cols-1">
+    <!-- Product Content -->
+    <div class="flex w-full flex-col items-start space-y-4 p-6">
+      
+      <!-- Categories -->
+      <div class="grid grid-cols-1 gap-2">
         <div
           v-for="category in categories"
           :key="category.id"
           class="flex items-center justify-start"
         >
-          <span class="col-span-1 text-[16px] text-white">
-            <i class="ri-price-tag-3-line"></i>
-            <span class="font-medium text-white">
+          <span class="flex items-center gap-2 text-green-400">
+            <i class="ri-price-tag-3-line text-sm"></i>
+            <span class="text-sm font-medium text-gray-200">
               {{ category.name }}
             </span>
           </span>
         </div>
       </div>
-      <h3
-        class="
-          break-words text-sm
-          selection:bg-[#1a1d18]
-          selection:text-white md:text-lg
-        "
-      >
-      <span
-        class="
-          font-montserrat
-          whitespace-normal
-          font-semibold transition duration-300
-          text-white ease-in-out hover:text-[#5EE738]
-        "
-      >
-        {{ name }}
-      </span>
+
+      <!-- Product Name -->
+      <h3 class="w-full min-h-[3rem]">
+        <span
+          class="font-bold text-xl text-gray-100 leading-tight 
+                 transition-colors duration-300 line-clamp-2 
+                 group-hover:text-green-300"
+        >
+          {{ name }}
+        </span>
       </h3>
-      <span class="w-9 border-t-2 border-white my-4"/>
-        <span v-if="!isOnSale" class="text-[18px] font-medium text-white">
-          <span>
+
+      <!-- Price Section -->
+      <div class="w-full space-y-3">
+        <div class="h-px w-12 bg-gradient-to-r from-green-400 
+                    to-transparent"></div>
+        
+        <!-- Regular Price -->
+        <div v-if="!isOnSale" class="flex items-center">
+          <span class="text-2xl font-bold text-gray-100">
             {{ formatCurrency(price) }}
           </span>
-        </span>
-        <span v-if="isOnSale" class="text-[18px] font-medium flex">
-          <span v-if="isRrp"
-          class="text-white opacity-75 line-through mr-2"
-          >
+        </div>
+
+        <!-- Sale Price -->
+        <div v-if="isOnSale" class="flex items-center gap-3">
+          <span v-if="isRrp" 
+                class="text-lg font-medium text-gray-400 line-through">
             {{formatCurrency(price)}}
           </span>
-          <span class="font-semibold text-brand-green">
-             {{formatCurrency(saleprice)}}
+          <span class="text-2xl font-bold text-green-400 
+                       bg-gradient-to-r from-green-500/20 to-transparent 
+                       px-3 py-1 rounded-lg">
+            {{formatCurrency(saleprice)}}
           </span>
-        </span>
-      <BaseButton
-      class="
-      w-full rounded-lg
-      bg-gradient-to-tr
-      from-[#5EE738]
-      via-[#3e872a]
-      to-[#050505]
-      py-4
-      px-8"
-      @click="addToCart"
-      >
-      <i class="ri-shopping-cart-line text-2xl"></i>
-      <span class="font-semibold normal-case text-white">
-        Add to Cart
-      </span>
-      </BaseButton>
-      <BaseButton
-      class="
-      w-full rounded-lg
-      bg-gradient-to-tr
-      from-[#5EE738]
-      via-[#3e872a]
-      to-[#050505]
-      py-4
-      px-8"
-      @click="viewItem"
-      >
-      <i class="ri-eye-line text-2xl"></i>
-      <span class="font-semibold normal-case text-white">
-        View Product
-      </span>
-      </BaseButton>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="w-full space-y-3">
+        <!-- Add to Cart Button -->
+        <button
+          type="button"
+          @click="addToCart"
+          class="w-full rounded-xl bg-gradient-to-r from-green-500 
+                 to-green-600 py-3 px-6 text-base font-bold 
+                 text-gray-50 shadow-lg transition-all duration-300 
+                 transform hover:from-green-600 hover:to-green-700 
+                 hover:scale-105 hover:shadow-green-500/50 
+                 active:scale-95 flex items-center justify-center gap-2"
+        >
+          <i class="ri-shopping-cart-line text-lg"></i>
+          Add to Cart
+        </button>
+
+        <!-- View Product Button -->
+        <button
+          type="button"
+          @click="viewItem"
+          class="w-full rounded-xl bg-gradient-to-r from-gray-600 
+                 to-gray-700 py-3 px-6 text-base font-semibold 
+                 text-gray-200 border-2 border-gray-500 
+                 transition-all duration-300 transform 
+                 hover:from-gray-500 hover:to-gray-600 
+                 hover:text-gray-50 hover:scale-105 
+                 hover:border-gray-400 active:scale-95 
+                 flex items-center justify-center gap-2"
+        >
+          <i class="ri-eye-line text-lg"></i>
+          View Product
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import currencyMixin from '~/mixins/currency';
+import handlesMediaMixin from '@/mixins/shop/handlesMedia'
 
 const CURRENCY_CODE = 'AUD'
 
 export default {
-  mixins: [ currencyMixin ],
+  mixins: [ currencyMixin, handlesMediaMixin ],
   props: {
     uid: {
       type: Number,
