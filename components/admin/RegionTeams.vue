@@ -1,173 +1,191 @@
   <template>
     <div>
-      <div class="bg-[#1A1A1B]" data-aos="fade-up">
-        <section class="mx-auto max-w-screen-xl gap-4 p-4">
-          <div class="grid grid-cols-1 gap-4">
-            <div
-            class="flex flex-col items-start justify-between
-            gap-4 sm:flex-row sm:items-center"
-            >
+      <div data-aos="fade-up">
+        <section class="mx-auto max-w-screen-xl gap-6 p-4 sm:p-6">
+          <!-- Header Section -->
+          <div class="mb-8">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <!-- Page Title -->
+              <div class="flex items-center gap-3">
+                <div class="bg-green-600 rounded-xl p-2">
+                  <i class="ri-team-line text-gray-50 text-xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-100">
+                  Teams
+                </h2>
+              </div>
+
+              <!-- Add Team Button -->
               <button
                 type="button"
-                class="
-                  w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] py-1.5
-                  text-center
-                  font-semibold
-                  text-white
-                  sm:w-40"
+                class="bg-green-600 hover:bg-green-700 text-gray-50 font-bold 
+                      py-3 px-6 rounded-xl transition-all duration-300 
+                      flex items-center gap-2 w-full sm:w-auto justify-center"
                 @click="openAddTeamDialog"
               >
-                +
+                <i class="ri-add-line text-xl"></i>
+                Add Team
               </button>
-            <div class="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row">
-            <div class="flex w-full flex-col sm:w-auto md:max-w-[280px]">
+            </div>
+          </div>
+
+          <!-- Filters Section -->
+          <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="col-span-1">
               <VSelect
-                  v-model="selectedSeries"
-                  :items="formattedSeriesItems"
-                  placeholder="Select Series"
-                  solo
-                  class="w-full"
-                  :hide-details="true"
-                  @change="onFilterChange"
+                v-model="selectedSeries"
+                :items="formattedSeriesItems"
+                placeholder="Select Series"
+                solo
+                class="bg-gray-800 rounded-lg"
+                :hide-details="true"
+                @change="onFilterChange"
               />
             </div>
-    
-            <div class="flex w-full flex-col sm:w-auto md:max-w-[280px]">
+
+            <div class="col-span-1">
               <VSelect
-                  v-model="selectedRegion"
-                  :items="formattedRegionItems"
-                  placeholder="Select Region"
-                  solo
-                  class="w-full"
-                  :hide-details="true"
-                  @change="onFilterChange"
+                v-model="selectedRegion"
+                :items="formattedRegionItems"
+                placeholder="Select Region"
+                solo
+                class="bg-gray-800 rounded-lg"
+                :hide-details="true"
+                @change="onFilterChange"
               />
             </div>
+          </div>
+
+          <!-- Results Info & Pagination -->
+          <div v-if="totalPages > 0" class="mb-6 flex flex-col gap-4
+            sm:flex-row sm:items-center sm:justify-between">
+            <div class="text-gray-300 text-sm">
+              Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+              of <span class="font-bold text-green-400">{{ totalItems }}</span> teams
             </div>
-            </div>
-            <div
-              v-if="totalPages > 0"
-              class="col-span-1 flex flex-wrap items-center
-              justify-around gap-x-2 md:justify-between"
-              data-aos="flip-up" data-aos-once="true"
-            >
-              <span
-              class="font-medium text-white"
-              >
-              Showing {{ from }}-{{ to }} of {{ totalItems }} items
-              </span>
             <VPagination
               v-model="page"
               :length="totalPages"
               color="success"
-              :total-visible="7"
+              :total-visible="5"
               class="text-white"
               dark
             />
+          </div>
+
+          <!-- Teams Table -->
+          <section v-if="totalItems > 0" class="bg-gray-800 rounded-2xl border
+            border-green-500/20 overflow-hidden">
+            <!-- Table Header -->
+            <div class="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-900
+            border-b border-green-500/30">
+              <div class="col-span-3 flex items-center gap-2">
+                <i class="ri-team-line text-green-400"></i>
+                <span class="font-semibold text-green-400">Team Name</span>
+              </div>
+              <div class="col-span-2 flex items-center gap-2">
+                <i class="ri-user-line text-green-400"></i>
+                <span class="font-semibold text-green-400">Age Group</span>
+              </div>
+              <div class="col-span-3 flex items-center gap-2">
+                <i class="ri-trophy-line text-green-400"></i>
+                <span class="font-semibold text-green-400">Series</span>
+              </div>
+              <div class="col-span-2 flex items-center gap-2">
+                <i class="ri-map-pin-line text-green-400"></i>
+                <span class="font-semibold text-green-400">Region</span>
+              </div>
+              <div class="col-span-2 flex items-center justify-center gap-2">
+                <i class="ri-settings-3-line text-green-400"></i>
+                <span class="font-semibold text-green-400">Actions</span>
+              </div>
             </div>
-            <section class="col-span-1">
-              <div class="overflow-x-auto">
-              <div class="inline-block min-w-full text-center">
-                <div 
-                    v-if="totalItems  > 0"
-                    class="flex min-w-[1200px] pr-24 md:w-auto"
-                    data-aos="flip-up"
-                >
-                  <span
-                  class="flex-1 px-4 py-2 text-center align-middle
-                  text-[20px] font-semibold text-[#555555]"
-                  >
-                  Team
-                  </span>
-                  <span
-                  class="flex-1 px-4 py-2 text-center align-middle
-                  text-[20px] font-semibold text-[#555555]"
-                  >
-                  Age Group
-                  </span>
-                  <span
-                  class="flex-1 px-4 py-2 text-center align-middle
-                  text-[20px] font-semibold text-[#555555]"
-                  >
-                  Series
-                  </span>
-                  <span
-                  class="flex-1 px-4 py-2 text-center align-middle
-                  text-[20px] font-semibold text-[#555555]"
-                  >
-                  Region
+
+            <!-- Table Body -->
+            <div class="divide-y divide-gray-700/50">
+              <div
+                v-for="(team, index) in Teams"
+                :key="team.id"
+                :class="[
+                  'grid grid-cols-12 gap-4 px-6 py-4 transition-all duration-300',
+                  'hover:bg-gray-700/30',
+                  index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50'
+                ]"
+              >
+                <!-- Team Name -->
+                <div class="col-span-3 flex items-center">
+                  <span class="text-gray-200 font-medium truncate">
+                    {{ team.name || 'Unnamed Team' }}
                   </span>
                 </div>
-                <div
-                v-for="(data) in Teams"
-                :key="data.id" class="col-span-1 mb-0.5 gap-0"
-                data-aos="flip-down" data-aos-duration="500"
-                data-aos-offset="0"  data-aos-once="true"
-                >
-                <div class="flex min-w-[640px] items-center justify-center">
-                  <input
-                  v-model="data.name"
-                  :rules="Rules"
-                  placeholder="Enter Team"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.agegroup.name"
-                  :rules="Rules"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.series.name"
-                  :rules="Rules"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  :value="getRegionName(data.region_id)"
-                  :rules="Rules"
-                  hide-details
-                  required
-                  readonly
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  @input="handleRegionInput(data, $event)"
-                  />
-                  <i
-                  class="ri-pencil-fill px-4 text-xl text-white"
-                  @click="openEditTeamDialog(data)"
-                  />
-                  <i
-                  class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                  @click="openDeleteTeamDialog(data)"
-                  />              
-              </div>
-              </div>
+
+                <!-- Age Group -->
+                <div class="col-span-2 flex items-center">
+                  <span class="text-gray-300">
+                    {{ team.agegroup && team.agegroup.name || 'N/A' }}
+                  </span>
+                </div>
+
+                <!-- Series -->
+                <div class="col-span-3 flex items-center">
+                  <span class="text-gray-300">
+                    {{ team.series && team.series.name || 'N/A' }}
+                  </span>
+                </div>
+
+                <!-- Region -->
+                <div class="col-span-2 flex items-center">
+                  <span class="text-gray-300">
+                    {{ getRegionName(team.region_id) || 'N/A' }}
+                  </span>
+                </div>
+
+                <!-- Actions -->
+                <div class="col-span-2 flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    class="text-blue-400 hover:text-blue-300 transition-colors
+                    duration-200 p-2 rounded-lg hover:bg-blue-600/20"
+                    @click="openEditTeamDialog(team)"
+                    title="Edit Team"
+                  >
+                    <i class="ri-pencil-line text-lg"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="text-red-400 hover:text-red-300 transition-colors
+                    duration-200 p-2 rounded-lg hover:bg-red-600/20"
+                    @click="openDeleteTeamDialog(team)"
+                    title="Delete Team"
+                  >
+                    <i class="ri-delete-bin-line text-lg"></i>
+                  </button>
+                </div>
               </div>
             </div>
-            </section>
-            <section
+          </section>
+
+          <!-- Empty State -->
+          <section
             v-if="totalPages === 0"
-            class="col-span-1 flex h-60 items-center
-            justify-center font-semibold
-            text-[#555555] md:col-span-3"
-            >
-            No Teams Available
-            </section>
-          </div>
+            class="flex h-60 items-center justify-center 
+                  rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 
+                  border-2 border-dashed border-green-500/30"
+          >
+            <div class="text-center">
+              <i class="ri-team-line text-6xl text-green-500/50 mb-4"></i>
+              <h3 class="text-xl font-bold text-gray-300 mb-2">
+                No Teams Available
+              </h3>
+              <p class="text-gray-400">
+                Get started by adding your first team
+              </p>
+            </div>
+          </section>
         </section>
       </div>
-      <AddTeamModal
-      class="fixed"
+
+    <AddTeamModal
       :active="showAddTeamModal"
       :field="FieldList"
       :series="seriesList"
@@ -176,8 +194,9 @@
       @close="closeAddTeamDialog"
       @confirm="AddTeam"
       />
+
+
       <EditTeamModal
-      class="fixed"
       :active="showEditTeamModal"
       :field="FieldList"
       :series="seriesList"
@@ -187,13 +206,14 @@
       @close="closeEditTeamDialog"
       @confirm="EditTeam"
       />
+
       <DeleteTeamModal
-      class="fixed"
       :active="showDeleteTeamModal"
       :team="selectedData"
       @close="closeDeleteTeamDialog"
       @confirm="DeleteTeam"
       />
+
     </div>
   </template>
 
@@ -531,9 +551,3 @@ export default {
   }
 }
 </script>
-
-  <style scoped>
-  .superheadline {
-  color: aliceblue;
-  }
-  </style>

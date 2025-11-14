@@ -157,50 +157,51 @@
                       group-hover:border-green-300">
             <img 
               :src="photo" 
-              class="h-72 object-contain transition-transform 
-                     duration-300 group-hover:scale-105"
+              class="h-72 w-full object-contain transition-transform 
+                    duration-300 group-hover:scale-105"
             />
             
-            <!-- Remove Button -->
+            <!-- Remove Button - Higher z-index -->
             <button
               type="button"
               class="absolute top-2 right-2 w-8 h-8 bg-red-500 
-                     hover:bg-red-600 text-gray-50 rounded-full 
-                     flex items-center justify-center shadow-md 
-                     transition-all duration-200 transform 
-                     hover:scale-110 opacity-0 group-hover:opacity-100"
+                    hover:bg-red-600 text-gray-50 rounded-full 
+                    flex items-center justify-center shadow-md 
+                    transition-all duration-200 transform 
+                    hover:scale-110 opacity-0 group-hover:opacity-100 
+                    cursor-pointer z-30"
               @click="removeEditedImage(photoIndex)"
             >
               <i class="ri-close-line text-sm"></i>
             </button>
             
-            <!-- Image Overlay -->
+            <!-- Image Overlay - Lower z-index -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 
                         to-transparent opacity-0 group-hover:opacity-100 
-                        transition-opacity duration-300 flex items-end p-3">
+                        transition-opacity duration-300 flex items-end p-3 z-20">
               <span class="text-gray-50 text-sm font-medium">
-                 Image {{ photoIndex + 1 }}
+                Image {{ photoIndex + 1 }}
               </span>
             </div>
           </div>
         </div>
       </div>
-      
-      <!-- Empty State -->
-      <div 
-        v-if="!imgUrlEdit || imgUrlEdit.length === 0"
-        class="text-center py-12 bg-gray-50 rounded-xl border-2 
-               border-dashed border-gray-300"
-      >
-        <i class="ri-image-2-line text-4xl text-gray-400 mb-3"></i>
-        <p class="text-gray-500 font-medium">
-          No images uploaded yet
-        </p>
-        <p class="text-gray-400 text-sm mt-1">
-          Upload your first image above
-        </p>
-      </div>
-    </div>
+  
+  <!-- Empty State -->
+  <div 
+    v-if="!imgUrlEdit || imgUrlEdit.length === 0"
+    class="text-center py-12 bg-gray-50 rounded-xl border-2 
+           border-dashed border-gray-300"
+  >
+    <i class="ri-image-2-line text-4xl text-gray-400 mb-3"></i>
+    <p class="text-gray-500 font-medium">
+      No images uploaded yet
+    </p>
+    <p class="text-gray-400 text-sm mt-1">
+      Upload your first image above
+    </p>
+  </div>
+</div>
   </div>
 </template>
 

@@ -13,7 +13,7 @@
              class="bg-brand-grey-4
              whitespace-nowrap
              px-4 py-2 text-center align-middle
-             text-[16px] font-semibold text-[#555555]"
+             text-[16px] font-semibold text-white"
             >
               {{ column.name !=  'id' ? column.label:'' }}
             </th>

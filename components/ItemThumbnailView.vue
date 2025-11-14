@@ -150,11 +150,11 @@ export default {
       required: true
     },
     isOnSale: {
-      type: Boolean,
+      type: [ Boolean, Number ],
       required: true
     },
     isRrp: {
-      type: Boolean,
+      type: [ Boolean, Number ],
       required: true
     },
     isHideOutOfStock: {

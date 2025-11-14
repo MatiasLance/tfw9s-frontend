@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="bg-[#1A1A1B]" data-aos="fade-up">
+    <div data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-4">
         <div class="grid grid-cols-1 gap-4">
           <div class="col-span-1 flex items-center">
@@ -92,11 +92,11 @@
                 <i
                 class="ri-pencil-fill px-4 text-xl text-white"
                 @click="openEditFieldDialog(data)"
-                />
+                ></i>
                 <i
                 class="ri-delete-bin-fill px-4 text-xl text-red-400"
                 @click="openDeleteFieldDialog(data)"
-                />
+                ></i>
               </div>
               </div>
             </div>
@@ -179,7 +179,7 @@ export default {
           return 'Name is required.'
         },
         value => {
-          if (value?.length <= 10) {
+          if (value && value.length <= 10) {
             return true
           }
 

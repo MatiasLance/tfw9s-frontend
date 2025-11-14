@@ -1,6 +1,6 @@
 <!-- eslint-disable max-len -->
 <template>
-  <div class="min-h-screen  bg-[#1A1A1B]">
+  <div class="min-h-screen bg-[#1A1A1B]">
     <!-- Enhanced Header -->
     <BaseHeader
       class="mx-auto max-w-full gap-4 relative overflow-hidden
@@ -42,32 +42,40 @@
       </div>
     </BaseHeader>
 
-    <div class="mx-auto max-w-screen-xl px-4 py-6">
-      <div class="-mx-4 flex flex-wrap">
-        <main class="w-full px-4">
-          <div class="my-6 flex flex-wrap items-center justify-end gap-4">
-            <div class="w-full sm:w-80">
-            <form @submit.prevent="retrieveNews">
-              <SearchBar v-model="query" />
-            </form>
+    <div class="mx-auto max-w-screen-2xl px-4 py-8">
+      <!-- Header Section -->
+      <div class="mb-12 text-center" data-aos="zoom-in">
+        <div class="inline-flex items-center gap-4 mb-6">
+          <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-3 
+                      shadow-lg animate-pulse">
+            <i class="ri-newspaper-fill text-gray-50 text-2xl"></i>
           </div>
-          </div>
-        </main>
+          <h1 class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-green-400 
+                    to-gray-100 bg-clip-text text-transparent">
+            Rugby News & Updates
+          </h1>
+        </div>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+          Stay updated with the latest from our rugby community
+        </p>
+        
+        <!-- Search Bar -->
+        <div class="max-w-md mx-auto">
+          <form @submit.prevent="retrieveNews">
+            <SearchBar v-model="query" />
+          </form>
+        </div>
       </div>
 
-      <section v-if="totalPages > 0" class="mb-8" data-aos="fade-up">
-        <div
-          class="
-            flex flex-wrap items-center justify-around
-            gap-x-2
-            md:justify-between
-          "
-        >
-          <span class="flex items-center">
-            <p class="text-base leading-[2.5em] text-white">
-              Showing {{ from }}-{{ to }} of {{ totalItems }} results
-            </p>
-          </span>
+      <!-- Results Info -->
+      <section v-if="totalPages > 0" class="mb-8" data-aos="zoom-in">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-gray-300">
+              Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+              of <span class="font-bold text-green-400">{{ totalItems }}</span> articles
+            </span>
+          </div>
           <BasePagination
             :active-page="page"
             :total-pages="totalPages"
@@ -75,86 +83,138 @@
           />
         </div>
       </section>
+
+      <!-- Empty State -->
       <section
         v-if="totalPages === 0"
-        class="col-span-1 flex h-60 items-center
-        justify-center font-semibold
-        text-[#555555] md:col-span-3"
-        >
-        No News Available
+        class="flex h-80 items-center justify-center rounded-3xl 
+              bg-gradient-to-br from-gray-800 to-gray-900 
+              border-2 border-dashed border-green-500/30"
+        data-aos="zoom-in"
+      >
+        <div class="text-center">
+          <i class="ri-article-line text-6xl text-green-500/40 mb-4"></i>
+          <h3 class="text-2xl font-bold text-gray-300 mb-2">
+            No Articles Found
+          </h3>
+          <p class="text-gray-400">
+            Try adjusting your search terms
+          </p>
+        </div>
       </section>
-      <article class="mx-auto max-w-screen-xl gap-4">
-          <div class="grid grid-cols-1 gap-4">
-            <div
-            v-for="(news) in newsList"
-            :key="news.id" class="group col-span-1 bg-[#212121]"
-            data-aos="fade-up"
+
+      <!-- News Grid -->
+      <article class="gap-8" data-aos="zoom-in">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+          <div
+            v-for="news in newsList"
+            :key="news.id" 
+            class="group rugby-news-card bg-gradient-to-br from-gray-800 to-gray-900 
+                  rounded-3xl border border-green-500/20 shadow-2xl 
+                  hover:shadow-3xl transition-all duration-700 
+                  hover:border-green-400/50 overflow-hidden 
+                  flex flex-col h-full"
           >
-            <div
-              class="
-              grid grid-cols-1
-              gap-4 md:grid-cols-6
-              lg:grid-cols-6"
-            >
-              <div
-                class="
-                col-span-1 p-4 md:col-span-3
-                lg:col-span-4 lg:p-8"
-              >
-                <h3
-                  class="
-                  grid text-xl sm:text-2xl font-semibold
-                  text-white sm:grid-cols-1"
-                >
-                  {{ news.headline }}
-                </h3>
-
-                <p class="text-sm text-brand-slate">
-                  {{ formattedDate(news.updated_at) }}
-                </p>
-
-                <p
-                  class="my-4 text-white line-clamp-3"
-                  v-html="news.content"
-                ></p>
-
-                <div
-                  class="mt-8 flex flex-wrap justify-start gap-2"
-                  >
-                  <NuxtLink :to="'/news-article/?id='+ news.id">
-                    <BaseButton
-                    class="
-                    max-w-full rounded-lg
-                    bg-gradient-to-tr
-                    from-[#5EE738]
-                    via-[#3e872a]
-                    to-[#050505]
-                    py-4
-                    px-8
-                    uppercase
-                    text-white"
-                    >
-                    READ MORE
-                    </BaseButton>
-                  </NuxtLink>
+            <!-- Full Image Section -->
+            <div class="relative overflow-hidden">
+              <div class="aspect-w-16 aspect-h-9 h-64">
+                <img
+                  :src="getMediaURL(news.media[0], 'news')"
+                  :alt="news.headline"
+                  class="absolute inset-0 w-full h-full object-cover 
+                        transition-transform duration-1000 
+                        group-hover:scale-110"
+                />
+                <!-- Gradient Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 
+                            via-transparent to-transparent"></div>
+                
+                <!-- Category Tag -->
+                <div class="absolute top-4 right-4">
+                  <span class="bg-green-600 text-gray-50 px-3 py-1 
+                              rounded-full text-xs font-semibold uppercase 
+                              tracking-wide">
+                    News
+                  </span>
                 </div>
               </div>
-              <div
-                class="col-span-1 overflow-hidden
-                md:col-span-3 lg:col-span-2"
-              >
-                <img
-                  :src="getMediaURL(news.path, 'news')"
-                  alt="Product Image"
-                  class="h-full w-full object-cover transition-all
-                    group-hover:scale-110"
+            </div>
+
+            <!-- Content Section -->
+            <div class="flex-1 p-6 lg:p-8 flex flex-col">
+              <!-- Date - Now Visible Below Image -->
+              <div class="mb-4 flex items-center gap-2">
+                <div class="bg-green-600/20 rounded-lg p-2">
+                  <i class="ri-calendar-2-line text-green-400 text-lg"></i>
+                </div>
+                <span class="text-green-400 font-semibold text-lg">
+                  {{ formattedDate(news.updated_at) }}
+                </span>
+              </div>
+
+              <!-- Headline -->
+              <h3 class="text-2xl lg:text-3xl font-bold text-gray-100 mb-4 
+                        group-hover:text-green-400 transition-colors 
+                        duration-500 line-clamp-2 leading-tight">
+                {{ news.headline }}
+              </h3>
+
+              <!-- Excerpt -->
+              <div class="flex-1 mb-6">
+                <p 
+                  class="text-gray-300 leading-relaxed line-clamp-3 
+                        text-lg group-hover:text-gray-200 transition-colors 
+                        duration-300"
+                  v-html="news.content"
+                ></p>
+              </div>
+
+              <!-- Action Button -->
+              <div class="mt-auto">
+                <NuxtLink :to="'/news-article/?id='+ news.id">
+                  <button
+                    type="button"
+                    class="w-full bg-gradient-to-r from-green-600 to-green-700 
+                          hover:from-green-700 hover:to-green-800 text-gray-50 
+                          font-bold py-4 px-6 rounded-xl transition-all 
+                          duration-500 transform hover:scale-105 
+                          flex items-center justify-center gap-3 
+                          group/btn shadow-lg hover:shadow-xl"
                   >
+                    <span>Read Full Story</span>
+                    <i class="ri-arrow-right-line transition-transform 
+                              duration-300 group-hover/btn:translate-x-1"></i>
+                  </button>
+                </NuxtLink>
               </div>
             </div>
+
+            <!-- Hover Effect Border -->
+            <div class="absolute inset-0 rounded-3xl border-2 border-transparent 
+                        bg-gradient-to-r from-green-500/0 via-green-400/0 to-green-500/0 
+                        bg-[length:200%_100%] group-hover:bg-[length:100%_100%] 
+                        transition-all duration-1000 -z-10 opacity-0 
+                        group-hover:opacity-100">
+            </div>
           </div>
-          </div>
+        </div>
       </article>
+
+      <!-- Bottom Pagination -->
+      <section v-if="totalPages > 0" class="mt-16" data-aos="zoom-in">
+        <div class="flex justify-center">
+          <BasePagination
+            :active-page="page"
+            :total-pages="totalPages"
+            @change="setPage"
+          />
+        </div>
+      </section>
     </div>
+    <LoadingAnimationVue
+    :is-loading="isNewsLoading"
+    loading-title="News"
+    />
   </div>
 </template>
 
@@ -164,15 +224,17 @@ import 'vue-croppa/dist/vue-croppa.css';
 import debounce from 'lodash/debounce';
 import logout from '~/mixins/auth/logout';
 import handlesMedia from '~/mixins/shop/handlesMedia'
+import aosMixin from '@/mixins/aos';
 import BasePagination from '~/components/base/BasePagination';
 import SearchBar from '~/components/SearchBar'
-import aosMixin from '@/mixins/aos';
+import LoadingAnimationVue from '~/components/loading/LoadingAnimation.vue';
 
 export default {
   buildModules: [ '@nuxtjs/moment' ],
   components: {
     BasePagination,
     SearchBar,
+    LoadingAnimationVue
   },
   mixins: [
     aosMixin,
@@ -294,40 +356,28 @@ export default {
 </script>
 
 <style scoped>
-.croppa-container {
-background-color: #abb8c3;
-border: 3px solid #1C1B1C;
-}
-.o-inputit__item--danger {
-background-color: #e73538 !important;
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-.part-item__actions [class^="ri-"] {
-padding-right: 0.25rem;
+.aspect-w-16 {
+  position: relative;
 }
 
-::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
-> .v-input__control > .v-input__slot {
-box-shadow: none;
-border: 1px rgb(243 244 246 / var(--tw-border-opacity));
-background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-padding: 0.5rem 0.75rem;
-width: 100%;
-appearance: none;
-border-radius: 0;
-transition: border-color 0.3s;
+.aspect-w-16::before {
+  content: '';
+  display: block;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
 }
 
-::v-deep .v-text-field input::placeholder {
-font-size: 1rem !important;
-font-family: inherit !important;
-color: rgb(104, 104, 104) !important;
-}
-
-.custom-btn {
-height: 50px !important;
-}
-img{
-  aspect-ratio: 16 / 9
+.aspect-w-16 > * {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 </style>

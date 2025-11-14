@@ -1,42 +1,77 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: false,
   target: 'static',
   head: {
-    title: 'TFW9s',
+    title: 'TFW9s | Competitive Kids Rugby League 9s & Life Skills Program',
     htmlAttrs: {
       lang: 'en',
     },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+
       {
-        hid: 'description',
-        name: 'description',
-        content: ''
+          hid: 'description',
+          name: 'description',
+          content: 'TFW9s: The electric & competitive kids footy 9s concept. A safe, empowering environment where young athletes build resilience, life skills & community spirit.'
+      },
+
+      {
+          hid: 'og:title',
+          property: 'og:title',
+          content: 'TFW9s | Competitive Kids Footy in a Safe Environment'
       },
       {
-        hid: 'og:title',
-        name: 'og:title',
-        content: '',
+          hid: 'og:description',
+          property: 'og:description',
+          content: 'Empowering young athletes through electric 9s footy. Building great humans on and off the field. Join the TFW9s community.'
       },
       {
-        hid: 'og:description',
-        name: 'og:description',
-        content: '',
+          hid: 'og:image',
+          property: 'og:image',
+          content: 'https://i.imgur.com/V1scZcq.png'
       },
       {
-        hid: 'og:image',
-        property: 'og:image',
-        content: '',
+          hid: 'og:url',
+          property: 'og:url',
+          content: 'https://tfw9s.com.au/'
       },
       {
-        hid: 'og:site_name',
-        name: 'og:site_name',
-        content: 'TFW Website',
+          hid: 'og:site_name',
+          property: 'og:site_name',
+          content: 'TFW9s'
       },
       {
-        name: 'google-site-verification',
-        content: 'KninbX5hpjrkV2j6g1xc7Hix4ahJTxeRzQYylzQGga0'
+          hid: 'og:type',
+          property: 'og:type',
+          content: 'website'
+      },
+
+      {
+          hid: 'twitter:card',
+          name: 'twitter:card',
+          content: 'summary_large_image'
+      },
+      {
+          hid: 'twitter:title',
+          name: 'twitter:title',
+          content: 'TFW9s | Competitive Kids Footy in a Safe Environment'
+      },
+      {
+          hid: 'twitter:description',
+          name: 'twitter:description',
+          content: 'Empowering young athletes through electric 9s footy. Building great humans on and off the field. Join the TFW9s community.'
+      },
+      {
+          hid: 'twitter:image',
+          name: 'twitter:image',
+          content: 'https://i.imgur.com/V1scZcq.png'
+      },
+
+      {
+          name: 'google-site-verification',
+          content: 'KninbX5hpjrkV2j6g1xc7Hix4ahJTxeRzQYylzQGga0'
       },
     ],
     link: [
@@ -55,22 +90,25 @@ export default {
       },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;700&display=swap'
+        href: 'https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;700&display=swap',
+        media: 'print',
+        onload: "this.media='all'" 
       }
     ],
     script: [
-      { src: 'https://js.stripe.com/v3' },
+      {
+        src: 'https://js.stripe.com/v3',
+        async: true,
+        defer: true
+      },
       {
         hid: 'square-web-payments-sdk',
         type: 'text/javascript',
-        src: `${process.env.ENVIRONMENT === 'production' ? 'https://web.squarecdn.com/v1/square.js' : 'https://sandbox.web.squarecdn.com/v1/square.js'}`
+        src: `${process.env.ENVIRONMENT === 'production' ? 'https://web.squarecdn.com/v1/square.js' : 'https://sandbox.web.squarecdn.com/v1/square.js'}`,
+        defer: true
       }
     ]
   },
-
-  // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  ssr: false,
-  target: 'server',
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [

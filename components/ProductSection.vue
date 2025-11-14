@@ -57,13 +57,17 @@
         :stock="product.stock"
         :path="getMediaURL(product.media[0])"
         :has-variants="product.has_variants"
-        :is-rrp="product.show_rrp===1?true:false"
-        :is-on-sale="product.is_on_sale===1?true:false"
+        :is-rrp="product.show_rrp"
+        :is-on-sale="product.is_on_sale"
         :is-hide-out-of-stock="product.isHideOutOfStock"
         data-aos="fade-up"
         data-aos-offset="30"
       />
     </section>
+    <LoadingAnimation
+    :is-loading="isProductsLoading"
+    loading-title="Products"
+    />
   </div>
 </template>
 
@@ -72,12 +76,14 @@ import debounce from 'lodash/debounce';
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import BasePagination from '~/components/base/BasePagination';
 import ItemThumbnailView from '~/components/ItemThumbnailView';
+import LoadingAnimation from '~/components/loading/LoadingAnimation';
 
 export default {
   name: 'ProductSection',
   components: {
     BasePagination,
-    ItemThumbnailView
+    ItemThumbnailView,
+    LoadingAnimation
   },
   mixins: [ handlesMedia ],
   data() {

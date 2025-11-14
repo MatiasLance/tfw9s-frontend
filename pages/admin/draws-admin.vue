@@ -1,299 +1,505 @@
 <template>
-  <div class="min-h-screen bg-[#1A1A1B] text-white">
-    <section class="mx-auto w-full max-w-screen-xl gap-4 p-4 sm:p-7">
+  <div class="min-h-screen bg-[#1A1A1B]">
+    <section class="mx-auto max-w-screen-xl gap-4 px-4 py-6">
       <div class="grid grid-cols-3 gap-2">
-        <div class="col-span-3 p-2" data-aos="fade-up">
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <span
-                class="hidden w-full py-2 align-middle text-[20px]
-                font-semibold text-[#555555] md:block"
-              >
-                Event Year
-              </span>
-              <VSelect
-                v-model="selectedYear"
-                :items="formattedYears"
-                placeholder="Select Event Year"
-                solo
-                class="w-full"
-              />
+        
+        <div class="col-span-3 py-2" data-aos="fade-up">
+          <!-- Enhanced Filter Container -->
+          <div class="
+            rounded-2xl bg-gradient-to-br from-green-50 to-green-100 
+            p-6 shadow-lg border border-green-200
+          ">
+            <!-- Section Header -->
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center space-x-3">
+                <div class="
+                  rounded-full bg-gradient-to-r from-green-400 to-green-600 
+                  p-2
+                ">
+                  <i class="ri-filter-3-line text-white text-lg"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">
+                  Event Filters
+                </h3>
+              </div>
+              <div class="flex items-center space-x-2 text-sm text-green-600">
+                <i class="ri-information-line"></i>
+                <span>Refine your event search</span>
+              </div>
             </div>
 
-            <div>
-              <span
-                class="hidden w-full py-2 align-middle text-[20px]
-                font-semibold text-[#555555] md:block"
-              >
-                Field
-              </span>
-              <VSelect
-                v-model="selectedField"
-                :items="formattedFields"
-                placeholder="Select Field"
-                solo
-                class="w-full"
-              />
+            <!-- Status Filter Buttons -->
+            <div class="mb-6">
+              <label class="
+                flex items-center text-sm font-semibold text-gray-900 mb-3
+              ">
+                <i class="ri-calendar-check-line mr-2 text-green-500"></i>
+                Event Status
+              </label>
+              <div class="flex space-x-3">
+                <!-- Complete Button -->
+                <button
+                  type="button"
+                  @click="setEventStatus('complete')"
+                  :class="`
+                    group relative flex-1 flex items-center justify-center space-x-2 
+                    rounded-xl py-3 px-4 font-semibold transition-all duration-300 
+                    transform hover:scale-105 hover:shadow-lg
+                    ${eventStatus === 'complete' 
+                      ? 'bg-gradient-to-r from-green-500 to-green-600' +
+                      'text-white shadow-md ring-2 ring-green-200 ring-offset-1' 
+                      : 'bg-white text-gray-900 border-2 border-green-200' +
+                      'hover:border-green-300 hover:bg-green-50'
+                    }
+                  `"
+                >
+                  <div 
+                    v-if="eventStatus !== 'complete'" 
+                    class="
+                      absolute inset-0 bg-green-500/10 rounded-xl 
+                      transform scale-0 transition-transform duration-300 
+                      group-hover:scale-100
+                    "
+                  ></div>
+                  <i 
+                    class="ri-checkbox-circle-line text-lg relative z-10" 
+                    :class="eventStatus === 'complete' ? 'text-white' : 'text-green-500'"
+                  ></i>
+                  <span class="relative z-10">Complete</span>
+                  <div 
+                    v-if="eventStatus === 'complete'" 
+                    class="
+                      absolute -top-1 -right-1 w-3 h-3 bg-green-400 
+                      rounded-full animate-ping
+                    "
+                  ></div>
+                </button>
+
+                <!-- Upcoming Button -->
+                <button
+                  type="button"
+                  @click="setEventStatus('upcoming')"
+                  :class="`
+                    group relative flex-1 flex items-center justify-center space-x-2 
+                    rounded-xl py-3 px-4 font-semibold transition-all duration-300 
+                    transform hover:scale-105 hover:shadow-lg
+                    ${eventStatus === 'upcoming' 
+                      ? 'bg-gradient-to-r from-green-500 to-green-600' +
+                      'text-white shadow-md ring-2 ring-green-200 ring-offset-1' 
+                      : 'bg-white text-gray-900 border-2 border-green-200' +
+                      'hover:border-green-300 hover:bg-green-50'
+                    }
+                  `"
+                >
+                  <div 
+                    v-if="eventStatus !== 'upcoming'" 
+                    class="
+                      absolute inset-0 bg-green-500/10 rounded-xl 
+                      transform scale-0 transition-transform duration-300 
+                      group-hover:scale-100
+                    "
+                  ></div>
+                  <i 
+                    class="ri-calendar-2-line text-lg relative z-10" 
+                    :class="eventStatus === 'upcoming' ? 'text-white' : 'text-green-500'"
+                  ></i>
+                  <span class="relative z-10">Upcoming</span>
+                  <div 
+                    v-if="eventStatus === 'upcoming'" 
+                    class="
+                      absolute -top-1 -right-1 w-3 h-3 bg-green-400 
+                      rounded-full animate-ping
+                    "
+                  ></div>
+                </button>
+              </div>
             </div>
 
-            <!-- Region -->
-            <div>
-              <span
-                class="hidden w-full py-2 align-middle text-[20px]
-                font-semibold text-[#555555] md:block"
-              >
-                Region
-              </span>
-              <VSelect
-                v-model="selectedRegion"
-                :items="formattedRegions"
-                placeholder="Select Region"
-                solo
-                class="w-full"
-              />
-            </div>
+            <!-- Filter Grid -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <!-- Event Year -->
+              <div class="group">
+                <label class="
+                  flex items-center text-sm font-semibold text-gray-900 mb-3
+                ">
+                  <i class="ri-calendar-line mr-2 text-green-500"></i>
+                  Event Year
+                </label>
+                <div class="relative">
+                  <VSelect
+                    v-model="selectedYear"
+                    :items="formattedYears"
+                    placeholder="Select Event Year"
+                    solo
+                  />
+                </div>
+              </div>
 
-            <!-- Team Name -->
-            <div>
-              <span
-                class="hidden w-full py-2 align-middle text-[20px]
-                font-semibold text-[#555555] md:block"
-              >
-                Teams
-              </span>
-              <VTextField
-                v-model="searchTeamName"
-                placeholder="Type Team Name"
-                solo
-                class="w-full"
-                :hide-details="false"
-                clearable
-                @click:clear="searchTeamName = ''"
-              />
+              <!-- Age Group -->
+              <div class="group">
+                <label class="
+                  flex items-center text-sm font-semibold text-gray-900 mb-3
+                ">
+                  <i class="ri-user-line mr-2 text-green-500"></i>
+                  Age Group
+                </label>
+                <div class="relative">
+                  <VSelect
+                    v-model="selectedAgeGroup"
+                    :items="formattedAgeGroup"
+                    placeholder="Select Age Group"
+                    solo
+                  />
+                </div>
+              </div>
+
+              <!-- Region -->
+              <div class="group">
+                <label class="
+                  flex items-center text-sm font-semibold text-gray-900 mb-3
+                ">
+                  <i class="ri-map-pin-line mr-2 text-green-500"></i>
+                  Region
+                </label>
+                <div class="relative">
+                  <VSelect
+                    v-model="selectedRegion"
+                    :items="formattedRegions"
+                    placeholder="Select Region"
+                    solo
+                  />
+                </div>
+              </div>
+
+              <!-- Teams -->
+              <div class="group">
+                <label class="
+                  flex items-center text-sm font-semibold text-gray-900 mb-3
+                ">
+                  <i class="ri-team-line mr-2 text-green-500"></i>
+                  Teams
+                </label>
+                <div class="relative">
+                  <VTextField
+                    v-model="searchTeamName"
+                    placeholder="Type Team Name"
+                    solo
+                    :hide-details="false"
+                    clearable
+                    @click:clear="searchTeamName = ''"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div v-if="isLoading" class="col-span-3 text-center">
-          <VProgressCircular
-            :size="150"
-            :width="15"
-            color="green"
-            indeterminate
-          />
-        </div>
-
-        <div v-else class="col-span-3">
+        <div class="col-span-3">
           <section
-            v-if="totalPages > 0 && !isLoading"
-            class="grid w-full grid-cols-1 gap-4 md:grid-cols-2"
+            v-if="totalPages > 0 && isLoaded"
+            class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2"
           >
             <div
               v-for="(match) in filteredMatchList"
-              :key="match.id"
+              :key="match.id" 
               data-aos="fade-up"
               data-aos-offset="0"
-              class="col-span-1 mx-auto w-full max-w-lg"
+              class="col-span-1"
             >
-              <div class="grid grid-cols-5 rounded-lg bg-[#212121] p-4 w-full">
-                <div class="col-span-4 text-md md:text-xl font-medium text-white">
-                  {{ match.event_date }}
-                </div>
-                <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
-                  {{ match.time }}
-                </div>
-                <div class="col-span-4 text-sm md:text-lg font-medium text-green-600">
-                  {{ match.field.name }}
-                </div>
-                <div
-                  class="col-span-2 flex text-lg font-medium text-slate-600"
-                >
-                  <span class="flex-1 transition h-44 sm:h-52 md:h-60 p-4">
-                    <img
-                      :src="getMediaURL(match.team1.media[0])"
-                      alt="Team 1 logo"
-                      class="h-full w-full object-contain"
-                    />
-                  </span>
-                </div>
-                <div></div>
-                <div
-                  v-if="match.team2"
-                  class="col-span-2 flex text-lg font-medium text-slate-600"
-                >
-                  <span class="h-44 flex-1 p-4 transition sm:h-52 md:h-60">
-                    <img
-                      :src="getMediaURL(match.team2.media[0])"
-                      alt="Team 2 logo"
-                      class="size-full object-contain"
-                    />
-                  </span>
-                </div>
-                <div
-                  v-else
-                  class="col-span-2 flex text-lg font-medium text-slate-600"
-                >
-                  <span class="h-44 flex-1 p-4 transition sm:h-52 md:h-60">
-                    <img
-                      src="~/assets/images/tfw9s.png"
-                      alt="Team 2 logo"
-                      class="size-full object-contain"
-                    />
-                  </span>
-                </div>
-                <div
-                  class="
-                  col-span-2 text-center text-sm md:text-lg
-                  font-semibold text-white
-                  lg:truncate lg:whitespace-nowrap lg:text-xl"
-                >
-                  {{ match.team1.name }}
-                </div>
-                <div
-                  class="col-span-1 flex items-center justify-center text-center
-                  text-sm md:text-lg font-semibold text-[#CCCCCC] lg:text-xl"
-                >
-                  VS
-                </div>
-                <div
-                  v-if="match.team2"
-                  class="col-span-2 text-center text-sm font-semibold text-white
-                  md:text-lg lg:truncate lg:whitespace-nowrap lg:text-xl"
-                >
-                  {{ match.team2.name }}
-                </div>
-                <div
-                  v-else
-                  class="col-span-2 text-center text-sm font-semibold text-white
-                  md:text-lg lg:truncate lg:whitespace-nowrap lg:text-xl"
-                >
-                  Bye
-                </div>
-                <div
-                v-if="match.submit"
-                class="
-                col-span-5 text-2xl
-                text-white font-semibold
-                flex justify-center pt-2 relative"
-                >
-                  <div class="absolute bg-red-500 text-sm rounded px-2">
-                    Final Score
-                  </div>
-                  <div class="bg-[#1A1A1B] px-4 py-2 mt-8 rounded">
-                    <span
-                      :class="(parseInt(match.team1_score) >= parseInt(match.team2_score))
-                        ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
-                    >
-                      {{ doubleDigitFormat(match.team1_score) }}
-                    </span>
-                    :
-                    <span
-                      :class="(parseInt(match.team1_score) <= parseInt(match.team2_score))
-                        ? 'font-semibold text-[#5EE738]' : 'font-medium text-white'"
-                    >
-                      {{ doubleDigitFormat(match.team2_score) }}
-                    </span>
+              <!-- Match Card Container -->
+              <div class="
+                relative overflow-hidden rounded-2xl bg-gradient-to-br 
+                from-gray-900 to-gray-800 p-6 shadow-2xl 
+                border border-green-500/20 transition-all duration-500 
+                hover:scale-105 hover:shadow-2xl hover:border-green-400/40
+              ">
+                <!-- Background Pattern -->
+                <div class="
+                  absolute inset-0 opacity-5 bg-repeat-round"
+                  :style="soccerPatternStyle"
+                ></div>
+
+                <!-- Match Header -->
+                <div class="relative z-10 mb-6">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <div class="
+                        rounded-full bg-green-500/20 p-2 
+                        border border-green-500/30
+                      ">
+                        <i class="ri-calendar-line text-green-400 text-sm"></i>
+                      </div>
+                      <div>
+                        <div class="text-lg font-bold text-white">
+                          {{ match.event_date }}
+                        </div>
+                        <div class="flex items-center space-x-4 text-sm text-green-300">
+                          <span class="flex items-center space-x-1">
+                            <i class="ri-time-line"></i>
+                            <span>{{ match.time }}</span>
+                          </span>
+                          <span class="flex items-center space-x-1">
+                            <i class="ri-map-pin-line"></i>
+                            <span>{{ match.field }}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div
-                v-if="!match.submit"
-                class="
-                col-span-5 text-2xl
-                text-white font-semibold
-                flex justify-center
-                pt-4 pb-2 relative"
-                >
-                  <div class="absolute bg-green-600 text-sm rounded px-2">
-                    Upcoming
+
+                <!-- Teams & Scores Section -->
+                <div class="relative z-10">
+                  <!-- Teams Row -->
+                  <div class="grid grid-cols-12 items-center gap-4 mb-6">
+                    <!-- Team 1 -->
+                    <div class="col-span-5 text-center">
+                      <div class="
+                        h-32 flex items-center justify-center p-4 
+                        bg-gray-800/50 rounded-xl border border-green-500/20
+                        transition-all duration-300 hover:bg-gray-800/70
+                      ">
+                        <img
+                          :src="getMediaURL(match.team1.media[0])"
+                          alt="Team 1 logo"
+                          class="max-h-20 max-w-full object-contain"
+                        />
+                      </div>
+                      <div class="mt-3">
+                        <div class="
+                          text-base font-bold text-white truncate 
+                          px-2 py-1 bg-gray-800/50 rounded-lg
+                        ">
+                          {{ match.team1.name }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- VS Badge -->
+                    <div class="col-span-2 flex items-center justify-center">
+                      <div class="
+                        relative rounded-full bg-gradient-to-r 
+                        from-green-500 to-emerald-600 p-3 
+                        border-2 border-white/20 shadow-lg
+                      ">
+                        <span class="text-xs font-black text-white">VS</span>
+                        <div class="
+                          absolute inset-0 rounded-full bg-green-400 
+                          animate-ping opacity-20
+                        "></div>
+                      </div>
+                    </div>
+
+                    <!-- Team 2 -->
+                    <div class="col-span-5 text-center">
+                      <div class="
+                        h-32 flex items-center justify-center p-4 
+                        bg-gray-800/50 rounded-xl border border-green-500/20
+                        transition-all duration-300 hover:bg-gray-800/70
+                      ">
+                        <img
+                          v-if="match.team2"
+                          :src="getMediaURL(match.team2.media[0])"
+                          alt="Team 2 logo"
+                          class="max-h-20 max-w-full object-contain"
+                        />
+                        <img
+                          v-else
+                          src="~/assets/images/tfw9s.png"
+                          alt="Team 2 logo"
+                          class="max-h-20 max-w-full object-contain opacity-70"
+                        />
+                      </div>
+                      <div class="mt-3">
+                        <div class="
+                          text-base font-bold text-white truncate 
+                          px-2 py-1 bg-gray-800/50 rounded-lg
+                        ">
+                          {{ match.team2 ? match.team2.name : 'Bye' }}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="px-4 py-2 mt-4">
-                    <span class="font-semibold text-[#5EE738]">
-                      {{ match.time }}
-                    </span>
+
+                  <!-- Score Section -->
+                  <div v-if="match.submit" class="
+                    relative bg-gradient-to-r from-gray-800 to-gray-900 
+                    rounded-xl p-4 border border-green-500/30 
+                    shadow-inner
+                  ">
+                    <!-- Final Score Badge -->
+                    <div class="
+                      absolute -top-3 left-1/2 transform -translate-x-1/2 
+                      bg-gradient-to-r from-red-500 to-red-600 
+                      px-4 py-1 rounded-full text-xs font-bold 
+                      text-white shadow-lg border border-red-400
+                    ">
+                      <i class="ri-trophy-line mr-1"></i>
+                      Final Score
+                    </div>
+
+                    <!-- Score Display -->
+                    <div class="flex items-center justify-center space-x-6 pt-4">
+                      <div class="text-center">
+                        <div class="
+                          text-4xl text-white
+                          ${parseInt(match.team1_score) >= parseInt(match.team2_score) 
+                            ? 'text-green-400' : 'text-gray-400'}
+                        ">
+                          {{ doubleDigitFormat(match.team1_score) }}
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">
+                          Points
+                        </div>
+                      </div>
+                      
+                      <div class="
+                        text-2xl font-black text-white 
+                        bg-gray-700 px-3 py-2 rounded-lg
+                      ">
+                        :
+                      </div>
+                      
+                      <div class="text-center">
+                        <div class="
+                          text-4xl text-white
+                          ${parseInt(match.team1_score) <= parseInt(match.team2_score) 
+                            ? 'text-green-400' : 'text-gray-400'}
+                        ">
+                          {{ doubleDigitFormat(match.team2_score) }}
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">
+                          Points
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Winning Indicator -->
+                    <div v-if="match.team1_score !== match.team2_score" class="
+                      mt-4 text-center
+                    ">
+                      <div class="
+                        inline-flex items-center space-x-2 
+                        bg-green-500/20 px-3 py-1 rounded-full 
+                        border border-green-500/30
+                      ">
+                        <i class="ri-star-fill text-green-400 text-sm"></i>
+                        <span class="text-xs font-semibold text-green-300">
+                          {{ parseInt(match.team1_score) > parseInt(match.team2_score) 
+                            ? match.team1.name + ' Wins!' 
+                            : match.team2.name + ' Wins!' }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Upcoming Match -->
+                  <div v-if="!match.submit" class="
+                    relative bg-gradient-to-r from-gray-800 to-gray-900 
+                    rounded-xl p-4 border border-blue-500/30 
+                    shadow-inner
+                  ">
+                    <!-- Upcoming Badge -->
+                    <div class="
+                      absolute -top-3 left-1/2 transform -translate-x-1/2 
+                      bg-gradient-to-r from-blue-500 to-cyan-600 
+                      px-4 py-1 rounded-full text-xs font-bold 
+                      text-white shadow-lg border border-blue-400
+                    ">
+                      <i class="ri-time-line mr-1"></i>
+                      Upcoming Match
+                    </div>
+
+                    <!-- Match Time -->
+                    <div class="flex items-center justify-center pt-4">
+                      <div class="text-center">
+                        <div class="
+                          flex items-center space-x-3 
+                          bg-blue-500/20 px-6 py-3 rounded-xl 
+                          border border-blue-500/30
+                        ">
+                          <i class="ri-time-fill text-blue-400 text-xl"></i>
+                          <span class="text-2xl font-black text-blue-300">
+                            {{ match.time }}
+                          </span>
+                        </div>
+                        <div class="text-xs text-gray-400 mt-2">
+                          Get ready for an exciting match!
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Match Status Footer -->
+                <div class="relative z-10 mt-6 pt-4 border-t border-gray-700">
+                  <div class="grid grid-cols-2 items-center text-xs text-gray-400">
+                    <div class="flex items-center space-x-2">
+                      <i class="ri-football-line"></i>
+                      <span>Match</span>
+                    </div>
+                    <div class="flex items-center space-x-1 justify-end">
+                      <div class="
+                        w-2 h-2 rounded-full 
+                        ${match.submit ? 'bg-green-500' : 'bg-blue-500'} 
+                        animate-pulse
+                      "></div>
+                      <span>{{ match.submit ? 'Completed' : 'Scheduled' }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          <!-- No draws section -->
+          <!-- Empty State -->
           <section
-            v-if="totalPages === 0 && !isLoading"
-            class="
-              col-span-3 flex flex-col items-center justify-center
-              h-60 p-6 text-center rounded-lg border border-dashed
-              border-gray-300 bg-gray-50
-            "
+            v-if="totalPages === 0"
+            class="col-span-1 flex h-80 items-center justify-center 
+            md:col-span-3"
             data-aos="fade-up"
           >
-            <div class="text-gray-400 mb-3">
-              <i class="ri-emotion-sad-line ri-2x"></i>
+            <div class="text-center">
+              <div class="
+                rounded-full bg-gray-800 p-6 inline-block mb-4 
+                border border-green-500/20
+              ">
+                <i class="ri-timer-flash-line text-4xl text-green-400"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-white mb-2">
+                No Matches Scheduled
+              </h3>
+              <p class="text-gray-400 max-w-md">
+                There are currently no matches scheduled. 
+                Check back later for upcoming games and tournament draws.
+              </p>
             </div>
-
-            <h2 class="text-lg font-semibold text-gray-700 mb-1">
-              No Draws Found
-            </h2>
-
-            <p class="text-sm text-gray-500 max-w-[280px]">
-              There are no draws matching your current criteria.
-              Try changing the filters or check back later.
-            </p>
-
-            <button
-              type="button"
-              class="
-                mt-4 px-4 py-2 bg-blue-600 text-white text-sm font-medium
-                rounded hover:bg-blue-700 focus:outline-none focus:ring-2
-                focus:ring-blue-500 focus:ring-offset-2 transition
-              "
-              @click="refreshDraws"
-            >
-              Refresh
-            </button>
           </section>
-          <!-- End of no draws section -->
         </div>
       </div>
     </section>
+    <!-- Loading indicator -->
+    <LoadingAnimation
+    :is-loading="!isLoaded"
+    loading-title="Draws"
+    />
   </div>
 </template>
 
 <script>
-import handlesMedia from '~/mixins/shop/handlesMedia'
+import LoadingAnimation from '~/components/loading/LoadingAnimation.vue';
+import handlesMedia from '~/mixins/shop/handlesMedia';
 
 export default {
   mixins: [ handlesMedia ],
-
+  components: { LoadingAnimation },
   data() {
     return {
-      // --- SEO ---
       pageSEO: {
         title: 'Draws - TFW9s',
         description: ''
       },
-
-      // --- STATE (persisted via localStorage) ---
-      searchTeamName: this.getStoredValue('draws-search-team', ''),
-      selectedYear: this.getStoredValue('draws-selected-year', null),
-      selectedRegion: this.getStoredValue('draws-selected-region', null),
-      selectedField: this.getStoredValue('draws-selected-field', null),
-      page: this.getStoredValue('draws-page', 1),
-
-      // --- CONFIG ---
-      perPage: 10,
-      isLoading: false,
-      isLoaded: false,
-
-      // --- DATA LISTS ---
-      EventList: [],
-      FieldList: [],
-      matchList: [],
-      totalPages: 0,
-      totalItems: 0,
-      from: 0,
-      to: 0,
-
-      // --- OPTION LISTS ---
+      searchTeamName: '',
       matchRoundOption: [
         { text: 'Round', value: 'round' },
         { text: 'Semi', value: 'semi' },
@@ -337,6 +543,7 @@ export default {
         { text: '5:10 PM', value: '17:10' },
         { text: '5:35 PM', value: '17:35' },
         { text: '6:00 PM', value: '18:00' },
+        { text: '6:00 PM', value: '18:00' },
         { text: '6:25 PM', value: '18:25' },
         { text: '6:50 PM', value: '18:50' },
         { text: '7:15 PM', value: '19:15' },
@@ -347,347 +554,257 @@ export default {
         { text: '9:20 PM', value: '21:20' },
         { text: '9:45 PM', value: '21:45' },
         { text: '10:00 PM', value: '22:00' },
-      ]
+      ],
+      selectedRegion: null,
+      selectedAgeGroup: null,
+      selectedYear: null,
+      AgeGroupList: [],
+      EventList: [],
+      matchList: [],
+      isLoaded: false,
+      from: 0,
+      to: 0,
+      page: 1,
+      perPage: 10,
+      totalPages: 0,
+      totalItems: 0,
+      eventStatus: null,
     }
   },
-
   computed: {
+    soccerPatternStyle() {
+      return { backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='8' fill='%235EE738'/%3E%3C/svg%3E")` }
+    },
     formattedEvents() {
       return this.EventList.map(event => ({
         text: `${event.name} ${this.replaceUnderWithU(event.agegroup.name)}`,
         value: event.id,
         agegroup: event.agegroup_id,
         date: new Date(event.event_date),
-      }))
+      }));
     },
-
-    formattedFields() {
-      const allFields = this.FieldList
-        .filter(field => field && field.id && field.name)
-        .map(field => ({ id: field.id, name: field.name }))
-
-      const eventFields = this.EventList
-        .map(event => event.field)
-        .filter(field => field && field.id && field.name)
-        .map(field => ({ id: field.id, name: field.name }))
-
-      const combinedFields = [ ...allFields, ...eventFields ]
-      const uniqueFieldsMap = new Map()
-      combinedFields.forEach(field => {
-        if (!uniqueFieldsMap.has(field.id)) {
-          uniqueFieldsMap.set(field.id, field)
-        }
-      })
-
-      const uniqueFields = Array.from(uniqueFieldsMap.values())
-      uniqueFields.sort((a, b) => a.name.localeCompare(b.name))
-
-      return uniqueFields.map(field => ({
-        text: field.name,
-        value: field.id
-      }))
+    formattedAgeGroup() {
+      return this.AgeGroupList.map(agegroup =>
+        ({ text: agegroup.name, value: agegroup.id }));
     },
-
+    filteredEvents() {
+      if (this.selectedYear && this.selectedAgeGroup) {
+        return this.formattedEvents.filter(event => {
+          return event && event.date &&
+                event.date.getFullYear() === this.selectedYear &&
+                event.agegroup === this.selectedAgeGroup;
+        });
+      } else {
+        return this.formattedEvents;
+      }
+    },
     formattedYears() {
-      const years = this.EventList.map(event => new Date(event.event_date).getFullYear())
-      const uniqueYears = [ ...new Set(years) ].sort()
-      return uniqueYears.map(year => ({
-        text: `Year ${year}`,
+      const years = this.EventList.map(event => {
+        const eventDate = new Date(event.event_date);
+        return eventDate.getFullYear();
+      });
+      const uniqueYears = [ ...new Set(years) ];
+      uniqueYears.sort();
+      const formattedYears = uniqueYears.map(year => ({
+        text: `Year ${year.toString()}`,
         value: year
-      }))
+      }));
+      return formattedYears;
     },
-
     formattedRegions() {
       const regions = this.EventList.map(event => ({
         id: event.region ? event.region.id : null,
         name: event.region ? event.region.name : 'Unknown'
-      }))
+      }));
 
-      const uniqueRegionNames = [ ...new Set(regions.map(r => r.name)) ]
-        .filter(name => name !== null && name !== undefined && name !== '')
-        .sort()
+      const uniqueRegions = [ ...new Set(regions.map(region => region.name)) ]
+        .filter(region => region).sort();
 
-      const formatted = uniqueRegionNames.map(regionName => {
-        const region = regions.find(r => r.name === regionName)
-        const regionId = region ? region.id : null
-        return { text: regionName, value: regionId }
-      })
-
-      return formatted
+      const formattedRegions = uniqueRegions.map(regionName => {
+        const regionId = regions.find(region => region.name === regionName).id;
+        return {
+          text: regionName,
+          value: regionId
+        };
+      });
+      return formattedRegions;
     },
-
-    filteredMatchList() {
-      const searchTerm = this.searchTeamName.toLowerCase().trim()
-      if (!searchTerm) return this.matchList
+    completedMatches() {
+      const searchTerm = this.searchTeamName.toLowerCase().trim();
+      
       return this.matchList.filter(match => {
-        const team1Name = (match.team1 && match.team1.name ? match.team1.name : '').toLowerCase()
-        const team2Name = (match.team2 && match.team2.name ? match.team2.name : '').toLowerCase()
-        const teamNameMatches = team1Name.includes(searchTerm) || team2Name.includes(searchTerm)
-        const isNotCompleted = !match.submit
-        return teamNameMatches && isNotCompleted
-      })
-    }
+        if (!match.submit) return false;
+        
+        if (searchTerm) {
+          const team1Name = match.team1.name.toLowerCase() || '';
+          const team2Name = match.team2.name.toLowerCase() || '';
+          return team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
+        }
+        
+        return true;
+      });
+    },
+  
+    upcomingMatches() {
+      const searchTerm = this.searchTeamName.toLowerCase().trim();
+      
+      return this.matchList.filter(match => {
+        if (match.submit) return false;
+        
+        if (searchTerm) {
+          const team1Name = match.team1.name.toLowerCase() || '';
+          const team2Name = match.team2.name.toLowerCase() || '';
+          return team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
+        }
+        
+        return true;
+      });
+    },
+    filteredMatchList() {
+      if (this.eventStatus === 'complete') {
+        return this.completedMatches;
+      } else if (this.eventStatus === 'upcoming') {
+        return this.upcomingMatches;
+      } else {
+        const searchTerm = this.searchTeamName.toLowerCase().trim();
+        
+        if (!searchTerm) {
+          return this.matchList;
+        }
+        
+        return this.matchList.filter(match => {
+          const team1Name = match.team1.name.toLowerCase() || '';
+          const team2Name = match.team2.name.toLowerCase() || '';
+          return team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
+        });
+      }
+    },
   },
-
   watch: {
-    selectedYear: {
-      handler(newYear) {
-        if (newYear !== null && this.isLoaded) {
-          this.page = 1
-          this.saveToStorage()
-          this.retrieveEventMatch()
-        }
-      },
-      immediate: true
-    },
-
-    selectedRegion: {
-      handler(newRegion) {
-        if (newRegion !== null && this.isLoaded) {
-          this.page = 1
-          this.saveToStorage()
-          this.retrieveEventMatch()
-        }
-      },
-      immediate: true
-    },
-
-    selectedField: {
-      handler(newField) {
-        if (newField !== null && this.isLoaded) {
-          this.page = 1
-          this.saveToStorage()
-          this.retrieveEventMatch()
-        }
-      },
-      immediate: true
-    },
-
-    searchTeamName: {
-      handler(newVal) {
-        if (newVal) {
-          this.page = 1
-        }
-        this.saveToStorage()
-      },
-      deep: true
-    },
-
-    page: {
-      handler(newPage) {
-        this.saveToStorage()
-        this.retrieveEventMatch()
-      },
-      immediate: true
-    },
-
     EventList: {
       handler(newEvents) {
         if (Array.isArray(newEvents) && newEvents.length > 0) {
-          const firstEvent = newEvents[0]
+          const firstEvent = newEvents[0];
           if (firstEvent && firstEvent.event_date) {
-            const eventDate = new Date(firstEvent.event_date)
-            if (!isNaN(eventDate.getTime())) {
-              this.selectedYear = eventDate.getFullYear()
-              this.selectedRegion = firstEvent.region_id
-              this.selectedField = firstEvent.field_id
-              this.saveToStorage()
+            const eventDate = new Date(firstEvent.event_date);
+            if (!isNaN(eventDate)) {
+              this.selectedYear = eventDate.getFullYear();
+              this.selectedRegion = firstEvent.region_id;
+              this.selectedAgeGroup = firstEvent.agegroup_id;
               this.retrieveEventMatch()
             } else {
-              console.error('Invalid event date format')
+              console.error('Invalid event date format');
             }
+          } else {
+            console.error('Missing or invalid event data');
           }
         }
       },
-      immediate: true
+      immediate: true,
+    },
+    selectedYear: {
+      handler(newYear) {
+        if (newYear && this.isLoaded) {
+          this.page = 1
+          /*
+           * this.selectedRegion = null
+           * this.selectedAgeGroup = null
+           */
+          this.selectedAgeGroup = this.formattedAgeGroup[0].value || null;
+          this.selectedRegion = this.formattedRegions[0].value || null;
+        }
+      },
+      immediate: true,
+    },
+    selectedAgeGroup: {
+      handler(newYear) {
+        if (newYear && this.isLoaded) {
+          this.page = 1
+          this.selectedRegion = null;
+          this.retrieveEventMatch()
+        }
+      },
+      immediate: true,
+    },
+    selectedRegion: {
+      handler(newEvent) {
+        if (newEvent && this.isLoaded) {
+          this.page = 1
+          this.retrieveEventMatch();
+        } else if (this.isLoaded) {
+          this.team = []
+          this.totalPages = 0
+        }
+      },
+      immediate: true,
+    },
+    searchTeamName(newVal) {
+      if (newVal) {
+        this.page = 1;
+      }
     }
   },
-
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.loadFromStorage()
-    })
-  },
-
-  beforeRouteUpdate(to, from, next) {
-    this.loadFromStorage()
-    next()
-  },
-
   created() {
-    this.retrieveFields()
-    this.retrieveEvents()
+    this.retrieveAgeGroups();
+    this.retrieveEvents();
   },
-
   methods: {
-    // STORAGE UTILITIES (Pwede rani ibutang sa Mixin)
-    getStoredValue(key, defaultValue) {
-      const val = localStorage.getItem(key)
-      if (val === null) return defaultValue
-      try {
-        return JSON.parse(val)
-      } catch (e) {
-        return val
-      }
+    setEventStatus(status) {
+      this.eventStatus = this.eventStatus === status ? null : status
     },
-
-    saveToStorage() {
-      localStorage.setItem('draws-search-team', this.searchTeamName)
-      localStorage.setItem('draws-selected-year', this.selectedYear)
-      localStorage.setItem('draws-selected-region', this.selectedRegion)
-      localStorage.setItem('draws-selected-field', this.selectedField)
-      localStorage.setItem('draws-page', this.page)
-    },
-
-    loadFromStorage() {
-      this.searchTeamName = this.getStoredValue('draws-search-team', '')
-      this.selectedYear = this.getStoredValue('draws-selected-year', null)
-      this.selectedRegion = this.getStoredValue('draws-selected-region', null)
-      this.selectedField = this.getStoredValue('draws-selected-field', null)
-      this.page = this.getStoredValue('draws-page', 1)
-    },
-
-    // DATA FETCHING
-    retrieveEvents() {
-      this.isLoading = true
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: 1,
-        maxEventsPerPage: this.perPage
-      }
-
-      Object.keys(query).forEach(key => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/events?${queryString}`)
-        .then(response => {
-          this.EventList = response.data.events || []
-          this.isLoading = false
-        })
-        .catch(err => {
-          console.error('Failed to fetch events:', err)
-          this.isLoading = false
-        })
-    },
-
-    retrieveFields() {
-      const query = {
-        q: this.query,
-        page: 1,
-        maxEventsPerPage: this.perPage
-      }
-
-      Object.keys(query).forEach(key => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/fields?${queryString}`)
-        .then(response => {
-          this.FieldList = response.data.fields || []
-        })
-        .catch(err => {
-          console.error('Failed to fetch fields:', err)
-        })
-    },
-
-    retrieveEventMatch() {
-      this.isLoading = true
-
-      const query = {
-        sort: 'latest',
-        region: this.selectedRegion,
-        /* eslint-disable camelcase */
-        field_id: this.selectedField,
-        year: this.selectedYear
-      }
-
-      Object.keys(query).forEach(key => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/events?${queryString}`)
-        .then(response => {
-          const events = response.data.events
-
-          this.matchList = []
-
-          events.forEach(event => {
-            const eventTime = this.AMPMformat(event.time)
-            const eventRound = this.roundFormat(event.round)
-            const eventDate = this.formattedDate(event.event_date)
-
-            event.eventmatch.forEach(match => {
-              this.matchList.push({
-                ...match,
-                time: eventTime,
-                round: eventRound,
-                eventDate,
-                field: {
-                  id: match.field && match.field.id !== undefined ? match.field.id : null,
-                  name: match.field && match.field.name !== undefined && match.field.name !== null ? match.field.name : 'Unknown Field'
-                },
-                submit: match.submitted === 1
-              })
-            })
-          })
-
-          this.totalItems = response.data.total_items || 0
-          this.totalPages = response.data.last_page || 0
-          this.from = response.data.from || 0
-          this.to = response.data.to || 0
-        })
-        .finally(() => {
-          this.isLoading = false
-          this.isLoaded = true
-        })
-        .catch(err => {
-          console.error('Failed to fetch matches:', err)
-          this.isLoading = false
-        })
-    },
-
-    // UTILITY METHODS
-    refreshDraws() {
-      this.$nuxt.refresh()
-    },
-
     AMPMformat(time) {
-      const matched = this.matchTimeOption.find(data => data.value === time)
-      return matched ? matched.text : 'Unknown'
+      // eslint-disable-next-line camelcase
+      const matched = this.matchTimeOption.find(data => data.value === time);
+      if (matched) {
+        return matched.text;
+      } else {
+        // If no matching field is found, return "unknown"
+        return 'Unknown';
+      }
     },
-
     roundFormat(round) {
-      const matched = this.matchRoundOption.find(data => data.value === round)
-      return matched ? matched.text : 'Unknown'
+      // eslint-disable-next-line camelcase
+      const matched = this.matchRoundOption.find(data => data.value === round);
+      if (matched) {
+        return matched.text;
+      } else {
+        // If no matching field is found, return "unknown"
+        return 'Unknown';
+      }
     },
-
     replaceUnderWithU(str) {
-      return str.replace(/^Under \b/, 'U')
+      return str.replace(/^Under \b/, 'U');
     },
-
     doubleDigitFormat(num) {
-      return num < 10 ? `0${num}` : num.toString()
+      if (num < 10) {
+        return `0${num}`;
+      } else {
+        return num.toString();
+      }
     },
+    reformatTime(timeString) {
+      const [
+        hours,
+        minutes
+      ] = timeString.split(':');
+      let formattedTime;
+      let period;
 
+      // Convert hours to integer for comparison
+      const hoursInt = parseInt(hours, 10);
+
+      if (hoursInt >= 12) {
+        period = 'PM';
+        formattedTime = `${hoursInt === 12 ? 12 : hoursInt - 12}:${minutes}`;
+      } else {
+        period = 'AM';
+        formattedTime = `${hoursInt === 0 ? 12 : hoursInt}:${minutes}`;
+      }
+
+      return `${formattedTime} ${period}`;
+    },
     formattedDate(dateString) {
-      const date = new Date(dateString)
+      const date = new Date(dateString);
       const daysOfWeek = [
         'Sunday',
         'Monday',
@@ -696,7 +813,7 @@ export default {
         'Thursday',
         'Friday',
         'Saturday'
-      ]
+      ];
       const months = [
         'January',
         'February',
@@ -710,40 +827,118 @@ export default {
         'October',
         'November',
         'December'
-      ]
-      const dayOfWeek = daysOfWeek[date.getDay()]
-      const dayOfMonth = date.getDate()
-      const monthName = months[date.getMonth()]
-      const year = date.getFullYear()
+      ];
+      const dayOfWeek = daysOfWeek[date.getDay()];
+      const dayOfMonth = date.getDate();
+      const monthName = months[date.getMonth()];
+      const year = date.getFullYear();
 
       const suffixes = [
-        'th',
-        'st',
-        'nd',
-        'rd',
-        'th',
-        'th',
-        'th',
-        'th',
-        'th',
-        'th'
-      ]
-      const suffixIndex = dayOfMonth % 100
-      const suffix = suffixIndex >= 11 && suffixIndex <= 13 ? 'th' : suffixes[dayOfMonth % 10]
+        'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'
+      ];
+      const suffixIndex = dayOfMonth % 100;
+      const suffix = suffixes[suffixIndex >= 11 &&
+      suffixIndex <= 13 ? 0 : dayOfMonth % 10];
 
-      return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`
+      return `${dayOfWeek} ${dayOfMonth}${suffix} ${monthName} ${year}`;
     },
+    // eslint-disable-next-line camelcase
+    retrieveEvents() {
+      const query = {
+        sort: 'latest',
+        q: this.query,
+        page: this.page,
+      };
 
-    setPage(page) {
-      this.page = page
-      this.retrieveEventMatch()
-    }
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/events?${queryString}`)
+        .then((response) => {
+          this.EventList = response.data.events;
+        })
+        .finally(() => {
+          this.retrieveEventMatch();
+        });
+    },
+    retrieveAgeGroups() {
+      const query = {
+        sort: 'latest',
+        q: this.query,
+        page: this.page,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/agegroups?${queryString}`)
+        .then((response) => {
+          this.AgeGroupList= response.data.ageGroups;
+        })
+    },
+    retrieveEventMatch() {
+      this.isLoaded = false
+      const query = {
+        sort: 'latest',
+        region: this.selectedRegion,
+        agegroup: this.selectedAgeGroup,
+        year: this.selectedYear,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+      const queryString = new URLSearchParams(query).toString()
+      this.$axios
+        .$get(`v1/events?${queryString}`)
+        .then((response) => {
+          const EventList = response.data.events.map(event => {
+            return {
+              ...event,
+              eventmatch: event.eventmatch.map(match => {
+                return {
+                  ...match,
+                  time: this.AMPMformat(event.time),
+                  round: this.roundFormat(event.round),
+                  // eslint-disable-next-line camelcase
+                  event_date: this.formattedDate(event.event_date),
+                  // eslint-disable-next-line camelcase
+                  field: match.field.name,
+                  submit: match.submitted === 1
+                };
+              })
+            };
+          });
+          this.matchList = EventList.flatMap(data => data.eventmatch);
+          this.totalItems = response.data.total_items;
+          this.totalPages = response.data.last_page;
+          this.from = response.data.from;
+          this.to = response.data.to;
+        })
+        .finally(() => {
+          this.isLoaded = true;
+        });
+    },
   }
 }
 </script>
 
 <style scoped>
 .v-label.theme--light {
-  color: black;
+  color: black
 }
 </style>

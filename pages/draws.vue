@@ -474,12 +474,12 @@
 
                 <!-- Match Status Footer -->
                 <div class="relative z-10 mt-6 pt-4 border-t border-gray-700">
-                  <div class="flex items-center justify-between text-xs text-gray-400">
+                  <div class="grid grid-cols-2 items-center text-xs text-gray-400">
                     <div class="flex items-center space-x-2">
                       <i class="ri-football-line"></i>
                       <span>Match</span>
                     </div>
-                    <div class="flex items-center space-x-1">
+                    <div class="flex items-center space-x-1 justify-end">
                       <div class="
                         w-2 h-2 rounded-full 
                         ${match.submit ? 'bg-green-500' : 'bg-blue-500'} 

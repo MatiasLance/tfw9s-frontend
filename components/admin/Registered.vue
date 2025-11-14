@@ -1,84 +1,142 @@
 <template>
   <div>
-    <div class="bg-[#1A1A1B]" data-aos="fade-up">
-      <section class="mx-auto max-w-full gap-4 p-4">
-        <div
-          class="grid grid-cols-1 gap-4 md:grid-cols-3"
-          data-aos="fade-up"
-          data-aos-offset="0"
-          data-aos-once="true"
-          >
-          <div class="col-span-1"></div>
-          <div class="col-span-1"/>
-          <VSelect
-            v-model="ActiveTab"
-            :items="SeriesTabs"
-            label="Select Event Year"
-            solo
-            class="col-span-1"
-          />
-          <div class="col-span-1 md:col-span-2"></div>
-          <div
-          class="col-span-1 flex items-center justify-end lg:justify-center"
-          >
-            <label class="font-semibold text-[#555555]">
-              Show Refunded
-              <input
-              id="submitted" v-model="trashed"
-              type="checkbox"
+    <div data-aos="fade-up">
+      <section class="mx-auto max-w-full gap-6 p-4 sm:p-6">
+        <!-- Header Section -->
+        <div class="mb-8">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div class="col-span-1 md:col-span-2 lg:col-span-2 flex items-center gap-3">
+              <div class="bg-green-600 rounded-xl p-2">
+                <i class="ri-user-heart-line text-gray-50 text-xl"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-gray-100">
+                Registrations
+              </h2>
+            </div>
+
+            <div class="col-span-1 lg:col-span-1">
+              <VSelect
+                v-model="ActiveTab"
+                :items="SeriesTabs"
+                label="Select Event Year"
+                solo
+                class="bg-gray-800 rounded-lg w-full"
               />
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters & Controls -->
+        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <!-- Show Refunded Toggle -->
+          <div class="col-span-1 flex items-center justify-start">
+            <label class="rugby-toggle flex items-center gap-3 cursor-pointer">
+              <div class="relative">
+                <input
+                  id="submitted"
+                  v-model="trashed"
+                  type="checkbox"
+                  class="sr-only"
+                />
+                <div class="rugby-toggle-track w-12 h-6 bg-gray-700 rounded-full 
+                            transition-all duration-300"></div>
+                <div class="rugby-toggle-thumb absolute top-1 left-1 w-4 h-4 
+                            bg-gray-400 rounded-full transition-all duration-300 
+                            transform"></div>
+              </div>
+              <span class="text-gray-300 font-semibold">Show Refunded</span>
             </label>
           </div>
-          <div
-          class="col-span-1 md:col-span-3 flex flex-wrap items-center
-          justify-around gap-x-2 md:justify-between"
-          data-aos="flip-up" data-aos-once="true"
-          >
-            <span
-            class="font-medium text-white"
-            >
-            Showing {{ from }}-{{ to }} of {{ totalItems }} items
-            </span>
+
+          <!-- Results Info -->
+          <div class="col-span-1 flex items-center justify-end">
+            <div class="bg-gray-800 rounded-xl px-4 py-2 border border-green-500/30">
+              <span class="text-gray-300 text-sm">
+                Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+                of <span class="font-bold text-green-400">{{ totalItems }}</span> items
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mb-6 flex justify-center" data-aos="flip-up">
             <VPagination
               v-model="page"
               :length="totalPages"
               color="success"
-              :total-visible="7"
+              :total-visible="5"
               class="text-white"
               dark
-              />
-          </div>
+            />
+        </div>
+
+        <!-- Content Sections -->
+        <div class="space-y-6">
+          <!-- Individual Registrations -->
           <section
-            v-if="primaryRetrievalComplete && totalPages > 0"
-            class="col-span-1 md:col-span-3"
+            v-if="primaryRetrievalComplete && totalPages > 0 && ActiveTab === 'weekly'"
+            class="rugby-content-card"
+            data-aos="fade-up"
           >
             <RegisteredVueTable
-              :columns="ActiveTab === 'weekly' ? individualData : teamData"
-              :data="ActiveTab === 'weekly' ? individualList : teamList"
+              :columns="individualData"
+              :data="individualList"
               @view="openViewRegistered"
               @transaction-data="openManageRefundDialog"
               @delete-data="openDeleteRegisterationDialog"
             />
           </section>
+
+          <!-- Team Registrations -->
+          <section
+            v-if="primaryRetrievalComplete && totalPages > 0 && ActiveTab !== 'weekly'"
+            class="rugby-content-card"
+            data-aos="fade-up"
+          >
+            <RegisteredVueTable
+              :columns="teamData"
+              :data="teamList"
+              @view="openViewRegistered"
+              @transaction-data="openManageRefundDialog"
+              @delete-data="openDeleteRegisterationDialog"
+            />
+          </section>
+
+          <!-- Empty States -->
           <section
             v-if="individualList.length === 0 && ActiveTab === 'weekly'"
-            class="col-span-1 flex h-20 items-center
-            justify-center font-semibold
-            text-[#555555] md:col-span-3"
+            class="rugby-empty-state flex h-40 items-center justify-center 
+                  rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 
+                  border-2 border-dashed border-green-500/30"
+            data-aos="fade-up"
           >
-            No Registration Record Found
+            <div class="text-center">
+              <i class="ri-user-search-line text-4xl text-green-500/50 mb-2"></i>
+              <p class="text-gray-400 font-semibold">
+                No Individual Registrations
+              </p>
+            </div>
           </section>
+
           <section
             v-if="teamList.length === 0 && ActiveTab !== 'weekly'"
-            class="col-span-1 flex h-20 items-center
-            justify-center font-semibold
-            text-[#555555] md:col-span-3"
+            class="rugby-empty-state flex h-40 items-center justify-center 
+                  rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 
+                  border-2 border-dashed border-green-500/30"
+            data-aos="fade-up"
           >
-            No Registration Record Found
+            <div class="text-center">
+              <i class="ri-team-line text-4xl text-green-500/50 mb-2"></i>
+              <p class="text-gray-400 font-semibold">
+                No Team Registrations
+              </p>
+            </div>
           </section>
         </div>
       </section>
     </div>
+
     <ViewRegisteredModal 
       :active="showViewRegisteredModal"
       :player="selectedPlayer"
@@ -639,41 +697,24 @@ export default {
 </script>
 
 <style scoped>
-.superheadline {
-color: aliceblue;
-}
-/* Default background color for unchecked checkbox */
-/* Default styles for unchecked checkbox */
-input[type="checkbox"] {
-  -webkit-appearance: none; /* Remove default styles */
-  -moz-appearance: none;
-  appearance: none;
-  background-color: white; /* Transparent background */
-  border: 2px solid white; /* White border */
-  width: 25px; /* Adjust width and height as needed */
-  height: 25px;
-  outline: none; /* Remove outline */
-  cursor: pointer; /* Show pointer on hover */
-  border-radius: 5px;
+.rugby-toggle input:checked + .rugby-toggle-track {
+  background: #10b981;
 }
 
-/* Background color for checked checkbox */
-input[type="checkbox"]:checked {
-  background-color:#e42828; /* Orange background */
+.rugby-toggle input:checked + .rugby-toggle-track + .rugby-toggle-thumb {
+  transform: translateX(150%);
+  background: #ffffff;
 }
 
-/* Optional: Styles for checkmark */
-input[type="checkbox"]::after {
-  display: inline-block;
-  font-size: 14px; /* Adjust size as needed */
-  color: white; /* Color of the checkmark */
-  line-height: 1; /* Vertical alignment */
-  visibility: hidden; /* Hide by default */
+.rugby-content-card {
+  backdrop-filter: blur(8px);
 }
 
-/* Show checkmark when checkbox is checked */
-input[type="checkbox"]:checked::after {
-  visibility: visible;
+.rugby-empty-state {
+  transition: all 0.3s ease;
 }
 
+.rugby-empty-state:hover {
+  border-color: rgba(34, 197, 94, 0.5);
+}
 </style>

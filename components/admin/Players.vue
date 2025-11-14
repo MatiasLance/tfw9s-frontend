@@ -1,6 +1,6 @@
 <template>
   <div>
-  <div class="bg-[#1A1A1B]" data-aos="fade-up">
+  <div data-aos="fade-up">
     <section class="mx-auto max-w-full gap-4 p-4">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
         <div class="col-span-2 flex items-center md:col-span-3">

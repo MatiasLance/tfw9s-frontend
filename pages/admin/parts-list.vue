@@ -4,60 +4,70 @@
     <div class="mx-auto max-w-full">
       <div class="flex flex-wrap">
         <main class="w-full px-2">
-          <section class="px-6">
-            <VueSlickCarousel
-              v-bind="slickSettings"
-              draggable
-              focusOnSelect
+
+          <section class="px-4 mb-8" data-aos="fade-down">
+            <!-- Simple Sporty Tabs Container -->
+            <div class="bg-gray-800 rounded-xl p-2 border border-green-500/30 shadow-lg">
+              <VueSlickCarousel
+                v-bind="slickSettings"
+                draggable
+                focusOnSelect
+                class="tab-carousel"
               >
-              <div
-                v-for="tab in tabs"
-                :key="tab.value" class="px-1"
-              >
-                <button
-                  type="button"
-                  class="
-                  w-full
-                  rounded-md
-                  py-1.5
-                  text-center
-                  text-sm
-                  font-semibold
-                  "
-                  :class="(activeTab == tab.value)
-                  ? `
-                      bg-gradient-to-br
-                      from-[#5EE738]
-                      via-[#3e872a]
-                      to-[#050505]
-                      text-white`
-                  :
-                  'bg-[#212121] text-[#555555]'"
-                  data-aos="flip-right"
-                  data-aos-offset="0"
-                  @click="setActiveTab(tab.value)"
+                <div
+                  v-for="tab in tabs"
+                  :key="tab.value" 
+                  class="px-1"
                 >
-                  {{ tab.label }}
-                </button>
+                  <button
+                    type="button"
+                    class="w-full rounded-lg py-3 px-4 text-center font-semibold 
+                          transition-all duration-300 min-w-[110px] flex items-center 
+                          justify-center gap-2"
+                    :class="activeTab == tab.value
+                      ? 'bg-green-600 text-white shadow-md'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'"
+                    @click="setActiveTab(tab.value)"
+                  >
+                    <i :class="getTabIcon(tab.value)" class="text-base"></i>
+                    <span class="text-sm whitespace-nowrap">{{ tab.label }}</span>
+                  </button>
+                </div>
+              </VueSlickCarousel>
+            </div>
+
+            <!-- Simple Active Indicator -->
+            <div class="flex justify-center mt-3">
+              <div class="flex gap-1">
+                <div 
+                  v-for="tab in tabs" 
+                  :key="tab.value"
+                  class="w-2 h-2 rounded-full transition-all duration-300"
+                  :class="activeTab == tab.value ? 'bg-green-500' : 'bg-gray-600'"
+                ></div>
               </div>
-            </VueSlickCarousel>
+            </div>
           </section>
+
           <div v-if="activeTab === 'regions'">
             <Regions
             :getRegions="retrieveRegions"
             />
           </div>
+
           <div v-if="activeTab === 'fields'">
             <Fields
             :RegionList="RegionList"
             :getFields="retrieveFields"
             />
           </div>
+
           <div v-if="activeTab === 'ages'">
             <AgeGroup
             :getAgeGroups="retrieveAgeGroups"
             />
           </div>
+
           <div v-if="activeTab === 'players'">
             <Players
             :AgeGroupList="AgeGroupList"
@@ -65,6 +75,7 @@
             :getSeries="retrieveSeries"
             />
           </div>
+
           <div v-if="activeTab === 'teams'">
             <Teams
             :FieldList="FieldList"
@@ -73,11 +84,13 @@
             :getEvents="retrieveEvents"
             />
           </div>
+
           <div v-if="activeTab === 'managers'">
             <Managers
             :getManagers="retrieveManagers"
             />
           </div>
+
           <div v-if="activeTab === 'fixings'">
             <Fixings
             :ManagerList="ManagerList"
@@ -89,12 +102,14 @@
             :getEvents="retrieveEvents"
             />
           </div>
+
           <div v-if="activeTab === 'results'">
             <Results
             :Matches="MatchList"
             :getEvents="retrieveEvents"
             />
           </div>
+
           <div v-if="activeTab === 'series'">
             <Series
             :TeamList="TeamList"
@@ -105,6 +120,7 @@
             :getEvents="retrieveEvents"
             />
           </div>
+
           <div v-if="activeTab === 'registered'">
             <Registered
             :Matches="MatchList"
@@ -112,6 +128,7 @@
             :getEvents="retrieveEvents"
             />
           </div>
+
         </main>
       </div>
     </div>
@@ -242,6 +259,18 @@ export default {
     this.retrievePlayers()
   },
   methods: {
+    getTabIcon(tabValue) {
+      const icons = {
+        'teams': 'ri-team-line',
+        'fixtures': 'ri-calendar-event-line',
+        'results': 'ri-trophy-line',
+        'stats': 'ri-line-chart-line',
+        'news': 'ri-newspaper-line',
+        'gallery': 'ri-gallery-line',
+        'shop': 'ri-shopping-bag-line'
+      };
+      return icons[tabValue] || 'ri-file-text-line';
+    },
     setActiveTab(tab) {
       this.activeTab = tab;
     },
@@ -448,5 +477,22 @@ export default {
 
 .slick-prev:before, .slick-next:before {
   color: #ffffff !important;
+}
+
+.tab-carousel {
+  margin: 0 -4px;
+}
+
+:deep(.slick-list) {
+  border-radius: 12px;
+}
+
+:deep(.slick-track) {
+  display: flex;
+  gap: 8px;
+}
+
+:deep(.slick-slide) {
+  padding: 0 4px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center">
+  <div>
     <nav>
       <ul class="list-style-none page-numbers flex flex-wrap justify-end gap-2">
         <li class="page-item text-sm">

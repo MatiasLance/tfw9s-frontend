@@ -1,35 +1,86 @@
 <template>
-  <section class="mx-auto max-w-screen-xl px-7 py-4">
-    <div v-if="partnerSponsors.length">
+  <section class="mx-auto max-w-screen-xl px-4 py-16 lg:px-8 lg:py-24">
+    <!-- Header -->
+    <div class="text-center mb-12" data-aos="fade-up">
+      <div class="inline-flex items-center gap-3 mb-4">
+        <div class="bg-green-600 rounded-full p-2 shadow-lg">
+          <i class="ri-team-fill text-gray-50 text-xl"></i>
+        </div>
+        <h2 class="text-2xl lg:text-3xl font-bold text-gray-100">
+          Our Partners
+        </h2>
+      </div>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+        Supported by leaders who share our rugby passion
+      </p>
+    </div>
+
+    <!-- Partners Carousel -->
+    <div v-if="partnerSponsors.length" class="relative" data-aos="fade-up">
       <VueSlickCarousel
-        class="flex w-full gap-6"
+        class="py-4"
         :arrows="true"
         :infinite="true"
-        :speed="500"
+        :speed="600"
         :slidesToShow="6"
         :slidesToScroll="1"
         :autoplay="true"
-        :autoplaySpeed="3000"
+        :autoplaySpeed="2500"
+        :pauseOnHover="true"
+        :dots="false"
         :responsive="responsiveSettings"
-        data-aos="fade-up"
       >
         <div
           v-for="(item, index) in partnerSponsors"
           :key="index"
+          class="px-2 lg:px-3"
         >
+          <div 
+            class="group relative bg-gray-800 rounded-xl p-4 border border-green-500/30 
+                   shadow-lg hover:shadow-xl transition-all duration-300 
+                   transform hover:-translate-y-1 cursor-pointer h-28 
+                   flex items-center justify-center"
+            @click="openLink(item.hyperlink)"
+          >
             <img
               :title="item.company_name"
-              class="size-24 md:size-40 overflow-hidden rounded-lg
-              object-contain brightness-50 transition duration-300
-              scale-90
-              ease-in-out hover:scale-100 hover:brightness-100
-              cursor-pointer"
+              class="max-h-16 w-auto object-contain brightness-75 
+                     transition-all duration-300 group-hover:brightness-100 
+                     group-hover:scale-105"
               :src="getMediaURL(item.media[0])"
-              alt="Sponsor Image"
-              @click="openLink(item.hyperlink)"
+              :alt="item.company_name"
             />
+          </div>
+          <div class="mt-2 text-center">
+            <span class="text-gray-400 text-sm font-medium truncate block">
+              {{ item.company_name }}
+            </span>
+          </div>
         </div>
       </VueSlickCarousel>
+    </div>
+
+    <!-- Empty State -->
+    <div v-else class="text-center py-12" data-aos="fade-up">
+      <div class="bg-gray-800 rounded-2xl p-8 border border-green-500/30 
+                  max-w-md mx-auto">
+        <i class="ri-team-line text-5xl text-green-500 mb-4"></i>
+        <h3 class="text-xl font-bold text-gray-300 mb-2">
+          Join Our Team
+        </h3>
+        <p class="text-gray-400 mb-6">
+          Become a sponsor and support rugby excellence
+        </p>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 
+                 text-gray-50 font-semibold px-6 py-3 rounded-lg transition-all 
+                 duration-300"
+        >
+          <i class="ri-mail-send-line"></i>
+          Partner With Us
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -37,10 +88,10 @@
 <script>
 import VueSlickCarousel from 'vue-slick-carousel';
 import 'vue-slick-carousel/dist/vue-slick-carousel.css';
-import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css';
 import handlesMedia from '~/mixins/shop/handlesMedia';
 
 export default {
+  name: 'Partnersponsor',
   components: { VueSlickCarousel },
   mixins: [ handlesMedia ],
   data() {
@@ -49,33 +100,21 @@ export default {
       responsiveSettings: [
         {
           breakpoint: 1280,
-          settings: {
-            slidesToShow: 6,
-            slidesToScroll: 1,
-          },
+          settings: { slidesToShow: 5 }
         },
         {
           breakpoint: 1024,
-          settings: {
-            slidesToShow: 6,
-            slidesToScroll: 1,
-          },
+          settings: { slidesToShow: 4 }
         },
         {
           breakpoint: 768,
-          settings: {
-            slidesToShow: 5,
-            slidesToScroll: 1,
-          },
+          settings: { slidesToShow: 3 }
         },
         {
           breakpoint: 640,
-          settings: {
-            slidesToShow: 3,
-            slidesToScroll: 2,
-          },
-        },
-      ],
+          settings: { slidesToShow: 2 }
+        }
+      ]
     };
   },
   created() {
@@ -83,11 +122,12 @@ export default {
   },
   methods: {
     openLink(url) {
-      window.open(url, '_blank');
+      if (url) {
+        window.open(url, '_blank');
+      }
     },
     retrieveSponsors() {
       const query = { q: this.query };
-
       Object.keys(query).forEach((key) => {
         if (query[key] == null) {
           delete query[key];
@@ -99,7 +139,28 @@ export default {
         .then((response) => {
           this.partnerSponsors = response.data.partnerSponsors;
         });
-    },
-  },
+    }
+  }
 };
 </script>
+
+<style scoped>
+:deep(.slick-prev) {
+  left: -40px !important;
+}
+:deep(.slick-next) {
+  right: -40px !important;
+}
+:deep(.slick-prev),
+:deep(.slick-next) {
+  width: 36px !important;
+  height: 36px !important;
+  background: rgba(31, 41, 55, 0.8) !important;
+  border-radius: 50% !important;
+  border: 2px solid rgba(34, 197, 94, 0.3) !important;
+}
+:deep(.slick-prev::before),
+:deep(.slick-next::before) {
+  display: none !important;
+}
+</style>

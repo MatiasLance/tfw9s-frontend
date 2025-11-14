@@ -1,7 +1,7 @@
 <!-- eslint-disable tailwindcss/classnames-order -->
 <template>
   <div>
-    <div class="bg-[#1A1A1B]" data-aos="fade-up">
+    <div data-aos="fade-up">
       <section
       class="mx-auto max-w-full gap-4 p-4
       grid grid-cols-1 md:grid-cols-3"
