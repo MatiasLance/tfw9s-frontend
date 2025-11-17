@@ -7,7 +7,7 @@
 
           <section class="px-4 mb-8" data-aos="fade-down">
             <!-- Simple Sporty Tabs Container -->
-            <div class="bg-gray-800 rounded-xl p-2 border border-green-500/30 shadow-lg">
+            <div class="bg-gray-800 text-white rounded-xl p-2 border border-green-500/30 shadow-lg">
               <VueSlickCarousel
                 v-bind="slickSettings"
                 draggable
@@ -33,6 +33,28 @@
                     <span class="text-sm whitespace-nowrap">{{ tab.label }}</span>
                   </button>
                 </div>
+
+                <!-- Custom Previous Arrow with Remix Icon -->
+                <template #prevArrow="arrowOption">
+                  <div 
+                    :class="arrowOption.className" 
+                    class="remix-arrow remix-prev-arrow"
+                    @click="arrowOption.click"
+                  >
+                    <i class="ri-arrow-left-s-line text-green-500 text-xl"></i>
+                  </div>
+                </template>
+                
+                <!-- Custom Next Arrow with Remix Icon -->
+                <template #nextArrow="arrowOption">
+                  <div 
+                    :class="arrowOption.className" 
+                    class="remix-arrow remix-next-arrow"
+                    @click="arrowOption.click"
+                  >
+                    <i class="ri-arrow-right-s-line text-green-500 text-xl"></i>
+                  </div>
+                </template>
               </VueSlickCarousel>
             </div>
 
@@ -187,48 +209,36 @@ export default {
       to: 0,
       isEventsLoading: false,
       slickSettings: {
-        arrows: false,
-        slidesToShow: 10,
-        slidesToScroll: 1,
-        responsive: [
+        "arrows": true,
+        "infinite": false,
+        "speed": 500,
+        "slidesToShow": 8,
+        "slidesToScroll": 8,
+        "initialSlide": 0,
+        "responsive": [
           {
-            breakpoint: 1280,
-            settings: {
-              slidesToShow: 4,
-              slidesToScroll: 1,
-              initialSlide: 0,
-              infinite: true,
-              arrows: true
+            "breakpoint": 1024,
+            "settings": {
+              "slidesToShow": 3,
+              "slidesToScroll": 3,
+              "initialSlide": 0,
+              "infinite": true,
+              "arrows": true
             }
           },
           {
-            breakpoint: 768,
-            settings: {
-              slidesToShow: 3,
-              slidesToScroll: 1,
-              initialSlide: 0,
-              infinite: true,
-              arrows: true
+            "breakpoint": 768,
+            "settings": {
+              "slidesToShow": 2,
+              "slidesToScroll": 2,
+              "initialSlide": 2
             }
           },
           {
-            breakpoint: 480,
-            settings: {
-              slidesToShow: 2,
-              slidesToScroll: 1,
-              initialSlide: 0,
-              infinite: true,
-              arrows: true
-            }
-          },
-          {
-            breakpoint: 370,
-            settings: {
-              slidesToShow: 1,
-              slidesToScroll: 1,
-              initialSlide: 0,
-              infinite: true,
-              arrows: true
+            "breakpoint": 480,
+            "settings": {
+              "slidesToShow": 1,
+              "slidesToScroll": 1,
             }
           }
         ],
@@ -475,10 +485,6 @@ export default {
   color: white !important;
 }
 
-.slick-prev:before, .slick-next:before {
-  color: #ffffff !important;
-}
-
 .tab-carousel {
   margin: 0 -4px;
 }
@@ -494,5 +500,40 @@ export default {
 
 :deep(.slick-slide) {
   padding: 0 4px;
+}
+
+::v-deep .remix-arrow {
+  width: 36px;
+  height: 36px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: #374151 !important; /* gray-700 */
+  border: 1px solid #4b5563 !important; /* gray-600 */
+  border-radius: 8px;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+::v-deep .remix-arrow:hover {
+  background: #4b5563 !important; /* gray-600 */
+  border-color: #6b7280 !important; /* gray-500 */
+}
+
+::v-deep .remix-arrow:hover i {
+  color: #34d399 !important; /* green-400 on hover */
+}
+
+::v-deep .remix-arrow::before {
+  display: none !important; /* Hide default arrow */
+}
+
+/* Position adjustments */
+::v-deep .remix-prev-arrow {
+  left: -18px !important;
+}
+
+::v-deep .remix-next-arrow {
+  right: -18px !important;
 }
 </style>

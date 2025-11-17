@@ -172,7 +172,7 @@ export default {
     RegisteredVueTable,
     ViewRegisteredModal,
     ManageRefundModal,
-    DeleteRegistrationModal,
+    DeleteRegistrationModal
   },
   mixins: [ currencyMixin ],
   props: {
@@ -256,6 +256,7 @@ export default {
       perPage: 10,
       totalPages: 1,
       totalItems: 0,
+      isLoading: false
     };
   },
   watch: {
@@ -390,7 +391,6 @@ export default {
       return `${formattedHour}:${minute} ${period}`;
     },
     openViewRegistered(player) {
-      console.log('Player data being passed to modal:', player);
       this.selectedPlayer = {
         ...player,
         ...player.itemdata,

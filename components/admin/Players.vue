@@ -81,7 +81,7 @@
             :total-visible="7"
             class="text-black"
             dark
-            @update:modelValue="page = $event"
+            @change="setPage"
             />
         </div>
 

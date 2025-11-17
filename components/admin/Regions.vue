@@ -69,7 +69,7 @@
             <VPagination
               v-model="page"
               :length="totalPages"
-              :total-visible="5"
+              :total-visible="7"
               class="text-white"
               color="success"
               dark

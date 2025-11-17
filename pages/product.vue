@@ -82,7 +82,7 @@
               <!-- Regular Price -->
               <span v-if="!product.is_on_sale" 
                     class="text-4xl md:text-5xl font-bold text-white">
-                {{ formatCurrency(product.price) }}
+                {{ displayPrice }}
               </span>
               
               <!-- Sale Price -->
@@ -90,51 +90,117 @@
                 <span v-if="product.show_rrp"
                   class="text-2xl font-medium text-gray-400 line-through"
                 >
-                  {{formatCurrency(product.price)}}
+                  {{ formatCurrency(product.price) }}
                 </span>
                 <span class="text-4xl md:text-5xl font-bold text-green-400 
                              bg-gradient-to-r from-green-500/20 to-transparent 
                              px-4 py-2 rounded-2xl">
-                  {{formatCurrency(product.saleprice)}}
+                  {{ displaySalePrice }}
                 </span>
               </span>
+            </div>
+            
+            <!-- Size Price Note -->
+            <div v-if="hasSizeVariants && selectedSize" class="mt-2">
+              <p class="text-sm text-green-300">
+                <i class="ri-information-line mr-1"></i>
+                Price for {{ selectedSize.size }} size
+              </p>
+            </div>
+            
+            <!-- Price Range for Sizes -->
+            <div v-if="hasSizeVariants && !selectedSize" class="mt-2">
+              <p class="text-sm text-gray-300">
+                <i class="ri-price-tag-3-line mr-1"></i>
+                {{ sizePriceRange }}
+              </p>
             </div>
           </div>
 
           <!-- Stock Status -->
           <div class="mb-6">
-            <template v-if="product.stock > 0">
+            <template v-if="hasStock">
               <div class="inline-flex items-center gap-2 rounded-xl 
                           bg-green-500/20 px-4 py-2 border border-green-500/30">
                 <i class="ri-checkbox-circle-line text-green-400"></i>
                 <span class="text-sm font-bold text-green-300 uppercase">
-                  In Stock ✅
+                  {{ stockStatus }}
                 </span>
               </div>
             </template>
             
             <template v-else>
-              <template v-if="!product.isHideOutOfStock">
-                <div class="inline-flex items-center gap-2 rounded-xl 
-                            bg-red-500/20 px-4 py-2 border border-red-500/30">
-                  <i class="ri-close-circle-line text-red-400"></i>
-                  <span class="text-sm font-bold text-red-300 uppercase">
-                    Out of Stock
-                  </span>
-                </div>
-              </template>
-              
-              <template v-if="product.has_variants">
-                <div class="inline-flex items-center gap-2 rounded-xl 
-                            bg-blue-500/20 px-4 py-2 border border-blue-500/30 
-                            mt-2">
-                  <i class="ri-checkbox-circle-line text-blue-400"></i>
-                  <span class="text-sm font-bold text-blue-300 uppercase">
-                    Variants Available
-                  </span>
-                </div>
-              </template>
+              <div class="inline-flex items-center gap-2 rounded-xl 
+                          bg-red-500/20 px-4 py-2 border border-red-500/30">
+                <i class="ri-close-circle-line text-red-400"></i>
+                <span class="text-sm font-bold text-red-300 uppercase">
+                  Out of Stock
+                </span>
+              </div>
             </template>
+            
+            <!-- Size Variants Available -->
+            <div v-if="hasSizeVariants" class="inline-flex items-center gap-2 rounded-xl 
+                        bg-blue-500/20 px-4 py-2 border border-blue-500/30 mt-2 ml-2">
+              <i class="ri-ruler-line text-blue-400"></i>
+              <span class="text-sm font-bold text-blue-300 uppercase">
+                Size Options Available
+              </span>
+            </div>
+          </div>
+
+          <!-- NEW: Size Variants Selection -->
+          <div v-if="hasSizeVariants" class="mb-6">
+            <div class="space-y-3">
+              <label class="block text-lg font-semibold text-white">
+                <i class="ri-ruler-line mr-2 text-green-400"></i>
+                Select Size:
+              </label>
+              
+              <!-- Size Options -->
+              <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                <button
+                 type="button"
+                  v-for="size in availableSizes"
+                  :key="size.id"
+                  @click="selectSize(size)"
+                  :class="[
+                    'py-3 px-4 rounded-xl border-2 text-center' +
+                    'transition-all duration-300 transform',
+                    'font-semibold text-sm md:text-base',
+                    selectedSize && selectSize.id === size.id
+                      ? 'border-green-500 bg-green-500/20 text-green-300 shadow-lg scale-105'
+                      : size.in_stock
+                        ? 'border-gray-600 bg-gray-700/50 text-white hover:border-green-400' +
+                        'hover:bg-green-500/10 hover:scale-105'
+                        : 'border-gray-700 bg-gray-800/30 text-gray-500' +
+                        'cursor-not-allowed line-through'
+                  ]"
+                  :disabled="!size.in_stock"
+                >
+                  <div class="flex flex-col items-center">
+                    <span>{{ size.size }}</span>
+                    <span v-if="size.price !== product.price" 
+                          class="text-xs mt-1"
+                          :class="selectedSize && selectSize.id === size.id ? 'text-green-200' :
+                          'text-gray-400'">
+                      +{{ formatCurrency(size.price - product.price) }}
+                    </span>
+                  </div>
+                </button>
+              </div>
+              
+              <!-- Size Guide Link -->
+              <div class="text-right">
+                <button
+                type="button"
+                class="text-sm text-green-400 hover:text-green-300 transition-colors"
+                >
+                  <i class="ri-question-line mr-1"></i>
+                  Size Guide
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Description -->
@@ -162,18 +228,23 @@
                        transition-all"
                 step="1"
                 min="0"
-                :max="product.stock"
-                :disabled="!product.stock > 0"
+                :max="maxQuantity"
+                :disabled="!canAddToCart"
                 name="quantity"
                 @keyup="handleHighStockValue"
               />
+              
+              <!-- Available Stock -->
+              <div v-if="selectedSize" class="text-sm text-gray-400">
+                {{ selectedSize.stock_quantity }} available
+              </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex flex-col gap-4">
               <!-- Primary Action -->
               <div class="flex gap-4">
-                <template v-if="product.has_variants">
+                <template v-if="product.has_variants && !hasSizeVariants">
                   <button
                     type="button"
                     @click="viewVariantSlider"
@@ -194,7 +265,7 @@
                 <template v-else>
                   <button
                     type="button"
-                    :disabled="!product.stock > 0"
+                    :disabled="!canAddToCart"
                     @click="addToCart"
                     class="flex-1 rounded-2xl bg-gradient-to-r 
                            from-green-500 to-green-600 px-8 py-4 
@@ -207,7 +278,7 @@
                            disabled:cursor-not-allowed"
                   >
                     <i class="ri-shopping-cart-2-line"></i>
-                    Add to Cart
+                    {{ addToCartText }}
                   </button>
                 </template>
 
@@ -259,7 +330,7 @@
 
       <!-- Variants Slider -->
       <div
-        v-if="product && product.has_variants"
+        v-if="product && product.has_variants && !hasSizeVariants"
         ref="variantSlider"
         class="mt-12 p-6 bg-gradient-to-br from-gray-800 to-gray-900 
                rounded-2xl shadow-2xl border border-gray-700"
@@ -352,14 +423,17 @@ export default {
         tags: [],
         variants: [],
         related: [],
-        // eslint-disable-next-line camelcase
+        /* eslint-disable camelcase */   
         has_variants: false,
+        size_variants: [],
+        available_sizes: [],
       },
       showOutOfStock: true,
       activeImageURL: '',
       photos: [],
       quantity: 1,
-      imageCarouselSettings: slickSettings
+      imageCarouselSettings: slickSettings,
+      selectedSize: null,
     };
   },
   computed: {
@@ -373,6 +447,102 @@ export default {
         return this.$store.getters['cart/cartCount']
       },
     },
+    
+    // NEW: Computed properties for size variants
+    hasSizeVariants() {
+      return (this.product.size_variants && this.product.size_variants.length > 0) || 
+             (this.product.available_sizes && this.product.available_sizes.length > 0);
+    },
+    
+    availableSizes() {
+      if (this.product.size_variants && this.product.size_variants.length > 0) {
+        return this.product.size_variants.map(variant => ({
+          id: variant.id,
+          size: variant.value,
+          price: variant.price_override || this.product.price,
+          stock_quantity: variant.stock_quantity,
+          in_stock: variant.stock_quantity > 0,
+          sku: variant.sku
+        }));
+      } else if (this.product.available_sizes && this.product.available_sizes.length > 0) {
+        return this.product.available_sizes;
+      }
+      return [];
+    },
+    
+    sizePriceRange() {
+      if (!this.hasSizeVariants) return '';
+      
+      const prices = this.availableSizes
+        .filter(size => size.in_stock)
+        .map(size => size.price);
+      
+      if (prices.length === 0) return 'No sizes in stock';
+      
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      
+      if (minPrice === maxPrice) {
+        return `All sizes: ${this.formatCurrency(minPrice)}`;
+      }
+      
+      return `Prices from ${this.formatCurrency(minPrice)} to ${this.formatCurrency(maxPrice)}`;
+    },
+    
+    displayPrice() {
+      if (this.selectedSize) {
+        return this.formatCurrency(this.selectedSize.price);
+      }
+      return this.formatCurrency(this.product.price);
+    },
+    
+    displaySalePrice() {
+      if (this.selectedSize) {
+        const salePrice = this.product.saleprice || this.product.price;
+        const sizePrice = this.selectedSize.price;
+        const basePrice = this.product.price;
+        
+        // Calculate sale price based on size override
+        if (sizePrice !== basePrice) {
+          const priceDifference = sizePrice - basePrice;
+          return this.formatCurrency(salePrice + priceDifference);
+        }
+        return this.formatCurrency(salePrice);
+      }
+      return this.formatCurrency(this.product.saleprice);
+    },
+    
+    hasStock() {
+      if (this.selectedSize) {
+        return this.selectedSize.in_stock;
+      }
+      return this.product.stock > 0;
+    },
+    
+    stockStatus() {
+      if (this.selectedSize) {
+        return `${this.selectedSize.stock_quantity} in stock`;
+      }
+      return `${this.product.stock} in stock`;
+    },
+    
+    maxQuantity() {
+      if (this.selectedSize) {
+        return this.selectedSize.stock_quantity;
+      }
+      return this.product.stock;
+    },
+    
+    canAddToCart() {
+      if (this.hasSizeVariants && !this.selectedSize) return false;
+      return this.hasStock && this.quantity > 0;
+    },
+    
+    addToCartText() {
+      if (this.hasSizeVariants && !this.selectedSize) return 'Select Size';
+      if (!this.hasStock) return 'Out of Stock';
+      return 'Add to Cart';
+    }
   },
   watch: {
     $route() {
@@ -409,20 +579,59 @@ export default {
           }
           this.activeImageURL = this.getMediaURL(this.product.media[0])
           this.photos = this.product.media
+          
+          // NEW: Auto-select first available size
+          if (this.hasSizeVariants) {
+            const firstAvailableSize = this.availableSizes.find(size => size.in_stock);
+            if (firstAvailableSize) {
+              this.selectedSize = firstAvailableSize;
+            }
+          }
         })
     },
     handleHighStockValue() {
-      if (this.quantity > this.product.stock) {
-        this.quantity = this.product.stock
+      const maxQty = this.maxQuantity;
+      if (this.quantity > maxQty) {
+        this.quantity = maxQty;
       }
     },
+    
+    // NEW: Size selection method
+    selectSize(size) {
+      if (!size.in_stock) return;
+      
+      this.selectedSize = size;
+      // Reset quantity to 1 when size changes
+      this.quantity = 1;
+    },
+    
     addToCart() {
+      if (this.hasSizeVariants && !this.selectedSize) {
+        this.$oruga.notification.open({
+          duration: 3000,
+          message: 'Please select a size',
+          position: 'bottom',
+          variant: 'warning',
+          queue: true,
+        });
+        return;
+      }
+
+      const cartItem = {
+        id: this.product.id,
+        quantity: parseInt(this.quantity),
+        stock: this.maxQuantity
+      };
+
+      // NEW: Add size variant information if selected
+      if (this.selectedSize) {
+        cartItem.size_variant_id = this.selectedSize.id;
+        cartItem.size = this.selectedSize.size;
+        cartItem.variant_sku = this.selectedSize.sku;
+      }
+
       this.$store
-        .dispatch('cart/addItemToCart', {
-          id: this.product.id,
-          quantity: parseInt(this.quantity),
-          stock: this.product.stock
-        })
+        .dispatch('cart/addItemToCart', cartItem)
         .then(() => {
           this.$oruga.notification.open({
             duration: 2000,

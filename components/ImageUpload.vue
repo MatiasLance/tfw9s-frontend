@@ -135,7 +135,7 @@
       </div>
     </div>
 
-    <!-- Image Gallery Preview -->
+    <!-- Image Preview -->
     <div class="col-span-4 w-full">
       <div class="flex items-center mb-4">
         <i class="ri-gallery-line text-green-600 text-xl mr-2"></i>
@@ -143,7 +143,7 @@
           Image Preview
         </h3>
       </div>
-      
+
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(photo, photoIndex) in imgUrl"
@@ -157,27 +157,28 @@
                       group-hover:border-green-300">
             <img 
               :src="photo" 
-              class="w-full h-72 object-contain transition-transform 
-                     duration-300 group-hover:scale-105"
+              class="h-72 w-full object-contain transition-transform 
+                    duration-300 group-hover:scale-105"
             />
             
-            <!-- Remove Button -->
+            <!-- Remove Button - Higher z-index -->
             <button
               type="button"
               class="absolute top-2 right-2 w-8 h-8 bg-red-500 
-                     hover:bg-red-600 text-gray-50 rounded-full 
-                     flex items-center justify-center shadow-md 
-                     transition-all duration-200 transform 
-                     hover:scale-110 opacity-0 group-hover:opacity-100"
+                    hover:bg-red-600 text-gray-50 rounded-full 
+                    flex items-center justify-center shadow-md 
+                    transition-all duration-200 transform 
+                    hover:scale-110 opacity-0 group-hover:opacity-100 
+                    cursor-pointer z-30"
               @click="removeImage(photoIndex)"
             >
               <i class="ri-close-line text-sm"></i>
             </button>
             
-            <!-- Image Overlay -->
+            <!-- Image Overlay - Lower z-index -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 
                         to-transparent opacity-0 group-hover:opacity-100 
-                        transition-opacity duration-300 flex items-end p-3">
+                        transition-opacity duration-300 flex items-end p-3 z-20">
               <span class="text-gray-50 text-sm font-medium">
                 Image {{ photoIndex + 1 }}
               </span>

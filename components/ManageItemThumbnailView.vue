@@ -256,15 +256,15 @@ export default {
       required: true
     },
     isRrp: {
-      type: Boolean,
+      type: [ Boolean, Number ],
       required: true
     },
     isOnSale: {
-      type: Boolean,
+      type: [ Boolean, Number ],
       required: true
     },
     isHideOutOfStock: {
-      type: Boolean,
+      type: [ Boolean, Number ],
       required: true
     }
   },

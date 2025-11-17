@@ -67,9 +67,10 @@
               v-model="page"
               :length="totalPages"
               color="success"
-              :total-visible="5"
+              :total-visible="7"
               class="text-white"
               dark
+              @change="setPage"
             />
           </div>
 
@@ -317,16 +318,13 @@ export default {
   },
   async mounted() {
     try {
-      console.log("Component mounted. Fetching lookup data...");
       await Promise.all([
         this.retrieveAgeGroups(),
         this.retrieveSeries(),
         this.retrieveRegions()
       ]);
-      console.log("Lookup data fetched. Fetching initial teams...");
       await this.retrieveTeams();
     } catch (error) {
-      console.error("Error during component mount initialization:", error);
       this.$oruga.notification.open({
         message: 'Failed to load initial data. Please try refreshing.',
         variant: 'danger',
@@ -351,7 +349,6 @@ export default {
         .$get(`v1/agegroups?${queryString}`)
         .then((response) => {
           this.ageGroupList = response.data.ageGroups || [];
-          console.log('All Age Groups Loaded:', this.ageGroupList.length);
         })
         .catch(error => {
           console.error('Error fetching age groups:', error);
@@ -366,7 +363,6 @@ export default {
         this.seriesList = (response.data.series || response.data || []).filter(series =>
           series.type !== 'weekly'
         );
-        console.log('All Series Loaded:', this.seriesList.length);
       } catch (error) {
         console.error('Error fetching series list:', error);
         this.seriesList = [];
@@ -379,7 +375,6 @@ export default {
         const response = await this.$axios.$get('v1/regions'); // Assuming this fetches all regions
         // Ensure correct path to region data
         this.regionList = response.data.regions || response.data || [];
-        console.log('All Regions Loaded:', this.regionList.length);
       } catch (error) {
         console.error('Failed to retrieve regions:', error);
         this.regionList = [];
@@ -436,8 +431,6 @@ export default {
       this.showDeleteTeamModal = false
     },
     AddTeam(response) {
-      console.log('AddTeam confirmed, data from modal (if any):', response);
-        
       this.$oruga.notification.open({
         duration: 5000,
         message: 'Team Added Successfully',
@@ -483,7 +476,6 @@ export default {
     async retrieveTeams() {
       try {
         if (this.ageGroupList.length === 0 && this.totalItems > 0) { 
-          console.warn("retrieveTeams: ageGroupList is empty. Attempting to reload it.");
           await this.retrieveAgeGroups();
         }
 

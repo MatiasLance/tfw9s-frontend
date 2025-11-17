@@ -140,8 +140,8 @@
             :stock="product.stock"
             :path="getMediaURL(product.media[0])"
             :has-variants="product.has_variants"
-            :is-rrp="product.show_rrp===1?true:false"
-            :is-on-sale="product.is_on_sale===1?true:false"
+            :is-rrp="product.show_rrp"
+            :is-on-sale="product.is_on_sale"
             :is-hide-out-of-stock="product.isHideOutOfStock"
             data-aos="fade-up"
             data-aos-offset="30"
@@ -161,7 +161,8 @@
           No Merch Available
         </section>
       </div>
-
+      
+      <!-- Show Add Merch Color Variant -->
       <OModal
        :active="showAddMerchVariantModal"
        @close="showAddMerchVariantModal = false"
@@ -240,286 +241,446 @@
         </VForm>
       </OModal>
 
-       <!-- Add Merch Modal component -->
-        <OModal
-          :active="showAddMerchItemModal"
-          @close="showAddMerchItemModal = false"
-          class="rugby-modal"
+      <!-- Add Merch Modal component -->
+      <OModal
+        :active="showAddMerchItemModal"
+        @close="showAddMerchItemModal = false"
+        class="rugby-modal"
+      >
+        <VForm
+          ref="form" 
+          v-model="valid" 
+          lazy-validation
+          class="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-green-50 rounded-xl"
         >
-          <VForm
-            ref="form" 
-            v-model="valid" 
-            lazy-validation
-            class="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-green-50 rounded-xl"
-          >
-            <!-- Header with Rugby Theme -->
-            <div class="flex items-center mb-6 pb-4 border-b-2 border-green-600">
-              <div class="rugby-icon mr-3 w-10 h-10 bg-green-600 rounded-full 
-                          flex items-center justify-center shadow-lg">
-                <i class="ri-t-shirt-line text-gray-50 text-xl"></i>
-              </div>
-              <h3 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-gray-800 
-                        bg-clip-text text-transparent">
-                Add Rugby Merch
-              </h3>
+          <!-- Header with Rugby Theme -->
+          <div class="flex items-center mb-6 pb-4 border-b-2 border-green-600">
+            <div class="rugby-icon mr-3 w-10 h-10 bg-green-600 rounded-full 
+                        flex items-center justify-center shadow-lg">
+              <i class="ri-t-shirt-line text-gray-50 text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-gray-800 
+                      bg-clip-text text-transparent">
+              Add Rugby Merch
+            </h3>
+          </div>
+
+          <!-- Product Details Grid -->
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <!-- Product Name -->
+            <div class="col-span-1">
+              <label for="productname" class="mb-2 block font-semibold text-gray-700">
+                <i class="ri-price-tag-3-line mr-2 text-green-600"></i>
+                Product Name:
+              </label>
+              <VTextField
+                id="name"
+                v-model="item.name"
+                label="Enter Product Name"
+                :rules="rules"
+                type="text"
+                solo
+                class="rugby-input"
+              />
             </div>
 
-            <!-- Product Details Grid -->
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <!-- Product Name -->
-              <div class="col-span-1">
-                <label for="productname" class="mb-2 block font-semibold text-gray-700">
-                  <i class="ri-price-tag-3-line mr-2 text-green-600"></i>
-                  Product Name:
-                </label>
-                <VTextField
-                  id="name"
-                  v-model="item.name"
-                  label="Enter Product Name"
-                  :rules="rules"
-                  type="text"
-                  solo
-                  class="rugby-input"
-                />
-              </div>
+            <!-- Stock -->
+            <div class="col-span-1">
+              <label for="productstock" class="mb-2 block font-semibold text-gray-700">
+                <i class="ri-stack-line mr-2 text-green-600"></i>
+                Stock:
+              </label>
+              <VTextField
+                id="stock"
+                v-model="item.stock"
+                label="Enter Stock"
+                :rules="rules"
+                type="number"
+                min="0"
+                solo
+                class="rugby-input"
+              />
+            </div>
 
-              <!-- Stock -->
-              <div class="col-span-1">
-                <label for="productstock" class="mb-2 block font-semibold text-gray-700">
-                  <i class="ri-stack-line mr-2 text-green-600"></i>
-                  Stock:
-                </label>
-                <VTextField
-                  id="stock"
-                  v-model="item.stock"
-                  label="Enter Stock"
-                  :rules="rules"
-                  type="number"
-                  min="0"
-                  solo
-                  class="rugby-input"
-                />
-              </div>
+            <!-- Price -->
+            <div class="col-span-1">
+              <label for="productprice" class="mb-2 flex justify-between
+              font-semibold text-gray-700"
+              >
+                <span><i class="ri-money-dollar-circle-line mr-2 text-green-600"></i>
+                  Base Price:
+                </span>
+                <span class="font-bold text-green-700 bg-green-100 px-3 py-1 rounded-lg">
+                  {{ formatCurrency(item.price) }}
+                </span>
+              </label>
+              <VTextField
+                id="price"
+                v-model="item.price"
+                label="Enter Base Price"
+                :rules="rules"
+                type="number"
+                step=".01"
+                min="0.00"
+                solo
+                class="rugby-input"
+              />
+            </div>
 
-              <!-- Price -->
-              <div class="col-span-1">
-                <label for="productprice" class="mb-2 flex justify-between
-                font-semibold text-gray-700"
-                >
-                  <span><i class="ri-money-dollar-circle-line mr-2 text-green-600"></i>
-                    Price:
-                  </span>
-                  <span class="font-bold text-green-700 bg-green-100 px-3 py-1 rounded-lg">
-                    {{ formatCurrency(item.price) }}
-                  </span>
-                </label>
-                <VTextField
-                  id="price"
-                  v-model="item.price"
-                  label="Enter Price"
-                  :rules="rules"
-                  type="number"
-                  step=".01"
-                  min="0.00"
-                  solo
-                  class="rugby-input"
-                />
-              </div>
+            <!-- Sale Price -->
+            <div class="col-span-1">
+              <label for="productsaleprice" class="mb-2 flex justify-between
+              font-semibold text-gray-700"
+              >
+                <span><i class="ri-discount-percent-line mr-2 text-green-600"></i>
+                  Sale Price:
+                </span>
+                <span class="font-bold text-red-600 bg-red-100 px-3 py-1 rounded-lg">
+                  {{ formatCurrency(item.saleprice) }}
+                </span>
+              </label>
+              <VTextField
+                id="saleprice"
+                v-model="item.saleprice"
+                label="Enter Sale Price"
+                type="number"
+                step=".01"
+                min="0.00"
+                solo
+                class="rugby-input"
+              />
+            </div>
 
-              <!-- Sale Price -->
-              <div class="col-span-1">
-                <label for="productsaleprice" class="mb-2 flex justify-between
-                font-semibold text-gray-700"
-                >
-                  <span><i class="ri-discount-percent-line mr-2 text-green-600"></i>
-                    Sale Price:
-                  </span>
-                  <span class="font-bold text-red-600 bg-red-100 px-3 py-1 rounded-lg">
-                    {{ formatCurrency(item.saleprice) }}
-                  </span>
-                </label>
-                <VTextField
-                  id="saleprice"
-                  v-model="item.saleprice"
-                  label="Enter Sale Price"
-                  type="number"
-                  step=".01"
-                  min="0.00"
-                  solo
-                  class="rugby-input"
-                />
-              </div>
+            <!-- Size Variants Section - NEW -->
+            <div class="col-span-1 md:col-span-2">
+              <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                  <label class="block font-semibold text-gray-700">
+                    <i class="ri-ruler-line mr-2 text-green-600"></i>
+                    Size Variants:
+                  </label>
+                  <button
+                    type="button"
+                    class="flex items-center gap-2 bg-green-600 hover:bg-green-700 
+                          text-gray-50 font-semibold px-4 py-2 rounded-lg 
+                          transition-all duration-200 transform hover:scale-105 
+                          shadow-md"
+                    @click="addSizeVariant"
+                  >
+                    <i class="ri-add-fill"></i>
+                    Add Size
+                  </button>
+                </div>
 
-              <!-- Description -->
-              <div class="col-span-1 md:col-span-2">
-                <label for="productdescription" class="mb-2 block font-semibold text-gray-700">
-                  <i class="ri-file-text-line mr-2 text-green-600"></i>
-                  Description:
-                </label>
-                <Tiptap
-                  id="content"
-                  v-model="item.description"
-                  class="rugby-editor"
-                />
-              </div>
+                <!-- Size Variants Info -->
+                <div v-if="sizeVariants.length === 0" 
+                    class="bg-gray-100 rounded-lg p-6 text-center border-2 
+                          border-dashed border-gray-300">
+                  <i class="ri-t-shirt-line text-3xl text-gray-400 mb-2"></i>
+                  <p class="text-gray-600 font-medium">
+                    No size variants added
+                  </p>
+                  <p class="text-gray-500 text-sm mt-1">
+                    Add sizes if this product comes in different sizes with unique pricing
+                  </p>
+                </div>
 
-              <!-- Categories Section -->
-              <div class="col-span-1 md:col-span-2">
-                <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                  <div class="flex items-center justify-between mb-4">
-                    <label class="block font-semibold text-gray-700">
-                      <i class="ri-folder-line mr-2 text-green-600"></i>
-                      Categories:
-                    </label>
-                    <button
-                      type="button"
-                      class="flex items-center gap-2 bg-green-600 hover:bg-green-700 
-                            text-gray-50 font-semibold px-4 py-2 rounded-lg 
-                            transition-all duration-200 transform hover:scale-105 
-                            shadow-md"
-                      @click="addCategoryPicker"
-                    >
-                      <i class="ri-add-fill"></i>
-                      Add Category
-                    </button>
-                  </div>
+                <!-- Size Variants List -->
+                <div v-else class="space-y-3 max-h-60 overflow-y-auto">
+                  <div
+                    v-for="(size, index) in sizeVariants"
+                    :key="index"
+                    class="flex flex-col sm:flex-row items-start sm:items-center gap-3 
+                          bg-gray-50 rounded-lg p-4 border border-gray-200 
+                          group hover:border-green-300 transition-colors duration-200"
+                  >
+                    <!-- Size Selection -->
+                    <div class="flex-1 min-w-0">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Size
+                      </label>
+                      <select
+                        v-model="size.value"
+                        class="w-full px-3 py-2 bg-white border border-gray-300 
+                              rounded-lg text-gray-700 focus:ring-2 focus:ring-green-500 
+                              focus:border-green-500 transition-all duration-200"
+                      >
+                        <option value="XS">
+                          XS
+                        </option>
+                        <option value="S">
+                          S
+                        </option>
+                        <option value="M">
+                          M
+                        </option>
+                        <option value="L">
+                          L
+                        </option>
+                        <option value="XL">
+                          XL
+                        </option>
+                        <option value="XXL">
+                          XXL
+                        </option>
+                        <option value="XXXL">
+                          XXXL
+                        </option>
+                      </select>
+                    </div>
 
-                  <!-- Selected Categories -->
-                  <div v-if="multipleCategoryBuffer.length > 0" 
-                      class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div
-                      v-for="(index) in multipleCategoryBuffer"
-                      :key="index"
-                      class="flex items-center gap-2 bg-gray-50 rounded-lg p-3 
-                            border border-gray-200 group hover:border-green-300 
-                            transition-colors duration-200"
-                    >
-                      <InfiniteCategories
-                        :ref="`categoryPicker-${index}`"
-                        :options="categories"
-                        :lineage="categoryLineages[index - 1]"
-                        class="flex-grow"
+                    <!-- Price Override -->
+                    <div class="flex-1 min-w-0">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Price Override
+                        <span class="text-xs text-gray-500">(optional)</span>
+                      </label>
+                      <VTextField
+                        v-model="size.price_override"
+                        label="Same as base"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        solo
+                        class="rugby-input"
+                        hide-details
                       />
+                    </div>
+
+                    <!-- Stock for this size -->
+                    <div class="flex-1 min-w-0">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Stock
+                      </label>
+                      <VTextField
+                        v-model="size.stock_quantity"
+                        label="Size stock"
+                        type="number"
+                        min="0"
+                        solo
+                        class="rugby-input"
+                        hide-details
+                      />
+                    </div>
+
+                    <!-- SKU Suffix -->
+                    <div class="flex-1 min-w-0">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                        SKU Suffix
+                      </label>
+                      <VTextField
+                        v-model="size.sku_suffix"
+                        label="-S, -M, etc"
+                        type="text"
+                        solo
+                        class="rugby-input"
+                        hide-details
+                      />
+                    </div>
+
+                    <!-- Remove Button -->
+                    <div class="pt-2 sm:pt-0">
                       <button
                         type="button"
-                        class="w-8 h-8 flex items-center justify-center bg-red-500 
-                              hover:bg-red-600 text-gray-50 rounded-full 
+                        class="w-10 h-10 flex items-center justify-center bg-red-500 
+                              hover:bg-red-600 text-gray-50 rounded-lg 
                               transition-all duration-200 transform hover:scale-110 
                               shadow-sm"
-                        @click="removeCategoryPicker(index)"
+                        @click="removeSizeVariant(index)"
+                        title="Remove this size"
                       >
                         <i class="ri-close-line text-sm"></i>
                       </button>
                     </div>
                   </div>
+                </div>
 
-                  <!-- Empty State -->
-                  <div
-                    v-else
-                    class="bg-gray-100 rounded-lg p-6 text-center border-2 
-                          border-dashed border-gray-300"
+                <!-- Size Variants Summary -->
+                <div v-if="sizeVariants.length > 0" 
+                    class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-green-700 font-medium">
+                      <i class="ri-information-line mr-1"></i>
+                      {{ sizeVariants.length }} size variant(s) configured
+                    </span>
+                    <span class="text-green-600">
+                      Price range: {{ sizePriceRange }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="col-span-1 md:col-span-2">
+              <label for="productdescription" class="mb-2 block font-semibold text-gray-700">
+                <i class="ri-file-text-line mr-2 text-green-600"></i>
+                Description:
+              </label>
+              <Tiptap
+                id="content"
+                v-model="item.description"
+                class="rugby-editor"
+              />
+            </div>
+
+            <!-- Categories Section -->
+            <div class="col-span-1 md:col-span-2">
+              <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                  <label class="block font-semibold text-gray-700">
+                    <i class="ri-folder-line mr-2 text-green-600"></i>
+                    Categories:
+                  </label>
+                  <button
+                    type="button"
+                    class="flex items-center gap-2 bg-green-600 hover:bg-green-700 
+                          text-gray-50 font-semibold px-4 py-2 rounded-lg 
+                          transition-all duration-200 transform hover:scale-105 
+                          shadow-md"
+                    @click="addCategoryPicker"
                   >
-                    <i class="ri-folder-open-line text-3xl text-gray-400 mb-2"></i>
-                    <p class="text-gray-600 font-medium">
-                      No categories selected
-                    </p>
-                    <p class="text-gray-500 text-sm mt-1">
-                      Add categories to organize your rugby merch
-                    </p>
+                    <i class="ri-add-fill"></i>
+                    Add Category
+                  </button>
+                </div>
+
+                <!-- Selected Categories -->
+                <div v-if="multipleCategoryBuffer.length > 0" 
+                    class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div
+                    v-for="(index) in multipleCategoryBuffer"
+                    :key="index"
+                    class="flex items-center gap-2 bg-gray-50 rounded-lg p-3 
+                          border border-gray-200 group hover:border-green-300 
+                          transition-colors duration-200"
+                  >
+                    <InfiniteCategories
+                      :ref="`categoryPicker-${index}`"
+                      :options="categories"
+                      :lineage="categoryLineages[index - 1]"
+                      class="flex-grow"
+                    />
+                    <button
+                      type="button"
+                      class="w-8 h-8 flex items-center justify-center bg-red-500 
+                            hover:bg-red-600 text-gray-50 rounded-full 
+                            transition-all duration-200 transform hover:scale-110 
+                            shadow-sm"
+                      @click="removeCategoryPicker(index)"
+                    >
+                      <i class="ri-close-line text-sm"></i>
+                    </button>
                   </div>
                 </div>
-              </div>
 
-              <!-- Toggle Switches -->
-              <div class="col-span-1 md:col-span-2">
-                <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                  <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
-                    <i class="ri-toggle-line mr-2 text-green-600"></i>
-                    Product Settings
-                  </h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label class="rugby-toggle">
-                      <input
-                        v-model="item.is_featured"
-                        type="checkbox"
-                        class="rugby-checkbox"
-                      />
-                      <span class="rugby-toggle-slider"></span>
-                      <span class="ml-3 font-medium text-gray-700">Featured Item</span>
-                    </label>
-
-                    <label class="rugby-toggle">
-                      <input
-                        v-model="item.isHideOutOfStock"
-                        type="checkbox"
-                        class="rugby-checkbox"
-                      />
-                      <span class="rugby-toggle-slider"></span>
-                      <span class="ml-3 font-medium text-gray-700">Out of Stock</span>
-                    </label>
-
-                    <label class="rugby-toggle">
-                      <input
-                        v-model="item.is_on_sale"
-                        type="checkbox"
-                        class="rugby-checkbox"
-                      />
-                      <span class="rugby-toggle-slider"></span>
-                      <span class="ml-3 font-medium text-gray-700">On Sale</span>
-                    </label>
-
-                    <label class="rugby-toggle">
-                      <input
-                        v-model="item.show_rrp"
-                        type="checkbox"
-                        class="rugby-checkbox"
-                      />
-                      <span class="rugby-toggle-slider"></span>
-                      <span class="ml-3 font-medium text-gray-700">Show RRP</span>
-                    </label>
-                  </div>
+                <!-- Empty State -->
+                <div
+                  v-else
+                  class="bg-gray-100 rounded-lg p-6 text-center border-2 
+                        border-dashed border-gray-300"
+                >
+                  <i class="ri-folder-open-line text-3xl text-gray-400 mb-2"></i>
+                  <p class="text-gray-600 font-medium">
+                    No categories selected
+                  </p>
+                  <p class="text-gray-500 text-sm mt-1">
+                    Add categories to organize your rugby merch
+                  </p>
                 </div>
-              </div>
-
-              <!-- Image Upload -->
-              <div class="col-span-1 md:col-span-2">
-                <ImageUpload
-                  @update-image="updateImage"
-                />
               </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex flex-col lg:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
-              <button
-                type="button"
-                class="flex-1 lg:flex-none bg-green-600 hover:bg-green-700 
-                      text-gray-50 font-bold py-3 px-6 rounded-lg 
-                      transition-all duration-200 transform hover:scale-105 
-                      disabled:opacity-50 disabled:cursor-not-allowed 
-                      disabled:transform-none shadow-lg"
-                :disabled="!valid"
-                @click="validate('Add')"
-              >
-                <i class="ri-check-double-line mr-2"></i>
-                Add Rugby Merch
-              </button>
-              <button
-                type="button"
-                class="flex-1 lg:flex-none bg-gray-500 hover:bg-gray-600 
-                      text-gray-50 font-bold py-3 px-6 rounded-lg 
-                      transition-all duration-200 transform hover:scale-105 
-                      shadow-lg"
-                @click="close"
-              >
-                <i class="ri-close-line mr-2"></i>
-                Cancel
-              </button>
-            </div>
-          </VForm>
-        </OModal>
+            <!-- Toggle Switches -->
+            <div class="col-span-1 md:col-span-2">
+              <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                  <i class="ri-toggle-line mr-2 text-green-600"></i>
+                  Product Settings
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.is_featured"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">Featured Item</span>
+                  </label>
 
-      <!-- Show Edit Merch -->
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.isHideOutOfStock"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">Out of Stock</span>
+                  </label>
+
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.is_on_sale"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">On Sale</span>
+                  </label>
+
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.show_rrp"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">Show RRP</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="col-span-1 md:col-span-2">
+              <ImageUpload
+                @update-image="updateImage"
+              />
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col lg:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              class="flex-1 lg:flex-none bg-green-600 hover:bg-green-700 
+                    text-gray-50 font-bold py-3 px-6 rounded-lg 
+                    transition-all duration-200 transform hover:scale-105 
+                    disabled:opacity-50 disabled:cursor-not-allowed 
+                    disabled:transform-none shadow-lg"
+              :disabled="!valid"
+              @click="validate('Add')"
+            >
+              <i class="ri-check-double-line mr-2"></i>
+              Add Rugby Merch
+            </button>
+            <button
+              type="button"
+              class="flex-1 lg:flex-none bg-gray-500 hover:bg-gray-600 
+                    text-gray-50 font-bold py-3 px-6 rounded-lg 
+                    transition-all duration-200 transform hover:scale-105 
+                    shadow-lg"
+              @click="close"
+            >
+              <i class="ri-close-line mr-2"></i>
+              Cancel
+            </button>
+          </div>
+        </VForm>
+      </OModal>
+
+      <!-- Show Edit Merch Modal -->
       <OModal
         :active="showEditMerchItemModal"
         @close="showEditMerchItemModal = false"
@@ -590,7 +751,9 @@
               <label for="productprice" class="mb-2 flex justify-between
               font-semibold text-gray-700"
               >
-                <span><i class="ri-money-dollar-circle-line mr-2 text-green-600"></i>Price:</span>
+                <span><i class="ri-money-dollar-circle-line mr-2 text-green-600"></i>
+                  Base Price:
+                </span>
                 <span class="font-bold text-green-700 bg-green-100 px-2 py-1 rounded">
                   {{ formatCurrency(item.price) }}
                 </span>
@@ -598,7 +761,7 @@
               <VTextField
                 id="price"
                 v-model="item.price"
-                label="Enter Price"
+                label="Enter Base Price"
                 :rules="rules"
                 type="number"
                 step=".01"
@@ -629,6 +792,166 @@
                 solo
                 class="rugby-input"
               />
+            </div>
+
+            <!-- NEW: Size Variants Section -->
+            <div class="col-span-1 md:col-span-2">
+              <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                  <label class="block font-semibold text-gray-700">
+                    <i class="ri-ruler-line mr-2 text-green-600"></i>
+                    Size Variants:
+                  </label>
+                  <button
+                    type="button"
+                    class="flex items-center gap-2 bg-green-600 hover:bg-green-700 
+                          text-gray-50 font-semibold px-4 py-2 rounded-lg 
+                          transition-all duration-200 transform hover:scale-105 
+                          shadow-md"
+                    @click="addSizeVariant"
+                  >
+                    <i class="ri-add-fill"></i>
+                    Add Size
+                  </button>
+                </div>
+
+                <!-- Size Variants Info -->
+                <div v-if="sizeVariants.length === 0" 
+                    class="bg-gray-100 rounded-lg p-6 text-center border-2 
+                          border-dashed border-gray-300">
+                  <i class="ri-t-shirt-line text-3xl text-gray-400 mb-2"></i>
+                  <p class="text-gray-600 font-medium">
+                    No size variants configured
+                  </p>
+                  <p class="text-gray-500 text-sm mt-1">
+                    Add sizes if this product comes in different sizes with unique pricing
+                  </p>
+                </div>
+
+                <!-- Size Variants List -->
+                <div v-else class="space-y-3 max-h-60 overflow-y-auto">
+                  <div
+                    v-for="(size, index) in sizeVariants"
+                    :key="size.id || index"
+                    class="flex flex-col sm:flex-row items-start sm:items-center gap-3 
+                          bg-gray-50 rounded-lg p-4 border border-gray-200 
+                          group hover:border-green-300 transition-colors duration-200"
+                  >
+                    <!-- Size Selection -->
+                    <div class="flex-1 min-w-0">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Size
+                      </label>
+                      <select
+                        v-model="size.value"
+                        class="w-full px-3 py-2 bg-white border border-gray-300 
+                              rounded-lg text-gray-700 focus:ring-2 focus:ring-green-500 
+                              focus:border-green-500 transition-all duration-200"
+                      >
+                        <option value="XS">
+                          XS
+                        </option>
+                        <option value="S">
+                          S
+                        </option>
+                        <option value="M">
+                          M
+                        </option>
+                        <option value="L">
+                          L
+                        </option>
+                        <option value="XL">
+                          XL
+                        </option>
+                        <option value="XXL">
+                          XXL
+                        </option>
+                        <option value="XXXL">
+                          XXXL
+                        </option>
+                      </select>
+                    </div>
+
+                    <!-- Price Override -->
+                    <div class="flex-1 min-w-0">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Price Override
+                        <span class="text-xs text-gray-500">(optional)</span>
+                      </label>
+                      <VTextField
+                        v-model="size.price_override"
+                        label="Same as base"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        solo
+                        class="rugby-input"
+                        hide-details
+                      />
+                    </div>
+
+                    <!-- Stock for this size -->
+                    <div class="flex-1 min-w-0">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Stock
+                      </label>
+                      <VTextField
+                        v-model="size.stock_quantity"
+                        label="Size stock"
+                        type="number"
+                        min="0"
+                        solo
+                        class="rugby-input"
+                        hide-details
+                      />
+                    </div>
+
+                    <!-- SKU Suffix -->
+                    <div class="flex-1 min-w-0">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                        SKU Suffix
+                      </label>
+                      <VTextField
+                        v-model="size.sku_suffix"
+                        label="-S, -M, etc"
+                        type="text"
+                        solo
+                        class="rugby-input"
+                        hide-details
+                      />
+                    </div>
+
+                    <!-- Remove Button -->
+                    <div class="pt-2 sm:pt-0">
+                      <button
+                        type="button"
+                        class="w-10 h-10 flex items-center justify-center bg-red-500 
+                              hover:bg-red-600 text-gray-50 rounded-lg 
+                              transition-all duration-200 transform hover:scale-110 
+                              shadow-sm"
+                        @click="removeSizeVariant(index)"
+                        title="Remove this size"
+                      >
+                        <i class="ri-close-line text-sm"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Size Variants Summary -->
+                <div v-if="sizeVariants.length > 0" 
+                    class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-green-700 font-medium">
+                      <i class="ri-information-line mr-1"></i>
+                      {{ sizeVariants.length }} size variant(s) configured
+                    </span>
+                    <span class="text-green-600">
+                      Price range: {{ sizePriceRange }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Description -->
@@ -926,6 +1249,7 @@ export default {
       },
       adminpage: { title: 'Products Codes' },
       checkedVariants: [],
+      sizeVariants: [],
     };
   },
   head() {
@@ -969,6 +1293,24 @@ export default {
           false
       )
     },
+    sizePriceRange() {
+      if (this.sizeVariants.length === 0) {
+        return 'No sizes';
+      }
+      
+      const prices = this.sizeVariants.map(size => {
+        return size.price_override || this.item.price;
+      });
+      
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      
+      if (minPrice === maxPrice) {
+        return this.formatCurrency(minPrice);
+      }
+      
+      return `${this.formatCurrency(minPrice)} - ${this.formatCurrency(maxPrice)}`;
+    }
   },
   watch: {
     query() {
@@ -983,10 +1325,22 @@ export default {
   mounted() {
     this.debouncedSearch = debounce(this.retrieveMerchItems, 800);
     this.retrieveMerchItems();
-    /* this.retrieveTags(); */
-    this.page = 1 // Reset pagination
+    this.page = 1
   },
   methods: {
+    addSizeVariant() {
+      /* eslint-disable camelcase */
+      this.sizeVariants.push({
+        value: 'M',
+        price_override: null,
+        stock_quantity: 0,
+        sku_suffix: '',
+        type: 'size'
+      });
+    },
+    removeSizeVariant(index) {
+      this.sizeVariants.splice(index, 1);
+    },
     validate(type) {
       if (type === 'Add') {
         this.create()
@@ -997,18 +1351,6 @@ export default {
       } else {
         return false;
       }
-      /*
-       * else if (this.tags.length === 0) {
-       * this.$oruga.notification.open({
-       *   duration: 5000,
-       *   message: 'Item needs at least one tag',
-       *   position: 'bottom',
-       *   variant: 'danger',
-       *   queue: true,
-       * });
-       * return false;
-       * }
-       */
     },
     addMerchItem() {
       this.showAddMerchItemModal = true;
@@ -1045,7 +1387,6 @@ export default {
         category: this.$store.state.shop.selectedCategory,
       };
 
-      // Sanitize and remove null values
       Object.keys(query).forEach((key) => {
         if (query[key] == null) {
           delete query[key]
@@ -1066,28 +1407,6 @@ export default {
           this.isNewsLoading = false;
         });
     },
-    /*
-     * retrieveTags() {
-     * this.isNewsLoading = true;
-     *
-     * const query = { q: this.query };
-     *
-     * // Sanitize and remove null values
-     * Object.keys(query).forEach((key) => {
-     * if (query[key] == null) {
-     *   }
-     * })
-     * const queryString = new URLSearchParams(query).toString()
-     * this.$axios
-     *   .$get(`v1/tags?${queryString}`)
-     *   .then((response) => {
-     *     this.Taglist = response.data.tags
-     *   })
-     *   .finally(() => {
-     *     this.isNewsLoading = false;
-     *   });
-     * },
-     */
     addCategoryPicker() {
       this.multipleCategoryCounter += 1
       this.multipleCategoryBuffer.push(this.multipleCategoryCounter)
@@ -1282,22 +1601,29 @@ export default {
       form.append('isHideOutOfStock', this.item.isHideOutOfStock)
       form.append('isOnSale', this.item.is_on_sale)
       form.append('isRRP', this.item.show_rrp)
-
-      /*
-       * for (let i = 0; i < this.tags.length; i++) {
-       * form.append('tags[]', this.tags[i]);
-       * }
-       */
-
+      
+      // Add categories
       for (let i = 0; i < categoryId.length; i++) {
         form.append('categoryId[]', categoryId[i]);
       }
-
+      
+      // Add images
       for (let i = 0; i < this.imgList.length; i++) {
         form.append('photo[]', this.imgList[i], 'newsThumbnail.png');
       }
+      
+      if (this.sizeVariants.length > 0) {
+        const cleanedSizeVariants = this.sizeVariants.map(size => ({
+          value: size.value,
+          price_override: size.price_override ? parseFloat(size.price_override) : null,
+          stock_quantity: parseInt(size.stock_quantity) || 0,
+          sku_suffix: size.sku_suffix || `-${size.value}`,
+          type: 'size'
+        }));
+        
+        form.append('size_variants', JSON.stringify(cleanedSizeVariants));
+      }
 
-      // label Data
       form.append('selected_shippingid', '0')
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
@@ -1307,7 +1633,7 @@ export default {
           this.showAddNewsModal = false;
           this.isNewsAdded = true;
           this.$oruga.notification.open({
-            message: 'Merch Item Added',
+            message: 'Merch Item Added' + (this.sizeVariants.length > 0 ? ' with Size Variants' : ''),
             variant: 'success',
             duration: 5000,
             position: 'bottom',
@@ -1327,15 +1653,30 @@ export default {
           });
         });
     },
+    saveVariant() {
+      const formData = new FormData();
+      formData.append('name', this.variant);
+
+      this.$axios
+        .$post('/v1/variant/itemvariant', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then(() => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Variant added',
+            position: 'bottom',
+            variant: 'success',
+            queue: true,
+          });
+          this.showAddMerchVariantModal = false;
+          this.variant = '';
+        })
+    },
     editMerchItem(index) {
       this.editingNo = toNumber(index);
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
         .then((response) => {
           this.item = response.data.item
-          /*
-           * this.tags = response.data.item.tags.map(x => x.id);
-           */
           const categoryLineages = response.data.item.categoryLineages
           this.multipleCategoryCounter = categoryLineages.length
           this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
@@ -1344,6 +1685,41 @@ export default {
             `${this.$config.baseURL}/storage/${x.path}`);
           // eslint-disable-next-line max-len, vue/max-len
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
+
+          this.sizeVariants = [];
+          if (response.data.item.size_variants && response.data.item.size_variants.length > 0) {
+            this.sizeVariants = response.data.item.size_variants.map(variant => ({
+              id: variant.id,
+              value: variant.value,
+              price_override: variant.price_override ? parseFloat(variant.price_override) : null,
+              stock_quantity: variant.stock_quantity || 0,
+              sku_suffix: variant.sku_suffix || `-${variant.value}`,
+              type: 'size'
+            }));
+          } else if (response.data.item.available_sizes &&
+            response.data.item.available_sizes.length > 0) {
+            this.sizeVariants = response.data.item.available_sizes.map(size => ({
+              id: size.id,
+              value: size.size,
+              price_override: size.price !== response.data.item.price ?
+                parseFloat(size.price) : null,
+              stock_quantity: size.stock_quantity || 0,
+              sku_suffix: size.sku || `-${size.size}`,
+              type: 'size'
+            }));
+          } else if (response.data.item.item_variants) {
+            const sizeVariants = response.data.item.item_variants.filter(
+              variant => variant.type === 'size'
+            );
+            this.sizeVariants = sizeVariants.map(variant => ({
+              id: variant.id,
+              value: variant.value,
+              price_override: variant.price_override ? parseFloat(variant.price_override) : null,
+              stock_quantity: variant.stock_quantity || 0,
+              sku_suffix: variant.sku || `-${variant.value}`,
+              type: 'size'
+            }));
+          }
 
           this.showEditMerchItemModal = true;
         })
@@ -1375,31 +1751,35 @@ export default {
       form.append('isHideOutOfStock', this.item.isHideOutOfStock)
       form.append('isOnSale', this.item.is_on_sale)
       form.append('isRRP', this.item.show_rrp)
-
-      /*
-       * for (let i = 0; i < this.tags.length; i++) {
-       * form.append('tags[]', this.tags[i]);
-       * }
-       */
-
       for (let i = 0; i < categoryId.length; i++) {
         form.append('categoryId[]', categoryId[i]);
       }
-
       for (let i = 0; i < this.imgListEdit.length; i++) {
         form.append('photo[]', this.imgListEdit[i]);
       }
 
-      // label Data
-      form.append('selected_shippingid', '0')
+      if (this.sizeVariants.length > 0) {
+        const cleanedSizeVariants = this.sizeVariants.map(size => ({
+          id: size.id,
+          value: size.value,
+          price_override: size.price_override ? parseFloat(size.price_override) : null,
+          stock_quantity: parseInt(size.stock_quantity) || 0,
+          sku_suffix: size.sku_suffix || `-${size.value}`,
+          type: 'size'
+        }));
+        
+        form.append('size_variants', JSON.stringify(cleanedSizeVariants));
+      }
 
+      form.append('selected_shippingid', '0')
       form.append('id', this.item.id);
+      
       this.$axios
         .$post(`v1/items/${editObject.id}`, form)
         .then((response) => {
           this.showEditNewsModal = false;
           this.$oruga.notification.open({
-            message: 'Merch Item Updated',
+            message: 'Merch Item Updated' + (this.sizeVariants.length > 0 ? ' with Size Variants' : ''),
             variant: 'success',
             duration: 5000,
             position: 'bottom',
@@ -1420,67 +1800,29 @@ export default {
           });
         });
     },
-    removeMerchItem(index) {
+    duplicateItem(index) {
       this.editingNo = toNumber(index);
-      this.$axios.$get(`v1/items/${this.editingNo}`)
-        .then((response) => {
-          // eslint-disable-next-line max-len, camelcase, vue/max-len
-          this.item.name = response.data.item.name;
-        });
-      setTimeout(() => {
-        this.showRemoveMerchItemModal = true;
-      }, 1000);
-    },
-    addVariant(index) {
-      this.editingNo = toNumber(index);
-      this.prodId = this.editingNo;
-      this.$axios.$get('v1/variant/')
-        .then((response) => {
-          this.variantList = response.data.variant;
-        });
-      setTimeout(() => {
-        this.showAddVariant = true;
-      }, 1000);
-    },
-    confirmVariant(prodId) {
-
-      const form = new FormData();
-      form.append('item_id', prodId)
-      for (let i = 0; i < this.checkedVariants.length; i++) {
-        form.append('color[]', this.checkedVariants[i]);
-      }
       this.$axios
-        .$post('v1/variant/', form)
-        .then((response) => {
-          if (response.title === 'success') {
-            this.$oruga.notification.open({
-              duration: 5000,
-              message: 'Merch Variant Added',
-              position: 'bottom',
-              variant: 'success',
-              queue: true,
-            });
-            this.showAddVariant = false;
-            this.checkedVariants = [];
-          } else if (response.title === 'exists') {
-            this.$oruga.notification.open({
-              duration: 5000,
-              message: 'Merch Variant already exists',
-              position: 'bottom',
-              variant: 'warning',
-              queue: true,
-            });
-          }
+        .$post(`v1/items/duplicate/${this.editingNo}`)
+        .then(() => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Item duplicated',
+            position: 'bottom',
+            variant: 'success',
+            queue: true,
+          });
+          this.retrieveMerchItems();
         })
         .catch(() => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Failed to add variant',
+            message: 'Failed to duplicate item',
             position: 'bottom',
             variant: 'danger',
             queue: true,
           });
-        });
+        })
     },
     showVariant(index) {
       this.myVariantList = [];
@@ -1492,6 +1834,17 @@ export default {
         });
       setTimeout(() => {
         this.showShowVariant = true;
+      }, 1000);
+    },
+    removeMerchItem(index) {
+      this.editingNo = toNumber(index);
+      this.$axios.$get(`v1/items/${this.editingNo}`)
+        .then((response) => {
+          // eslint-disable-next-line max-len, camelcase, vue/max-len
+          this.item.name = response.data.item.name;
+        });
+      setTimeout(() => {
+        this.showRemoveMerchItemModal = true;
       }, 1000);
     },
     removeVariant(variantId) {
@@ -1527,30 +1880,6 @@ export default {
           });
         });
     },
-    duplicateItem(index) {
-      this.editingNo = toNumber(index);
-      this.$axios
-        .$post(`v1/items/duplicate/${this.editingNo}`)
-        .then(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Item duplicated',
-            position: 'bottom',
-            variant: 'success',
-            queue: true,
-          });
-          this.retrieveMerchItems();
-        })
-        .catch(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Failed to duplicate item',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true,
-          });
-        })
-    },
     remove(index) {
       const editObject = this.MerchItems.find(
         (item) => item.id === this.editingNo
@@ -1582,30 +1911,21 @@ export default {
       this.showRemoveMerchItemModal = false;
     },
     reset() {
-      this.item = []
-      this.imgList = []
-      this.imgUrl = []
-      this.imgListEdit = []
-      this.selectedCategory = {}
-      /* this.tags = [] */
-    },
-    saveVariant() {
-      const formData = new FormData();
-      formData.append('name', this.variant);
-
-      this.$axios
-        .$post('/v1/variant/itemvariant', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Variant added',
-            position: 'bottom',
-            variant: 'success',
-            queue: true,
-          });
-          this.showAddMerchVariantModal = false;
-          this.variant = '';
-        })
+      this.item = {
+        name: '',
+        description: '',
+        price: 0,
+        saleprice: 0,
+        stock: 0,
+        is_featured: false,
+        isHideOutOfStock: false,
+        is_on_sale: false,
+        show_rrp: false
+      };
+      this.selectedCategory = [];
+      this.imgList = [];
+      this.sizeVariants = [];
+      this.multipleCategoryBuffer = [];
     }
   },
 };
