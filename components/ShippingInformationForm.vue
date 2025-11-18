@@ -398,7 +398,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss">
 .shipping-option {
   @apply cursor-pointer hover:border-brand-grey hover:bg-blue-50
 }

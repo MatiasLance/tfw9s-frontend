@@ -514,7 +514,7 @@ for this code.
 };
 </script>
 
-<style scoped>
+<style lang="postcss">
 .payment-module {
   @apply bg-white p-8;
 }

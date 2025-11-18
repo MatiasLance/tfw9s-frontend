@@ -1100,7 +1100,7 @@
         </VForm>
       </OModal>
 
-    <!-- showRemoveProduct modal component -->
+    <!-- Remove merch item modal -->
     <OModal
       :active="showRemoveMerchItemModal"
       @close="showRemoveMerchItemModal = false"

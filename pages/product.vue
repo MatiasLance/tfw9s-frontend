@@ -620,10 +620,10 @@ export default {
       const cartItem = {
         id: this.product.id,
         quantity: parseInt(this.quantity),
-        stock: this.maxQuantity
+        stock: this.maxQuantity,
+        shippingOption: 0
       };
 
-      // NEW: Add size variant information if selected
       if (this.selectedSize) {
         cartItem.size_variant_id = this.selectedSize.id;
         cartItem.size = this.selectedSize.size;
@@ -642,15 +642,16 @@ export default {
           });
           this.$router.push('/cart');
         })
-        .catch(() => {
+        .catch((error) => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Item quantity in cart cannot exceed item stock',
+            message: error.message ||
+            'Item quantity in cart cannot exceed item stock',
             position: 'bottom',
             variant: 'danger',
             queue: true,
           });
-        })
+        });
     },
   },
 };

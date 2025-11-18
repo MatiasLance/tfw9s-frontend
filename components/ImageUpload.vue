@@ -323,7 +323,7 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="postcss">
 .rugby-control-btn {
   @apply flex items-center gap-1 px-4 py-2 rounded-lg font-semibold 
          transition-all duration-200 transform hover:scale-105 
@@ -333,15 +333,17 @@ export default {
 .rugby-generate-btn {
   @apply inline-flex items-center justify-center;
 }
+</style>
 
-.rugby-image-card {
-  position: relative;
-  overflow: hidden;
-}
-
+<style scoped>
 .rugby-croppa-container {
   background-image: 
     radial-gradient(circle at 20% 80%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
+}
+
+.rugby-image-card {
+  position: relative;
+  overflow: hidden;
 }
 </style>

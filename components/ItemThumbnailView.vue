@@ -76,33 +76,15 @@
 
       <!-- Action Buttons -->
       <div class="w-full space-y-3">
-        <!-- Add to Cart Button -->
         <button
           type="button"
-          @click="addToCart"
+          @click="viewItem"
           class="w-full rounded-xl bg-gradient-to-r from-green-500 
                  to-green-600 py-3 px-6 text-base font-bold 
                  text-gray-50 shadow-lg transition-all duration-300 
                  transform hover:from-green-600 hover:to-green-700 
                  hover:scale-105 hover:shadow-green-500/50 
                  active:scale-95 flex items-center justify-center gap-2"
-        >
-          <i class="ri-shopping-cart-line text-lg"></i>
-          Add to Cart
-        </button>
-
-        <!-- View Product Button -->
-        <button
-          type="button"
-          @click="viewItem"
-          class="w-full rounded-xl bg-gradient-to-r from-gray-600 
-                 to-gray-700 py-3 px-6 text-base font-semibold 
-                 text-gray-200 border-2 border-gray-500 
-                 transition-all duration-300 transform 
-                 hover:from-gray-500 hover:to-gray-600 
-                 hover:text-gray-50 hover:scale-105 
-                 hover:border-gray-400 active:scale-95 
-                 flex items-center justify-center gap-2"
         >
           <i class="ri-eye-line text-lg"></i>
           View Product
@@ -139,10 +121,6 @@ export default {
     },
     categories: {
       type: Array,
-      required: true,
-    },
-    stock: {
-      type: Number,
       required: true,
     },
     path: {
@@ -196,35 +174,7 @@ export default {
       const scrollYValue = window.scrollY
       localStorage.setItem('scrollTop', scrollYValue);
       this.$router.push(`/product/?id=${this.uid}`)
-    },
-    addToCart() {
-      const scrollYValue = window.scrollY
-      localStorage.setItem('scrollTop', scrollYValue);
-      this.$store
-        .dispatch('cart/addItemToCart', {
-          id: this.uid,
-          quantity: 1,
-          stock: this.stock
-        })
-        .then(() => {
-          this.$oruga.notification.open({
-            duration: 2000,
-            message: 'Item added to cart',
-            position: 'bottom',
-            variant: 'success',
-            queue: true,
-          });
-        })
-        .catch(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Item quantity in cart cannot exceed item stock',
-            position: 'bottom',
-            variant: 'danger',
-            queue: true,
-          });
-        })
-    },
+    }
   },
 };
 </script>
