@@ -14,6 +14,7 @@
         class="h-64 cursor-pointer object-contain transition-all 
                duration-500 group-hover:scale-110"
         :src="getMediaURL(path)"
+        loading="lazy"
         :alt="name"
       />
     </div>

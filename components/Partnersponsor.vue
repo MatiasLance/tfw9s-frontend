@@ -48,6 +48,7 @@
                      transition-all duration-300 group-hover:brightness-100 
                      group-hover:scale-105"
               :src="getMediaURL(item.media[0])"
+              loading="lazy"
               :alt="item.company_name"
             />
           </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-full bg-gradient-to-br from-gray-900 to-green-900">
-    
+
     <BaseHeader
       class="mx-auto max-w-full gap-4 relative overflow-hidden
       bg-gradient-to-br from-green-900 via-green-700 to-gray-900
@@ -101,7 +101,7 @@
               
               <ul class="space-y-4">
                 <li class="flex justify-between text-white">
-                  <span class="text-lg">Subtotal:</span>
+                  <span class="text-lg">Sub-Total:</span>
                   <span class="text-lg font-semibold">{{ formatCurrency(subtotal) }}</span>
                 </li>
                 <li class="flex justify-between text-green-300">
@@ -110,7 +110,7 @@
                 </li>
                 <li class="flex justify-between text-white border-t 
                            border-gray-600 pt-4 text-xl font-bold">
-                  <span>Total:</span>
+                  <span>Grand Total:</span>
                   <span class="text-green-400">
                     {{ formatCurrency(total) }}
                   </span>
@@ -251,12 +251,10 @@ export default {
       }
     },
   },
-  mounted() {
-    this.retrieveTaxValue()
-    this.retrieveToggleTaxControl()
-    setTimeout(() => {
-      this.getItemData()
-    }, 700);
+  async mounted() {
+    await this.retrieveTaxValue()
+    await this.retrieveToggleTaxControl()
+    await this.getItemData()
   },
   beforeDestroy() {
     this.cullZeroQuantityItems()
@@ -378,28 +376,6 @@ export default {
       return item.stock;
     },
     
-    retrieveToggleTaxControl() {
-      const id = 1;
-      const endpoint = `v1/toogletax/retrieve/${id}`
-      this.$axios
-        .$get(endpoint)
-        .then((response) => {
-          this.toggleControl1 = response.me.toggleControl1
-          this.toggleControl2 = response.me.toggleControl2
-          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
-          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
-    },
-    
     getItemData() {
       // Get unique product IDs from cart (since same product ID can have multiple size variants)
       const uniqueProductIds = [ ...new Set(this.cartItems.map(item => item.id)) ];
@@ -501,8 +477,8 @@ export default {
     
     calculatePriceAggregates() {
       const itemCostData = this.items.map((item) => {
-        const quantity = this.getQuantity(item)
-        const price = this.getItemPrice(item)
+        const quantity = this.getQuantity(item);
+        const price = this.getItemPrice(item);
         const finalPrice = item.is_on_sale && item.saleprice ? item.saleprice : price;
         
         return {
@@ -512,68 +488,96 @@ export default {
         };
       });
 
+      // Calculate raw subtotal (sum of all items * quantities)
       const subtotal = itemCostData.reduce((acc, item) => {
-        const preTaxSubtotal = currency(item.price, { fromCents: false })
+        const itemTotal = currency(item.price, { fromCents: false })
           .multiply(item.quantity)
           .value;
         return currency(acc, { fromCents: false })
-          .add(preTaxSubtotal)
+          .add(itemTotal)
           .value;
       }, 0);
-      
-      if (this.toggleControl1) {
-        this.showGSTExcluded = true;
-        this.showGSTIncluded = false;
-      }
+
+      // Set display flags based on tax mode
+      this.showGSTExcluded = !this.toggleControl2;
+      this.showGSTIncluded = this.toggleControl2;
+
+      // Get current tax rate (as percentage, e.g., 10 for 10%)
+      const currentTaxRate = this.taxrateValue || this.$store.state.cart.tax || 0;
+
+      let taxAmount = 0;
+      let total = 0;
+      let baseAmount = 0;
+
       if (this.toggleControl2) {
-        this.showGSTExcluded = false;
-        this.showGSTIncluded = true;
+        // INCLUSIVE MODE: Tax is hidden in product prices
+        // Customer sees prices that already include tax
+        
+        // Calculate the base amount (price before tax)
+        baseAmount = currency(subtotal, { fromCents: false })
+          .divide(1 + (currentTaxRate / 100))
+          .value;
+        
+        // Calculate tax amount (hidden in the prices)
+        taxAmount = currency(subtotal, { fromCents: false })
+          .subtract(baseAmount)
+          .value;
+        
+        // Total is the subtotal (customer pays this amount)
+        total = subtotal;
+        
+      } else {
+        // EXCLUSIVE MODE: Tax is added on top of product prices
+        // Customer sees prices before tax
+        
+        // Base amount is the subtotal (prices before tax)
+        baseAmount = subtotal;
+        
+        // Calculate total with tax added
+        total = currency(subtotal, { fromCents: false })
+          .multiply(1 + (currentTaxRate / 100))
+          .value;
+        
+        // Tax amount is the difference
+        taxAmount = currency(total, { fromCents: false })
+          .subtract(subtotal)
+          .value;
       }
-      
-      // gst exclusive
-      const exclusiveValue = currency(subtotal, { fromCents: false })
-        .multiply(1 + this.taxrateValue)
-        .value;
-      // gst inclusive
-      const inclusiveValue = currency(subtotal, { fromCents: false })
-        .multiply(this.taxrateValue)
-        .value;
 
+      // Update all state values
       this.subtotal = subtotal;
+      this.total = total; 
+      this.taxAmount = taxAmount;
 
-      const total = this.toggleControl1 ? exclusiveValue : subtotal;
-      this.total = total;
-
-      this.taxAmount = this.toggleControl2 ?
-        inclusiveValue :
-        this.total - this.subtotal
-      this.$store.commit('cart/setTaxAmount', this.taxAmount);
+      // Commit to store for persistence
+      this.$store.commit('cart/setSubtotal', subtotal);
       this.$store.commit('cart/setTotal', total);
+      this.$store.commit('cart/setTaxAmount', taxAmount);
     },
-    
+
     cullZeroQuantityItems() {
-      this.$store.dispatch('cart/cullZeroQuantityItems')
+      this.$store.dispatch('cart/cullZeroQuantityItems');
     },
-    
+
+    async retrieveToggleTaxControl() {
+      try {
+        const response = await this.$axios.$get('v1/toggletax/');
+        this.toggleControl2 = response.toggleControl2;
+        this.$store.commit('master/setToggleControl2', response.toggleControl2);
+      } catch (error) {
+        console.error('Failed to load tax controls:', error);
+      }
+    },
+
     async retrieveTaxValue() {
       try {
-        const id = 1
-        const response = await this.$axios.$get(`v1/tax/${id}`)
-        this.addTaxOnCartPrice = response.me.addTaxValue
-        this.includeTaxOnCartPrice = response.me.includeTaxValue
-        const taxAmount = this.toggleControl1 ?
-          this.addTaxOnCartPrice :
-          (this.toggleControl2 ? this.includeTaxOnCartPrice : 0);
-        this.$store.commit('cart/setTax', taxAmount);
-        this.taxrateValue = this.tax / 100
-      } catch (err) {
-        this.$oruga.notification.open({
-          message: err.message,
-          duration: 5000,
-          variant: 'danger',
-          queue: true,
-          position: 'bottom'
-        })
+        const response = await this.$axios.$get('v1/tax/');
+        const taxValue = response.addTaxValue || 0;
+        
+        this.taxrateValue = taxValue;
+        this.$store.commit('cart/setTax', taxValue);
+      } catch (error) {
+        console.error('Failed to load tax value:', error);
       }
     }
   },

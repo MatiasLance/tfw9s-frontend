@@ -98,6 +98,7 @@
           <div class="relative z-10">
             <img
               :src="getMediaURL(contentimage)"
+              loading="lazy"
               class="h-auto w-full rounded-xl object-cover shadow-lg 
                      transition-transform duration-500 hover:scale-105"
               alt="Rugby Action"

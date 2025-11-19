@@ -40,6 +40,7 @@
           <VCarouselItem
             v-if="photos.length === 0"
             src="http://localhost:8000/_nuxt/assets/images/kidsplaying.jpg"
+            loading="lazy"
             cover
           >
             <!-- Back Button for Fallback -->

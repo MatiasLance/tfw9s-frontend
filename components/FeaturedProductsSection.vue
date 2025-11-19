@@ -58,6 +58,7 @@
               >
                 <img
                   :src="getMediaURL(product.media[0])"
+                  loading="lazy"
                   class="mb-8 rounded-t-lg object-contain"
                   alt=""
                 />

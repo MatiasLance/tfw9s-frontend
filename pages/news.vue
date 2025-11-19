@@ -120,6 +120,7 @@
               <div class="aspect-w-16 aspect-h-9 h-64">
                 <img
                   :src="getMediaURL(news.media[0], 'news')"
+                  loading="lazy"
                   :alt="news.headline"
                   class="absolute inset-0 w-full h-full object-cover 
                         transition-transform duration-1000 

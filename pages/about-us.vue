@@ -31,6 +31,7 @@
             >
                 <img
                     src="img/about-img.jpg"
+                    loading="lazy"
                     class="mt-4 w-full sm:-mt-4"
                     alt="Bryan Macaranas Photo"
                 />

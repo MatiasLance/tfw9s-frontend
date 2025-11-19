@@ -1,7 +1,22 @@
 <template>
-  <div class="bg-[#1A1A1B] h-full">
+  <div class="min-h-screen w-screen bg-gradient-to-br
+  from-gray-900 via-gray-800 to-gray-900 transition">
     <!-- Header -->
-    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black shadow-md">
+     <BaseHeader
+      class="mx-auto max-w-full gap-4 relative overflow-hidden
+      bg-gradient-to-br from-green-900 via-green-700 to-gray-900
+      lg:px-8"
+    >
+
+    <!-- Animated Rugby Field Background -->
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-1/4 left-0 w-full h-1 bg-white/30 
+                    animate-pulse"></div>
+        <div class="absolute top-1/2 left-0 w-full h-1 bg-white/40 
+                    animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-3/4 left-0 w-full h-1 bg-white/30 
+                    animate-pulse" style="animation-delay: 2s;"></div>
+      </div>
       <!-- Breadcrumbs and Title -->
       <BreadCrumbs title="Tax Setting"/>
     </BaseHeader>
@@ -20,12 +35,8 @@
           <!-- Option 1: Add Tax -->
           <div class="mb-8 rounded-md border border-gray-100 bg-gray-50 p-5">
             <div class="flex flex-col gap-4">
-              <div class="flex items-center">
-                <VSwitch v-model="toggleControl1" color="green" @change="toggleControl2 = false" />
-                <label class="ml-3 text-xl font-semibold text-gray-700">Add Tax of:</label>
-              </div>
-
               <div class="flex flex-wrap items-center gap-4">
+                <label class="ml-3 text-xl font-semibold text-gray-700">Add Tax of:</label>
                 <input
                   v-model.number="addTaxOnCartPrice"
                   type="number"
@@ -40,11 +51,10 @@
                     focus:border-green-500 focus:outline-none
                     disabled:cursor-not-allowed disabled:bg-gray-300
                   "
-                  :disabled="!toggleControl1"
                   step=".01"
                   min="0"
+                  @keydown="handleDecimal"
                 />
-                <span class="text-lg text-gray-600">on top of prices in cart stage.</span>
               </div>
             </div>
           </div>
@@ -56,7 +66,6 @@
                 <VSwitch
                 v-model="toggleControl2"
                 color="green"
-                @change="toggleControl1 = false"
                 />
                 <label
                 class="
@@ -64,31 +73,8 @@
                 font-semibold
                 text-gray-700"
                 >
-                Show inclusive tax amount of:
+                Show {{ toggleControl2 ? 'inclusive' : 'exclusive' }} tax in cart stage.
                 </label>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-4">
-                <input
-                  v-model.number="includeTaxOnCartPrice"
-                  type="number"
-                  name="includeTaxOnCartPrice"
-                  class="
-                    form-input
-                    w-32 appearance-none
-                    rounded-md border border-gray-200
-                    bg-gray-100
-                    p-3 text-xl
-                    transition
-                    focus:border-green-500 focus:outline-none
-                    disabled:cursor-not-allowed disabled:bg-gray-300
-                  "
-                  :disabled="!toggleControl2"
-                  step=".01"
-                  min="0"
-                  @keydown="handleDecimal"
-                />
-                <span class="text-lg text-gray-600">in cart stage.</span>
               </div>
             </div>
           </div>
@@ -148,7 +134,8 @@ export default {
   data() {
     return {
       addTaxOnCartPrice: 0,
-      includeTaxOnCartPrice: 0
+      taxID: null,
+      toggleTaxControllID: null
     }
   },
   computed: {
@@ -187,13 +174,12 @@ export default {
       }
     }
   },
-  mounted() {
-    const { tax } = this.$store.state.cart;
-    this.addTaxOnCartPrice = tax;
-    this.retrieveToggleControl();
-    setTimeout(() => {
-      this.retrieveControlValues();
-    }, 1000);
+  created() {
+    this.debouncedUpdateToggleControl = this.debounce(this.updateToggleControl, 500)
+  },
+  async mounted() {
+    await this.retrieveToggleControl();
+    await this.taxList();
   },
   methods: {
     handleDecimal(event) {
@@ -206,115 +192,94 @@ export default {
       ]
       return keyCodes.includes(event.code) ? true : !isNaN(Number(event.key)) && event.code!=='Space'
     },
-    saveControl1() {
-      this.$store.commit('master/setToggleControl1', this.toggleControl1)
-    },
-    saveControl2() {
-      this.$store.commit('master/setToggleControl2', this.toggleControl2)
-    },
-    retrieveControlValues() {
-      const id = 1;
-      this.$axios
-        .$get(`v1/tax/${id}`)
-        .then((response) => {
-          this.addTaxOnCartPrice = response.me.addTaxValue
-          this.includeTaxOnCartPrice = response.me.includeTaxValue
-          if (!this.toggleControl1 && !this.toggleControl2) {
-            this.$store.commit('cart/setTax', 0)
-          } else {
-            this.$store.commit('cart/setTax', this.addTaxOnCartPrice)
-          }
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
-    },
-    updateToggleControl() {
-      this.saveControl1()
-      this.saveControl2()
-      const form = new FormData();
-      form.append('_method', 'PATCH')
-      form.append('toggleControl1', this.toggleControl1)
-      form.append('toggleControl2', this.toggleControl2)
 
-      const endpoint = 'v1/toogletax/1'
-      this.$axios
-        .$post(endpoint, form)
-        .then((response) => {
-          this.$oruga.notification.open({
-            message: `Toggle setting: ${response.message}`,
-            variant: 'success',
-            duration: 5000,
-            position: 'bottom'
-          })
-          this.retrieveToggleControl()
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
+    debounce(func, wait) {
+      let timeout
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout)
+          func(...args)
+        }
+        clearTimeout(timeout)
+        timeout = setTimeout(later, wait)
+      }
     },
-    retrieveToggleControl() {
-      const id = 1;
-      const endpoint = `v1/toogletax/${id}`
-      this.$axios
-        .$get(endpoint)
-        .then((response) => {
-          this.toggleControl1 = response.me.toggleControl1
-          this.toggleControl2 = response.me.toggleControl2
-          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
-          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
+
+    async taxList() {
+      try {
+        const response = await this.$axios.$get('v1/tax/');
+        this.addTaxOnCartPrice = response.addTaxValue
+        this.taxID = response.id
+        if (!this.toggleControl2) {
+          this.$store.commit('cart/setTax', 0)
+        } else {
+          this.$store.commit('cart/setTax', this.addTaxValue)
+        }
+      } catch (error) {
+        console.error(error)
+      }
     },
-    proceed() {
-      const form = new FormData();
-      form.append('_method', 'PATCH')
-      form.append('addTaxValue', this.addTaxOnCartPrice)
-      form.append('includeTaxValue', this.includeTaxOnCartPrice)
-      const id = 1
-      const endpoint = `v1/tax/${id}`
-      this.$axios
-        .$post(endpoint, form)
-        .then((response) => {
-          this.$oruga.notification.open({
-            message: `Master settings: ${response.message}`,
-            variant: 'success',
-            duration: 5000,
-            position: 'bottom'
-          })
-          this.retrieveControlValues()
+
+    async retrieveToggleControl() {
+      try {
+        const response = await this.$axios.$get('v1/toggletax/');
+        this.toggleControl2 = response.toggleControl2
+        this.toggleTaxControllID = response.id
+        this.$store.commit('master/setToggleControl2', response.toggleControl2)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async updateToggleControl() {
+      try {
+        const form = new FormData()
+        form.append('toggleControl1', this.toggleControl1)
+        form.append('toggleControl2', this.toggleControl2)
+
+        const endpoint = `v1/toggletax/${this.toggleTaxControllID}`
+        await this.$axios.$post(endpoint, form)
+        
+        await this.retrieveToggleControl()
+        
+      } catch (err) {
+        this.$oruga.notification.open({
+          message: err.message,
+          duration: 5000,
+          variant: 'danger',
+          queue: true,
+          position: 'bottom'
         })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
+      }
+    },
+
+    async proceed() {
+      try {
+        const form = new FormData();
+        form.append('addTaxOnCartPrice', this.addTaxOnCartPrice)
+
+        const response = await this.$axios.$post(`v1/tax/${this.taxID}`, form)
+
+        this.$oruga.notification.open({
+          message: `Tax settings: ${response.message}`,
+          variant: 'success',
+          duration: 5000,
+          position: 'bottom'
         })
 
-      this.updateToggleControl()
+        await Promise.all([
+          this.taxList(),
+          this.retrieveToggleControl(),
+          this.updateToggleControl()
+        ])
+      } catch (error) {
+        this.$oruga.notification.open({
+          message: error.message || 'Failed to update tax settings',
+          variant: 'danger',
+          duration: 5000,
+          position: 'bottom'
+        })
+      }
     }
   }
 }

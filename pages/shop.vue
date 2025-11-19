@@ -100,52 +100,36 @@ export default {
       }
     },
   },
-  mounted() {
-    this.retrieveTaxValue()
-    this.retrieveToggleTaxControl()
+  async mounted() {
+    await this.taxList()
+    await this.retrieveToggleTaxControl()
   },
   methods: {
     retrieveItems() {
       this.$refs.products.retrieveProducts()
     },
-    retrieveToggleTaxControl() {
-      const id = 1;
-      // todo: check endpoint
-      const endpoint = `v1/toogletax/retrieve/${id}`
-      this.$axios
-        .$get(endpoint)
-        .then((response) => {
-          this.toggleControl1 = response.me.toggleControl1
-          this.toggleControl2 = response.me.toggleControl2
-          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
-          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
-    },
-    async retrieveTaxValue() {
+
+    async taxList() {
       try {
-        const id = 1
-        const response = await this.$axios.$get(`v1/tax/${id}`)
-        const taxAmount = this.toggleControl1 ?
-          response.me.addTaxValue :
-          (this.toggleControl2 ? response.me.includeTaxValue : 0);
-        this.$store.commit('cart/setTax', taxAmount);
-      } catch (err) {
-        this.$oruga.notification.open({
-          message: err.message,
-          duration: 5000,
-          variant: 'danger',
-          queue: true,
-          position: 'bottom'
-        })
+        const response = await this.$axios.$get('v1/tax/');
+        this.addTaxOnCartPrice = response.addTaxValue
+        if (!this.toggleControl2) {
+          this.$store.commit('cart/setTax', 0)
+        } else {
+          this.$store.commit('cart/setTax', this.addTaxValue)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async retrieveToggleTaxControl() {
+      try {
+        const response = await this.$axios.$get('v1/toggletax/');
+        this.toggleControl2 = response.toggleControl2
+        this.$store.commit('master/setToggleControl2', response.toggleControl2)
+      } catch (error) {
+        console.error(error)
       }
     }
   },

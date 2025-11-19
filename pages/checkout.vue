@@ -57,7 +57,6 @@
           <PaymentForm
             :subtotal="subtotal"
             :total="total"
-            :shipping="shipping"
             @active-step="setPreviousStep"
           />
         </template>
@@ -93,14 +92,6 @@ export default {
     };
   },
   computed: {
-    shipping: {
-      get() {
-        return this.$store.state.cart.shipping
-      },
-      set(v) {
-        this.$store.commit('cart/setShipping', v)
-      }
-    },
     shippingInformation: {
       get() {
         return this.$store.state.order.shippingInformation;
@@ -117,14 +108,6 @@ export default {
         this.$store.commit('cart/setSubtotal', v);
       },
     },
-    gst: {
-      get() {
-        return this.$store.state.cart.gst;
-      },
-      set(v) {
-        this.$store.commit('cart/setGst', v);
-      },
-    },
     total: {
       get() {
         return this.$store.state.cart.total;
@@ -135,27 +118,6 @@ export default {
     },
   },
   methods: {
-    retrieveToggleTaxControl() {
-      const id = 1;
-      const endpoint = `v1/toogletax/retrieve/${id}`
-      this.$axios
-        .$get(endpoint)
-        .then((response) => {
-          this.toggleControl1 = response.me.toggleControl1
-          this.toggleControl2 = response.me.toggleControl2
-          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
-          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
-    },
     setPreviousStep(stepNo) {
       this.activeStep = stepNo
     },

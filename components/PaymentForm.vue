@@ -146,8 +146,8 @@
       </ul>
       <ul v-if="!isLoading" class="px-2">
         <li class="mb-1 flex justify-between">
-          <span>Subtotal:</span>
-          <span>{{ formatCurrency(originalAmount.subtotal) }}</span>
+          <span>Sub-Total:</span>
+          <span>{{ formatCurrency(subTotal) }}</span>
         </li>
         <li class="mb-1 flex justify-between">
           <span>GST:</span>
@@ -155,7 +155,7 @@
           <span v-if="showGSTExcluded" class="pl-2">GST Exclusive</span>
         </li>
         <li class="mb-1 flex justify-between">
-          <span>Tax Amount:</span>
+          <span>Tax:</span>
           <span>{{ formatCurrency(taxAmount) }}</span>
         </li>
         <!-- Shipping Fee -->
@@ -168,7 +168,7 @@
         </li>
         <li v-else class="mb-1 flex justify-between">
           <span>Shipping:</span>
-          <span>{{ formatCurrency(10) }}</span>
+          <span>{{ formatCurrency(shippingPreTax) }}</span>
         </li>
         <!-- End of Shipping Fee Section -->
         <li v-if="isDiscountCodeMatch"
@@ -182,7 +182,7 @@
         class="mt-3 flex justify-between"
         :class="!isDiscountCodeMatch?'border-t pt-3':''"
         >
-          <span>Total price:</span>
+          <span>Grand Total:</span>
           <span class="font-bold text-gray-900">
             {{ formatCurrency(overAllTotal) }}
           </span>
@@ -229,8 +229,10 @@ export default {
         taxamount: 0,
       },
       overAllTotal: 0,
+      subTotal: 0,
+      shippingPreTax: 0,
       newSubTotal: 0,
-      showPaypal: true,
+      showPaypal: false,
       showSquare: false,
       showStripe: true,
       showDiscountCodeForm: true,
@@ -251,14 +253,6 @@ export default {
     };
   },
   computed: {
-    shipping: {
-      get() {
-        return this.$store.state.cart.shipping
-      },
-      set(v) {
-        this.$store.commit('cart/setShipping', v)
-      }
-    },
     tax: {
       get() {
         return this.$store.state.cart.tax
@@ -283,16 +277,6 @@ export default {
         this.$store.commit('order/setShippingInformation', v);
       },
     },
-    toggleControl1: {
-      get() {
-        return (
-          this.$store.state.master.toggleControl1
-        )
-      },
-      set(val) {
-        this.$store.commit('master/setToggleControl1', val)
-      }
-    },
     toggleControl2: {
       get() {
         return (
@@ -312,13 +296,11 @@ export default {
       }
     }
   },
-  mounted() {
-    this.retrieveToggleTaxControl();
-    this.$store.commit('order/setPaymentMethod', this.paymentMethod)
-    this.initialize()
-    setTimeout(() => {
-      this.setOriginalAmount()
-    }, 2000);
+  async mounted() {
+    await this.retrieveToggleTaxControl();
+    await this.initialize()
+    await this.setOriginalAmount()
+    await this.$store.commit('order/setPaymentMethod', this.paymentMethod)
   },
   methods: {
     setOriginalAmount() {
@@ -328,16 +310,13 @@ export default {
       this.originalAmount.taxamount = this.taxAmount
     },
     retrieveToggleTaxControl() {
-      const id = 1;
-      const endpoint = `v1/toogletax/retrieve/${id}`
+      const endpoint = 'v1/toggletax/'
       this.$axios
         .$get(endpoint)
         .then((response) => {
-          this.toggleControl1 = response.me.toggleControl1
-          this.toggleControl2 = response.me.toggleControl2
-          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
-          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
-          if (this.toggleControl1) {
+          this.toggleControl2 = response.toggleControl2
+          this.$store.commit('master/setToggleControl2', response.toggleControl2)
+          if (!this.toggleControl2) {
             this.showGSTExcluded = true;
             this.showGSTIncluded = false;
             this.isGSTInclusive = false;
@@ -499,9 +478,11 @@ for this code.
         })
         .then((response) => {
           this.activeStep = 2
-          this.$store.commit('cart/setTotal', response.overAllTotal/100);
-          const toPrice = response.overAllTotal;
-          this.overAllTotal = toPrice;
+          this.overAllTotal = response.grand_total;
+          this.subTotal = response.subtotal;
+          this.shippingPreTax = response.shipping;
+          this.taxAmount = response.tax;
+          this.$store.commit('cart/setTotal', response.grand_total);
         })
         .finally(() => {
           this.isLoading = false

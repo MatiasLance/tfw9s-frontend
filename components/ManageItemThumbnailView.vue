@@ -19,6 +19,7 @@
                transition-transform duration-500 ease-out
                group-hover:scale-105"
         :src="getMediaURL(path)"
+        loading="lazy"
         :alt="name"
       />
       
