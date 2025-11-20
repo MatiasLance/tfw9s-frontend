@@ -202,8 +202,7 @@ export default {
               this.bannerText = 'Order failed'
             }
           })
-          .catch((err) => {
-            console.log(err.message)
+          .catch(() => {
             this.status = 'failed'
             this.bannerText = 'Order failed'
           })
