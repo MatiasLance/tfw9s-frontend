@@ -206,7 +206,8 @@
                 class="info text-gray-200 leading-relaxed text-lg 
                       group-hover:text-gray-100 transition-colors duration-300
                       insurance-content"
-              >{{ statement.content }}</span>
+                v-html="statement.content"
+              ></span>
             </div>
           </div>
         </div>
@@ -442,27 +443,20 @@ export default {
   padding: 0 4px;
 }
 
-.insurance-content a {
-  display: inline-block;
-  color: #5EE738 !important;
-  font-weight: 700;
+/* Deep selector to penetrate v-html content */
+.insurance-content ::v-deep a {
+  color: #10b981 !important; /* Your green-400 equivalent */
   text-decoration: none;
-  padding: 8px 16px;
-  border: 2px solid #5EE738;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(94, 231, 56, 0.15), rgba(94, 231, 56, 0.05));
-  transition: all 0.3s ease;
-  margin: 4px 0;
-  box-shadow: 0 4px 15px rgba(94, 231, 56, 0.2);
+  transition: color 0.3s ease;
+  border-bottom: 1px solid transparent;
 }
 
-.insurance-content a:hover {
-  background: linear-gradient(135deg, rgba(94, 231, 56, 0.3), rgba(94, 231, 56, 0.15));
-  box-shadow: 0 6px 20px rgba(94, 231, 56, 0.4);
-  transform: translateY(-2px);
+.insurance-content ::v-deep a:hover {
+  color: #34d399 !important; /* A lighter green for hover */
+  border-bottom-color: #34d399;
 }
 
-.insurance-content a:active {
-  transform: translateY(0);
+.insurance-content ::v-deep a:visited {
+  color: #059669 !important; /* A darker green for visited state */
 }
 </style>

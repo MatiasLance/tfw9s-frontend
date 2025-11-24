@@ -1,38 +1,9 @@
 <template>
-  <div class="min-h-screen w-screen bg-[#1A1A1B]">
-    <BaseHeader
-    class="mx-auto max-w-screen-xl gap-4
-    bg-gradient-to-r from-brand-green to-brand-black lg:px-8"
-    >
-      <div
-        class="
-          col-span-12
-          text-center
-          sm:space-y-3
-          sm:text-left
-          lg:col-span-6
-          xl:mt-10"
-        data-aos="fade-right"
-      >
-        <span
-          class="
-            superheadline flex flex-row
-            items-center
-            text-[1rem]
-            font-normal
-            text-white
-          "
-        >
-          <span class="font-medium">
-            <NuxtLink to="/admin">
-              <VBtn text color="white">Admin</VBtn>
-            </NuxtLink>
-          </span>
-        </span>
-        <h1 class="flex flex-row text-4xl font-bold text-white lg:text-5xl">
-          Categories
-        </h1>
-      </div>
+  <div class="min-h-screen w-screen bg-gradient-to-br
+  from-gray-900 via-gray-800 to-gray-900">
+    
+   <BaseHeader class="from-brand-green to-brand-black bg-gradient-to-r shadow-md">
+      <BreadCrumbs title="Categories"/>
     </BaseHeader>
 
     <section class="container mx-auto max-w-screen-md px-2 sm:px-4">

@@ -1,38 +1,11 @@
 <!-- eslint-disable max-len -->
 <template>
-    <div class="min-h-screen bg-[#1A1A1B]">
-      <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-        <div
-          class="
-            space-y-3
-            px-6
-            text-left
-            sm:text-left
-            lg:col-span-6 lg:mt-10
-            xl:mt-10
-          "
-        >
-          <span
-            class="
-              superheadline
-              flex flex-row
-              items-center
-              pb-3
-              text-[1rem]
-              font-normal
-            "
-          >
-            <span class="font-medium">
-              <NuxtLink to="/admin">
-                <VBtn text color="white">Admin</VBtn>
-              </NuxtLink>
-            </span>
-          </span>
-          <h1 class="flex flex-row text-3xl font-bold text-white lg:text-4xl">
-            Merch Products
-          </h1>
-        </div>
-      </BaseHeader>
+    <div class="min-h-screen bg-gradient-to-br
+  from-gray-900 via-gray-800 to-gray-900">
+      
+    <BaseHeader class="from-brand-green to-brand-black bg-gradient-to-r shadow-md">
+      <BreadCrumbs title="Merch Products"/>
+    </BaseHeader>
 
       <div class="mx-auto max-w-screen-xl px-4 py-7">
         <div class="-mx-4 flex flex-wrap">

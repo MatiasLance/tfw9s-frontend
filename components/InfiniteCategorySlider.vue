@@ -1,32 +1,58 @@
 <template>
   <div>
-    <VueSlickCarousel 
-      class="mb-4" 
-      v-bind="slickSettings"
-    >
-      <!-- All Categories Option -->
-      <div>
-        <ShopCategory
-          :selected="currentCategory === null"
-          @click="handleCategorySelect(null)"
-        >
-          All
-        </ShopCategory>
-      </div>
-      
-      <!-- Category Options -->
-      <div
-        v-for="category in options"
-        :key="category.id"
+    <div class="bg-gray-800 text-white rounded-xl p-2 border border-green-500/30 shadow-lg mb-4">
+      <VueSlickCarousel
+        v-bind="slickSettings"
+        draggable
+        focusOnSelect
+        class="tab-carousel"
       >
-        <ShopCategory
-          :selected="isCategorySelected(category)"
-          @click="handleCategorySelect(category)"
+        <!-- All Categories Option -->
+        <div>
+          <ShopCategory
+            :selected="currentCategory === null"
+            @click="handleCategorySelect(null)"
+          >
+            All
+          </ShopCategory>
+        </div>
+        
+        <!-- Category Options -->
+        <div
+          v-for="category in options"
+          :key="category.id"
         >
-          {{ category.name }}
-        </ShopCategory>
-      </div>
-    </VueSlickCarousel>
+          <ShopCategory
+            :selected="isCategorySelected(category)"
+            @click="handleCategorySelect(category)"
+          >
+            {{ category.name }}
+          </ShopCategory>
+        </div>
+
+        <!-- Custom Previous Arrow with Remix Icon -->
+        <template #prevArrow="arrowOption">
+          <div 
+            :class="arrowOption.className" 
+            class="remix-arrow remix-prev-arrow"
+            @click="arrowOption.click"
+          >
+            <i class="ri-arrow-left-s-line text-green-500 text-xl"></i>
+          </div>
+        </template>
+        
+        <!-- Custom Next Arrow with Remix Icon -->
+        <template #nextArrow="arrowOption">
+          <div 
+            :class="arrowOption.className" 
+            class="remix-arrow remix-next-arrow"
+            @click="arrowOption.click"
+          >
+            <i class="ri-arrow-right-s-line text-green-500 text-xl"></i>
+          </div>
+        </template>
+      </VueSlickCarousel>
+    </div>
 
     <!-- Child Categories Slider -->
     <div 
@@ -265,5 +291,57 @@ export default {
   background: #1a1d18;
   color: #ffffff;
   border: 1px solid transparent;
+}
+
+.tab-carousel {
+  margin: 0 -4px;
+}
+
+:deep(.slick-list) {
+  border-radius: 12px;
+}
+
+:deep(.slick-track) {
+  display: flex;
+  gap: 8px;
+}
+
+:deep(.slick-slide) {
+  padding: 0 4px;
+}
+
+::v-deep .remix-arrow {
+  width: 36px;
+  height: 36px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: #374151 !important; /* gray-700 */
+  border: 1px solid #4b5563 !important; /* gray-600 */
+  border-radius: 8px;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+::v-deep .remix-arrow:hover {
+  background: #4b5563 !important; /* gray-600 */
+  border-color: #6b7280 !important; /* gray-500 */
+}
+
+::v-deep .remix-arrow:hover i {
+  color: #34d399 !important; /* green-400 on hover */
+}
+
+::v-deep .remix-arrow::before {
+  display: none !important; /* Hide default arrow */
+}
+
+/* Position adjustments */
+::v-deep .remix-prev-arrow {
+  left: -18px !important;
+}
+
+::v-deep .remix-next-arrow {
+  right: -18px !important;
 }
 </style>

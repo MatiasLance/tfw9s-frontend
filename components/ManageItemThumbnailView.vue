@@ -121,7 +121,7 @@
                  leading-relaxed transition-colors duration-300 
                  group-hover:text-gray-200"
           v-html="description"
-        />
+        ></span>
       </div>
 
       <!-- Action Buttons - Staggered Hover Effects -->

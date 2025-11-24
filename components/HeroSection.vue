@@ -27,7 +27,7 @@
             class="text-justify text-base leading-relaxed text-white 
                    md:text-lg"
             v-html="contentblurb"
-          />
+          ></span>
         </div>
 
         <!-- Call to Action Buttons -->
@@ -60,71 +60,49 @@
             </button>
           </NuxtLink>
         </div>
-
-        <!-- Quick Stats -->
-        <div class="mt-8 flex flex-wrap gap-6">
-          <div class="text-center">
-            <div class="text-2xl font-bold text-green-400">
-              50+
-            </div>
-            <div class="text-sm text-gray-400">
-              Teams
-            </div>
-          </div>
-          <div class="text-center">
-            <div class="text-2xl font-bold text-green-400">
-              1K+
-            </div>
-            <div class="text-sm text-gray-400">
-              Players
-            </div>
-          </div>
-          <div class="text-center">
-            <div class="text-2xl font-bold text-green-400">
-              25+
-            </div>
-            <div class="text-sm text-gray-400">
-              Events
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Image Section -->
-      <div class="relative col-span-1 w-full p-4" data-aos="fade-up">
-        <div class="relative overflow-hidden rounded-2xl bg-gray-800 p-6 
-                    shadow-2xl border border-green-500/30">
+      <div class="relative col-span-1 w-full" data-aos="fade-up">
+        <!-- TFW Logo - Floating Above Everything -->
+        <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 z-30">
+          <div class="bg-gradient-to-r from-green-600 to-green-800 
+                      rounded-2xl p-4 shadow-2xl border-2 border-yellow-400">
+            <img
+              src="~/assets/images/tfw9s.png"
+              class="h-20 w-20 object-contain"
+              alt="TFW Rugby"
+            />
+          </div>
+        </div>
+
+        <!-- Image Card -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br 
+                    from-gray-900 to-green-900 p-8 pt-12 shadow-2xl 
+                    border-2 border-green-500/40 mt-8">
+          
           <!-- Main Image -->
           <div class="relative z-10">
             <img
               :src="getMediaURL(contentimage)"
               loading="lazy"
               class="h-auto w-full rounded-xl object-cover shadow-lg 
-                     transition-transform duration-500 hover:scale-105"
+                    transition-transform duration-500 hover:scale-105 
+                    border-2 border-green-500/20"
               alt="Rugby Action"
             />
           </div>
-          
-          <!-- Floating Badge -->
-          <div class="absolute -top-4 -right-4 z-20 animate-bounce">
-            <div class="bg-green-600 text-gray-50 rounded-full p-4 
-                        shadow-2xl">
-              <i class="ri-football-line text-2xl"></i>
-            </div>
-          </div>
 
-          <!-- TFW Logo -->
-          <div class="absolute bottom-4 left-4 z-20">
-            <div class="bg-gray-50 rounded-xl p-3 shadow-lg">
-              <img
-                src="~/assets/images/tfw9s.png"
-                class="h-16 w-16 object-contain"
-                alt="TFW Rugby"
-              />
+          <!-- Rugby Badge -->
+          <div class="absolute -bottom-3 -right-3 z-20">
+            <div class="bg-yellow-400 text-gray-900 rounded-full p-4 
+                        shadow-2xl rotate-12">
+              <i class="ri-football-line text-2xl font-bold"></i>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 </template>

@@ -16,7 +16,7 @@
     </div>
 
     <!-- Partners Carousel -->
-    <div v-if="partnerSponsors.length" class="relative" data-aos="fade-up">
+    <div v-if="partnerSponsors.length" class="relative py-8" data-aos="fade-up">      
       <VueSlickCarousel
         class="py-4"
         :arrows="true"
@@ -36,26 +36,18 @@
           class="px-2 lg:px-3"
         >
           <div 
-            class="group relative bg-gray-800 rounded-xl p-4 border border-green-500/30 
-                   shadow-lg hover:shadow-xl transition-all duration-300 
-                   transform hover:-translate-y-1 cursor-pointer h-28 
-                   flex items-center justify-center"
+            class="group relative cursor-pointer h-40 flex items-center justify-center"
             @click="openLink(item.hyperlink)"
           >
             <img
               :title="item.company_name"
-              class="max-h-16 w-auto object-contain brightness-75 
-                     transition-all duration-300 group-hover:brightness-100 
-                     group-hover:scale-105"
+              class="max-h-32 w-full object-contain brightness-50 
+                    transition-all duration-500 group-hover:brightness-100 
+                    group-hover:scale-125"
               :src="getMediaURL(item.media[0])"
               loading="lazy"
               :alt="item.company_name"
             />
-          </div>
-          <div class="mt-2 text-center">
-            <span class="text-gray-400 text-sm font-medium truncate block">
-              {{ item.company_name }}
-            </span>
           </div>
         </div>
       </VueSlickCarousel>

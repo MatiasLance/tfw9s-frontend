@@ -189,22 +189,18 @@
                         :class="selectedSize && selectedSize.id === size.id 
                               ? 'text-green-200 bg-green-500/20 px-1 rounded' 
                               : 'text-gray-400'">
-                    +{{ formatCurrency(size.price - product.price) }}
+                    {{ formatCurrency(size.price) }}
+                  </span>
+                  <span v-else
+                        class="text-xs mt-1 font-normal"
+                        :class="selectedSize && selectedSize.id === size.id 
+                              ? 'text-green-200 bg-green-500/20 px-1 rounded' 
+                              : 'text-gray-400'">
+                    {{ formatCurrency(product.price) }}
                   </span>
                 </div>
               </button>
             </div>
-              
-              <!-- Size Guide Link -->
-              <div class="text-right">
-                <button
-                type="button"
-                class="text-sm text-green-400 hover:text-green-300 transition-colors"
-                >
-                  <i class="ri-question-line mr-1"></i>
-                  Size Guide
-                </button>
-              </div>
             </div>
           </div>
 
