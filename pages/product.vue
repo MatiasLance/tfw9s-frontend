@@ -157,38 +157,43 @@
                 Select Size:
               </label>
               
-              <!-- Size Options -->
-              <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-                <button
-                 type="button"
-                  v-for="size in availableSizes"
-                  :key="size.id"
-                  @click="selectSize(size)"
-                  :class="[
-                    'py-3 px-4 rounded-xl border-2 text-center' +
-                    'transition-all duration-300 transform',
-                    'font-semibold text-sm md:text-base',
-                    selectedSize && selectSize.id === size.id
-                      ? 'border-green-500 bg-green-500/20 text-green-300 shadow-lg scale-105'
-                      : size.in_stock
-                        ? 'border-gray-600 bg-gray-700/50 text-white hover:border-green-400' +
-                        'hover:bg-green-500/10 hover:scale-105'
-                        : 'border-gray-700 bg-gray-800/30 text-gray-500' +
-                        'cursor-not-allowed line-through'
-                  ]"
-                  :disabled="!size.in_stock"
-                >
-                  <div class="flex flex-col items-center">
-                    <span>{{ size.size }}</span>
-                    <span v-if="size.price !== product.price" 
-                          class="text-xs mt-1"
-                          :class="selectedSize && selectSize.id === size.id ? 'text-green-200' :
-                          'text-gray-400'">
-                      +{{ formatCurrency(size.price - product.price) }}
-                    </span>
-                  </div>
-                </button>
-              </div>
+              <!-- Enhanced Size Options -->
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+              <button
+                type="button"
+                v-for="size in availableSizes"
+                :key="size.id"
+                @click="selectSize(size)"
+                :class="[
+                  'py-3 px-4 rounded-xl border-2 text-center transition-all' +
+                  'duration-300 transform font-semibold text-sm md:text-base',
+                  selectedSize && selectedSize.id === size.id
+                    ? 'border-green-400 bg-gradient-to-br from-green-500/30' +
+                    'to-green-600/20 text-green-100 shadow-lg shadow-green-500/20' +
+                    'scale-105 ring-2 ring-green-400/30'
+                    :
+                  size.in_stock
+                    ? 'border-gray-500 bg-gray-700/40 text-gray-100 hover:border-green-400' +
+                    'hover:bg-green-500/15 hover:scale-105 hover:shadow-md' +
+                    'hover:shadow-green-500/10'
+                    :
+                  'border-gray-700 bg-gray-800/20 text-gray-500' +
+                  'cursor-not-allowed line-through opacity-60'
+                ]"
+                :disabled="!size.in_stock"
+              >
+                <div class="flex flex-col items-center">
+                  <span class="font-medium">{{ size.size }}</span>
+                  <span v-if="size.price !== product.price" 
+                        class="text-xs mt-1 font-normal"
+                        :class="selectedSize && selectedSize.id === size.id 
+                              ? 'text-green-200 bg-green-500/20 px-1 rounded' 
+                              : 'text-gray-400'">
+                    +{{ formatCurrency(size.price - product.price) }}
+                  </span>
+                </div>
+              </button>
+            </div>
               
               <!-- Size Guide Link -->
               <div class="text-right">

@@ -268,22 +268,15 @@ export default {
         `${item.id}`;
     },
     
-    // NEW: Get the cart item from store with size variant info
+    // UPDATED: Much simpler now that items have cart context
     getCartItemFromStore(item) {
       if (!this.cartItems || !this.cartItems.length) return null;
       
-      const cartItem = this.cartItems.find(cartItem => {
-        if (cartItem.size_variant_id) {
-          // For items with size variants, match both ID and size_variant_id
-          return cartItem.id === item.id && 
-                this.doesItemHaveSizeVariant(item, cartItem.size_variant_id);
-        } else {
-          // For regular items, just match the ID
-          return cartItem.id === item.id && 
-                !this.doesItemHaveSizeVariants(item);
-        }
-      });
-      return cartItem || null;
+      // Direct lookup using the cart context we stored
+      return this.cartItems.find(cartItem => 
+        cartItem.id === item._cartItemId && 
+        cartItem.size_variant_id === item._sizeVariantId
+      );
     },
     
     // NEW: Check if item has a specific size variant
@@ -351,55 +344,56 @@ export default {
       return item.price;
     },
     
-    // Handle both item object and { id, size_variant_id } object
+    // UPDATED: Simplified stock lookup using the enriched item data
     /* eslint-disable camelcase */
-    getItemStock(itemOrData) {
-      let id, size_variant_id;
-      
-      if (typeof itemOrData === 'object' && itemOrData.id) {
-        id = itemOrData.id;
-        size_variant_id = itemOrData.size_variant_id || null;
-      } else {
-        const cartItem = this.getCartItemFromStore(itemOrData);
-        id = cartItem.id;
-        size_variant_id = cartItem.size_variant_id || null;
-      }
-      
-      const item = this.items.find(i => i.id === id);
+    getItemStock(item) {
+      // Now item already contains the cart context
       if (!item) return 0;
       
-      if (size_variant_id) {
-        const sizeVariant = this.findSizeVariant(item, size_variant_id);
+      // If this cart item has a size variant, get that stock
+      if (item._sizeVariantId) {
+        const sizeVariant = this.findSizeVariant(item, item._sizeVariantId);
         return sizeVariant ? sizeVariant.stock_quantity : item.stock;
       }
       
+      // Otherwise return base item stock
       return item.stock;
     },
-    
+        
     getItemData() {
-      // Get unique product IDs from cart (since same product ID can have multiple size variants)
-      const uniqueProductIds = [ ...new Set(this.cartItems.map(item => item.id)) ];
-      
-      const itemPromises = uniqueProductIds.map((productId) => {
+      // Process each cart item individually to preserve size variant context
+      const itemPromises = this.cartItems.map((cartItem) => {
         return this.$axios
-          .$get(`/v1/items/${productId}`)
+          .$get(`/v1/items/${cartItem.id}`)
           .then((response) => {
-            const item = response.data.item;
-            // Get all cart items for this product ID (including different sizes)
-            const productCartItems = this.$store.getters[ 'cart/getProductCartItems' ](productId);
-            // Store cart item references
-            item._cartItems = productCartItems;
-            return item;
+            const product = response.data.item;
+            
+            // Create a enriched item that combines product data WITH cart context
+            return {
+              // Product data
+              ...product,
+              // Cart-specific context (CRITICAL)
+              _cartItemId: cartItem.id,
+              _sizeVariantId: cartItem.size_variant_id,
+              _quantity: cartItem.quantity,
+              // For direct access in templates
+              cartSizeVariantId: cartItem.size_variant_id,
+              cartQuantity: cartItem.quantity
+            };
           })
-      })
+          .catch(error => {
+            console.error(`Failed to fetch product ${cartItem.id}:`, error);
+            return null;
+          });
+      });
 
       Promise.all(itemPromises)
         .then((values) => {
-          this.items = values
+          this.items = values.filter(item => item !== null);
         })
         .then(() => {
-          this.calculatePriceAggregates()
-        })
+          this.calculatePriceAggregates();
+        });
     },
     
     /* eslint-disable camelcase */
@@ -461,7 +455,7 @@ export default {
             // Keep the item only if it doesn't have this specific size variant in cart
             return !hasSizeVariant;
           }
-          return true; // Keep items with different IDs
+          return true;
         } else {
           // For regular items without size variants, remove the entire item
           return item.id !== id;

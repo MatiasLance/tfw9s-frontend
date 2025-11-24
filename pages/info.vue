@@ -126,7 +126,7 @@
             <div class="rugby-content-badge bg-green-600 rounded-xl p-2">
               <i class="ri-file-code-line text-gray-50 text-xl"></i>
             </div>
-            <h3 class="text-xl font-bold text-green-400">
+            <h3 class="text-sm font-bold text-green-400">
               Code of Conduct
             </h3>
           </div>
@@ -136,14 +136,13 @@
               :key="statement.id"
               class="rugby-content-card group bg-gray-700/30 rounded-2xl p-6 
                     border border-gray-600/50 hover:border-green-500/30 
-                    transition-all duration-500 hover:scale-[1.02] 
-                    hover:shadow-lg cursor-pointer"
+                    transition-all duration-500 hover:shadow-lg cursor-pointer"
             >
               <span 
                 class="info text-gray-200 leading-relaxed text-lg 
                       group-hover:text-gray-100 transition-colors duration-300" 
                 v-html="statement.content"
-              />
+              ></span>
             </div>
           </div>
         </div>
@@ -169,14 +168,13 @@
               :key="statement.id"
               class="rugby-content-card group bg-gray-700/30 rounded-2xl p-6 
                     border border-gray-600/50 hover:border-green-500/30 
-                    transition-all duration-500 hover:scale-[1.02] 
-                    hover:shadow-lg cursor-pointer"
+                    transition-all duration-500 hover:shadow-lg cursor-pointer"
             >
               <span 
                 class="info text-gray-200 leading-relaxed text-lg 
                       group-hover:text-gray-100 transition-colors duration-300" 
                 v-html="statement.content"
-              />
+              ></span>
             </div>
           </div>
         </div>
@@ -202,14 +200,13 @@
               :key="statement.id"
               class="rugby-content-card group bg-gray-700/30 rounded-2xl p-6 
                     border border-gray-600/50 hover:border-green-500/30 
-                    transition-all duration-500 hover:scale-[1.02] 
-                    hover:shadow-lg cursor-pointer"
+                    transition-all duration-500 hover:shadow-lg cursor-pointer"
             >
               <span 
                 class="info text-gray-200 leading-relaxed text-lg 
-                      group-hover:text-gray-100 transition-colors duration-300" 
-                v-html="statement.content"
-              />
+                      group-hover:text-gray-100 transition-colors duration-300
+                      insurance-content"
+              >{{ statement.content }}</span>
             </div>
           </div>
         </div>
@@ -443,5 +440,29 @@ export default {
 
 :deep(.slick-slide) {
   padding: 0 4px;
+}
+
+.insurance-content a {
+  display: inline-block;
+  color: #5EE738 !important;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 2px solid #5EE738;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(94, 231, 56, 0.15), rgba(94, 231, 56, 0.05));
+  transition: all 0.3s ease;
+  margin: 4px 0;
+  box-shadow: 0 4px 15px rgba(94, 231, 56, 0.2);
+}
+
+.insurance-content a:hover {
+  background: linear-gradient(135deg, rgba(94, 231, 56, 0.3), rgba(94, 231, 56, 0.15));
+  box-shadow: 0 6px 20px rgba(94, 231, 56, 0.4);
+  transform: translateY(-2px);
+}
+
+.insurance-content a:active {
+  transform: translateY(0);
 }
 </style>

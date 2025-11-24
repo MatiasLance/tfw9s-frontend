@@ -1,8 +1,8 @@
 <!-- eslint-disable max-len -->
 <template>
-    <div class="min-h-screen bg-[#1A1A1B]">
+    <div class="min-h-screen bg-gradient-to-br from-gray-800 to-gray-900">
       <div class="mx-auto max-w-screen-xl px-4 py-7">
-        <div class="bg-[#1A1A1B]" data-aos="fade-up">
+        <div data-aos="fade-up">
           <section class="mx-auto max-w-screen-xl gap-4 p-4">
             <div class="grid grid-cols-1 gap-4">
               <div
@@ -38,7 +38,7 @@
                 {{ contentData.title }}
               </h1>
               <p class="py-4 link">
-                <span v-html="contentData.content"/>
+                <span v-html="contentData.content"></span>
               </p>
               </section>
             </div>
