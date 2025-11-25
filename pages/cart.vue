@@ -140,11 +140,6 @@
                 </button>
               </NuxtLink>
             </div>
-
-            <!-- Help Text -->
-            <p class="text-green-300 text-center text-sm mt-6">
-              Need help? Contact our team
-            </p>
           </article>
         </aside>
       </div>
@@ -174,7 +169,6 @@ export default {
     return {
       items: [],
       showGSTIncluded: true,
-      showGSTExcluded: false,
       showGST: false,
       taxrate: '10%',
       taxrateValue: 0,
@@ -482,8 +476,7 @@ export default {
         };
       });
 
-      // Calculate raw subtotal (sum of all items * quantities)
-      const subtotal = itemCostData.reduce((acc, item) => {
+      const itemBasePrice = itemCostData.reduce((acc, item) => {
         const itemTotal = currency(item.price, { fromCents: false })
           .multiply(item.quantity)
           .value;
@@ -492,59 +485,48 @@ export default {
           .value;
       }, 0);
 
-      // Set display flags based on tax mode
-      this.showGSTExcluded = !this.toggleControl2;
-      this.showGSTIncluded = this.toggleControl2;
+      const isInclusive = this.toggleControl2;
 
-      // Get current tax rate (as percentage, e.g., 10 for 10%)
       const currentTaxRate = this.taxrateValue || this.$store.state.cart.tax || 0;
 
       let taxAmount = 0;
       let total = 0;
-      let baseAmount = 0;
+      let subTotal = 0;
 
-      if (this.toggleControl2) {
+      if (isInclusive) {
         // INCLUSIVE MODE: Tax is hidden in product prices
         // Customer sees prices that already include tax
         
-        // Calculate the base amount (price before tax)
-        baseAmount = currency(subtotal, { fromCents: false })
+        subTotal = currency(itemBasePrice, { fromCents: false })
           .divide(1 + (currentTaxRate / 100))
           .value;
         
-        // Calculate tax amount (hidden in the prices)
-        taxAmount = currency(subtotal, { fromCents: false })
-          .subtract(baseAmount)
+        taxAmount = currency(itemBasePrice, { fromCents: false })
+          .subtract(subTotal)
           .value;
         
-        // Total is the subtotal (customer pays this amount)
-        total = subtotal;
+        total = itemBasePrice;
         
       } else {
         // EXCLUSIVE MODE: Tax is added on top of product prices
         // Customer sees prices before tax
         
-        // Base amount is the subtotal (prices before tax)
-        baseAmount = subtotal;
+        subTotal = itemBasePrice;
         
-        // Calculate total with tax added
-        total = currency(subtotal, { fromCents: false })
+        total = currency(itemBasePrice, { fromCents: false })
           .multiply(1 + (currentTaxRate / 100))
           .value;
         
-        // Tax amount is the difference
         taxAmount = currency(total, { fromCents: false })
-          .subtract(subtotal)
+          .subtract(subTotal)
           .value;
       }
 
-      // Update all state values
-      this.subtotal = subtotal;
-      this.total = total; 
+      this.subtotal = subTotal;
+      this.total = total;
       this.taxAmount = taxAmount;
 
-      // Commit to store for persistence
-      this.$store.commit('cart/setSubtotal', subtotal);
+      this.$store.commit('cart/setSubtotal', subTotal);
       this.$store.commit('cart/setTotal', total);
       this.$store.commit('cart/setTaxAmount', taxAmount);
     },

@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   ssr: false,
-  target: 'static',
+  target: 'server',
   head: {
     title: 'TFW9s | Competitive Kids Rugby League 9s & Life Skills Program',
     htmlAttrs: {

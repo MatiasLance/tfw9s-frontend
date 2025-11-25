@@ -4,7 +4,7 @@
   from-gray-900 via-gray-800 to-gray-900">
       
     <BaseHeader class="from-brand-green to-brand-black bg-gradient-to-r shadow-md">
-      <BreadCrumbs title="Merch Products"/>
+      <BreadCrumbs title="Merch Items"/>
     </BaseHeader>
 
       <div class="mx-auto max-w-screen-xl px-4 py-7">
