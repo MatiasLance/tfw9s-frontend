@@ -75,6 +75,36 @@
               />
             </label>
           </div>
+
+          <div
+            v-if="totalPages > 0"
+            class="col-span-3 flex flex-col items-center justify-between
+            gap-4 bg-white backdrop-blur-sm rounded-xl
+            p-4 sm:flex-row sm:gap-6"
+            data-aos="flip-up" 
+            data-aos-once="true"
+          >
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-medium text-black">
+                Showing 
+                <span class="font-semibold text-black">{{ from }}-{{ to }}</span> 
+                of 
+                <span class="font-semibold text-black">{{ totalItems }}</span> 
+                {{ totalItems === 1 ? 'item' : 'items' }}
+              </span>
+            </div>
+
+            <VPagination
+              v-model="page"
+              :length="totalPages"
+              color="success"
+              :total-visible="7"
+              class="text-black"
+              dark
+              @change="setPage"
+              />
+          </div>
+
           <section
           v-if="isLoading"
           class="
@@ -132,6 +162,7 @@
 </template>
 
 <script>
+import _debounce from 'lodash/debounce';
 import CustomVueTable from '~/components/tables/CustomVueTable.vue';
 import ManageResultModal from '~/components/modals/ManageResultModal.vue';
 import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
@@ -295,8 +326,21 @@ export default {
       },
       immediate: true,
     },
+    page(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.retrieveEvents();
+      }
+    },
+    totalPages() {
+      if (this.page > this.totalPages) {
+        this.setPage(1)
+      }
+    },
   },
   methods: {
+    setPage() {
+      this.retrieveEvents();
+    },
     convertTo12HourFormat(timeString) {
       const [ hour, minute ] = timeString.split(':');
       const period = hour >= 12 ? 'PM' : 'AM';
@@ -421,7 +465,7 @@ export default {
       const year = date.getFullYear();
       return `${day}/${month}/${year.toString().slice(-2)}`;
     },
-    retrieveEvents() {
+    retrieveEvents: _debounce(function() {
       this.isLoading = true
       let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
       let eventMonth = this.dateFilter ?
@@ -457,6 +501,8 @@ export default {
         q: this.query,
         sort: 'latest',
         page: this.page,
+        // eslint-disable-next-line camelcase
+        per_page: this.perPage,
         // eslint-disable-next-line camelcase
         eventDate: event_date,
         submit: this.submit,
@@ -509,7 +555,7 @@ export default {
           this.showCustomVueTable = true;
           this.isLoading = false
         });
-    },
+    }, 100),
     clearDate() {
       this.dateFilter = null;
     },
