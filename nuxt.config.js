@@ -93,13 +93,16 @@ export default {
         href: 'https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;700&display=swap',
         media: 'print',
         onload: "this.media='all'" 
-      }
+      },
+      { rel: 'preconnect', href: 'https://js.stripe.com' },
+      { rel: 'dns-prefetch', href: 'https://js.stripe.com' }
     ],
     script: [
       {
         src: 'https://js.stripe.com/v3',
-        async: true,
-        defer: true
+        async: false,
+        defer: true,
+        preconnect: 'https://js.stripe.com',
       },
       {
         hid: 'square-web-payments-sdk',

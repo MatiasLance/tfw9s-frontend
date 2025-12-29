@@ -561,6 +561,7 @@ export default {
       AgeGroupList: [],
       EventList: [],
       matchList: [],
+      RegionList: [],
       isLoaded: false,
       from: 0,
       to: 0,
@@ -612,9 +613,9 @@ export default {
       return formattedYears;
     },
     formattedRegions() {
-      const regions = this.EventList.map(event => ({
-        id: event.region ? event.region.id : null,
-        name: event.region ? event.region.name : 'Unknown'
+      const regions = this.RegionList.map(region => ({
+        id: region.id ? region.id : null,
+        name: region.name ? region.name : 'Unknown'
       }));
 
       const uniqueRegions = [ ...new Set(regions.map(region => region.name)) ]
@@ -747,6 +748,7 @@ export default {
   created() {
     this.retrieveAgeGroups();
     this.retrieveEvents();
+    this.retrieveRegions();
   },
   methods: {
     setEventStatus(status) {
@@ -932,6 +934,28 @@ export default {
         .finally(() => {
           this.isLoaded = true;
         });
+    },
+    retrieveRegions() {
+      const query = {
+        q: this.query,
+        sort: 'a_to_z',
+        page: this.page,
+        maxRegionsPerPage: 10,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/regions?${queryString}`)
+        .then((response) => {
+          this.RegionList = response.data.regions;
+        })
     },
   }
 }
