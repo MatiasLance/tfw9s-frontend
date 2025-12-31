@@ -654,7 +654,6 @@ export default {
       return formattedYears;
     },
     formattedRegions() {
-      console.log(this.RegionList)
       const regions = this.RegionList.map(region => ({
         id: region.id ? region.id : null,
         name: region.name ? region.name : 'Unknown'

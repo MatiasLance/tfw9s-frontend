@@ -168,8 +168,8 @@
 import VueTable from '~/components/tables/VueTable.vue';
 import LoadingAnimation from '~/components/loading/LoadingAnimation.vue';
 
-// Pre-computed constants to avoid runtime calculations
-const MATCH_ROUND_OPTIONS = Object.freeze([
+// Constants moved outside component for better organization
+const MATCH_ROUND_OPTIONS = [
   { text: 'Overall Standings', value: null },
   { text: 'Round', value: 'round' },
   { text: 'Semi', value: 'semi' },
@@ -185,10 +185,10 @@ const MATCH_ROUND_OPTIONS = Object.freeze([
   { text: 'Pool A Grand Final', value: 'pool_a_grand_final' },
   { text: 'Pool B Grand Final', value: 'pool_b_grand_final' },
   { text: 'Pool C Grand Final', value: 'pool_c_grand_final' },
-  { text: 'Pool D Grand Final', value: 'pool_d_grand_final' }
-]);
+  { text: 'Pool D Grand Final', value: 'pool_d_grand_final' },
+];
 
-const DATA_COLUMNS = Object.freeze([
+const DATA_COLUMNS = [
   { name: 'pos', label: 'Pos' },
   { name: 'team', label: 'Team' },
   { name: 'played', label: 'Played' },
@@ -199,33 +199,22 @@ const DATA_COLUMNS = Object.freeze([
   { name: 'against', label: 'Against' },
   { name: 'difference', label: 'Difference' },
   { name: 'points', label: 'Points' },
-]);
+];
 
-// Simple cache with size limit
-const createCache = (maxSize = 50) => {
-  const cache = new Map();
-  return {
-    get(key) {
-      return cache.get(key)
-    },
-    set(key, value) {
-      if (cache.size >= maxSize) {
-        const firstKey = cache.keys().next().value;
-        cache.delete(firstKey);
-      }
-      cache.set(key, value);
-    },
-    clear() {
-      cache.clear()
-    }
-  };
-};
-
-const cache = createCache();
+const AGE_GROUPS = [
+  '12 Years Below',
+  '13 to 15',
+  '16 to 18',
+  '19 to 24',
+  '25 and above'
+];
 
 export default {
   name: 'ladders',
-  components: { VueTable, LoadingAnimation },
+  components: {
+    VueTable,
+    LoadingAnimation
+  },
   
   data() {
     return {
@@ -246,62 +235,42 @@ export default {
       totalPages: 0,
       totalItems: 0,
       from: 0,
-      to: 0,
-      initialLoad: false,
-      pendingRequests: new Set()
+      to: 0
     }
   },
 
   computed: {
     pageSEO() {
       return {
-        title: 'Rugby Ladders & Standings - TFW9s',
-        description: 'View latest rugby tournament ladders, team standings, match results and statistics. Track your team\'s performance across different age groups and competitions.'
+        title: 'Ladders - TFW9s',
+        description: ''
       };
     },
 
     formattedEvents() {
-      const cacheKey = `formattedEvents-${this.events.length}`;
-      const cached = cache.get(cacheKey);
-      if (cached) return cached;
-
-      const result = [];
-      for (let i = 0; i < this.events.length; i++) {
-        const event = this.events[i];
-        if (!event.event_date) continue;
-        
-        const ageGroupName = (event.agegroup && event.agegroup.name) ?
-          event.agegroup.name : '';
+      return this.events.map(event => {
+        const ageGroupName = event.agegroup && event.agegroup.name ? event.agegroup.name : '';
         const eventName = event.name || '';
-        const date = new Date(event.event_date);
         
-        if (isNaN(date.getTime())) continue;
-
-        const series = (event.eventmatch && Array.isArray(event.eventmatch)) ?
-          event.eventmatch.map(em => (em.team1 && em.team1.series_id)).filter(Boolean) :
-          [];
-
-        result.push({
+        return {
           text: `${eventName} ${this.replaceUnderWithU(ageGroupName)}`,
           value: event.id,
           agegroup: event.agegroup_id,
-          series,
-          date,
-        });
-      }
-
-      cache.set(cacheKey, result);
-      return result;
+          series: event.eventmatch ?
+            event.eventmatch.map(em => em.team1 && em.team1.series_id) : [],
+          date: event.event_date ? new Date(event.event_date) : null,
+        };
+      }).filter(event => event.date && !isNaN(event.date));
     },
 
     formattedAgeGroup() {
-      return this.ageGroupList.map(agegroup => 
+      return (this.ageGroupList || []).map(agegroup => 
         ({ text: agegroup.name, value: agegroup.id })
       );
     },
 
     formattedSeries() {
-      return this.seriesList.map(series => 
+      return (this.seriesList || []).map(series => 
         ({ text: series.name, value: series.id })
       );
     },
@@ -311,22 +280,16 @@ export default {
         return this.formattedEvents;
       }
 
-      const cacheKey = `filteredEvents-${this.selectedYear}-
-        ${this.selectedAgeGroup}-${this.selectedSeries}`;
-      const cached = cache.get(cacheKey);
-      if (cached) return cached;
-
-      const result = this.formattedEvents.filter(event => {
-        const yearMatch = event.date.getFullYear() === this.selectedYear;
+      return this.formattedEvents.filter(event => {
+        const yearMatch = event.date && event.date.getFullYear() === this.selectedYear;
         const ageGroupMatch = event.agegroup === this.selectedAgeGroup;
         
-        return this.selectedSeries ?
-          yearMatch && ageGroupMatch && event.series.includes(this.selectedSeries):
-          yearMatch && ageGroupMatch;
+        if (this.selectedSeries) {
+          return yearMatch && ageGroupMatch && event.series.includes(this.selectedSeries);
+        }
+        
+        return yearMatch && ageGroupMatch;
       });
-
-      cache.set(cacheKey, result);
-      return result;
     },
 
     filteredRound() {
@@ -334,62 +297,37 @@ export default {
         return [ MATCH_ROUND_OPTIONS[0] ];
       }
 
-      const cacheKey = `filteredRound-${this.team.length}`;
-      const cached = cache.get(cacheKey);
-      if (cached) return cached;
+      const rounds = this.team.map(team => team.round).filter(Boolean);
+      const uniqueRounds = [ ...new Set(rounds) ];
+      uniqueRounds.unshift(null);
 
-      const rounds = new Set();
-      for (let i = 0; i < this.team.length; i++) {
-        if (this.team[i].round) {
-          rounds.add(this.team[i].round);
-        }
-      }
-      
-      const uniqueRounds = [ null, ...rounds ];
-      const result = MATCH_ROUND_OPTIONS.filter(option =>
+      return MATCH_ROUND_OPTIONS.filter(option =>
         uniqueRounds.includes(option.value)
       );
-
-      cache.set(cacheKey, result);
-      return result;
     },
 
     filteredTeamsByRound() {
-      if (!this.selectedRound) return this.team;
-      
-      const cacheKey = `filteredTeams-${this.selectedRound}`;
-      const cached = cache.get(cacheKey);
-      if (cached) return cached;
-
-      const result = this.team.filter(team => {
-        return team.event && team.event.round === this.selectedRound;
-      });
-      cache.set(cacheKey, result);
-      return result;
+      if (!this.selectedRound) {
+        return this.team;
+      }
+      return this.team.filter(team => team.event && team.event.round === this.selectedRound);
     },
 
     formattedYears() {
-      const cacheKey = `formattedYears-${this.events.length}`;
-      const cached = cache.get(cacheKey);
-      if (cached) return cached;
+      const years = this.events
+        .map(event => {
+          if (!event.event_date) return null;
+          const eventDate = new Date(event.event_date);
+          return isNaN(eventDate) ? null : eventDate.getFullYear();
+        })
+        .filter(Boolean);
 
-      const years = new Set();
-      for (let i = 0; i < this.events.length; i++) {
-        const event = this.events[i];
-        if (event.event_date) {
-          const year = new Date(event.event_date).getFullYear();
-          if (!isNaN(year)) years.add(year);
-        }
-      }
-
-      const uniqueYears = Array.from(years).sort((a, b) => b - a);
-      const result = uniqueYears.map(year => ({
+      const uniqueYears = [ ...new Set(years) ].sort();
+      
+      return uniqueYears.map(year => ({
         text: `Year ${year}`,
         value: year
       }));
-
-      cache.set(cacheKey, result);
-      return result;
     },
 
     dataColumns() {
@@ -398,6 +336,20 @@ export default {
 
     matchRoundOption() {
       return MATCH_ROUND_OPTIONS;
+    },
+
+    eventYears() {
+      return [
+        '2020',
+        '2021',
+        '2022',
+        '2023',
+        '2024'
+      ];
+    },
+
+    ageGroup() {
+      return AGE_GROUPS;
     }
   },
 
@@ -411,12 +363,34 @@ export default {
       immediate: true
     },
 
-    selectedYear: 'handleFilterChangeDebounced',
-    selectedAgeGroup: 'handleFilterChangeDebounced', 
-    selectedSeries: 'handleFilterChangeDebounced',
+    selectedYear: {
+      handler(year) {
+        if (year && this.isLoaded) {
+          this.handleFilterChange();
+        }
+      }
+    },
 
-    selectedRound() {
-      this.calculateAllTeamStats();
+    selectedAgeGroup: {
+      handler() {
+        if (this.isLoaded) {
+          this.handleFilterChange();
+        }
+      }
+    },
+
+    selectedSeries: {
+      handler() {
+        if (this.isLoaded) {
+          this.handleFilterChange();
+        }
+      }
+    },
+
+    selectedRound: {
+      handler() {
+        this.calculateAllTeamStats();
+      }
     }
   },
 
@@ -426,16 +400,14 @@ export default {
 
   methods: {
     async initializeData() {
-      this.isLoading = true;
       try {
-        await this.retrieveEvents();
-        await Promise.allSettled([
+        await Promise.all([
           this.retrieveAgeGroups(),
           this.retrieveSeries(),
+          this.retrieveEvents()
         ]);
       } catch (error) {
         console.error('Error initializing data:', error);
-      } finally {
         this.isLoading = false;
       }
     },
@@ -448,63 +420,57 @@ export default {
       }
 
       const eventDate = new Date(firstEvent.event_date);
-      if (isNaN(eventDate.getTime())) return;
+      if (isNaN(eventDate)) {
+        console.error('Invalid event date format');
+        return;
+      }
 
       this.selectedYear = eventDate.getFullYear();
       this.selectedAgeGroup = firstEvent.agegroup_id;
-      
       const eventMatch = firstEvent.eventmatch;
       const firstMatch = eventMatch && eventMatch[0];
       const team1 = firstMatch && firstMatch.team1;
       this.selectedSeries = team1 && team1.series_id;
       
-      this.initialLoad = true;
       this.retrieveTeamPosition();
-    },
-
-    handleFilterChangeDebounced() {
-      clearTimeout(this._debounceTimer);
-      this._debounceTimer = setTimeout(() => {
-        if (this.initialLoad || this.isLoaded) {
-          this.handleFilterChange();
-        }
-      }, 200);
     },
 
     handleFilterChange() {
-      this.pendingRequests.forEach(controller => controller.abort());
-      this.pendingRequests.clear();
-
       this.isLoading = true;
       this.page = 1;
       this.selectedRound = null;
-      this.retrieveTeamPosition();
+      
+      // Debounce the API call to prevent rapid successive calls
+      clearTimeout(this._filterTimeout);
+      this._filterTimeout = setTimeout(() => {
+        this.retrieveTeamPosition();
+      }, 300);
     },
 
     getUniqueTeamIds() {
-      const teams = this.filteredTeamsByRound;
-      const cacheKey = `uniqueTeamIds-${teams.length}`;
-      const cached = cache.get(cacheKey);
-      if (cached) return cached;
-
-      const teamIds = new Set();
-      for (let i = 0; i < teams.length; i++) {
-        teamIds.add(teams[i].team_id);
-      }
-      const result = Array.from(teamIds);
-      
-      cache.set(cacheKey, result);
-      return result;
+      return [ ...new Set(this.filteredTeamsByRound.map(event => event.team_id)) ];
     },
 
     calculateTeamStats(teamId) {
-      const teamEvents = this.filteredTeamsByRound.filter(event => 
-        event.team_id === teamId
-      );
-      if (teamEvents.length === 0) return null;
+      const teamEvents = this.filteredTeamsByRound.filter(event => event.team_id === teamId);
       
-      const stats = {
-        /* eslint-disable camelcase */
+      if (teamEvents.length === 0) {
+        return null;
+      }
+      /* eslint-disable camelcase */
+      const stats = teamEvents.reduce((acc, event) => ({
+        team_id: teamId,
+        team: event.team,
+        played: acc.played + (event.win + event.loss + event.draw),
+        win: acc.win + event.win,
+        loss: acc.loss + event.loss,
+        draw: acc.draw + event.draw,
+        for: acc.for + event.for,
+        against: acc.against + event.against,
+        // Calculate difference as For - Against for each event and accumulate
+        difference: acc.difference + (event.for - event.against),
+        points: acc.points + event.points,
+      }), {
         team_id: teamId,
         team: teamEvents[0].team,
         played: 0,
@@ -513,42 +479,30 @@ export default {
         draw: 0,
         for: 0,
         against: 0,
-        difference: 0,
+        difference: 0, // Start with 0, not with event.difference
         points: 0,
-      };
-
-      for (let i = 0; i < teamEvents.length; i++) {
-        const event = teamEvents[i];
-        stats.played += event.win + event.loss + event.draw;
-        stats.win += event.win;
-        stats.loss += event.loss;
-        stats.draw += event.draw;
-        stats.for += event.for;
-        stats.against += event.against;
-        stats.difference += (event.for - event.against);
-        stats.points += event.points;
-      }
+      });
 
       return stats;
     },
 
     calculateAllTeamStats() {
       const uniqueTeamIds = this.getUniqueTeamIds();
-      const stats = [];
-      
-      for (let i = 0; i < uniqueTeamIds.length; i++) {
-        const teamStats = this.calculateTeamStats(uniqueTeamIds[i]);
-        if (teamStats) stats.push(teamStats);
-      }
+      const stats = uniqueTeamIds
+        .map(teamId => this.calculateTeamStats(teamId))
+        .filter(Boolean);
 
-      stats.sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points;
-        if (b.difference !== a.difference) return b.difference - a.difference;
+      const sortedData = stats.sort((a, b) => {
+        if (b.points !== a.points) {
+          return b.points - a.points;
+        }
+        if (b.difference !== a.difference) {
+          return b.difference - a.difference;
+        }
         return a.team.localeCompare(b.team);
       });
 
-      // Update reactively in one operation
-      this.allTeamStats = stats.map((team, index) => ({
+      this.allTeamStats = sortedData.map((team, index) => ({
         ...team,
         pos: index + 1,
       }));
@@ -559,40 +513,32 @@ export default {
     },
 
     buildQueryParams(additionalParams = {}) {
-      const params = {
+      const baseParams = {
         q: this.query,
-        sort: 'points', 
+        sort: 'points',
         page: this.page,
         agegroup: this.selectedAgeGroup,
         series: this.selectedSeries,
         ...additionalParams
       };
 
-      // Build URLSearchParams directly for better performance
-      const searchParams = new URLSearchParams();
-      Object.keys(params).forEach(key => {
-        if (params[key] != null) {
-          searchParams.append(key, params[key]);
+      // Remove null/undefined values
+      Object.keys(baseParams).forEach(key => {
+        if (baseParams[key] == null) {
+          delete baseParams[key];
         }
       });
 
-      return searchParams.toString();
+      return new URLSearchParams(baseParams).toString();
     },
 
     async retrieveTeamPosition() {
-      // Create abort controller for this request
-      const controller = new AbortController();
-      this.pendingRequests.add(controller);
-
       this.isLoading = true;
       
       try {
         const queryString = this.buildQueryParams();
-        const response = await this.$axios.$get(`v1/teampositions?${queryString}`,
-          { signal: controller.signal }
-        );
+        const response = await this.$axios.$get(`v1/teampositions?${queryString}`);
         
-        // Process data in batches for large datasets
         this.team = response.data.teamPositions.map((team, index) => ({
           ...team,
           team: (team.team && team.team.name) || 'Unknown Team',
@@ -607,13 +553,9 @@ export default {
         
         this.calculateAllTeamStats();
       } catch (error) {
-        if (error.name !== 'CanceledError') {
-          console.error('Error retrieving team positions:', error);
-        }
+        console.error('Error retrieving team positions:', error);
       } finally {
-        this.pendingRequests.delete(controller);
         this.isLoaded = true;
-        this.initialLoad = false;
         this.isLoading = false;
       }
     },
@@ -665,11 +607,8 @@ export default {
   },
 
   beforeDestroy() {
-    clearTimeout(this._debounceTimer);
-    // Abort all pending requests
-    this.pendingRequests.forEach(controller => controller.abort());
-    this.pendingRequests.clear();
-    cache.clear();
+    // Clean up any timeouts
+    clearTimeout(this._filterTimeout);
   }
 }
 </script>
