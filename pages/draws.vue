@@ -212,6 +212,24 @@
                 </div>
               </div>
 
+              <!-- Match Round -->
+              <div class="group">
+                <label class="
+                    flex items-center text-sm font-semibold text-gray-900 mb-3
+                  ">
+                  <i class="ri-loop-right-line mr-2 text-green-500"></i>
+                  Match Round
+                </label>
+                <div class="relative">
+                  <VSelect
+                    v-model="selectedRound"
+                    :items="filteredRound"
+                    label="Match Round"
+                    solo
+                  />
+                </div>
+              </div>
+
               <!-- Teams -->
               <div class="group">
                 <label class="
@@ -557,7 +575,9 @@ export default {
       },
       searchTeamName: '',
       matchRoundOption: [
+        { text: 'Overall Standings', value: null },
         { text: 'Round', value: 'round' },
+        { text: 'Quater', value: 'quater' },
         { text: 'Semi', value: 'semi' },
         { text: 'Final', value: 'final' },
         { text: 'Pool A Round', value: 'pool_a_round' },
@@ -614,6 +634,7 @@ export default {
       selectedRegion: 8,
       selectedAgeGroup: 12,
       selectedYear: 2025,
+      selectedRound: null,
       AgeGroupList: [],
       EventList: [],
       RegionList: [],
@@ -722,6 +743,9 @@ export default {
         });
       }
     },
+    filteredRound() {
+      return this.matchRoundOption;
+    }
   },
   watch: {
     matchList: {
@@ -734,6 +758,9 @@ export default {
               this.selectedYear = eventDate.getFullYear();
               this.selectedRegion = firstEvent.region_id;
               this.selectedAgeGroup = firstEvent.agegroup_id;
+              if (!this.selectedRound) {
+                this.selectedRound = firstEvent.event.round
+              }
               this.retrieveEventMatch()
             } else {
               console.error('Invalid event date format');
@@ -755,6 +782,7 @@ export default {
            */
           this.selectedAgeGroup = this.formattedAgeGroup[0].value || null;
           this.selectedRegion = this.formattedRegions[0].value || null;
+          this.selectedRound = null
         }
       },
       immediate: true,
@@ -775,11 +803,22 @@ export default {
           this.page = 1
           this.retrieveEventMatch();
         } else if (this.isLoaded) {
-          this.team = []
+          this.matchList = []
           this.totalPages = 0
         }
       },
       immediate: true,
+    },
+    selectedRound: {
+      handler(newEvent) {
+        if (newEvent && this.isLoaded) {
+          this.page = 1
+          this.retrieveEventMatch()
+        } else if (this.isLoaded) {
+          this.matchList = []
+          this.totalPages = 0
+        }
+      }
     },
     searchTeamName(newVal) {
       if (newVal) {
@@ -849,6 +888,7 @@ export default {
         agegroup: this.selectedAgeGroup,
         year: this.selectedYear,
         page: this.page,
+        round: this.selectedRound
       };
 
       Object.keys(query).forEach((key) => {
