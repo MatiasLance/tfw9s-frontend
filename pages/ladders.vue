@@ -106,8 +106,16 @@
             </div>
           </span>
 
+          <section v-if="!isLoaded" class="w-full">
+            <LoadingAnimation
+              :is-loading="true"
+              loading-title="Ladders"
+            />
+          </section>
+
+
           <section
-            v-if="allTeamStats.length === 0 && !isLoading"
+            v-else-if="allTeamStats.length === 0"
             class="col-span-1 flex h-80 flex-col items-center
                   justify-center rounded-2xl bg-gradient-to-br
                   from-green-50 to-gray-100 p-8 text-center
@@ -154,10 +162,7 @@
               class="border"
             />
           </section>
-          <LoadingAnimation
-          :is-loading="isLoading"
-          loading-title="Ladders"
-          />
+
         </div>
       </div>
     </section>
@@ -229,7 +234,7 @@ export default {
       selectedRound: null,
       selectedYear: null,
       isLoaded: false,
-      isLoading: false,
+      isLoading: true,
       page: 1,
       perPage: 10,
       totalPages: 0,
@@ -401,6 +406,7 @@ export default {
   methods: {
     async initializeData() {
       try {
+        this.isLoading = true
         await Promise.all([
           this.retrieveAgeGroups(),
           this.retrieveSeries(),
