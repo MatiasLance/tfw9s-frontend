@@ -111,25 +111,25 @@
           </span>
 
           <!--
-          <section v-if="totalPages > 0" class="my-8 col-span-3" data-aos="zoom-in">
+            <section v-if="totalPages > 0" class="my-8 col-span-3" data-aos="zoom-in">
             <div class="flex flex-wrap items-center justify-between gap-4">
-              <div class="flex items-center gap-3">
-                <span class="text-gray-300">
-                  Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
-                  of <span class="font-bold text-green-400">{{ totalItems }}</span> matches
-                </span>
-              </div>
-              <BasePagination
-                :active-page="page"
-                :total-pages="totalPages"
-                @change="setPage"
-              />
+            <div class="flex items-center gap-3">
+            <span class="text-gray-300">
+            Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+            of <span class="font-bold text-green-400">{{ totalItems }}</span> matches
+            </span>
             </div>
-          </section>
+            <BasePagination
+            :active-page="page"
+            :total-pages="totalPages"
+            @change="setPage"
+            />
+            </div>
+            </section>
           -->
 
           <section
-          v-if="!isLoaded && isLoading"
+          v-if="isLoading"
           class="w-full"
           >
             <LoadingAnimation
@@ -249,7 +249,6 @@ export default {
       selectedSeries: 9,
       selectedRound: null,
       selectedYear: 2025,
-      isLoaded: false,
       isLoading: true,
       page: 1,
       perPage: 10,
@@ -334,7 +333,7 @@ export default {
 
     selectedYear: {
       handler(year) {
-        if (year && this.isLoaded) {
+        if (year && !this.isLoading) {
           this.handleFilterChange();
         }
       }
@@ -342,7 +341,7 @@ export default {
 
     selectedAgeGroup: {
       handler() {
-        if (this.isLoaded) {
+        if (!this.isLoading) {
           this.handleFilterChange();
         }
       }
@@ -350,7 +349,7 @@ export default {
 
     selectedSeries: {
       handler() {
-        if (this.isLoaded) {
+        if (!this.isLoading) {
           this.handleFilterChange();
         }
       }
@@ -359,7 +358,7 @@ export default {
     selectedRound: {
       handler() {
         this.calculateAllTeamStats();
-        // if (this.isLoaded) {
+        // if (!this.isLoading) {
         //   this.handleFilterChange();
         // }
       }
@@ -533,7 +532,6 @@ export default {
       } catch (error) {
         console.error('Error retrieving team positions:', error);
       } finally {
-        this.isLoaded = true;
         this.isLoading = false;
       }
     },
