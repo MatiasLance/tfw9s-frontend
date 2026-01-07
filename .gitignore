@@ -96,3 +96,6 @@ sw.*
 **:Zone.Identifier
 .bun
 bun.lockb
+
+pages/ladders-old-v1.vue
+pages/ladders-old-v2.vue

@@ -80,14 +80,18 @@
                           text-white bg-green-800 px-3 py-1 rounded-t md:block">
                 Event
               </span>
+              
               <VSelect
                 v-model="selectedSeries"
                 :items="formattedSeries"
+                item-text="text"
+                item-value="value"
                 label="Select Event"
                 solo
-                cclass="w-full rounded-lg shadow-lg
+                class="w-full rounded-lg shadow-lg
                 hover:border-green-400 transition-all"
               />
+             
             </div>
             
             <div class="col-span-1 md:col-span-2">
@@ -106,7 +110,28 @@
             </div>
           </span>
 
-          <section v-if="!isLoaded" class="w-full">
+          <!--
+          <section v-if="totalPages > 0" class="my-8 col-span-3" data-aos="zoom-in">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <span class="text-gray-300">
+                  Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+                  of <span class="font-bold text-green-400">{{ totalItems }}</span> matches
+                </span>
+              </div>
+              <BasePagination
+                :active-page="page"
+                :total-pages="totalPages"
+                @change="setPage"
+              />
+            </div>
+          </section>
+          -->
+
+          <section
+          v-if="!isLoaded && isLoading"
+          class="w-full"
+          >
             <LoadingAnimation
               :is-loading="true"
               loading-title="Ladders"
@@ -206,14 +231,6 @@ const DATA_COLUMNS = [
   { name: 'points', label: 'Points' },
 ];
 
-const AGE_GROUPS = [
-  '12 Years Below',
-  '13 to 15',
-  '16 to 18',
-  '19 to 24',
-  '25 and above'
-];
-
 export default {
   name: 'ladders',
   components: {
@@ -225,14 +242,13 @@ export default {
     return {
       allTeamStats: [],
       team: [],
-      events: [],
       ageGroupList: [],
       seriesList: [],
       selectedEvent: null,
-      selectedAgeGroup: null,
-      selectedSeries: null,
+      selectedAgeGroup: 7,
+      selectedSeries: 9,
       selectedRound: null,
-      selectedYear: null,
+      selectedYear: 2025,
       isLoaded: false,
       isLoading: true,
       page: 1,
@@ -252,22 +268,6 @@ export default {
       };
     },
 
-    formattedEvents() {
-      return this.events.map(event => {
-        const ageGroupName = event.agegroup && event.agegroup.name ? event.agegroup.name : '';
-        const eventName = event.name || '';
-        
-        return {
-          text: `${eventName} ${this.replaceUnderWithU(ageGroupName)}`,
-          value: event.id,
-          agegroup: event.agegroup_id,
-          series: event.eventmatch ?
-            event.eventmatch.map(em => em.team1 && em.team1.series_id) : [],
-          date: event.event_date ? new Date(event.event_date) : null,
-        };
-      }).filter(event => event.date && !isNaN(event.date));
-    },
-
     formattedAgeGroup() {
       return (this.ageGroupList || []).map(agegroup => 
         ({ text: agegroup.name, value: agegroup.id })
@@ -278,23 +278,6 @@ export default {
       return (this.seriesList || []).map(series => 
         ({ text: series.name, value: series.id })
       );
-    },
-
-    filteredEvents() {
-      if (!this.selectedYear || !this.selectedAgeGroup) {
-        return this.formattedEvents;
-      }
-
-      return this.formattedEvents.filter(event => {
-        const yearMatch = event.date && event.date.getFullYear() === this.selectedYear;
-        const ageGroupMatch = event.agegroup === this.selectedAgeGroup;
-        
-        if (this.selectedSeries) {
-          return yearMatch && ageGroupMatch && event.series.includes(this.selectedSeries);
-        }
-        
-        return yearMatch && ageGroupMatch;
-      });
     },
 
     filteredRound() {
@@ -309,6 +292,7 @@ export default {
       return MATCH_ROUND_OPTIONS.filter(option =>
         uniqueRounds.includes(option.value)
       );
+      // return MATCH_ROUND_OPTIONS;
     },
 
     filteredTeamsByRound() {
@@ -319,54 +303,34 @@ export default {
     },
 
     formattedYears() {
-      const years = this.events
-        .map(event => {
-          if (!event.event_date) return null;
-          const eventDate = new Date(event.event_date);
-          return isNaN(eventDate) ? null : eventDate.getFullYear();
-        })
-        .filter(Boolean);
+      const currentYear = new Date().getFullYear();
 
-      const uniqueYears = [ ...new Set(years) ].sort();
-      
-      return uniqueYears.map(year => ({
-        text: `Year ${year}`,
-        value: year
-      }));
+      return [
+        {
+          text: `Year ${currentYear - 1}`,
+          value: currentYear - 1
+        },
+        {
+          text: `Year ${currentYear}`,
+          value: currentYear
+        }
+      ];
     },
 
     dataColumns() {
       return DATA_COLUMNS;
     },
-
-    matchRoundOption() {
-      return MATCH_ROUND_OPTIONS;
-    },
-
-    eventYears() {
-      return [
-        '2020',
-        '2021',
-        '2022',
-        '2023',
-        '2024'
-      ];
-    },
-
-    ageGroup() {
-      return AGE_GROUPS;
-    }
   },
 
   watch: {
-    events: {
-      handler(events) {
-        if (events && events.length > 0) {
-          this.initializeSelections();
-        }
-      },
-      immediate: true
-    },
+    // events: {
+    //   handler(events) {
+    //     if (events && events.length > 0) {
+    //       this.initializeSelections();
+    //     }
+    //   },
+    //   immediate: true
+    // },
 
     selectedYear: {
       handler(year) {
@@ -395,8 +359,17 @@ export default {
     selectedRound: {
       handler() {
         this.calculateAllTeamStats();
+        // if (this.isLoaded) {
+        //   this.handleFilterChange();
+        // }
       }
-    }
+    },
+
+    totalPages() {
+      if (this.page > this.totalPages) {
+        this.setPage(1)
+      }
+    },
   },
 
   created() {
@@ -410,7 +383,7 @@ export default {
         await Promise.all([
           this.retrieveAgeGroups(),
           this.retrieveSeries(),
-          this.retrieveEvents()
+          this.retrieveTeamPosition()
         ]);
       } catch (error) {
         console.error('Error initializing data:', error);
@@ -418,35 +391,34 @@ export default {
       }
     },
 
-    initializeSelections() {
-      const firstEvent = this.events[0];
-      if (!firstEvent || !firstEvent.event_date) {
-        console.warn('No valid events found');
-        return;
-      }
+    // initializeSelections() {
+    //   const firstEvent = this.events[0];
+    //   if (!firstEvent || !firstEvent.event_date) {
+    //     console.warn('No valid events found');
+    //     return;
+    //   }
 
-      const eventDate = new Date(firstEvent.event_date);
-      if (isNaN(eventDate)) {
-        console.error('Invalid event date format');
-        return;
-      }
+    //   const eventDate = new Date(firstEvent.event_date);
+    //   if (isNaN(eventDate)) {
+    //     console.error('Invalid event date format');
+    //     return;
+    //   }
 
-      this.selectedYear = eventDate.getFullYear();
-      this.selectedAgeGroup = firstEvent.agegroup_id;
-      const eventMatch = firstEvent.eventmatch;
-      const firstMatch = eventMatch && eventMatch[0];
-      const team1 = firstMatch && firstMatch.team1;
-      this.selectedSeries = team1 && team1.series_id;
+    //   this.selectedYear = eventDate.getFullYear();
+    //   this.selectedAgeGroup = firstEvent.agegroup_id;
+    //   const eventMatch = firstEvent.eventmatch;
+    //   const firstMatch = eventMatch && eventMatch[0];
+    //   const team1 = firstMatch && firstMatch.team1;
+    //   this.selectedSeries = team1 && team1.series_id;
       
-      this.retrieveTeamPosition();
-    },
+    //   this.retrieveTeamPosition();
+    // },
 
     handleFilterChange() {
       this.isLoading = true;
       this.page = 1;
       this.selectedRound = null;
-      
-      // Debounce the API call to prevent rapid successive calls
+
       clearTimeout(this._filterTimeout);
       this._filterTimeout = setTimeout(() => {
         this.retrieveTeamPosition();
@@ -485,7 +457,7 @@ export default {
         draw: 0,
         for: 0,
         against: 0,
-        difference: 0, // Start with 0, not with event.difference
+        difference: 0,
         points: 0,
       });
 
@@ -512,10 +484,8 @@ export default {
         ...team,
         pos: index + 1,
       }));
-    },
 
-    replaceUnderWithU(str) {
-      return str ? str.replace(/^Under \b/, 'U') : '';
+      console.log(this.allTeamStats);
     },
 
     buildQueryParams(additionalParams = {}) {
@@ -525,6 +495,8 @@ export default {
         page: this.page,
         agegroup: this.selectedAgeGroup,
         series: this.selectedSeries,
+        year: this.selectedYear,
+        round: this.selectedRound,
         ...additionalParams
       };
 
@@ -543,9 +515,9 @@ export default {
       
       try {
         const queryString = this.buildQueryParams();
-        const response = await this.$axios.$get(`v1/teampositions?${queryString}`);
-        
-        this.team = response.data.teamPositions.map((team, index) => ({
+        const response = await this.$axios.$get(`v1/teampositions/list?${queryString}`);
+
+        this.team = response.data.all_positions.map((team, index) => ({
           ...team,
           team: (team.team && team.team.name) || 'Unknown Team',
           round: (team.event && team.event.round) || null,
@@ -566,17 +538,6 @@ export default {
       }
     },
 
-    async retrieveEvents() {
-      try {
-        const queryString = this.buildQueryParams({ sort: 'a_to_z' });
-        const response = await this.$axios.$get(`v1/events?${queryString}`);
-        this.events = response.data.events || [];
-      } catch (error) {
-        console.error('Error retrieving events:', error);
-        this.events = [];
-      }
-    },
-
     async retrieveAgeGroups() {
       try {
         const queryString = this.buildQueryParams();
@@ -590,13 +551,24 @@ export default {
 
     async retrieveSeries() {
       try {
-        const response = await this.$axios.$get('v1/series');
-        this.seriesList = response.data.series || [];
+        const { series } = await this.$axios.$get('v1/series/names')
+
+        this.seriesList = series ?
+          Object.entries(series).map(([ id, name ]) => ({
+            id: Number(id),
+            name
+          })) : []
+
       } catch (error) {
-        console.error('Error retrieving series:', error);
-        this.seriesList = [];
+        console.error('Error retrieving series:', error)
+        this.seriesList = []
       }
-    }
+    },
+
+    // setPage(page) {
+    //   this.page = page
+    //   this.retrieveTeamPosition()
+    // }
   },
 
   head() {
@@ -613,7 +585,6 @@ export default {
   },
 
   beforeDestroy() {
-    // Clean up any timeouts
     clearTimeout(this._filterTimeout);
   }
 }
