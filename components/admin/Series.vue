@@ -130,7 +130,7 @@
                 </div>
                 
                 <!-- Quick Actions -->
-                <div class="flex gap-2">
+                <div class="flex gap-2 mr-2">
                   <!-- Pause/Resume Toggle -->
                   <button
                     type="button"
@@ -707,7 +707,7 @@ export default {
       const queryString = new URLSearchParams(query).toString()
 
       this.$axios
-        .$get(`v1/series?${queryString}`)
+        .$get(`v1/series/paginated?${queryString}`)
         .then((response) => {
           this.seriesList = response.data.series.map(event => {
             return {

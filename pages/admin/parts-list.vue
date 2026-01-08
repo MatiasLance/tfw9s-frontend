@@ -258,15 +258,15 @@ export default {
       ],
     };
   },
-  created() {
-    this.retrieveRegions()
+  mounted() {
+    // this.retrieveRegions()
     this.retrieveFields()
     this.retrieveAgeGroups()
     this.retrieveManagers()
     this.retrieveTeams()
     this.retrieveSeries()
     this.retrieveEvents()
-    this.retrievePlayers()
+    // this.retrievePlayers()
   },
   methods: {
     getTabIcon(tabValue) {
@@ -283,27 +283,6 @@ export default {
     },
     setActiveTab(tab) {
       this.activeTab = tab;
-    },
-    retrieveRegions() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/regions/all?${queryString}`)
-        .then((response) => {
-          this.RegionList = response.data.regions;
-        })
     },
     retrieveFields() {
       const query = {
@@ -443,28 +422,39 @@ export default {
           });
         })
     },
-    retrievePlayers() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/players?${queryString}`)
-        .then((response) => {
-          this.PlayersList = response.data.players;
-        })
-    },
   },
+
+  async regionList({ $axios, query }) {
+    const params = {
+      q: query.q || null,
+      sort: 'a_to_z',
+      page: query.page || 1,
+    }
+
+    Object.keys(params).forEach(
+      key => params[key] == null && delete params[key]
+    )
+
+    const response = await $axios.$get('v1/regions/all', { params })
+
+    return { RegionList: response.data.regions }
+  },
+
+  async playerList({ $axios, query }) {
+    const params = {
+      q: query.q || null,
+      sort: 'a_to_z',
+      page: query.page || 1,
+    }
+
+    Object.keys(params).forEach(
+      key => params[key] == null && delete params[key]
+    )
+
+    const response = await $axios.$get('v1/players/all', { params })
+
+    return { PlayersList: response.data.players }
+  }
 };
 </script>
 

@@ -109,7 +109,7 @@
               />
             </div>
 
-            <div class="col-span-1">
+            <div class="col-span-1 mb-10">
               <VBtn
                 color="green"
                 class="w-full h-[56px]

@@ -445,6 +445,7 @@ export default {
         .$get(`v1/series/${Id}`)
         .then((response) => {
           const series = response.data.series;
+          console.log(series);
 
           this.article = {
             ...series,
@@ -510,15 +511,14 @@ export default {
 
     },
     retrieveToggleTaxControl() {
-      const id = 1;
-      const endpoint = `v1/toogletax/retrieve/${id}`
+      const endpoint = 'v1/toggletax'
       this.$axios
         .$get(endpoint)
         .then((response) => {
-          this.toggleControl1 = response.me.toggleControl1
-          this.toggleControl2 = response.me.toggleControl2
-          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
-          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
+          this.toggleControl1 = response.toggleControl1
+          this.toggleControl2 = response.toggleControl2
+          this.$store.commit('master/setToggleControl1', response.toggleControl1)
+          this.$store.commit('master/setToggleControl2', response.toggleControl2)
         })
         .catch((err) => {
           this.$oruga.notification.open({
@@ -532,10 +532,9 @@ export default {
     },
     async retrieveTaxValue() {
       try {
-        const id = 1
-        const response = await this.$axios.$get(`v1/tax/${id}`)
-        this.addTaxOnCartPrice = response.me.addTaxValue
-        this.includeTaxOnCartPrice = response.me.includeTaxValue
+        const response = await this.$axios.$get('v1/tax')
+        this.addTaxOnCartPrice = response.addTaxValue
+        this.includeTaxOnCartPrice = response.includeTaxValue
         const taxAmount = this.toggleControl1 ?
           this.addTaxOnCartPrice :
           (this.toggleControl2 ? this.includeTaxOnCartPrice : 0);

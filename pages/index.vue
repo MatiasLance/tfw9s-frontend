@@ -27,8 +27,9 @@
         <div class="absolute inset-0 bg-gradient-to-b from-green-900/5 to-transparent 
                     z-0"></div>
         <HeroSection
-          :blurb="contentData.content"
-          :image="contentData.image"
+          v-if="blurb && image"
+          :blurb="blurb"
+          :image="image"
         />
       </div>
 
@@ -55,13 +56,7 @@ export default {
   },
   mixins: [ aosMixin ],
   data() {
-    return {
-      contentData: {
-        image: [],
-        content: '<p></p>'
-      },
-      isLoading: true
-    }
+    return { contentData: {} }
   },
   head() {
     return {
@@ -93,49 +88,20 @@ export default {
       ]
     }
   },
-  created() {
-    this.retrieveHomePageInfo()
-  },
-  mounted() {
-    this.$nextTick(() => {
-      setTimeout(() => {
-        this.isLoading = false
-      }, 1000)
-    })
-  },
-  methods: {
-    retrieveHomePageInfo() {
+
+  async asyncData({ $axios, error }) {
+    try {
       const id = 1
-      this.isLoading = true
+      const response = await $axios.$get(`v1/homepageinfo/${id}`)
 
-      this.$axios
-        .$get(`v1/homepageinfo/${id}`)
-        .then((response) => {
-          this.contentData.content = response.data.teamFolder.blurb
-          this.contentData.image = response.data.teamFolder.media
-        })
-        .catch((error) => {
-          console.error('Error fetching homepage data:', error)
-          this.handleDataError()
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
-    },
-
-    handleDataError() {
-      // Fallback content
-      this.contentData.content = '<p>Welcome to TFW9s Rugby Club. ' +
-                                'Join our community of passionate rugby players ' +
-                                'and fans. Experience the thrill of the game!</p>'
-      this.contentData.image = [ '/default-rugby-banner.jpg' ]
-    },
-
-    handleImageError(event) {
-      console.warn('Image failed to load:', event.target.src)
-      event.target.src = '/fallback-rugby-image.jpg'
+      return {
+        blurb: response.data.teamFolder.blurb,
+        image: response.data.teamFolder.media
+      }
+    } catch (err) {
+      error({ statusCode: 500, message: 'Failed to load homepage content' })
     }
-  }
+  },
 }
 </script>
 
