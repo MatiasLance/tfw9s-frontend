@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen w-screen bg-[#1A1A1B]">
+  <div class="min-h-screen w-full bg-[#1A1A1B]">
     <!-- Enhanced Header -->
     <BaseHeader
       class="mx-auto max-w-full gap-4 relative overflow-hidden
@@ -94,7 +94,7 @@
              
             </div>
             
-            <div class="col-span-1 md:col-span-2">
+            <div class="col-span-1">
               <span class="hidden w-full align-middle text-lg font-bold
                           text-white bg-green-800 px-3 py-1 rounded-t md:block">
                 Match Round
@@ -107,6 +107,26 @@
                 class="w-full rounded-lg shadow-lg
                 hover:border-green-400 transition-all"
               />
+            </div>
+
+            <div class="col-span-1">
+              <VBtn
+                color="green"
+                class="w-full h-[56px]
+                      rounded-lg
+                      bg-gradient-to-r from-green-600 to-green-500
+                      text-white font-bold tracking-wide
+                      shadow-lg
+                      transition-all duration-200
+                      hover:from-green-500 hover:to-green-400
+                      hover:scale-[1.02]
+                      active:scale-[0.98]"
+                :disabled="isLoading"
+                @click="handleFilterChange"
+              >
+                <i class="ri-play-circle-line mr-2 text-lg"></i>
+                Go
+              </VBtn>
             </div>
           </span>
 
@@ -331,29 +351,29 @@ export default {
     //   immediate: true
     // },
 
-    selectedYear: {
-      handler(year) {
-        if (year && !this.isLoading) {
-          this.handleFilterChange();
-        }
-      }
-    },
+    // selectedYear: {
+    //   handler(year) {
+    //     if (year && !this.isLoading) {
+    //       this.handleFilterChange();
+    //     }
+    //   }
+    // },
 
-    selectedAgeGroup: {
-      handler() {
-        if (!this.isLoading) {
-          this.handleFilterChange();
-        }
-      }
-    },
+    // selectedAgeGroup: {
+    //   handler() {
+    //     if (!this.isLoading) {
+    //       this.handleFilterChange();
+    //     }
+    //   }
+    // },
 
-    selectedSeries: {
-      handler() {
-        if (!this.isLoading) {
-          this.handleFilterChange();
-        }
-      }
-    },
+    // selectedSeries: {
+    //   handler() {
+    //     if (!this.isLoading) {
+    //       this.handleFilterChange();
+    //     }
+    //   }
+    // },
 
     selectedRound: {
       handler() {
@@ -389,29 +409,6 @@ export default {
         this.isLoading = false;
       }
     },
-
-    // initializeSelections() {
-    //   const firstEvent = this.events[0];
-    //   if (!firstEvent || !firstEvent.event_date) {
-    //     console.warn('No valid events found');
-    //     return;
-    //   }
-
-    //   const eventDate = new Date(firstEvent.event_date);
-    //   if (isNaN(eventDate)) {
-    //     console.error('Invalid event date format');
-    //     return;
-    //   }
-
-    //   this.selectedYear = eventDate.getFullYear();
-    //   this.selectedAgeGroup = firstEvent.agegroup_id;
-    //   const eventMatch = firstEvent.eventmatch;
-    //   const firstMatch = eventMatch && eventMatch[0];
-    //   const team1 = firstMatch && firstMatch.team1;
-    //   this.selectedSeries = team1 && team1.series_id;
-      
-    //   this.retrieveTeamPosition();
-    // },
 
     handleFilterChange() {
       this.isLoading = true;

@@ -105,25 +105,13 @@
               />
           </div>
 
+          <LoadingAnimation
+          :is-loading="isLoading"
+          loading-title="Results"
+          />
+
           <section
-          v-if="isLoading"
-          class="
-          col-span-1
-          flex h-60
-          items-center
-          justify-center
-          md:col-span-3"
-          >
-            <VProgressCircular
-              :size="200"
-              :width="15"
-              color="green"
-              indeterminate
-            >
-            </VProgressCircular>
-          </section>
-          <section
-          v-else
+          v-if="!isLoading"
           class="relative col-span-1 md:col-span-3"
           >
           
@@ -166,12 +154,14 @@ import _debounce from 'lodash/debounce';
 import CustomVueTable from '~/components/tables/CustomVueTable.vue';
 import ManageResultModal from '~/components/modals/ManageResultModal.vue';
 import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
+import LoadingAnimation from '~/components/loading/LoadingAnimation.vue';
 
 export default {
   components: {
     CustomVueTable,
     ManageResultModal,
     SubmitResultModal,
+    LoadingAnimation
   },
   props: {
     Matches: {
