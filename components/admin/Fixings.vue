@@ -140,10 +140,10 @@
       :active="showAddFixingModal"
       :managers="managers"
       :regions="regions"
-      :fields="fields"
-      :agegroup="ageGroups"
-      :teams="teams"
-      :series="series"
+      :fields="lists.fields"
+      :agegroup="lists.ageGroups"
+      :teams="lists.teams"
+      :series="lists.series"
       @close="closeAddFixingDialog"
       @confirm="handleRefresh"
     />
@@ -152,10 +152,10 @@
     :active="showEditFixingModal"
     :managers="managers"
     :regions="regions"
-    :fields="fields"
-    :agegroup="ageGroups"
-    :teams="teams"
-    :series="series"
+    :fields="lists.fields"
+    :agegroup="lists.ageGroups"
+    :teams="lists.teams"
+    :series="lists.series"
     :event="selectedFixing"
     @close="closeEditFixingDialog"
     @confirm="handleRefresh"
@@ -189,10 +189,6 @@ export default {
   props: {
     managers: Array,
     regions: Array,
-    fields: Array,
-    ageGroups: Array,
-    teams: Array,
-    series: Array
   },
 
   data() {
@@ -215,7 +211,53 @@ export default {
         { name: 'team1', label: 'Team 1' },
         { name: 'team2', label: 'Team 2' },
         { name: 'field', label: 'Field' }
-      ]
+      ],
+
+      matchTimeOption: [
+        { text: '8:00 AM', value: '8:00' },
+        { text: '8:25 AM', value: '8:25' },
+        { text: '8:50 AM', value: '8:50' },
+        { text: '9:15 AM', value: '9:15' },
+        { text: '9:40 AM', value: '9:40' },
+        { text: '10:05 AM', value: '10:05' },
+        { text: '10:30 AM', value: '10:30' },
+        { text: '10:55 AM', value: '10:55' },
+        { text: '11:20 AM', value: '11:20' },
+        { text: '11:45 AM', value: '11:45' },
+        { text: '12:10 PM', value: '12:10' },
+        { text: '12:35 PM', value: '12:35' },
+        { text: '1:00 PM', value: '13:00' },
+        { text: '1:25 PM', value: '13:25' },
+        { text: '1:50 PM', value: '13:50' },
+        { text: '2:15 PM', value: '14:15' },
+        { text: '2:40 PM', value: '14:40' },
+        { text: '3:05 PM', value: '15:05' },
+        { text: '3:30 PM', value: '15:30' },
+        { text: '3:55 PM', value: '15:55' },
+        { text: '4:20 PM', value: '16:20' },
+        { text: '4:45 PM', value: '16:45' },
+        { text: '5:10 PM', value: '17:10' },
+        { text: '5:35 PM', value: '17:35' },
+        { text: '6:00 PM', value: '18:00' },
+        { text: '6:25 PM', value: '18:25' },
+        { text: '6:50 PM', value: '18:50' },
+        { text: '7:15 PM', value: '19:15' },
+        { text: '7:40 PM', value: '19:40' },
+        { text: '8:05 PM', value: '20:05' },
+        { text: '8:30 PM', value: '20:30' },
+        { text: '8:55 PM', value: '20:55' },
+        { text: '9:20 PM', value: '21:20' },
+        { text: '9:45 PM', value: '21:45' },
+        { text: '10:00 PM', value: '22:00' },
+      ],
+
+      lists: {
+        fields: [],
+        ageGroups: [],
+        teams: [],
+        series: [],
+      },
+
     }
   },
 
@@ -237,9 +279,52 @@ export default {
   mounted() {
     this._mounted = true
     this.retrieveEvents()
+    this.loadAgeGroups()
+    this.loadTeams()
+    this.loadSeries()
+    this.loadFields()
   },
 
   methods: {
+    buildQuery(params) {
+      return new URLSearchParams(
+        Object.entries(params).filter(([ , v ]) => v != null)
+      ).toString()
+    },
+
+    async loadAgeGroups() {
+      if (this.lists.ageGroups.length) return
+      const r = await this.$axios.$get(`v1/agegroups`)
+      this.lists.ageGroups = r.data.ageGroups
+    },
+
+    async loadTeams() {
+      if (this.lists.teams.length) return
+      const r = await this.$axios.$get(`v1/teams`)
+      this.lists.teams = r.data.teams
+    },
+
+    async loadSeries() {
+      if (this.lists.series.length) return
+      const r = await this.$axios.$get(`v1/series`)
+      this.lists.series = r.data.series
+    },
+
+    async loadFields() {
+      if (this.lists.fields.length) return
+      const r = await this.$axios.$get(`v1/fields/all`)
+      this.lists.fields = r.data.fields
+    },
+
+    AMPMformat(time) {
+      const matched = this.matchTimeOption.find(data => data.value === time);
+      if (matched) {
+        return matched.text;
+      } else {
+        return 'Unknown';
+      }
+    },
+
     async retrieveEvents() {
       this.isLoading = true
 
@@ -262,6 +347,7 @@ export default {
           date: new Date(event.event_date),
           eventmatch: event.eventmatch.map(m => ({
             ...m,
+            matchtime: this.AMPMformat(event.time),
             field: m.field ? m.field.name : 'Unknown'
           }))
         }))
