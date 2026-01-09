@@ -201,7 +201,7 @@
     </div>
     <AddTeamModal
     :active="showAddTeamModal"
-    :field="FieldList"
+    :field="fields"
     :series="seriesList"
     :agegroup="ageGroupList"
     :regions="regionList"
@@ -210,7 +210,7 @@
     />
     <EditTeamModal
     :active="showEditTeamModal"
-    :field="FieldList"
+    :field="fields"
     :series="seriesList"
     :agegroup="ageGroupList"
     :regions="regionList"
@@ -241,19 +241,9 @@ export default {
     YearFilter
   },
   props: {
-    // eslint-disable-next-line vue/prop-name-casing
-    FieldList: {
+    fields: {
       type: Array,
       required: true
-    },
-    // eslint-disable-next-line vue/prop-name-casing
-    getTeams: {
-      type: Function,
-      required: true,
-    },
-    getEvents: {
-      type: Function,
-      required: true,
     },
   },
   data() {

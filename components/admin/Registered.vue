@@ -176,11 +176,7 @@ export default {
   },
   mixins: [ currencyMixin ],
   props: {
-    Matches: {
-      type: Array,
-      required: true
-    },
-    SeriesList: {
+    series: {
       type: Array,
       required: true
     },
@@ -358,19 +354,8 @@ export default {
     },
   },
   computed: {
-    EventDates() {
-      return this.Matches.map(event =>
-        ({ date: new Date(event.date), type: event.submit?'danger':'success' }));
-    },
-    filteredMatches() {
-      return this.individualList.filter(match =>
-        match && typeof match.submit === 'boolean' ?
-          match.submit === this.submit :
-          false
-      );
-    },
     formattedSeries() {
-      return this.SeriesList.map(series =>
+      return this.series.map(series =>
         ({ text: series.name, value: series.id }));
     },
   },
@@ -383,12 +368,6 @@ export default {
 
         return 'Unknown';
       }
-    },
-    convertTo12HourFormat(timeString) {
-      const [ hour, minute ] = timeString.split(':');
-      const period = hour >= 12 ? 'PM' : 'AM';
-      const formattedHour = (hour % 12) || 12;
-      return `${formattedHour}:${minute} ${period}`;
     },
     openViewRegistered(player) {
       this.selectedPlayer = {
@@ -422,12 +401,6 @@ export default {
     closeViewModal() {
       this.showViewRegisteredModal = false;
       this.selectedPlayer = null;
-    },
-    View() {
-      this.showViewRegisteredModal = false;
-      if (this.ActiveTab) {
-        this.showViewRegisteredModal = true
-      }
     },
     ManageRefund(data) {
       this.$oruga.notification.open({

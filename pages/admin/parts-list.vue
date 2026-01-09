@@ -1,274 +1,234 @@
 <template>
-  <!-- min-h-screen added temporarily to avoid glitching when changing tabs -->
-  <div>
-    <div class="mx-auto max-w-full">
-      <div class="flex flex-wrap">
-        <main class="w-full px-2">
+  <div class="mx-auto max-w-full">
+    <div class="flex flex-wrap">
+    <main class="w-full px-2">
 
-          <section class="px-4 mb-8" data-aos="fade-down">
-            <!-- Simple Sporty Tabs Container -->
-            <div class="bg-gray-800 text-white rounded-xl p-2 border border-green-500/30 shadow-lg">
-              <VueSlickCarousel
-                v-bind="slickSettings"
-                draggable
-                focusOnSelect
-                class="tab-carousel"
-              >
-                <div
-                  v-for="tab in tabs"
-                  :key="tab.value" 
-                  class="px-1"
+      <!-- Tabs -->
+      <section class="px-4 mb-8" data-aos="fade-down">
+        <!-- Simple Sporty Tabs Container -->
+        <div class="bg-gray-800 text-white rounded-xl p-2 border border-green-500/30 shadow-lg">
+            <VueSlickCarousel
+            v-bind="slickSettings"
+            draggable
+            focusOnSelect
+            class="tab-carousel"
+            >
+            <div
+                v-for="tab in tabs"
+                :key="tab.value" 
+                class="px-1"
+            >
+                <button
+                type="button"
+                class="w-full rounded-lg py-3 px-4 text-center font-semibold 
+                        transition-all duration-300 min-w-[110px] flex items-center 
+                        justify-center gap-2"
+                :class="activeTab == tab.value
+                    ? 'bg-green-600 text-white shadow-md'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'"
+                @click="setActiveTab(tab.value)"
                 >
-                  <button
-                    type="button"
-                    class="w-full rounded-lg py-3 px-4 text-center font-semibold 
-                          transition-all duration-300 min-w-[110px] flex items-center 
-                          justify-center gap-2"
-                    :class="activeTab == tab.value
-                      ? 'bg-green-600 text-white shadow-md'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'"
-                    @click="setActiveTab(tab.value)"
-                  >
-                    <i :class="getTabIcon(tab.value)" class="text-base"></i>
-                    <span class="text-sm whitespace-nowrap">{{ tab.label }}</span>
-                  </button>
-                </div>
-
-                <!-- Custom Previous Arrow with Remix Icon -->
-                <template #prevArrow="arrowOption">
-                  <div 
-                    :class="arrowOption.className" 
-                    class="remix-arrow remix-prev-arrow"
-                    @click="arrowOption.click"
-                  >
-                    <i class="ri-arrow-left-s-line text-green-500 text-xl"></i>
-                  </div>
-                </template>
-                
-                <!-- Custom Next Arrow with Remix Icon -->
-                <template #nextArrow="arrowOption">
-                  <div 
-                    :class="arrowOption.className" 
-                    class="remix-arrow remix-next-arrow"
-                    @click="arrowOption.click"
-                  >
-                    <i class="ri-arrow-right-s-line text-green-500 text-xl"></i>
-                  </div>
-                </template>
-              </VueSlickCarousel>
+                <i :class="getTabIcon(tab.value)" class="text-base"></i>
+                <span class="text-sm whitespace-nowrap">{{ tab.label }}</span>
+                </button>
             </div>
 
-            <!-- Simple Active Indicator -->
-            <div class="flex justify-center mt-3">
-              <div class="flex gap-1">
+            <!-- Custom Previous Arrow with Remix Icon -->
+            <template #prevArrow="arrowOption">
                 <div 
-                  v-for="tab in tabs" 
-                  :key="tab.value"
-                  class="w-2 h-2 rounded-full transition-all duration-300"
-                  :class="activeTab == tab.value ? 'bg-green-500' : 'bg-gray-600'"
-                ></div>
-              </div>
+                :class="arrowOption.className" 
+                class="remix-arrow remix-prev-arrow"
+                @click="arrowOption.click"
+                >
+                <i class="ri-arrow-left-s-line text-green-500 text-xl"></i>
+                </div>
+            </template>
+            
+            <!-- Custom Next Arrow with Remix Icon -->
+            <template #nextArrow="arrowOption">
+                <div 
+                :class="arrowOption.className" 
+                class="remix-arrow remix-next-arrow"
+                @click="arrowOption.click"
+                >
+                <i class="ri-arrow-right-s-line text-green-500 text-xl"></i>
+                </div>
+            </template>
+            </VueSlickCarousel>
+        </div>
+
+        <!-- Simple Active Indicator -->
+        <div class="flex justify-center mt-3">
+            <div class="flex gap-1">
+            <div 
+                v-for="tab in tabs" 
+                :key="tab.value"
+                class="w-2 h-2 rounded-full transition-all duration-300"
+                :class="activeTab == tab.value ? 'bg-green-500' : 'bg-gray-600'"
+            ></div>
             </div>
-          </section>
+        </div>
+        </section>
 
-          <div v-if="activeTab === 'regions'">
-            <Regions
-            :getRegions="retrieveRegions"
-            />
-          </div>
+      <!-- Content -->
+      <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
+      <keep-alive>
+        <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
+        <component
+          :is="activeComponent"
+          v-bind="activeProps"
+          @refresh="handleRefresh"
+        />
+      </keep-alive>
 
-          <div v-if="activeTab === 'fields'">
-            <Fields
-            :RegionList="RegionList"
-            :getFields="retrieveFields"
-            />
-          </div>
-
-          <div v-if="activeTab === 'ages'">
-            <AgeGroup
-            :getAgeGroups="retrieveAgeGroups"
-            />
-          </div>
-
-          <div v-if="activeTab === 'players'">
-            <Players
-            :AgeGroupList="AgeGroupList"
-            :PlayersList="PlayersList"
-            :getSeries="retrieveSeries"
-            />
-          </div>
-
-          <div v-if="activeTab === 'teams'">
-            <Teams
-            :FieldList="FieldList"
-            :EventList="EventList"
-            :getTeams="retrieveTeams"
-            :getEvents="retrieveEvents"
-            />
-          </div>
-
-          <div v-if="activeTab === 'managers'">
-            <Managers
-            :getManagers="retrieveManagers"
-            />
-          </div>
-
-          <div v-if="activeTab === 'fixings'">
-            <Fixings
-            :ManagerList="ManagerList"
-            :RegionList="RegionList"
-            :FieldList="FieldList"
-            :AgeGroupList="AgeGroupList"
-            :TeamList="TeamList"
-            :SeriesList="SeriesList"
-            :getEvents="retrieveEvents"
-            />
-          </div>
-
-          <div v-if="activeTab === 'results'">
-            <Results
-            :Matches="MatchList"
-            :getEvents="retrieveEvents"
-            />
-          </div>
-
-          <div v-if="activeTab === 'series'">
-            <Series
-            :TeamList="TeamList"
-            :EventList="EventList"
-            :AgeGroupList="AgeGroupList"
-            :PlayersList="PlayersList"
-            :getSeries="retrieveSeries"
-            :getEvents="retrieveEvents"
-            />
-          </div>
-
-          <div v-if="activeTab === 'registered'">
-            <Registered
-            :Matches="MatchList"
-            :SeriesList="SeriesList"
-            :getEvents="retrieveEvents"
-            />
-          </div>
-
-        </main>
-      </div>
+    </main>
     </div>
   </div>
 </template>
 
 <script>
-/* eslint-disable vue/max-len */
-/* eslint-disable max-len */
-/* eslint-disable multiline-comment-style */
-import 'remixicon/fonts/remixicon.css';
-import 'vue-croppa/dist/vue-croppa.css';
-import 'vue-slick-carousel/dist/vue-slick-carousel.css'
-import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css'
-
 import VueSlickCarousel from 'vue-slick-carousel'
-import Regions from '~/components/admin/Regions.vue';
-import Fields from '~/components/admin/Fields.vue';
-import AgeGroup from '~/components/admin/AgeGroup.vue';
-import Teams from '~/components/admin/Teams.vue';
-import Managers from '~/components/admin/Managers.vue';
-import Fixings from '~/components/admin/Fixings.vue';
-import Results from '~/components/admin/Results.vue';
-import Series from '~/components/admin/Series.vue';
-import Players from '~/components/admin/Players.vue';
-import Registered from '~/components/admin/Registered.vue';
+
+import Regions from '~/components/admin/Regions.vue'
+import Fields from '~/components/admin/Fields.vue'
+import AgeGroup from '~/components/admin/AgeGroup.vue'
+import Players from '~/components/admin/Players.vue'
+import Teams from '~/components/admin/Teams.vue'
+import Managers from '~/components/admin/Managers.vue'
+import Fixings from '~/components/admin/Fixings.vue'
+import Results from '~/components/admin/Results.vue'
+import Series from '~/components/admin/Series.vue'
+import Registered from '~/components/admin/Registered.vue'
+
 export default {
-  name: 'parts-list',
   components: {
     VueSlickCarousel,
     Regions,
     Fields,
     AgeGroup,
+    Players,
     Teams,
     Managers,
     Fixings,
     Results,
     Series,
-    Players,
-    Registered,
+    Registered
   },
+
   data() {
     return {
-      RegionList: [],
-      FieldList: [],
-      AgeGroupList: [],
-      ManagerList: [],
-      TeamList: [],
-      SeriesList: [],
-      PlayersList: [],
-      EventList: [],
-      MatchList: [],
-      totalEvents: [],
-      totalPages: 0,
-      from: 0,
-      to: 0,
-      isEventsLoading: false,
-      slickSettings: {
-        "arrows": true,
-        "infinite": false,
-        "speed": 500,
-        "slidesToShow": 8,
-        "slidesToScroll": 8,
-        "initialSlide": 0,
-        "responsive": [
-          {
-            "breakpoint": 1024,
-            "settings": {
-              "slidesToShow": 3,
-              "slidesToScroll": 3,
-              "initialSlide": 0,
-              "infinite": true,
-              "arrows": true
-            }
-          },
-          {
-            "breakpoint": 768,
-            "settings": {
-              "slidesToShow": 2,
-              "slidesToScroll": 2,
-              "initialSlide": 2
-            }
-          },
-          {
-            "breakpoint": 480,
-            "settings": {
-              "slidesToShow": 1,
-              "slidesToScroll": 1,
-            }
-          }
-        ],
-      },
       activeTab: 'regions',
+
+      lists: {
+        regions: [],
+        fields: [],
+        ageGroups: [],
+        players: [],
+        teams: [],
+        managers: [],
+        series: [],
+        events: [],
+        matches: []
+      },
+
+      slickSettings: {
+        arrows: true,
+        infinite: false,
+        slidesToShow: 6,
+        slidesToScroll: 6
+      },
+
       tabs: [
         { value: 'regions', label: 'Regions' },
         { value: 'fields', label: 'Fields' },
         { value: 'ages', label: 'Ages' },
         { value: 'players', label: 'Players' },
         { value: 'teams', label: 'Teams' },
-        { value: 'managers', label: 'TFW Staffs' },
+        { value: 'managers', label: 'Staffs' },
         { value: 'series', label: 'Series' },
         { value: 'fixings', label: 'Fixings' },
         { value: 'results', label: 'Results' },
-        { value: 'registered', label: 'Registered' },
-      ],
-    };
+        { value: 'registered', label: 'Registered' }
+      ]
+    }
   },
-  mounted() {
-    // this.retrieveRegions()
-    this.retrieveFields()
-    this.retrieveAgeGroups()
-    this.retrieveManagers()
-    this.retrieveTeams()
-    this.retrieveSeries()
-    this.retrieveEvents()
-    // this.retrievePlayers()
+
+  computed: {
+    activeComponent() {
+      return {
+        regions: Regions,
+        fields: Fields,
+        ages: AgeGroup,
+        players: Players,
+        teams: Teams,
+        managers: Managers,
+        series: Series,
+        fixings: Fixings,
+        results: Results,
+        registered: Registered
+      }[this.activeTab]
+    },
+
+    activeProps() {
+      return {
+        regions: this.lists.regions,
+        fields: this.lists.fields,
+        ageGroups: this.lists.ageGroups,
+        players: this.lists.players,
+        teams: this.lists.teams,
+        managers: this.lists.managers,
+        series: this.lists.series,
+        events: this.lists.events,
+        matches: this.lists.matches
+      }
+    }
   },
+
+  watch: {
+    activeTab: {
+      immediate: true,
+      handler(tab) {
+        const loaders = {
+          regions: this.loadRegions,
+          fields: this.loadFields,
+          ages: this.loadAgeGroups,
+          players: this.loadPlayers,
+          teams: this.loadTeams,
+          managers: this.loadManagers,
+          series: this.loadSeries,
+          fixings: this.loadEvents,
+          results: this.loadEvents,
+          registered: this.loadEvents
+        }
+        
+        if (loaders[tab]) {
+          loaders[tab]()
+        }
+      }
+    }
+  },
+
   methods: {
+    handleRefresh() {
+      const tabLoaders = {
+        regions: this.loadRegions,
+        fields: this.loadFields,
+        ages: this.loadAgeGroups,
+        players: this.loadPlayers,
+        teams: this.loadTeams,
+        managers: this.loadManagers,
+        series: this.loadSeries,
+        fixings: this.loadEvents,
+        results: this.loadEvents,
+        registered: this.loadEvents
+      }
+
+      const loader = tabLoaders[this.activeTab]
+      if (loader) {
+        loader()
+      }
+    },
+
     getTabIcon(tabValue) {
       const icons = {
         'teams': 'ri-team-line',
@@ -281,181 +241,67 @@ export default {
       };
       return icons[tabValue] || 'ri-file-text-line';
     },
+
     setActiveTab(tab) {
       this.activeTab = tab;
     },
-    retrieveFields() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/fields/all?${queryString}`)
-        .then((response) => {
-          this.FieldList= response.data.fields;
-        })
+    buildQuery(params) {
+      return new URLSearchParams(
+        Object.entries(params).filter(([ , v ]) => v != null)
+      ).toString()
     },
-    retrieveAgeGroups() {
-      const query = {
-        q: this.query,
-        page: this.page,
-      };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/agegroups?${queryString}`)
-        .then((response) => {
-          this.AgeGroupList= response.data.ageGroups;
-        })
+    async loadRegions() {
+      if (this.lists.regions.length) return
+      const r = await this.$axios.$get(`v1/regions/all?${this.buildQuery({ sort: 'a_to_z' })}`)
+      this.lists.regions = r.data.regions
     },
-    retrieveManagers() {
-      const query = {
-        q: this.query,
-        page: this.page,
-      };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/managers?${queryString}`)
-        .then((response) => {
-          this.ManagerList = response.data.managers;
-        })
+    async loadFields() {
+      if (this.lists.fields.length) return
+      const r = await this.$axios.$get(`v1/fields/all`)
+      this.lists.fields = r.data.fields
     },
-    retrieveTeams() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/teams?${queryString}`)
-        .then((response) => {
-          this.TeamList = response.data.teams;
-        })
+    async loadAgeGroups() {
+      if (this.lists.ageGroups.length) return
+      const r = await this.$axios.$get(`v1/agegroups`)
+      this.lists.ageGroups = r.data.ageGroups
     },
-    retrieveSeries() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/series?${queryString}`)
-        .then((response) => {
-          this.SeriesList = response.data.series;
-        })
+    async loadPlayers() {
+      if (this.lists.players.length) return
+      const r = await this.$axios.$get(`v1/players`)
+      this.lists.players = r.data.players
     },
-    retrieveEvents() {
-      const query = {
-        q: this.query,
-        sort: 'a_to_z',
-        page: this.page,
-      };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/events?${queryString}`)
-        .then((response) => {
-          this.EventList = response.data.events.map(event => {
-            return {
-              ...event,
-              eventmatch: event.eventmatch.map(match => {
-                return {
-                  ...match,
-                  date: event.event_date,
-                  submit: match.submitted === 1
-                };
-              })
-            };
-          });
-          this.MatchList = this.EventList.flatMap(data => {
-            return data.eventmatch;
-          });
-        })
+    async loadTeams() {
+      if (this.lists.teams.length) return
+      const r = await this.$axios.$get(`v1/teams`)
+      this.lists.teams = r.data.teams
     },
-  },
 
-  async regionList({ $axios, query }) {
-    const params = {
-      q: query.q || null,
-      sort: 'a_to_z',
-      page: query.page || 1,
+    async loadManagers() {
+      if (this.lists.managers.length) return
+      const r = await this.$axios.$get(`v1/managers`)
+      this.lists.managers = r.data.managers
+    },
+
+    async loadSeries() {
+      if (this.lists.series.length) return
+      const r = await this.$axios.$get(`v1/series`)
+      this.lists.series = r.data.series
+    },
+
+    async loadEvents() {
+      if (this.lists.events.length) return
+      const r = await this.$axios.$get(`v1/events`)
+      this.lists.events = r.data.events
+      this.lists.matches = r.data.events.flatMap(e => e.eventmatch)
     }
-
-    Object.keys(params).forEach(
-      key => params[key] == null && delete params[key]
-    )
-
-    const response = await $axios.$get('v1/regions/all', { params })
-
-    return { RegionList: response.data.regions }
-  },
-
-  async playerList({ $axios, query }) {
-    const params = {
-      q: query.q || null,
-      sort: 'a_to_z',
-      page: query.page || 1,
-    }
-
-    Object.keys(params).forEach(
-      key => params[key] == null && delete params[key]
-    )
-
-    const response = await $axios.$get('v1/players/all', { params })
-
-    return { PlayersList: response.data.players }
   }
-};
+}
 </script>
 
 <style scoped>

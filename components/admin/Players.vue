@@ -274,14 +274,14 @@
   <AddPlayersModal
   :active="showAddPlayersModal"
   :agegroup="ageGroupList"
-  :teams="PlayersList"
+  :teams="players"
   @close="closeAddPlayerDialog"
   @confirm="AddSeries"
   />
   <EditPlayersModal
   :active="showEditPlayersModal"
   :agegroup="ageGroupList"
-  :teams="PlayersList"
+  :teams="players"
   :series="selecetedData"
   @close="closeEditPlayersDialog"
   @confirm="EditSeries"
@@ -289,7 +289,7 @@
   <DeletePlayersModal
   :active="showDeletePlayersModal"
   :agegroup="ageGroupList"
-  :teams="PlayersList"
+  :teams="players"
   :series="selecetedData"
   @close="closeDeletePlayersDialog"
   @confirm="DeleteSeries"
@@ -309,14 +309,9 @@ export default {
     DeletePlayersModal,
   },
   props: {
-    // eslint-disable-next-line vue/prop-name-casing
-    PlayersList: {
+    players: {
       type: Array,
       required: true
-    },
-    getSeries: {
-      type: Function,
-      required: true,
     },
   },
   data() {
@@ -333,25 +328,6 @@ export default {
       selectedGroup: [],
       ageGroupList: [],
       isLoading: false,
-      events: [
-        'Event 1',
-        'Event 2',
-        'Event 3'
-      ],
-      eventYears: [
-        '2020',
-        '2021',
-        '2022',
-        '2023',
-        '2024',
-      ],
-      ageGroup: [
-        '12 Years Below',
-        '13 to 15',
-        '16 to 18',
-        '19 to 24',
-        '25 and above'
-      ],
       dataColumns: [
         { name: 'name', label: 'Title' },
         { name: 'type', label: 'Type' },
@@ -461,7 +437,6 @@ export default {
       })
       this.showEditPlayersModal = false;
       this.retrievePlayers();
-      this.getSeries();
     },
     openDeletePlayersDialog(data) {
       this.selecetedData = data
@@ -481,7 +456,6 @@ export default {
       })
       this.showDeletePlayersModal = false;
       this.retrievePlayers();
-      this.getSeries();
     },
     setTab(tab) {
       this.selectedAgeGroup = tab

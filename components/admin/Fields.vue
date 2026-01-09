@@ -3,133 +3,137 @@
     <div data-aos="fade-up">
       <section class="mx-auto max-w-screen-xl gap-4 p-4">
         <div class="grid grid-cols-1 gap-4">
+          <!-- Add Button -->
           <div class="col-span-1 flex items-center">
             <button
-            type="button"
-            class="
-            w-full rounded-md
-            bg-gradient-to-br
-            from-[#5EE738] via-[#3e872a]
-            to-[#050505] py-1.5
-            text-center
-            font-semibold
-            text-white
-            sm:w-36"
-            @click="openAddFieldDialog"
-          >
-            +
-          </button>
-          </div>
-          <div
-          v-if="totalPages > 0"
-          class="col-span-1 flex flex-wrap items-center
-          justify-around gap-x-2 md:justify-between"
-          data-aos="flip-up" data-aos-once="true"
-          >
-            <span
-            class="font-medium text-white"
+              type="button"
+              class="w-full sm:w-36 rounded-md
+              bg-gradient-to-br from-[#5EE738]
+              via-[#3e872a] to-[#050505] py-1.5
+              text-center font-semibold text-white"
+              @click="showAddFieldModal = true"
             >
-            Showing {{ from }}-{{ to }} of {{ totalItems }} items
+              +
+            </button>
+          </div>
+
+          <!-- Pagination Info -->
+          <div
+            v-if="totalPages > 0"
+            class="col-span-1 flex flex-wrap items-center
+            justify-around gap-x-2 md:justify-between"
+            data-aos="flip-up"
+            data-aos-once="true"
+          >
+            <span class="font-medium text-white">
+              Showing {{ from }}-{{ to }} of {{ totalItems }} items
             </span>
             <VPagination
               v-model="page"
               :length="totalPages"
               :total-visible="7"
               color="success"
-              class="text-white"
               dark
-              @change="setPage"
-              />
+              class="text-white"
+              @change="retrieveFields"
+            />
           </div>
+
+          <!-- Table Header -->
           <section class="col-span-1">
-            <div
-            class="grid grid-cols-1 overflow-x-scroll
+            <div class="grid grid-cols-1 overflow-x-scroll
             overflow-y-hidden md:overflow-x-hidden"
             >
               <div
-              v-if="totalPages > 0"
-              class="col-span-1 flex w-[640px] pr-24 md:w-auto"
-              data-aos="flip-up"
+                v-if="totalPages > 0"
+                class="col-span-1 flex w-[640px] pr-24 md:w-auto"
+                data-aos="flip-up"
               >
-                <span
-                class="flex-1 px-4 py-2 align-middle
-                text-[20px] font-semibold text-[#555555]"
+                <span class="flex-1 px-4 py-2 text-[20px]
+                font-semibold text-[#555555]"
                 >
-                Field
+                  Field
                 </span>
-                <span
-                class="flex-1 px-4 py-2 align-middle
-                text-[20px] font-semibold text-[#555555]"
+                <span class="flex-1 px-4 py-2 text-[20px]
+                font-semibold text-[#555555]"
                 >
-                Region
+                  Region
                 </span>
               </div>
+
+              <!-- Fields List -->
               <div
-              v-for="(data) in Fields"
-              :key="data.id" class="col-span-1 mb-0.5 gap-0"
-              data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="0"  data-aos-once="true"
+                v-for="field in fieldsList"
+                :key="field.id"
+                class="col-span-1 mb-0.5 gap-0"
+                data-aos="flip-down"
+                data-aos-duration="500"
+                data-aos-offset="0"
+                data-aos-once="true"
               >
-              <div class="flex min-w-[640px] items-center justify-center">
-                <input
-                v-model="data.name"
-                :rules="Rules"
-                placeholder="Enter Field"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <input
-                v-model="data.regionName"
-                :rules="Rules"
-                placeholder="Enter Region"
-                hide-details
-                required
-                :disabled="true"
-                class="mr-0.5 flex-1 border-black bg-white p-1"
-                />
-                <i
-                class="ri-pencil-fill px-4 text-xl text-white"
-                @click="openEditFieldDialog(data)"
-                ></i>
-                <i
-                class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                @click="openDeleteFieldDialog(data)"
-                ></i>
-              </div>
+                <div class="flex min-w-[640px] items-center justify-center">
+                  <input
+                    v-model="field.name"
+                    :rules="Rules"
+                    placeholder="Enter Field"
+                    hide-details
+                    required
+                    disabled
+                    class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <input
+                    v-model="field.regionName"
+                    :rules="Rules"
+                    placeholder="Enter Region"
+                    hide-details
+                    required
+                    disabled
+                    class="mr-0.5 flex-1 border-black bg-white p-1"
+                  />
+                  <i
+                    class="ri-pencil-fill px-4 text-xl text-white cursor-pointer"
+                    @click="openEditFieldDialog(field)"
+                  ></i>
+                  <i
+                    class="ri-delete-bin-fill px-4 text-xl text-red-400 cursor-pointer"
+                    @click="openDeleteFieldDialog(field)"
+                  ></i>
+                </div>
               </div>
             </div>
           </section>
+
+          <!-- No Fields -->
           <section
-          v-if="totalPages=== 0"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
+            v-if="totalPages === 0"
+            class="col-span-1 flex h-60 items-center justify-center
+            font-semibold text-[#555555] md:col-span-3"
           >
-          No Fields Available
+            No Fields Available
           </section>
         </div>
       </section>
     </div>
+
+    <!-- Modals -->
     <AddFieldModal
-    :active="showAddFieldModal"
-    :regions="RegionList"
-    @close="closeAddFieldDialog"
-    @confirm="AddField"
+      :active="showAddFieldModal"
+      :regions="regions"
+      @close="showAddFieldModal = false"
+      @confirm="handleAddField"
     />
     <EditFieldModal
-    :active="showEditFieldModal"
-    :regions="RegionList"
-    :field="selectedData"
-    @close="closeEditFieldDialog"
-    @confirm="EditField"
+      :active="showEditFieldModal"
+      :regions="regions"
+      :field="selectedField"
+      @close="showEditFieldModal = false"
+      @confirm="handleEditField"
     />
     <DeleteFieldModal
-    :active="showDeleteFieldModal"
-    :field="selectedData"
-    @close="closeDeleteFieldDialog"
-    @confirm="DeleteField"
+      :active="showDeleteFieldModal"
+      :field="selectedField"
+      @close="showDeleteFieldModal = false"
+      @confirm="handleDeleteField"
     />
   </div>
 </template>
@@ -138,6 +142,7 @@
 import AddFieldModal from '~/components/modals/AddFieldModal.vue';
 import EditFieldModal from '~/components/modals/EditFieldModal.vue';
 import DeleteFieldModal from '~/components/modals/DeleteFieldModal.vue';
+
 export default {
   components: {
     AddFieldModal,
@@ -145,161 +150,111 @@ export default {
     DeleteFieldModal
   },
   props: {
-    // eslint-disable-next-line vue/prop-name-casing
-    RegionList: {
+    regions: {
       type: Array,
-      required: true
-    },
-    getFields: {
-      type: Function,
       required: true,
-    },
+      default: () => []
+    }
   },
   data() {
     return {
-      selectedData: ({}),
+      fieldsList: [],
+      selectedField: {},
       showAddFieldModal: false,
       showEditFieldModal: false,
       showDeleteFieldModal: false,
-      Fields: [],
-      Dataset: [],
       query: '',
-      from: 0,
-      to: 0,
       page: 1,
       perPage: 10,
       totalPages: 0,
       totalItems: 0,
       Rules: [
-        value => {
-          if (value) {
-            return true
-          }
-
-          return 'Name is required.'
-        },
-        value => {
-          if (value && value.length <= 10) {
-            return true
-          }
-
-          return 'Name must be less than 10 characters.'
-        },
-      ],
+        value => (value ? true : 'Name is required.'),
+        value => (value && value.length <= 10 ? true : 'Name must be less than 10 characters.')
+      ]
     };
   },
   watch: {
-    totalPages() {
-      if (this.page > this.totalPages) {
-        this.setPage(1)
-      }
-    },
     page: {
-      handler(newPage) {
-        this.retrieveFields()
+      handler() {
+        this.retrieveFields();
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
-    setPage() {
-      this.retrieveFields();
+    openEditFieldDialog(field) {
+      this.selectedField = field;
+      this.showEditFieldModal = true;
     },
-    openAddFieldDialog(a) {
-      this.showAddFieldModal = true
+    openDeleteFieldDialog(field) {
+      this.selectedField = field;
+      this.showDeleteFieldModal = true;
     },
-    openEditFieldDialog(a) {
-      this.selectedData = a;
-      this.showEditFieldModal = true
-    },
-    openDeleteFieldDialog(a) {
-      this.selectedData = a;
-      this.showDeleteFieldModal = true
-    },
-    closeAddFieldDialog(a) {
-      this.showAddFieldModal = false
-    },
-    closeEditFieldDialog(a) {
-      this.selectedData = ({});
-      this.showEditFieldModal = false
-    },
-    closeDeleteFieldDialog(a) {
-      this.selectedData = ({});
-      this.showDeleteFieldModal = false
-    },
-    AddField() {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Field Added',
-        position: 'bottom',
-        variant: 'success',
-        queue: true
-      })
+
+    async handleAddField() {
       this.showAddFieldModal = false;
-      this.retrieveFields();
-      this.getFields();
-    },
-    EditField() {
       this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Field Modified',
-        position: 'bottom',
+        message: 'Field Added',
         variant: 'success',
-        queue: true
-      })
+        duration: 5000,
+        position: 'bottom'
+      });
+      await this.retrieveFields();
+    },
+
+    async handleEditField() {
       this.showEditFieldModal = false;
-      this.retrieveFields();
-      this.getFields();
-    },
-    DeleteField() {
       this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Field Removed',
-        position: 'bottom',
+        message: 'Field Modified',
         variant: 'success',
-        queue: true
-      })
-      this.showDeleteFieldModal = false;
-      this.retrieveFields();
-      this.getFields();
+        duration: 5000,
+        position: 'bottom'
+      });
+      await this.retrieveFields();
     },
-    retrieveFields() {
+
+    async handleDeleteField() {
+      this.showDeleteFieldModal = false;
+      this.$oruga.notification.open({
+        message: 'Field Removed',
+        variant: 'success',
+        duration: 5000,
+        position: 'bottom'
+      });
+      await this.retrieveFields();
+    },
+
+    async retrieveFields() {
       const query = {
-        q: this.query,
+        q: this.query || '',
         sort: 'a_to_z',
         page: this.page,
-        maxFieldsPerPage: 10,
+        maxFieldsPerPage: this.perPage
       };
 
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
+      const queryString = new URLSearchParams(query).toString();
 
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/fields?${queryString}`)
-        .then((response) => {
-          this.Fields = response.data.fields.map(region => {
-            return {
-              ...region,
-              regionName: region.region && region.region.name ? region.region.name : '',
-            };
-          });
-          this.totalItems = response.data.total_items;
-          this.totalPages = response.data.last_page;
-          this.from = response.data.from;
-          this.to = response.data.to;
-        })
-    },
+      try {
+        const response = await this.$axios.$get(`v1/fields?${queryString}`);
+        this.fieldsList = response.data.fields.map(f => ({
+          ...f,
+          regionName: f.region ? f.region.name : ''
+        }));
+        this.totalItems = response.data.total_items;
+        this.totalPages = response.data.last_page;
+        this.from = response.data.from;
+        this.to = response.data.to;
+      } catch (error) {
+        console.error('Error fetching fields:', error);
+      }
+    }
   }
 };
 </script>
 
 <style scoped>
 .superheadline {
-color: aliceblue;
+  color: aliceblue;
 }
 </style>

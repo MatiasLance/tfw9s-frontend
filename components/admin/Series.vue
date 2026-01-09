@@ -274,21 +274,21 @@
   </div>
   <AddPlayersModal
   :active="showAddPlayersModal"
-  :agegroup="AgeGroupList"
-  :teams="PlayersList"
+  :agegroup="ageGroups"
+  :teams="players"
   @close="closeAddPlayerDialog"
   @confirm="confirmAddedPlayer"
   />
   <AddSeriesModal
   :active="showAddSeriesModal"
-  :agegroup="AgeGroupList"
-  :teams="TeamList"
+  :agegroup="ageGroups"
+  :teams="teams"
   @close="closeAddSeriesDialog"
   @confirm="AddSeries"
   />
   <ManageTeamLimitModal
   :active="showTeamLimitModal"
-  :agegroup="AgeGroupList"
+  :agegroup="ageGroups"
   :seriesid="seriesid"
   @close="closeTeamLimitDialog"
   @confirm="EditTeamLimit"
@@ -296,13 +296,13 @@
   <ManageWeeklySeriesTeamsModal
   :active="showWeeklyTeamsModal"
   :selected="selected"
-  :agegroup="AgeGroupList"
+  :agegroup="ageGroups"
   @close="closeWeeklyTeamsDialog"
   />
   <EditSeriesModal
   :active="showEditSeriesModal"
-  :agegroup="AgeGroupList"
-  :teams="TeamList"
+  :agegroup="ageGroups"
+  :teams="teams"
   :series="selecetedData"
   @close="closeEditSeriesDialog"
   @confirm="EditSeries"
@@ -315,8 +315,8 @@
   />
   <DeleteSeriesModal
   :active="showDeleteSeriesModal"
-  :agegroup="AgeGroupList"
-  :teams="TeamList"
+  :agegroup="ageGroups"
+  :teams="teams"
   :series="selecetedData"
   @close="closeDeleteSeriesDialog"
   @confirm="DeleteSeries"
@@ -343,30 +343,15 @@ export default {
     EditThumbnailModal
   },
   props: {
-    // eslint-disable-next-line vue/prop-name-casing
-    TeamList: {
+    teams: {
       type: Array,
       required: true
     },
-    // eslint-disable-next-line vue/prop-name-casing
-    EventList: {
+    ageGroups: {
       type: Array,
       required: true
     },
-    // eslint-disable-next-line vue/prop-name-casing
-    AgeGroupList: {
-      type: Array,
-      required: true
-    },
-    getSeries: {
-      type: Function,
-      required: true,
-    },
-    getEvents: {
-      type: Function,
-      required: true,
-    },
-    PlayersList: {
+    players: {
       type: Array,
       required: true
     },
@@ -400,25 +385,6 @@ export default {
       selectedYear: null,
       selectedGroup: [],
       seriesid: 0,
-      events: [
-        'Event 1',
-        'Event 2',
-        'Event 3'
-      ],
-      eventYears: [
-        '2020',
-        '2021',
-        '2022',
-        '2023',
-        '2024',
-      ],
-      ageGroup: [
-        '12 Years Below',
-        '13 to 15',
-        '16 to 18',
-        '19 to 24',
-        '25 and above'
-      ],
       dataColumns: [
         { name: 'name', label: 'Title' },
         { name: 'type', label: 'Type' },
@@ -536,8 +502,6 @@ export default {
       this.showAddSeriesModal = false;
       this.showAddPlayersModal = false
       this.retrieveSeries();
-      this.getSeries();
-      this.getEvents();
     },
     openEditSeriesDialog(data) {
       this.selecetedData = data
@@ -557,8 +521,6 @@ export default {
       })
       this.showTeamLimitModal = false;
       this.retrieveSeries();
-      this.getSeries();
-      this.getEvents();
     },
     EditThumbnail() {
       this.$oruga.notification.open({
@@ -570,8 +532,6 @@ export default {
       })
       this.showEditThumbnailModal = false;
       this.retrieveSeries();
-      this.getSeries();
-      this.getEvents();
     },
     EditSeries(data) {
       this.$oruga.notification.open({
@@ -583,8 +543,6 @@ export default {
       })
       this.showEditSeriesModal = false;
       this.retrieveSeries();
-      this.getSeries();
-      this.getEvents();
     },
     openDeleteSeriesDialog(data) {
       this.selecetedData = data
@@ -609,8 +567,6 @@ export default {
       this.showDeleteSeriesModal = false;
       this.selecetedData = ({});
       this.retrieveSeries();
-      this.getSeries();
-      this.getEvents();
     },
     setTab(tab) {
       this.ActiveTab = tab

@@ -215,12 +215,6 @@ export default {
     DeleteRegionModal,
     RegionTeams
   },
-  props: {
-    getRegions: {
-      type: Function,
-      required: true,
-    },
-  },
   data() {
     return {
       showAddRegionModal: false,
@@ -319,7 +313,6 @@ export default {
       })
       this.showAddRegionModal = false;
       this.retrieveRegions();
-      this.getRegions()
     },
     UpdateRegion(data) {
       this.$oruga.notification.open({
@@ -331,7 +324,6 @@ export default {
       })
       this.showEditRegionModal = false;
       this.retrieveRegions();
-      this.getRegions()
     },
     DeleteRegion(data) {
       this.$oruga.notification.open({
@@ -343,7 +335,6 @@ export default {
       })
       this.showDeleteRegionModal = false;
       this.retrieveRegions();
-      this.getRegions()
     },
     retrieveRegions() {
       const query = {

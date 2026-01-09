@@ -168,10 +168,6 @@ export default {
       type: Array,
       required: true
     },
-    getEvents: {
-      type: Function,
-      required: true,
-    },
   },
   data() {
     return {
@@ -382,7 +378,6 @@ export default {
         queue: true
       })
       this.showManageResultModal = false;
-      this.getEvents();
       this.retrieveEvents();
     },
     AMPMformat(time) {
@@ -410,7 +405,6 @@ export default {
         queue: true
       })
       this.showSubmitResultModal = false
-      this.getEvents();
       this.retrieveEvents();
     },
     ModifyResult(data) {

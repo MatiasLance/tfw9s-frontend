@@ -113,12 +113,6 @@ export default {
     EditManagerModal,
     DeleteManagerModal,
   },
-  props: {
-    getManagers: {
-      type: Function,
-      required: true,
-    },
-  },
   data() {
     return {
       date: new Date(),
@@ -215,7 +209,6 @@ export default {
       })
       this.showEditManagerModal = false;
       this.retrieveManagers();
-      this.getManagers();
     },
     UpdateManager(data) {
       this.$oruga.notification.open({
@@ -227,7 +220,6 @@ export default {
       })
       this.showEditManagerModal = false;
       this.retrieveManagers();
-      this.getManagers();
     },
     DeleteManager(data) {
       this.$oruga.notification.open({
@@ -239,7 +231,6 @@ export default {
       })
       this.showDeleteManagerModal = false;
       this.retrieveManagers();
-      this.getManagers();
     },
     retrieveManagers() {
       const query = {

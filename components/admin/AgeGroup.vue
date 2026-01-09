@@ -115,12 +115,6 @@ export default {
     EditAgeGroupModal,
     DeleteAgeGroupModal
   },
-  props: {
-    getAgeGroups: {
-      type: Function,
-      required: true,
-    },
-  },
   data() {
     return {
       selectedageGroup: ({}),
