@@ -326,7 +326,6 @@ export default {
       this.selectedYear = year;
       this.query = year;
       this.retrieveTeams();
-      console.log('Year updated:', year);
     },
     matchField(id) {
       const fieldData = this.FieldList.find(field => field.id === id);

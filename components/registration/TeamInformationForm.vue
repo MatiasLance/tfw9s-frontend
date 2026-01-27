@@ -1,6 +1,6 @@
 <template>
   <form
-    class="mb-5 w-full rounded border
+    class="w-full rounded border
     border-gray-200 bg-white p-4 shadow-sm lg:p-6"
     @submit.prevent="submit"
   >

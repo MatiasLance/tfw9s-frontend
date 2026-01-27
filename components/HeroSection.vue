@@ -138,7 +138,11 @@ export default {
       required: false
     },
     image: {
-      type: [ String, Object ],
+      type: [
+        String,
+        Object,
+        Array
+      ],
       required: false
     }
   },
@@ -150,14 +154,19 @@ export default {
   },
 
   mounted() {
-    setInterval(() => {
-      this.launchFireworks()
-    }, 500)
+    this.$nextTick(() => {
+      setInterval(() => {
+        this.launchFireworks()
+      }, 500)
+    })
   },
 
   methods: {
     launchFireworks() {
       const canvas = this.$refs.fireworksCanvas
+      if (!canvas) {
+        return
+      }
       const ctx = canvas.getContext('2d')
 
       const resize = () => {

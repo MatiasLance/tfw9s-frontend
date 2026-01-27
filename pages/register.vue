@@ -41,8 +41,24 @@
       </div>
     </BaseHeader>
 
-    <div class="my-24 mx-auto max-w-screen-xl bg-gray-200">
-      <div class="mb-12 w-full bg-white">
+    <div class="my-5 mx-auto max-w-screen-xl py-6">
+      <div class="bg-gradient-to-r from-green-500
+      to-green-600 rounded-lg shadow-lg p-6 text-white border-2 border-green-400"
+      >
+      <div class="flex items-center gap-3 mb-2">
+      <i class="ri-team-line text-3xl font-bold"></i>
+      <h2 class="text-2xl font-bold">
+      Current Registrations
+      </h2>
+      </div>
+      <p class="text-green-50 text-lg font-semibold">
+       15 are currently registered for this event.
+      </p>
+      </div>
+    </div>
+
+    <div class="my-5 mx-auto max-w-screen-xl bg-gray-200">
+      <div class="mb-5 w-full bg-white">
         <Stepper :step="activeStep" stepname="Information" />
       </div>
 

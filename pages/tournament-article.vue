@@ -445,7 +445,6 @@ export default {
         .$get(`v1/series/${Id}`)
         .then((response) => {
           const series = response.data.series;
-          console.log(series);
 
           this.article = {
             ...series,

@@ -101,3 +101,7 @@ pages/ladders-old-v1.vue
 pages/ladders-old-v2.vue
 pages/admin/parts-list-old.vue
 components/admin/Fixings-old.vue
+components/PaymentFormForMerchV1.vue
+components/registration/AfterPayCheckoutV1.vue
+components/registration/StripeCheckoutV1.vue
+components/payment/PaymentFormV1.vue

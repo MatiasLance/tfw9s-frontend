@@ -1,125 +1,153 @@
 <template>
   <div class="flex w-full flex-col justify-center gap-4 md:flex-row">
+    <!-- Payment Methods Section -->
     <div class="payment-section flex grow flex-col bg-gray-200">
-
+      <!-- Payment Method Tabs -->
       <div class="flex">
-        <!--
-          <PaymentTab
-          v-if="showPaypal"
-          :active="paymentMethod === 'paypal'"
-          @click="setAsPaymentMethod('paypal')"
-          >
-          Paypal
-          </PaymentTab>
-        -->
         <PaymentTab
           v-if="stripeEnabled"
           :active="paymentMethod === 'stripe'"
-          @click="setAsPaymentMethod('stripe')"
+          @click="setPaymentMethod('stripe')"
+          :disabled="isLoading || isProcessing"
         >
           Credit Card
         </PaymentTab>
         <PaymentTab
           v-if="afterpayEnabled"
           :active="paymentMethod === 'afterpay'"
-          @click="paymentMethod = 'afterpay'"
+          @click="setPaymentMethod('afterpay')"
+          :disabled="isLoading || isProcessing"
         >
           Afterpay
         </PaymentTab>
+        <div v-if="!hasPaymentMethods && !isLoading"
+        class="p-4 text-center text-red-600"
+        >
+          No payment methods available. Please contact support.
+        </div>
       </div>
 
-      <!--
-        <PaypalCheckout
-        v-if="paymentMethod === 'paypal'"
-        id="paypal-payment-form"
-        class="payment-module p-10"
-        :cart-total="overallTotal"
-        :discount-code="discountcode"
-        @active-step="activeStepPrev"
+      <!-- Payment Method Components -->
+      <div v-if="!isLoading && hasPaymentMethods">
+        <StripeCheckout
+          v-if="paymentMethod === 'stripe' && stripeEnabled"
+          class="payment-module gap-3 text-gray-600"
+          :series="series"
+          :seriestype="seriestype"
+          :price="price"
+          :disabled="isProcessing"
+          @active-step="handleActiveStep"
         />
-      -->
 
-      <StripeCheckout
-        v-if="paymentMethod === 'stripe' && stripeEnabled"
-        class="payment-module gap-3 text-gray-600"
-        :series="series"
-        :seriestype="seriestype"
-        :price="price"
-        @active-step="activeStepPrev"
-      />
-
-      <AfterPayCheckout
-        v-if="paymentMethod === 'afterpay' && afterpayEnabled"
-        class="payment-module p-10"
-        :series="series"
-        :seriestype="seriestype"
-        :price="price"
-        :cart-total="overallTotal"
-        @active-step="activeStepPrev"
-      />
+        <AfterPayCheckout
+          v-if="paymentMethod === 'afterpay' && afterpayEnabled"
+          class="payment-module p-10"
+          :series="series"
+          :seriestype="seriestype"
+          :price="price"
+          :cart-total="overallTotal"
+          :disabled="isProcessing"
+          @active-step="handleActiveStep"
+        />
+      </div>
     </div>
 
-    <article
-      class="
-        summary
-        flex
-        w-full
-        flex-col
-        justify-center
-        bg-white
-        p-2
-        text-gray-600
-        md:w-80
-      "
+    <!-- Order Summary -->
+    <article class="summary flex w-full flex-col
+    justify-center bg-white p-2 text-gray-600 md:w-80"
     >
       <h2 class="mb-3 flex justify-center text-lg font-semibold">
-        Summary
+        Order Summary
       </h2>
-      <ul v-if="isLoading" class="px-2">
-        <li class="mb-1 flex justify-center">
-          <VProgressCircular
+      
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex flex-col items-center justify-center p-8">
+        <VProgressCircular
           size="125"
           width="15"
           indeterminate
           color="gray lighten-2"
         />
-        </li>
-      </ul>
-      <ul
-      v-if="!isLoading"
-      class="px-2"
-      >
-        <li class="mb-1 flex justify-between">
-          <span>Subtotal:</span>
-          <span>{{ formatCurrencyFromCent(subTotal) }}</span>
-        </li>
-        <li class="mb-1 flex justify-between">
-          <span>GST:</span>
-          <span v-if="showGSTIncluded" class="pl-2">GST Inclusive</span>
-          <span v-if="showGSTExcluded" class="pl-2">GST Exclusive</span>
-        </li>
-        <li class="mb-1 flex justify-between">
-          <span>Tax Amount:</span>
-          <span>{{ formatCurrency(taxAmount) }}</span>
-        </li>
-        <li class="mt-3 flex justify-between">
-          <span>Total price:</span>
-          <span class="font-bold text-gray-900">
-            {{ formatCurrencyFromCent(overallTotal) }}
-          </span>
-        </li>
-      </ul>
+        <p class="mt-4 text-gray-500">
+            Loading payment information...
+        </p>
+      </div>
+
+      <!-- Summary Content -->
+      <div v-if="!isLoading && hasPaymentMethods" class="px-2">
+        <ul>
+          <li class="mb-3 flex justify-between border-b pb-2">
+            <span class="font-medium">Subtotal:</span>
+            <span>{{ formatCurrencyFromCent(subTotal) }}</span>
+          </li>
+          <li class="mb-3 flex justify-between border-b pb-2">
+            <span class="font-medium">Tax Status:</span>
+            <span>
+              <span v-if="showGSTIncluded" class="text-green-600">GST Inclusive</span>
+              <span v-if="showGSTExcluded" class="text-amber-600">GST Exclusive</span>
+            </span>
+          </li>
+          <li class="mb-3 flex justify-between border-b pb-2">
+            <span class="font-medium">Tax Amount:</span>
+            <span>{{ formatCurrency(taxAmount) }}</span>
+          </li>
+          <li class="mt-6 flex justify-between border-t pt-4">
+            <span class="text-lg font-bold">Total:</span>
+            <span class="text-xl font-bold text-gray-900">
+              {{ formatCurrencyFromCent(overallTotal) }}
+            </span>
+          </li>
+        </ul>
+        
+        <!-- Payment Method Info -->
+        <div v-if="selectedPaymentMethodInfo" class="mt-6 rounded bg-blue-50 p-3">
+          <p class="text-sm text-blue-800">
+            <span class="font-semibold">Selected:</span> {{ selectedPaymentMethodInfo }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div v-if="errorMessage" class="mt-4 rounded bg-red-50 p-3">
+        <p class="text-sm text-red-800">
+            {{ errorMessage }}
+        </p>
+        <button
+          type="button"
+          @click="retryInitialization" 
+          class="mt-2 text-sm font-medium text-red-600 hover:text-red-800"
+        >
+          Retry
+        </button>
+      </div>
     </article>
   </div>
 </template>
 
 <script>
+import _debounce from 'lodash/debounce';
 import PaymentTab from '~/components/payment/PaymentTab';
 import currencyMixin from '~/mixins/currency/handlesCurrency';
 import StripeCheckout from '~/components/registration/StripeCheckout.vue';
 import AfterPayCheckout from '~/components/registration/AfterPayCheckout.vue';
 
+const API_ENDPOINTS = {
+  WEEKLY: '/v1/tournament/indiv/stripe/calculation',
+  TEAM: '/v1/tournament/team/stripe/calculation',
+  PAYMENT_SETTINGS: 'v1/payment/setting/',
+  TAX_SETTINGS: 'v1/toogletax/retrieve/1'
+};
+
+const PAYMENT_METHODS = {
+  STRIPE: 'stripe',
+  AFTERPAY: 'afterpay'
+};
+
+const LOADING_DELAY_MS = 300;
+const INITIALIZATION_TIMEOUT_MS = 10000;
+
 export default {
+  name: 'PaymentForm',
   components: {
     PaymentTab,
     StripeCheckout,
@@ -128,11 +156,11 @@ export default {
   mixins: [ currencyMixin ],
   props: {
     series: {
-      type: [ String ],
+      type: String,
       required: true
     },
     seriestype: {
-      type: [ String ],
+      type: String,
       required: true
     },
     price: {
@@ -143,39 +171,34 @@ export default {
   },
   data() {
     return {
+      isLoading: true,
+      isProcessing: false,
+      errorMessage: '',
+      stripeEnabled: false,
+      afterpayEnabled: false,
+      paymentMethod: null,
       showGSTIncluded: true,
       showGSTExcluded: false,
       isGSTInclusive: true,
-      paymentMethod: 'stripe',
-      isLoading: false,
+      overallTotal: 0,
+      subTotal: 0,
+      taxAmount: 0,
       originalAmount: {
         subtotal: 0,
         gst: 0,
         total: 0,
       },
-      overallTotal: 0,
-      showPaypal: false,
-      showSquare: true,
-      showStripe: true,
-      isFormNotFilled: true,
-      showErrorMessage: false,
-      ResponseMessage: '',
-      showMinimumAmountMessage: false,
-      ResponseMessage2: '',
-      showTaxInfo: true,
-      subTotal: 0,
-      taxAmount: 0,
-      stripeEnabled: false,
-      afterpayEnabled: false
+      initializationAttempts: 0,
+      maxInitializationAttempts: 3
     };
   },
   computed: {
     tax: {
       get() {
-        return this.$store.state.cart.tax
+        return this.$store.state.cart.tax;
       },
       set(v) {
-        this.$store.commit('cart/setTax', v)
+        this.$store.commit('cart/setTax', v);
       }
     },
     registrationInformation: {
@@ -188,22 +211,18 @@ export default {
     },
     toggleControl1: {
       get() {
-        return (
-          this.$store.state.master.toggleControl1
-        )
+        return this.$store.state.master.toggleControl1;
       },
       set(val) {
-        this.$store.commit('master/setToggleControl1', val)
+        this.$store.commit('master/setToggleControl1', val);
       }
     },
     toggleControl2: {
       get() {
-        return (
-          this.$store.state.master.toggleControl2
-        )
+        return this.$store.state.master.toggleControl2;
       },
       set(val) {
-        this.$store.commit('master/setToggleControl2', val)
+        this.$store.commit('master/setToggleControl2', val);
       }
     },
     paymentIntent: {
@@ -213,132 +232,321 @@ export default {
       set(v) {
         this.$store.commit('registration/setPaymentIntent', v);
       }
+    },
+
+    hasPaymentMethods() {
+      return this.stripeEnabled || this.afterpayEnabled;
+    },
+    
+    selectedPaymentMethodInfo() {
+      if (!this.paymentMethod) return null;
+      
+      const methods = {
+        [PAYMENT_METHODS.STRIPE]: 'Credit/Debit Card',
+        [PAYMENT_METHODS.AFTERPAY]: 'Afterpay'
+      };
+      
+      return methods[ this.paymentMethod ] || this.paymentMethod;
+    },
+
+    isValidPrice() {
+      const price = Number(this.price);
+      return !isNaN(price) && price >= 0;
     }
   },
-  mounted() {
-    this.retrieveToggleTaxControl();
-    this.$store.commit('order/setPaymentMethod', this.paymentMethod)
-    this.initialize()
-    this.listOfPaymentSetting();
-    setTimeout(() => {
-      this.setOriginalAmount()
-      this.$nextTick(() => {
-        if (this.stripeEnabled) {
-          this.setAsPaymentMethod('stripe')
-        } else {
-          this.setAsPaymentMethod('afterpay')
+  watch: {
+    price: {
+      immediate: true,
+      handler(newPrice) {
+        if (newPrice !== undefined && newPrice !== null && this.isValidPrice) {
+          this.debouncedPriceUpdate();
         }
-      })
-    }, 2000);
+      }
+    },
+
+    paymentMethod(newMethod) {
+      if (newMethod) {
+        this.$store.commit('order/setPaymentMethod', newMethod);
+      }
+    }
+  },
+  async mounted() {
+    await this.initializeComponent();
+  },
+  beforeDestroy() {
+    if (this.debouncedPriceUpdate && this.debouncedPriceUpdate.cancel) {
+      this.debouncedPriceUpdate.cancel();
+    }
+    if (this.initializationTimeout) {
+      clearTimeout(this.initializationTimeout);
+    }
   },
   methods: {
-    listOfPaymentSetting() {
-      this.$axios
-        .$get(`v1/payment/setting/`)
-        .then((response) => {
-          this.stripeEnabled = response.stripe_enabled
-          this.afterpayEnabled = response.afterpay_enabled
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
-    },
-    setOriginalAmount() {
-      this.originalAmount.subtotal = this.subtotal
-      this.originalAmount.total = this.overallTotal
-    },
-    retrieveToggleTaxControl() {
-      const id = 1;
-      const endpoint = `v1/toogletax/retrieve/${id}`
-      this.$axios
-        .$get(endpoint)
-        .then((response) => {
-          this.toggleControl1 = response.me.toggleControl1
-          this.toggleControl2 = response.me.toggleControl2
-          this.$store.commit('master/setToggleControl1', response.me.toggleControl1)
-          this.$store.commit('master/setToggleControl2', response.me.toggleControl2)
-          if (this.toggleControl1) {
-            this.showGSTExcluded = true;
-            this.showGSTIncluded = false;
-            this.isGSTInclusive = false;
-          }
-          if (this.toggleControl2) {
-            this.showGSTExcluded = false;
-            this.showGSTIncluded = true;
-            this.isGSTInclusive = true;
-          }
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
-    },
-    toCurrency(x) {
-      return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(x)
-    },
-    setAsPaymentMethod(val) {
-      this.paymentMethod = val
-      this.$store.commit('order/setPaymentMethod', this.paymentMethod)
-    },
-    checkLesserMinimumAmount(minAmount) {
-      const isLesserThanMinimumAmount = (
-        this.price/100 < minAmount)
-      return isLesserThanMinimumAmount;
-    },
-    activeStepPrev(stepNo) {
-      this.$emit('active-step', stepNo)
-    },
-    initialize() {
-      this.isLoading = true
-      const item = this.$route.query.id
-      const amount = this.registrationInformation.price / 100;
-      const discountID = this.registrationInformation.discountCodeId
+    /**
+     * Main initialization sequence
+     */
+    async initializeComponent() {
+      try {
+        this.isLoading = true;
+        this.errorMessage = '';
 
-      let endpoint = ''
+        this.initializationTimeout = setTimeout(() => {
+          this.handleInitializationTimeout();
+        }, INITIALIZATION_TIMEOUT_MS);
 
-      if (this.seriestype === 'weekly') {
-        endpoint = '/v1/tournament/indiv/stripe/calculation'
-      } else {
-        endpoint = '/v1/tournament/team/stripe/calculation'
+        await this.loadPaymentSettings();
+
+        await this.loadTaxSettings();
+
+        await this.initializePaymentCalculation();
+
+        this.setInitialPaymentMethod();
+
+        this.setOriginalAmount();
+        
+      } catch (error) {
+        this.handleInitializationError(error);
+      } finally {
+        this.isLoading = false;
+        if (this.initializationTimeout) {
+          clearTimeout(this.initializationTimeout);
+        }
       }
-      this.$axios
-        .$post(endpoint, {
+    },
+    
+    /**
+     * Load available payment methods from API
+     */
+    async loadPaymentSettings() {
+      try {
+        const response = await this.$axios.$get(API_ENDPOINTS.PAYMENT_SETTINGS);
+        
+        this.stripeEnabled = Boolean(response.stripe_enabled);
+        this.afterpayEnabled = Boolean(response.afterpay_enabled);
+        
+        if (!this.hasPaymentMethods) {
+          throw new Error('No payment methods are currently available');
+        }
+      } catch (error) {
+        console.error('Failed to load payment settings:', error);
+        this.showNotification(
+          'Unable to load payment options. Please try again.',
+          'danger'
+        );
+        throw error;
+      }
+    },
+    
+    /**
+     * Load tax configuration
+     */
+    async loadTaxSettings() {
+      try {
+        const response = await this.$axios.$get(API_ENDPOINTS.TAX_SETTINGS);
+        
+        if (response && response.me) {
+          this.toggleControl1 = response.me.toggleControl1;
+          this.toggleControl2 = response.me.toggleControl2;
+          
+          this.$store.commit('master/setToggleControl1', response.me.toggleControl1);
+          this.$store.commit('master/setToggleControl2', response.me.toggleControl2);
+          
+          this.showGSTIncluded = Boolean(response.me.toggleControl2);
+          this.showGSTExcluded = Boolean(response.me.toggleControl1);
+          this.isGSTInclusive = response.me.toggleControl2;
+        }
+      } catch (error) {
+        console.warn('Failed to load tax settings, using defaults:', error);
+      }
+    },
+    
+    /**
+     * Initialize payment calculation
+     */
+    async initializePaymentCalculation() {
+      if (!this.isValidPrice) {
+        this.errorMessage = 'Invalid price provided';
+        return;
+      }
+      
+      try {
+        this.isProcessing = true;
+        
+        const endpoint = this.seriestype === 'weekly' ?
+          API_ENDPOINTS.WEEKLY :
+          API_ENDPOINTS.TEAM;
+        
+        const item = this.$route.query.id;
+        const amount = this.registrationInformation &&
+        this.registrationInformation.price ?
+          Number(this.registrationInformation.price) / 100 :
+          Number(this.price) / 100;
+        const discountID = this.registrationInformation &&
+        this.registrationInformation.discountCodeId;
+        
+        const response = await this.$axios.$post(endpoint, {
           item,
           amount,
           discountID
-        })
-        .then((response) => {
-          this.activeStep = 2
-          this.overallTotal = response.totalPrice;
-          this.taxAmount = response.taxAmount;
-          this.subTotal = response.subTotal;
+        });
 
-          this.$store.commit('cart/setSubtotal', this.price)
-          this.$store.commit('cart/setTotal', this.overallTotal)
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
-        .catch((err) => {
-          console.log(err.message)
-        })
+        this.overallTotal = Number(response.totalPrice) || 0;
+        this.taxAmount = Number(response.taxAmount) || 0;
+        this.subTotal = Number(response.subTotal) || 0;
+
+        this.$store.commit('cart/setSubtotal', this.price);
+        this.$store.commit('cart/setTotal', this.overallTotal);
+
+        this.errorMessage = '';
+        
+      } catch (error) {
+        console.error('Payment calculation failed:', error);
+        this.errorMessage = 'Failed to calculate payment amount. Please refresh the page.';
+        this.showNotification('Payment calculation error', 'danger');
+      } finally {
+        this.isProcessing = false;
+      }
     },
+    
+    /**
+     * Debounced price update method
+     */
+    debouncedPriceUpdate: _debounce(function() {
+      this.initializePaymentCalculation();
+    }, LOADING_DELAY_MS),
+    
+    /**
+     * Set the initial payment method based on availability
+     */
+    setInitialPaymentMethod() {
+      if (this.stripeEnabled) {
+        this.paymentMethod = PAYMENT_METHODS.STRIPE;
+      } else if (this.afterpayEnabled) {
+        this.paymentMethod = PAYMENT_METHODS.AFTERPAY;
+      } else {
+        this.paymentMethod = null;
+      }
+      
+      if (this.paymentMethod) {
+        this.$store.commit('order/setPaymentMethod', this.paymentMethod);
+      }
+    },
+    
+    /**
+     * Set payment method with validation
+     */
+    setPaymentMethod(method) {
+      if (this.isProcessing || this.isLoading) {
+        return;
+      }
+      
+      if ([ PAYMENT_METHODS.STRIPE, PAYMENT_METHODS.AFTERPAY ].includes(method)) {
+        this.paymentMethod = method;
+        this.$store.commit('order/setPaymentMethod', method);
+      }
+    },
+    
+    /**
+     * Store original amounts for comparison/rollback
+     */
+    setOriginalAmount() {
+      this.originalAmount = {
+        subtotal: this.subTotal,
+        total: this.overallTotal,
+        timestamp: Date.now()
+      };
+    },
+    
+    /**
+     * Check if amount is below minimum required
+     */
+    isBelowMinimumAmount(minAmount) {
+      if (!this.isValidPrice) return true;
+      
+      const priceInDollars = Number(this.price) / 100;
+      return priceInDollars < minAmount;
+    },
+    
+    /**
+     * Handle active step events from child components
+     */
+    handleActiveStep(stepNo) {
+      this.$emit('active-step', stepNo);
+    },
+    
+    /**
+     * Handle initialization timeout
+     */
+    handleInitializationTimeout() {
+      this.errorMessage = 'Payment initialization is taking longer than expected.';
+      this.showNotification('Please check your connection and try again.', 'warning');
+      this.isLoading = false;
+    },
+    
+    /**
+     * Handle initialization errors
+     */
+    handleInitializationError(error) {
+      console.error('Component initialization failed:', error);
+      
+      this.initializationAttempts++;
+      
+      if (this.initializationAttempts >= this.maxInitializationAttempts) {
+        this.errorMessage = 'Unable to initialize payment system. Please contact support.';
+      } else {
+        this.errorMessage = `Failed to load (Attempt ${this.initializationAttempts}/
+        ${this.maxInitializationAttempts})`;
+      }
+      
+      this.showNotification('Initialization error', 'danger');
+    },
+    
+    /**
+     * Retry initialization
+     */
+    retryInitialization() {
+      this.errorMessage = '';
+      this.initializeComponent();
+    },
+    
+    /**
+     * Show notification consistently
+     */
+    showNotification(message, variant = 'danger') {
+      if (this.$oruga && this.$oruga.notification) {
+        this.$oruga.notification.open({
+          message,
+          duration: 5000,
+          variant,
+          queue: true,
+          position: 'bottom'
+        });
+      }
+    },
+    
+    /**
+     * Original method for backward compatibility
+     */
+    initialize() {
+      this.debouncedPriceUpdate();
+    },
+
+    setAsPaymentMethod(val) {
+      this.setPaymentMethod(val);
+    },
+    
+    activeStepPrev(stepNo) {
+      this.handleActiveStep(stepNo);
+    },
+    
+    checkLesserMinimumAmount(minAmount) {
+      return this.isBelowMinimumAmount(minAmount);
+    }
   }
 };
 </script>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .payment-module {
   @apply bg-white p-8;
 }
@@ -349,5 +557,16 @@ export default {
 
 .summary {
   @apply order-1 md:order-2;
+}
+
+/* Loading animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.payment-module,
+.summary > div {
+  animation: fadeIn 0.3s ease-in-out;
 }
 </style>
