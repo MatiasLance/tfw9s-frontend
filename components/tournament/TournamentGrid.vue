@@ -67,7 +67,7 @@
             class="text-gray-300 text-sm leading-relaxed 
                    line-clamp-3"
             v-html="item.description"
-          />
+          ></p>
         </div>
 
         <!-- Action Button -->
@@ -187,7 +187,7 @@ export default {
     },
 
     handleViewArticle(id) {
-      this.$emit('view-article', id)
+      this.$emit('view-article', id, this.type)
     },
   }
 }

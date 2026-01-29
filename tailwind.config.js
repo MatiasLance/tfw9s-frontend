@@ -47,6 +47,9 @@ module.exports = {
         '4/3': '4 / 3',
         '16/9': '16 / 9',
       },
+      animation: {
+        'pulse-subtle': 'pulse-subtle 0.6s ease-in-out',
+      }
     },
   },
   variants: {

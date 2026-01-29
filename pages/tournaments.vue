@@ -304,8 +304,14 @@ export default {
     setTab(tab) {
       this.activeTab = tab;
     },
-    ViewArticle(id) {
-      this.$router.push(`/tournament-article/?id=${id}`);
+    ViewArticle(id, type) {
+      this.$router.push({
+        path: '/tournament-article',
+        query: {
+          id,
+          type
+        }
+      })
     },
     formattedDate(dateString) {
       const date = new Date(dateString);

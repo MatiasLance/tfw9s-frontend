@@ -2,6 +2,16 @@
   <div class="flex min-h-screen w-screen items-center bg-gradient-to-br 
               from-gray-900 to-gray-950 text-white">
     
+    <ClientOnly>
+      <CountDownTimer 
+        v-if="showCountdown && !hasCompleted &&
+        series.type !== 'competitions'"
+        :target-date="registrationOpensDate"
+        @completed="handleCountdownComplete"
+        @dismiss="handleCountdownDismiss"
+      />
+    </ClientOnly>
+    
     <!-- Sporty Loading State -->
     <section
       v-if="isLoading"
@@ -28,7 +38,9 @@
     </section>
 
     <!-- Main Content -->
-    <div v-else class="w-full">
+    <div v-else-if="!showCountdown || hasCompleted ||
+      series.type === 'competitions'" class="w-full"
+    >
       <div class="grid h-auto w-screen grid-cols-1 gap-6 p-4 
                   sm:p-6 md:grid-cols-6 md:p-8 lg:p-12">
         
@@ -138,7 +150,7 @@
                           bg-gray-700/50 p-4 border border-gray-600">
                 <p class="text-gray-200 text-sm leading-relaxed"
                    v-html="article.description"
-                />
+                ></p>
               </div>
             </article>
 
@@ -222,6 +234,7 @@ import currency from 'currency.js';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css';
 import InnerImageZoom from 'vue-inner-image-zoom';
 import VueSlickCarousel from 'vue-slick-carousel';
+import CountDownTimer from '~/components/CountDownTimer.vue'
 import handlesMedia from '~/mixins/shop/handlesMedia'
 import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
 import currencyMixin from '~/mixins/currency/handlesCurrency'
@@ -273,9 +286,12 @@ export default {
   components: {
     InnerImageZoom,
     VueSlickCarousel,
+    CountDownTimer,
   },
   data() {
     return {
+      showCountdown: true,
+      hasCompleted: false,
       isLoading: true,
       isSelected: '',
       addTaxOnCartPrice: 0,
@@ -316,6 +332,8 @@ export default {
         'Fourth',
         'Fifth',
       ],
+      registrationOpensDate: new Date('January 30, 2026 00:00:00'),
+      series: { type: '' }
     };
   },
   computed: {
@@ -383,11 +401,23 @@ export default {
     }
   },
   mounted() {
+    this.series.type = this.$route.query.type
     this.retrieveToggleTaxControl()
     this.retrieveTaxValue()
     this.retrieveSeries(this.$route.query.id);
+    if (Date.now() >= this.registrationOpensDate.getTime()) {
+      this.showCountdown = false
+    }
   },
   methods: {
+    handleCountdownComplete() {
+      this.hasCompleted = true
+    },
+
+    handleCountdownDismiss() {
+      this.showCountdown = false
+    },
+
     setActiveMedia(path) {
       this.activeImageURL = this.getMediaURL(path)
     },
