@@ -332,7 +332,7 @@ export default {
         'Fourth',
         'Fifth',
       ],
-      registrationOpensDate: new Date('January 30, 2026 00:00:00'),
+      registrationOpensDate: new Date('January 31, 2026 00:00:00'),
       series: { type: '' }
     };
   },

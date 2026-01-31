@@ -251,6 +251,17 @@
                     <i class="ri-delete-bin-line mr-2"></i>
                     Delete Series
                   </BaseButton>
+
+                  <BaseButton
+                    v-show="ActiveTab === 'tournament' || ActiveTab === 'coast'"
+                    class="w-full justify-center rounded-xl bg-indigo-600 px-4 py-3
+                    text-sm font-semibold text-white transition-all hover:bg-indigo-700
+                    hover:shadow-lg hover:scale-105"
+                    @click="handleOpenRegistrationStatusModal(data)"
+                  >
+                    Registration Setting
+                  </BaseButton>
+
                 </div>
               </div>
 
@@ -321,6 +332,17 @@
   @close="closeDeleteSeriesDialog"
   @confirm="DeleteSeries"
   />
+
+  <RegistrationStatusModal
+    :active="openRegistrationModalStatus"
+    :loading="saving"
+    :date="currentSettings.date"
+    :isShowCountDownTimer="currentSettings.isShowCountDownTimer"
+    :seriesId="seriesid"
+    @close="handleCloseRegistrationStatusModal"
+    @save="handleSave"
+  />
+  
   </div>
 </template>
 
@@ -332,6 +354,8 @@ import DeleteSeriesModal from '~/components/modals/DeleteSeriesModal.vue';
 import ManageTeamLimitModal from '~/components/modals/ManageTeamLimitModal.vue';
 import ManageWeeklySeriesTeamsModal from '~/components/modals/ManageWeeklySeriesTeamsModal.vue';
 import EditThumbnailModal from '~/components/modals/EditThumbnailModal.vue';
+import RegistrationStatusModal from '~/components/modals/RegistrationStatusModal.vue'
+
 export default {
   components: {
     AddPlayersModal,
@@ -340,7 +364,8 @@ export default {
     ManageWeeklySeriesTeamsModal,
     EditSeriesModal,
     DeleteSeriesModal,
-    EditThumbnailModal
+    EditThumbnailModal,
+    RegistrationStatusModal
   },
   props: {
     teams: {
@@ -395,6 +420,14 @@ export default {
       showVueTable: false,
       matches: [],
       selected: [],
+
+      // Registration Status
+      openRegistrationModalStatus: false,
+      saving: false,
+      currentSettings: {
+        date: '',
+        isShowCountDownTimer: false,
+      },
     }
   },
   computed: {
@@ -454,6 +487,10 @@ export default {
     },
   },
   methods: {
+    handleOpenRegistrationStatusModal(data) {
+      this.seriesid = data.id
+      this.openRegistrationModalStatus = true
+    },
     openAddPlayerDialog() {
       this.showAddPlayersModal = true
     },
@@ -470,6 +507,9 @@ export default {
     openWeeklyTeamsDialog (data) {
       this.selected = { ...data }
       this.showWeeklyTeamsModal = true
+    },
+    handleCloseRegistrationStatusModal() {
+      this.openRegistrationModalStatus = false
     },
     closeAddPlayerDialog() {
       this.showAddPlayersModal = false
@@ -742,6 +782,47 @@ export default {
           });
         });
     },
+
+    async handleSave(payload) {
+      this.saving = true
+      try {
+        const response =  await this.$axios.$post('/v1/registration-form-status', payload)
+
+        if (response.success) {
+          this.$oruga.notification.open({
+            message: response.message,
+            variant: 'success',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+          this.retrieveRegistrationFormStatus(response.id)
+        } else {
+          this.$oruga.notification.open({
+            message: response.message,
+            variant: 'warning',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+        }
+        this.openRegistrationModalStatus = false
+      } catch (error) {
+        console.error('Save failed:', error)
+      } finally {
+        this.saving = false
+      }
+    },
+
+    async retrieveRegistrationFormStatus(id) {
+      try {
+        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
+        this.currentSettings.date = response.date
+        this.currentSettings.isShowCountDownTimer = response.is_show_count_down_timer
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 }
 </script>
