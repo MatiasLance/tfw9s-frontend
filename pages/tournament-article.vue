@@ -290,7 +290,7 @@ export default {
   },
   data() {
     return {
-      showCountdown: true,
+      showCountdown: false,
       hasCompleted: false,
       isLoading: true,
       isSelected: '',
@@ -332,7 +332,7 @@ export default {
         'Fourth',
         'Fifth',
       ],
-      registrationOpensDate: new Date('January 31, 2026 00:00:00'),
+      registrationOpensDate: '',
       series: { type: '' }
     };
   },
@@ -400,13 +400,17 @@ export default {
       });
     }
   },
-  mounted() {
+  async mounted() {
     this.series.type = this.$route.query.type
-    this.retrieveToggleTaxControl()
-    this.retrieveTaxValue()
-    this.retrieveSeries(this.$route.query.id);
-    if (Date.now() >= this.registrationOpensDate.getTime()) {
-      this.showCountdown = false
+    await this.retrieveToggleTaxControl()
+    await this.retrieveTaxValue()
+    await this.retrieveSeries(this.$route.query.id);
+    await this.retrieveRegistrationFormStatus(this.$route.query.id)
+
+    if (this.registrationOpensDate !== '') {
+      if (Date.now() >= this.registrationOpensDate.getTime()) {
+        this.showCountdown = false
+      }
     }
   },
   methods: {
@@ -577,6 +581,20 @@ export default {
           queue: true,
           position: 'bottom'
         })
+      }
+    },
+
+    async retrieveRegistrationFormStatus(id) {
+      try {
+        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
+
+        if (response.success) {
+          this.registrationOpensDate = new Date(response.data.date);
+          this.showCountdown = response.data.is_show_count_down_timer
+        }
+
+      } catch (error) {
+        console.log(error)
       }
     }
   },

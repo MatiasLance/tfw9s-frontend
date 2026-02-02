@@ -336,7 +336,7 @@
   <RegistrationStatusModal
     :active="openRegistrationModalStatus"
     :loading="saving"
-    :date="currentSettings.date"
+    :date="formatDate"
     :isShowCountDownTimer="currentSettings.isShowCountDownTimer"
     :seriesId="seriesid"
     @close="handleCloseRegistrationStatusModal"
@@ -467,6 +467,15 @@ export default {
       }));
 
       return formattedYears;
+    },
+    formatDate() {
+      const date = new Date(this.currentSettings.date);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
     }
   },
   watch: {
@@ -486,9 +495,11 @@ export default {
       }
     },
   },
+
   methods: {
-    handleOpenRegistrationStatusModal(data) {
+    async handleOpenRegistrationStatusModal(data) {
       this.seriesid = data.id
+      await this.retrieveRegistrationFormStatus(data.id)
       this.openRegistrationModalStatus = true
     },
     openAddPlayerDialog() {
@@ -796,7 +807,6 @@ export default {
             position: 'bottom',
             queue: true,
           });
-          this.retrieveRegistrationFormStatus(response.id)
         } else {
           this.$oruga.notification.open({
             message: response.message,
@@ -817,8 +827,12 @@ export default {
     async retrieveRegistrationFormStatus(id) {
       try {
         const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
-        this.currentSettings.date = response.date
-        this.currentSettings.isShowCountDownTimer = response.is_show_count_down_timer
+
+        if (response.success) {
+          this.currentSettings.date = response.data.date;
+          this.currentSettings.isShowCountDownTimer = response.data.is_show_count_down_timer
+        }
+
       } catch (error) {
         console.log(error)
       }

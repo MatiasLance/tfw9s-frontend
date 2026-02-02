@@ -85,6 +85,13 @@
         This screen will disappear automatically when registration opens
         <i class="ri-timer-line ml-1"></i>
       </p>
+
+      <ReturnButtonLink 
+        to="/tournaments"
+        label="Back to Register Page"
+        :isTryScored="true"
+        :pulse="true"
+      />
     </div>
 
     <!-- Confetti explosion when complete -->
@@ -113,8 +120,13 @@
 </template>
 
 <script>
+import ReturnButtonLink from './base/ReturnButtonLink.vue';
+
 export default {
   name: 'CountDownTimer',
+
+  components: { ReturnButtonLink },
+
   props: {
     targetDate: {
       type: Date,

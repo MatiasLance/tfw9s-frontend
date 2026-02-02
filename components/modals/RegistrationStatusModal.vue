@@ -61,7 +61,7 @@
           </p>
           
           <p v-else class="mt-2 text-sm text-gray-500">
-            The countdown will expire on this date
+            The countdown will expire on {{ new Date(date).toDateString() }}
           </p>
         </div>
 
@@ -243,7 +243,7 @@ export default {
       }
 
       const payload = {
-        date: this.form.isShowCountDownTimer ? this.form.date : null,
+        date: this.form.date,
         isShowCountDownTimer: this.form.isShowCountDownTimer,
         seriesId: this.seriesId
       }
