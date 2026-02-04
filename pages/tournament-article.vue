@@ -333,7 +333,9 @@ export default {
         'Fifth',
       ],
       registrationOpensDate: '',
-      series: { type: '' }
+      series: { type: '' },
+      pollTimer: null,
+      isPolling: false
     };
   },
   computed: {
@@ -413,6 +415,7 @@ export default {
       }
     }
   },
+
   methods: {
     handleCountdownComplete() {
       this.hasCompleted = true
@@ -584,20 +587,58 @@ export default {
       }
     },
 
-    async retrieveRegistrationFormStatus(id) {
-      try {
-        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
+    retrieveRegistrationFormStatus(id) {
+      this.isPolling = true
 
-        if (response.success) {
-          this.registrationOpensDate = new Date(response.data.date);
-          this.showCountdown = response.data.is_show_count_down_timer
+      let pollInterval  = 5000;
+
+      const poll = async () => {
+
+        if (!this.isPolling) {
+          return
         }
 
-      } catch (error) {
-        console.log(error)
+        try {
+          const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
+
+          if (response.success) {
+            if (this.hasDataChanged(response.data.date)) {
+              this.registrationOpensDate = new Date(response.data.date);
+              this.showCountdown = response.data.is_show_count_down_timer;
+              pollInterval = 5000
+            } else {
+              pollInterval = Math.min(pollInterval * 1.5, 30000)
+            }
+          }
+
+        } catch (error) {
+          console.log(error)
+          pollInterval = Math.min(pollInterval * 2, 60000)
+        } finally {
+          this.pollTimer = setTimeout(poll, pollInterval)
+        }
+
+      }
+
+      poll();
+    },
+
+    hasDataChanged(newData) {
+      return this.registrationOpensDate !== new Date(newData)
+    },
+
+    stopPolling() {
+      this.isPolling = false
+      if (this.pollTimer) {
+        clearTimeout(this.pollTimer)
+        this.pollTimer = null
       }
     }
   },
+
+  beforeDestroy() {
+    this.stopPolling();
+  }
 };
 </script>
 

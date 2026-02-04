@@ -543,6 +543,8 @@ export default {
         return false;
       }
 
+      const idempotencyKey = `reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
       this.$emit('submit', {
         coachesName: this.coach.name,
         coachesEmail: this.coach.email,
@@ -553,6 +555,7 @@ export default {
         teamName: this.teamName,
         ageGroup: this.ageGroup,
         price: this.price,
+        idempotencyKey
       });
 
       return false;

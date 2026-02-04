@@ -231,7 +231,7 @@ export default {
         ],
       },
       query: null,
-      dateFilter: null,
+      dateFilter: null
     };
   },
   head() {
@@ -284,8 +284,8 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
-    this.quickFetch();
+  async mounted() {
+    await this.quickFetch();
     this.page = 1
   },
   methods: {
@@ -353,6 +353,7 @@ export default {
       // eslint-disable-next-line max-len, vue/max-len, no-return-assign
       return `${startmonth === endmonth? startmonth:endmonth} ${startdate}${startsuffix} -  ${startmonth !== endmonth? endmonth:''} ${enddate}${endsuffix} ${startyear === endyear? startyear: endyear}`;
     },
+
     retrieveSeries() {
       let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
       let eventMonth = this.dateFilter ?
@@ -416,10 +417,11 @@ export default {
           });
         })
     },
+
     clearDate() {
       this.dateFilter = null;
     },
-  }
+  },
 };
 </script>
 
