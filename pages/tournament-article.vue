@@ -403,11 +403,13 @@ export default {
     }
   },
   async mounted() {
+    await this.$nextTick()
     this.series.type = this.$route.query.type
     await this.retrieveToggleTaxControl()
     await this.retrieveTaxValue()
     await this.retrieveSeries(this.$route.query.id);
-    await this.retrieveRegistrationFormStatus(this.$route.query.id)
+    await this.retrieveRegistrationFormStatus(this.$route.query.id);
+    this.$socket.on('registration-form-status', this.handleRegistrationStatus);
 
     if (this.registrationOpensDate !== '') {
       if (Date.now() >= this.registrationOpensDate.getTime()) {
@@ -417,6 +419,19 @@ export default {
   },
 
   methods: {
+    handleRegistrationStatus(response) {
+      const data = response.data || response
+      
+      if (data && data.date) {
+        this.registrationOpensDate = new Date(data.date)
+        this.showCountdown = data.is_show_count_down_timer
+        
+        this.$forceUpdate()
+        
+        this.$emit('registration-status-updated', data)
+      }
+    },
+
     handleCountdownComplete() {
       this.hasCompleted = true
     },
@@ -428,11 +443,13 @@ export default {
     setActiveMedia(path) {
       this.activeImageURL = this.getMediaURL(path)
     },
+
     formattedDate(dateString) {
       const date = new Date(dateString);
       date.setHours(0, 0, 0, 0);
       return date;
     },
+
     DateRange(start, end) {
       const months = [
         'January',
@@ -468,6 +485,7 @@ export default {
       // eslint-disable-next-line max-len, vue/max-len, no-return-assign
       return `${startmonth === endmonth? startmonth:endmonth} ${startdate}${startsuffix} -  ${startmonth !== endmonth? endmonth:''} ${enddate}${endsuffix} ${startyear === endyear? startyear: endyear}`;
     },
+
     viewVariantSlider() {
       const sliderCoordinates = this.getCoordinates(this.$refs.variantSlider)
       window.scrollTo({
@@ -476,6 +494,7 @@ export default {
         behavior: 'smooth',
       })
     },
+
     retrieveSeries(Id) {
       this.isLoading = true;
       this.$axios
@@ -502,6 +521,7 @@ export default {
           this.isLoading = false;
         });
     },
+
     calculatePriceAggregates() {
       const itemCostData = {
         id: this.$route.query.id,
@@ -546,6 +566,7 @@ export default {
       this.$store.commit('cart/setTotal', total);
 
     },
+
     retrieveToggleTaxControl() {
       const endpoint = 'v1/toggletax'
       this.$axios
@@ -566,6 +587,7 @@ export default {
           })
         })
     },
+
     async retrieveTaxValue() {
       try {
         const response = await this.$axios.$get('v1/tax')
@@ -587,57 +609,23 @@ export default {
       }
     },
 
-    retrieveRegistrationFormStatus(id) {
-      this.isPolling = true
-
-      let pollInterval  = 5000;
-
-      const poll = async () => {
-
-        if (!this.isPolling) {
-          return
+    async retrieveRegistrationFormStatus(id) {
+      try {
+        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
+        if (response.success) {
+          this.registrationOpensDate = new Date(response.data.date);
+          this.showCountdown = response.data.is_show_count_down_timer;
         }
-
-        try {
-          const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
-
-          if (response.success) {
-            if (this.hasDataChanged(response.data.date)) {
-              this.registrationOpensDate = new Date(response.data.date);
-              this.showCountdown = response.data.is_show_count_down_timer;
-              pollInterval = 5000
-            } else {
-              pollInterval = Math.min(pollInterval * 1.5, 30000)
-            }
-          }
-
-        } catch (error) {
-          console.log(error)
-          pollInterval = Math.min(pollInterval * 2, 60000)
-        } finally {
-          this.pollTimer = setTimeout(poll, pollInterval)
-        }
-
-      }
-
-      poll();
-    },
-
-    hasDataChanged(newData) {
-      return this.registrationOpensDate !== new Date(newData)
-    },
-
-    stopPolling() {
-      this.isPolling = false
-      if (this.pollTimer) {
-        clearTimeout(this.pollTimer)
-        this.pollTimer = null
+      } catch (error) {
+        console.error(error)
       }
     }
   },
 
   beforeDestroy() {
-    this.stopPolling();
+    if (this.$socket) {
+      this.$socket.off('registration-form-status', this.handleRegistrationStatus)
+    }
   }
 };
 </script>

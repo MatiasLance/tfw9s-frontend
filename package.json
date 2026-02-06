@@ -41,6 +41,7 @@
     "lodash": "^4.17.21",
     "nuxt": "^2.15.8",
     "remixicon": "^4.3.0",
+    "socket.io-client": "^4.8.3",
     "uuid": "^8.3.2",
     "vue": "^2.6.14",
     "vue-color": "^2.8.1",

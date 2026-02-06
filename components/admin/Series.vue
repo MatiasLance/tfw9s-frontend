@@ -807,6 +807,8 @@ export default {
             position: 'bottom',
             queue: true,
           });
+
+          await this.retrieveRegistrationFormStatus(response.id)
         } else {
           this.$oruga.notification.open({
             message: response.message,
@@ -815,6 +817,8 @@ export default {
             position: 'bottom',
             queue: true,
           });
+
+          await this.retrieveRegistrationFormStatus(response.id)
         }
         this.openRegistrationModalStatus = false
       } catch (error) {

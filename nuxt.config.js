@@ -129,7 +129,8 @@ export default {
     { src: '~/plugins/croppa.js' },
     { src: '~/plugins/ChromePicker.js', mode: 'client' },
     { src: '~/plugins/PhotoshopPicker.js', mode: 'client' },
-    { src: '~/plugins/vue-stripe.js', mode: 'client' }
+    { src: '~/plugins/vue-stripe.js', mode: 'client' },
+    { src: '~/plugins/socket.js', mode: 'client' },
   ],
 
   router: {
@@ -180,6 +181,7 @@ export default {
     environment: process.env.ENVIRONMENT,
     baseURL: process.env.BASE_URL,
     apiURL: process.env.BACKEND_URL + process.env.API_PATH,
+    socketURL: process.env.SOCKET_URL,
     persistentVuexModules: process.env.PERSISTENT_VUEX_MODULES.split(','),
   },
 
