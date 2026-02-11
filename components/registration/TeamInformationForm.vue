@@ -361,9 +361,9 @@
             :class="{
               ['bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700' +
               'hover:to-emerald-800 focus:ring-emerald-200 shadow-lg hover:shadow-xl']: 
-                !isLoading && !isAgeLimitReached && hasAgreedToTerms,
+                !isLoading && !isAgeLimitReached && hasAgreedToTerms && !isAvailable,
               'bg-gradient-to-r from-gray-400 to-gray-500 cursor-not-allowed shadow': 
-                isLoading || isAgeLimitReached || !hasAgreedToTerms
+                isLoading || isAgeLimitReached || !hasAgreedToTerms || isAvailable
             }"
             :disabled="isLoading || isAgeLimitReached || !hasAgreedToTerms"
           >
@@ -488,7 +488,10 @@ export default {
       teamCount: '',
       isAgeLimitReached: false,
       isValidEmail: false,
-      emailTimeout: null
+      emailTimeout: null,
+      isAvailable: false,
+      currentCount: null,
+      remainingSlots: null,
     }
   },
   computed: {
@@ -530,6 +533,7 @@ export default {
   created() {
     this.retrieveTeamLimits();
   },
+
   methods: {
     submit() {
       if (!this.isValidEmail) {
@@ -543,7 +547,7 @@ export default {
         return false;
       }
 
-      const idempotencyKey = `reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      const idEmpotencyKey = `reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 
       this.$emit('submit', {
         coachesName: this.coach.name,
@@ -555,7 +559,7 @@ export default {
         teamName: this.teamName,
         ageGroup: this.ageGroup,
         price: this.price,
-        idempotencyKey
+        idEmpotencyKey
       });
 
       return false;

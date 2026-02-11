@@ -240,4 +240,13 @@ export default {
       ].filter(Boolean)
     }
   },
+
+  watchers: {
+    webpack: {
+      aggregateTimeout: 300,
+      poll: 1000
+    }
+  },
+  // If using Nginx as a proxy locally:
+  telemetry: false
 }

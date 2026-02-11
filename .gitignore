@@ -106,3 +106,4 @@ components/registration/AfterPayCheckoutV1.vue
 components/registration/StripeCheckoutV1.vue
 components/payment/PaymentFormV1.vue
 components/registration/TeamInformationFormV1.vue
+pages/register-v1.vue

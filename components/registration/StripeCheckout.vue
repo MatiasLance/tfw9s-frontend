@@ -252,6 +252,14 @@ export default {
     seriestype: {
       type: String,
       required: true
+    },
+    loungeToken: {
+      type: String,
+      required: true
+    },
+    clientId: {
+      type: String,
+      required: true
     }
   },
 
@@ -348,6 +356,16 @@ export default {
           return
         }
 
+        if (response.success) {
+          this.$oruga.notification.open({
+            message: response.message,
+            variant: 'warning',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          });
+        }
+
         this.paymentIntentId = response.paymentIntentId
         this.clientSecret = response.stripeToken
         this.$store.commit('registration/setPaymentIntent', response.paymentIntentId)
@@ -375,7 +393,10 @@ export default {
         /* eslint-disable camelcase */
         payment_method: 'stripe',
         metadata: this.registrationInformation,
-        discountcode: ''
+        discountcode: '',
+        /* eslint-disable camelcase */
+        lounge_token: this.loungeToken,
+        client_id: this.clientId
       }
     },
 
@@ -719,14 +740,12 @@ export default {
   }
 }
 
-/* Focus styles for accessibility */
 button:focus-visible,
 a:focus-visible {
   outline: 2px solid #1a1d18;
   outline-offset: 2px;
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .spinner,
   .animate-spin {

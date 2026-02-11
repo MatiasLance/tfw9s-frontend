@@ -1,12 +1,46 @@
 <template>
   <div class="min-h-full bg-[#1A1A1B]">
-    <!-- Enhanced Header -->
+    
+    <div
+     v-if="isInQueue"
+     class="fixed inset-0 z-50 flex items-center
+     justify-center bg-black/90 backdrop-blur-sm"
+    >
+      <div class="bg-white rounded-lg p-8 max-w-md w-full
+      text-center shadow-2xl border-t-4 border-green-600"
+      >
+        <div class="mb-4">
+          <div class="spinner !text-green-600 !w-12 !h-12 !border-green-200"></div>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">
+            You are in line
+        </h2>
+        <p class="text-gray-600 mb-6">
+          Due to high traffic, we have placed you in a virtual waiting room. 
+          Please do not refresh the page.
+        </p>
+        
+        <div class="bg-gray-100 rounded p-4 mb-4">
+          <p class="text-sm text-gray-500 uppercase tracking-wide">
+            Your Position
+          </p>
+          <p class="text-4xl font-bold text-green-700">
+            {{ queuePosition }}
+         </p>
+        </div>
+
+        <p class="text-xs text-gray-400">
+          Checking status every few seconds...
+        </p>
+      </div>
+    </div>
+
     <BaseHeader
       class="mx-auto max-w-full gap-4 relative overflow-hidden
       bg-gradient-to-br from-green-900 via-green-700 to-gray-900
       lg:px-8"
     >
-      <!-- Animated Rugby Field Background -->
+    <!-- Animated Rugby Field Background -->
       <div class="absolute inset-0 opacity-20">
         <div class="absolute top-1/4 left-0 w-full h-1 bg-white/30 
                     animate-pulse"></div>
@@ -41,32 +75,16 @@
       </div>
     </BaseHeader>
 
-    <div class="my-5 mx-auto max-w-screen-xl py-6">
-      <div class="bg-gradient-to-r from-green-500
-      to-green-600 rounded-lg shadow-lg p-6 text-white border-2 border-green-400"
-      >
-      <div class="flex items-center gap-3 mb-2">
-      <i class="ri-team-line text-3xl font-bold"></i>
-      <h2 class="text-2xl font-bold">
-      Current Registrations
-      </h2>
-      </div>
-      <p class="text-green-50 text-lg font-semibold">
-       15 are currently registered for this event.
-      </p>
-      </div>
-    </div>
+    <LiveCounter class="mt-10" :series-id="$route.query.id" />
 
-    <div class="my-5 mx-auto max-w-screen-xl bg-gray-200">
+    <div class="mt-5 mb-10 rounded-lg mx-auto max-w-screen-xl bg-gray-200">
       <div class="mb-5 w-full bg-white">
         <Stepper :step="activeStep" stepname="Information" />
       </div>
 
       <div class="flex flex-col gap-4 p-2 md:flex-row">
         <template v-if="activeStep === 1">
-          <template
-            v-if="seriestype === 'weekly'"
-          >
+           <template v-if="seriestype === 'weekly'">
             <IndividualInformationForm
               :is-loading="isStepperLoading"
               :price="price"
@@ -81,6 +99,7 @@
             />
           </template>
         </template>
+        
         <template v-else-if="activeStep === 2">
           <PaymentForm
             :subtotal="subtotal"
@@ -89,35 +108,40 @@
             :seriestype="seriestype"
             :taxAmount="taxAmount"
             :price="price"
+            :lounge-token="loungeToken"
+            :client-id="clientId"
             @active-step="setPreviousStep"
           />
         </template>
-        <!-- col.// -->
       </div>
-      <!-- grid.// -->
     </div>
-    <!-- container.// -->
   </div>
 </template>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
 import BaseHeader from '~/components/base/BaseHeader';
 import IndividualInformationForm from '~/components/registration/IndividualInformationForm';
 import TeamInformationForm from '~/components/registration/TeamInformationForm';
 import Stepper from '~/components/Stepper/Stepper';
 import currencyMixin from '~/mixins/currency';
 import PaymentForm from '~/components/payment/PaymentForm';
+import LiveCounter from '~/components/registration/LiveCounter.vue';
 
 export default {
   name: 'register',
+
   components: {
     BaseHeader,
     IndividualInformationForm,
     TeamInformationForm,
     Stepper,
     PaymentForm,
+    LiveCounter
   },
+
   mixins: [ currencyMixin ],
+
   data() {
     return {
       clientSecret: '',
@@ -125,10 +149,16 @@ export default {
       isStepperLoading: false,
       seriestype: '',
       pause: false,
-      seeries: null,
+      series: null,
       price: null,
+      clientId: null,
+      loungeToken: null,
+      isInQueue: false,
+      queuePosition: 0,
+      pollingInterval: null,
     };
   },
+
   computed: {
     registrationInformation: {
       get() {
@@ -163,7 +193,10 @@ export default {
       },
     },
   },
+
   created() {
+    this.clientId = uuidv4();
+    
     this.retrieveSeries();
     this.series = this.$route.query.series
     this.price = this.$route.query.price
@@ -171,10 +204,50 @@ export default {
   },
 
   methods: {
+    async checkLoungeAndProceed() {
+      try {
+        const response = await this.$axios.$post('/v1/lounge/check', {
+          item: this.$route.query.id,
+          /* eslint-disable camelcase */
+          client_id: this.clientId
+        });
+
+        if (response.status === 'pass') {
+          this.loungeToken = response.token;
+          this.stopPolling();
+          this.moveToPaymentStep();
+        } else {
+          this.isInQueue = true;
+          this.queuePosition = response.position;
+
+          if (!this.pollingInterval) {
+            this.pollingInterval = setInterval(() => {
+              this.checkLoungeAndProceed();
+            }, 5000);
+          }
+        }
+      } catch (error) {
+        console.error("Lounge check failed", error);
+        this.stopPolling();
+        this.moveToPaymentStep(); 
+      }
+    },
+
+    stopPolling() {
+      if (this.pollingInterval) {
+        clearInterval(this.pollingInterval);
+        this.pollingInterval = null;
+      }
+      this.isInQueue = false;
+    },
+
+    moveToPaymentStep() {
+      this.activeStep = 2;
+      this.isStepperLoading = false;
+    },
+
     retrieveSeries() {
-
       this.id = this.$route.query.id;
-
       this.$axios
         .$get(`v1/series/${this.id}`)
         .then((response) => {
@@ -183,9 +256,11 @@ export default {
           this.pause = parseInt(SeriesData.is_paused) === 1
         })
     },
+
     setPreviousStep(stepNo) {
       this.activeStep = stepNo
     },
+
     toPayStep(registrationInformation) {
       this.registrationInformation = registrationInformation;
       this.isStepperLoading = true;
@@ -196,6 +271,7 @@ export default {
         .then((response) => {
           const SeriesData = response.data.series
           const pause = parseInt(SeriesData.is_paused) === 1
+          
           if (pause) {
             this.$oruga.notification.open({
               message: 'Event Unavailable',
@@ -207,12 +283,16 @@ export default {
             this.isStepperLoading = false;
           } else {
             setTimeout(() => {
-              this.activeStep = 2;
-              this.isStepperLoading = false;
-            }, 3000);
+              this.checkLoungeAndProceed();
+            }, 1000);
           }
         })
+        .catch(err => {
+          console.log(err)
+          this.isStepperLoading = false;
+        });
     },
+
     async checkStatus() {
       const clientSecret = this.$route.query.payment_intent_client_secret;
 
@@ -242,6 +322,7 @@ export default {
         break;
       }
     },
+
     checkRegistrationLimits(seriesData) {
       const maxAge = seriesData.age_group.max_age;
       const currentRegistrations = seriesData.max_registration || 0;
@@ -260,152 +341,7 @@ export default {
         return false;
       }
       return true;
-    },
-  },
+    }
+  }
 };
 </script>
-
-<style>
-  .croppa-container {
-  background-color: #abb8c3;
-  border: 3px solid #3981da;
-  }
-  .o-inputit__item--danger {
-  background-color: #e73538 !important;
-  }
-/* Variables */
-#payment-message {
-  color: rgb(105, 115, 134);
-  font-size: 16px;
-  line-height: 20px;
-  padding-top: 12px;
-  text-align: center;
-}
-
-#payment-element {
-  margin-bottom: 24px;
-}
-
-/* Buttons and links */
-button#stripeSubmit {
-  background: #1a1d18;
-  color: #ffffff;
-  border-radius: 4px;
-  border: 0;
-  padding: 12px 16px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: block;
-  transition: all 0.2s ease;
-  box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
-  width: 100%;
-}
-
-button#backCart {
-  background: #ffffff;
-  color: #000;
-  border-radius: 4px;
-  border: 0;
-  padding: 12px 16px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: block;
-  transition: all 0.2s ease;
-  box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
-  width: 100%;
-}
-
-button#stripeSubmit:hover {
-  filter: contrast(115%);
-}
-
-button#stripeSubmit:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-/* spinner/processing state, errors */
-.spinner,
-.spinner:before,
-.spinner:after {
-  border-radius: 50%;
-}
-.spinner {
-  color: #ffffff;
-  font-size: 22px;
-  text-indent: -99999px;
-  margin: 0px auto;
-  position: relative;
-  width: 20px;
-  height: 20px;
-  box-shadow: inset 0 0 0 2px;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-}
-.spinner:before,
-.spinner:after {
-  position: absolute;
-  content: '';
-}
-.spinner:before {
-  width: 10.4px;
-  height: 20.4px;
-  background: #5469d4;
-  border-radius: 20.4px 0 0 20.4px;
-  top: -0.2px;
-  left: -0.2px;
-  -webkit-transform-origin: 10.4px 10.2px;
-  transform-origin: 10.4px 10.2px;
-  -webkit-animation: loading 2s infinite ease 1.5s;
-  animation: loading 2s infinite ease 1.5s;
-}
-.spinner:after {
-  width: 10.4px;
-  height: 10.2px;
-  background: #5469d4;
-  border-radius: 0 10.2px 10.2px 0;
-  top: -0.1px;
-  left: 10.2px;
-  -webkit-transform-origin: 0px 10.2px;
-  transform-origin: 0px 10.2px;
-  -webkit-animation: loading 2s infinite ease;
-  animation: loading 2s infinite ease;
-}
-
-@-webkit-keyframes loading {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes loading {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  form {
-    width: 80vw;
-    min-width: initial;
-  }
-}
-
-.selected {
-  background: #1a1d18;
-  color: #ffffff;
-  border: 1px solid transparent;
-}
-</style>

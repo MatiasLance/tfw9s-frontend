@@ -36,6 +36,8 @@
           :seriestype="seriestype"
           :price="price"
           :disabled="isProcessing"
+          :lounge-token="loungeToken"
+          :client-id="clientId"
           @active-step="handleActiveStep"
         />
 
@@ -47,6 +49,8 @@
           :price="price"
           :cart-total="overallTotal"
           :disabled="isProcessing"
+          :lounge-token="loungeToken"
+          :client-id="clientId"
           @active-step="handleActiveStep"
         />
       </div>
@@ -167,6 +171,14 @@ export default {
       type: [ Number, String ],
       required: true,
       default: 0
+    },
+    loungeToken: {
+      type: String,
+      default: null
+    },
+    clientId: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -189,7 +201,9 @@ export default {
         total: 0,
       },
       initializationAttempts: 0,
-      maxInitializationAttempts: 3
+      maxInitializationAttempts: 3,
+      timeLeft: 900,
+      timer: null
     };
   },
   computed: {
@@ -270,9 +284,20 @@ export default {
       }
     }
   },
+
   async mounted() {
     await this.initializeComponent();
+
+    this.timer = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+      } else {
+        alert("Your session has expired. Please re-enter the queue.");
+        window.location.reload();
+      }
+    }, 1000);
   },
+
   beforeDestroy() {
     if (this.debouncedPriceUpdate && this.debouncedPriceUpdate.cancel) {
       this.debouncedPriceUpdate.cancel();
@@ -280,6 +305,7 @@ export default {
     if (this.initializationTimeout) {
       clearTimeout(this.initializationTimeout);
     }
+    clearInterval(this.timer);
   },
   methods: {
     /**
@@ -387,7 +413,7 @@ export default {
         const response = await this.$axios.$post(endpoint, {
           item,
           amount,
-          discountID
+          discountID,
         });
 
         this.overallTotal = Number(response.totalPrice) || 0;
