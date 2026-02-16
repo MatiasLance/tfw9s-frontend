@@ -149,7 +149,7 @@
                 class="w-full pl-10 pr-4 py-3 bg-transparent text-gray-900
                 placeholder-gray-400 focus:outline-none"
                 type="tel"
-                placeholder="1234 5678"
+                placeholder="123 456 789"
                 required
                 :disabled="isLoading"
                 @input="formatPhoneNumber"
@@ -583,7 +583,7 @@ export default {
       let digits = this.coach.phoneDigits.replace(/\D/g, '');
       
       if (digits.length > 4) {
-        digits = `${digits.slice(0, 4)} ${digits.slice(4, 8)}`;
+        digits = `${digits.slice(0, 4)} ${digits.slice(4, 9)}`;
       }
       
       this.coach.phoneDigits = digits;

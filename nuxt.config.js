@@ -94,23 +94,44 @@ export default {
         media: 'print',
         onload: "this.media='all'" 
       },
-      { rel: 'preconnect', href: 'https://js.stripe.com' },
-      { rel: 'dns-prefetch', href: 'https://js.stripe.com' }
     ],
     script: [
       {
         src: 'https://js.stripe.com/v3',
         async: false,
         defer: true,
-        preconnect: 'https://js.stripe.com',
+        preconnect: 'https://js.stripe.com/v3',
       },
       {
         hid: 'square-web-payments-sdk',
         type: 'text/javascript',
         src: `${process.env.ENVIRONMENT === 'production' ? 'https://web.squarecdn.com/v1/square.js' : 'https://sandbox.web.squarecdn.com/v1/square.js'}`,
         defer: true
+      },
+      {
+        hid: 'force-clear-sw',
+        innerHTML: `
+          (function() {
+            var CURRENT_VERSION = '1.1';
+            var savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(regs) {
+                  for(var i=0; i<regs.length; i++) { regs[i].unregister(); }
+                  localStorage.setItem('app_version', CURRENT_VERSION);
+                  if (savedVersion) window.location.reload(true);
+                });
+              } else {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+              }
+            }
+          })();
+        `,
+        type: 'text/javascript',
+        charset: 'utf-8'
       }
-    ]
+    ],
+    __dangerouslyDisableSanitizers: ['script']
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -131,6 +152,7 @@ export default {
     { src: '~/plugins/PhotoshopPicker.js', mode: 'client' },
     { src: '~/plugins/vue-stripe.js', mode: 'client' },
     { src: '~/plugins/socket.js', mode: 'client' },
+    { src: '~/plugins/version-check.client.js', mode: 'client' }
   ],
 
   router: {
@@ -241,12 +263,12 @@ export default {
     }
   },
 
-  watchers: {
-    webpack: {
-      aggregateTimeout: 300,
-      poll: 1000
+  pwa: {
+    workbox: {
+      navigateFallback: '/index.html',
+      updateOnNavigation: true,
+      skipWaiting: true,
+      clientsClaim: true,
     }
-  },
-  // If using Nginx as a proxy locally:
-  telemetry: false
+  }
 }

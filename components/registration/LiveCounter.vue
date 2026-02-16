@@ -2,7 +2,7 @@
   <div 
     :class="[
       'transition-all duration-500 ease-in-out p-4',
-      'rounded-t-lg border-b shadow-sm mx-auto max-w-screen-xl', 
+      'border-b shadow-sm mx-auto max-w-screen-xl', 
       statusClasses.container
     ]"
   >
@@ -37,7 +37,7 @@
          py-2 rounded-md border border-white/10 text-center min-w-[100px]"
         >
           <p class="text-[10px] uppercase text-white/60 font-semibold mb-1">
-            In Checkout
+            Checking Out
           </p>
           <p class="text-lg font-mono font-bold text-white">
             {{ stats.active_shoppers }}<span class="text-xs font-normal opacity-50 ml-1">/
@@ -105,9 +105,10 @@ export default {
 
     statusDescription() {
       const descriptions = {
-        'STABLE': 'Slots available. Proceed to payment for instant processing.',
-        'HIGH': 'Many users are currently registering. Your checkout speed may vary.',
-        'CRITICAL': 'The payment gateway is at capacity. You will be queued automatically.'
+        'STABLE': 'System performing within nominal limits. Processing is instantaneous.',
+        'HIGH': 'Heavy load detected. Throughput is high; monitor for potential latency.',
+        'CRITICAL': `Load balancer/Gateway threshold reached.
+         New users are being diverted to the waiting room/queue.`
       };
       return descriptions[this.trafficLevel];
     },

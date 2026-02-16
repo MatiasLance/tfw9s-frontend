@@ -46,7 +46,7 @@
       <div class="grid grid-cols-1 gap-6">
         
         <!-- Sporty Tab Navigation -->
-        <span class="col-span-1">
+        <div class="col-span-1 block">
           <VueSlickCarousel v-bind="slickSettings" draggable focus-on-select>
             <div v-for="tab in tabs" :key="tab.name" class="px-2">
               <button
@@ -68,7 +68,7 @@
               </button>
             </div>
           </VueSlickCarousel>
-        </span>
+        </div>
 
         <!-- Filters Section -->
         <div class="grid grid-cols-1 gap-6 p-4 md:grid-cols-3 
@@ -184,9 +184,10 @@ export default {
       ],
       SeriesList: [],
       slickSettings: {
-        arrows: false,
+        arrows: true,
         slidesToShow: 4,
         slidesToScroll: 1,
+        infinite: true,
         responsive: [
           {
             breakpoint: 1280,
@@ -438,6 +439,18 @@ export default {
   list-style: revert !important;
   margin: 0 !important;
   padding-left: 20px !important;
+}
+
+button.slick-prev:before, button.slick-next:before {
+  color:#10b981 !important;
+}
+
+button.slick-prev:before {
+  margin-right: -25px !important;
+}
+
+button.slick-next:before {
+  margin-left: -25px !important;
 }
 </style>
 

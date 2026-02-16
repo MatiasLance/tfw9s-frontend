@@ -2,7 +2,7 @@
   <div
     class="
       flex w-full items-center
-      rounded-t
+      rounded-t-lg
       border border-gray-200
     "
   >

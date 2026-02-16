@@ -262,6 +262,16 @@
                     Registration Setting
                   </BaseButton>
 
+                  <BaseButton
+                    v-show="ActiveTab === 'tournament' || ActiveTab === 'coast'"
+                    class="w-full justify-center rounded-xl bg-indigo-600 px-4 py-3
+                    text-sm font-semibold text-white transition-all hover:bg-indigo-700
+                    hover:shadow-lg hover:scale-105"
+                    @click="handleOpenCheckRegistrationStatusModal(data)"
+                  >
+                    Check Registration Status
+                  </BaseButton>
+
                 </div>
               </div>
 
@@ -342,6 +352,12 @@
     @close="handleCloseRegistrationStatusModal"
     @save="handleSave"
   />
+
+  <CheckRegistrationStatusModal
+    :active="openCheckRegistrationStatusModal"
+    :seriesId="seriesid"
+    @close="handleCloseCheckRegistrationStatusModal"
+  />
   
   </div>
 </template>
@@ -355,6 +371,7 @@ import ManageTeamLimitModal from '~/components/modals/ManageTeamLimitModal.vue';
 import ManageWeeklySeriesTeamsModal from '~/components/modals/ManageWeeklySeriesTeamsModal.vue';
 import EditThumbnailModal from '~/components/modals/EditThumbnailModal.vue';
 import RegistrationStatusModal from '~/components/modals/RegistrationStatusModal.vue'
+import CheckRegistrationStatusModal from '~/components/modals/CheckRegistrationStatusModal.vue';
 
 export default {
   components: {
@@ -365,7 +382,8 @@ export default {
     EditSeriesModal,
     DeleteSeriesModal,
     EditThumbnailModal,
-    RegistrationStatusModal
+    RegistrationStatusModal,
+    CheckRegistrationStatusModal
   },
   props: {
     teams: {
@@ -428,6 +446,7 @@ export default {
         date: '',
         isShowCountDownTimer: false,
       },
+      openCheckRegistrationStatusModal: false,
     }
   },
   computed: {
@@ -497,6 +516,10 @@ export default {
   },
 
   methods: {
+    handleOpenCheckRegistrationStatusModal(data) {
+      this.seriesid = data.id
+      this.openCheckRegistrationStatusModal = true
+    },
     async handleOpenRegistrationStatusModal(data) {
       this.seriesid = data.id
       await this.retrieveRegistrationFormStatus(data.id)
@@ -521,6 +544,9 @@ export default {
     },
     handleCloseRegistrationStatusModal() {
       this.openRegistrationModalStatus = false
+    },
+    handleCloseCheckRegistrationStatusModal() {
+      this.openCheckRegistrationStatusModal = false
     },
     closeAddPlayerDialog() {
       this.showAddPlayersModal = false

@@ -17,7 +17,6 @@
         </h2>
         <p class="text-gray-600 mb-6">
           Due to high traffic, we have placed you in a virtual waiting room. 
-          Please do not refresh the page.
         </p>
         
         <div class="bg-gray-100 rounded p-4 mb-4">
@@ -30,7 +29,7 @@
         </div>
 
         <p class="text-xs text-gray-400">
-          Checking status every few seconds...
+          Please do not refresh the page.
         </p>
       </div>
     </div>
@@ -75,10 +74,8 @@
       </div>
     </BaseHeader>
 
-    <LiveCounter class="mt-10" :series-id="$route.query.id" />
-
-    <div class="mt-5 mb-10 rounded-lg mx-auto max-w-screen-xl bg-gray-200">
-      <div class="mb-5 w-full bg-white">
+    <div class="mt-10 mb-10 rounded-lg mx-auto max-w-screen-xl bg-gray-200">
+      <div class="mb-5 w-full rounded-t-lg bg-white">
         <Stepper :step="activeStep" stepname="Information" />
       </div>
 
@@ -126,7 +123,6 @@ import TeamInformationForm from '~/components/registration/TeamInformationForm';
 import Stepper from '~/components/Stepper/Stepper';
 import currencyMixin from '~/mixins/currency';
 import PaymentForm from '~/components/payment/PaymentForm';
-import LiveCounter from '~/components/registration/LiveCounter.vue';
 
 export default {
   name: 'register',
@@ -136,8 +132,7 @@ export default {
     IndividualInformationForm,
     TeamInformationForm,
     Stepper,
-    PaymentForm,
-    LiveCounter
+    PaymentForm
   },
 
   mixins: [ currencyMixin ],

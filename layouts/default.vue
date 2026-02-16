@@ -16,25 +16,30 @@
               class="ri-arrow-up-line rounded-lg bg-[#4cbe5c]
               p-2 text-3xl font-bold text-white drop-shadow-xl
               transition hover:brightness-125"
-              />
+              ></i>
             </button>
             <NavHeader
               class="font-montserrat sm:custom-py-4
               custom-py-1 relative font-semibold"
             />
             <div class="relative min-h-screen bg-[#1A1A1B]">
-              <div class="page-top"/>
-              <Nuxt />
+              <div class="page-top">
+                <Nuxt />
+                <UpdateNotification />
+              </div>
             </div>
-            <Footer />
+            <Footer></Footer>
         </v-app>
     </div>
 </template>
 
 <script>
 import TopHeader from '~/components/TopHeader.vue'
+import UpdateNotification from '~/components/UpdateNotification.vue';
+
 export default {
-  components: { TopHeader },
+  components: { TopHeader, UpdateNotification },
+
   data() {
     return {
       showTopScroll: false,
@@ -45,14 +50,17 @@ export default {
       }
     }
   },
+
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
     document.addEventListener('click', this.close)
   },
+
   beforeDestroy() {
     window.removeEventListener('scroll', this.handleScroll)
     document.removeEventListener('click', this.close)
   },
+
   methods: {
     scrollUp() {
       const pageTop = document.querySelector('.page-top');
