@@ -98,6 +98,14 @@
         </template>
       </button>
 
+      <div class="flex items-center gap-2 px-1 pb-1">
+        <i class="ri-information-line text-yellow-600 text-sm flex-shrink-0"></i>
+        <p class="text-xs text-gray-500 italic leading-none">
+          Note: If you have poor internet bars it may result in
+          the payment loading indefinitely and failing
+        </p>
+      </div>
+
       <!-- Return Links -->
       <NuxtLink
         class="flex items-center justify-center

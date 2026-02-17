@@ -582,8 +582,8 @@ export default {
     formatPhoneNumber() {
       let digits = this.coach.phoneDigits.replace(/\D/g, '');
       
-      if (digits.length > 4) {
-        digits = `${digits.slice(0, 4)} ${digits.slice(4, 9)}`;
+      if (digits.length > 3) {
+        digits = `${digits.slice(0, 3)} ${digits.slice(3, 9)}`;
       }
       
       this.coach.phoneDigits = digits;

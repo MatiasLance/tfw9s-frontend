@@ -29,7 +29,7 @@
         </div>
 
         <p class="text-xs text-gray-400">
-          Please do not refresh the page.
+          Do not refresh the page.
         </p>
       </div>
     </div>
@@ -196,6 +196,10 @@ export default {
     this.series = this.$route.query.series
     this.price = this.$route.query.price
     this.$store.commit('registration/setBase64IMG', '');
+  },
+
+  beforeDestroy() {
+    this.stopPolling();
   },
 
   methods: {

@@ -87,8 +87,11 @@
           <li class="mb-3 flex justify-between border-b pb-2">
             <span class="font-medium">Tax Status:</span>
             <span>
-              <span v-if="showGSTIncluded" class="text-green-600">GST Inclusive</span>
-              <span v-if="showGSTExcluded" class="text-amber-600">GST Exclusive</span>
+              <span
+              :class="showGSTIncluded ? 'text-green-600' : 'text-amber-600'"
+              >
+                {{ showGSTIncluded ? 'GST Inclusive' : 'GST Exclusive' }}
+              </span>
             </span>
           </li>
           <li class="mb-3 flex justify-between border-b pb-2">
@@ -139,7 +142,7 @@ const API_ENDPOINTS = {
   WEEKLY: '/v1/tournament/indiv/stripe/calculation',
   TEAM: '/v1/tournament/team/stripe/calculation',
   PAYMENT_SETTINGS: 'v1/payment/setting/',
-  TAX_SETTINGS: 'v1/toogletax/retrieve/1'
+  TAX_SETTINGS: 'v1/toggletax/'
 };
 
 const PAYMENT_METHODS = {
@@ -370,16 +373,16 @@ export default {
       try {
         const response = await this.$axios.$get(API_ENDPOINTS.TAX_SETTINGS);
         
-        if (response && response.me) {
-          this.toggleControl1 = response.me.toggleControl1;
-          this.toggleControl2 = response.me.toggleControl2;
+        if (response) {
+          this.toggleControl1 = response.toggleControl1;
+          this.toggleControl2 = response.toggleControl2;
           
-          this.$store.commit('master/setToggleControl1', response.me.toggleControl1);
-          this.$store.commit('master/setToggleControl2', response.me.toggleControl2);
+          this.$store.commit('master/setToggleControl1', response.toggleControl1);
+          this.$store.commit('master/setToggleControl2', response.toggleControl2);
           
-          this.showGSTIncluded = Boolean(response.me.toggleControl2);
-          this.showGSTExcluded = Boolean(response.me.toggleControl1);
-          this.isGSTInclusive = response.me.toggleControl2;
+          this.showGSTIncluded = Boolean(response.toggleControl2);
+          this.showGSTExcluded = Boolean(response.toggleControl1);
+          this.isGSTInclusive = response.toggleControl2;
         }
       } catch (error) {
         console.warn('Failed to load tax settings, using defaults:', error);

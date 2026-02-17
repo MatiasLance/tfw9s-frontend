@@ -135,9 +135,13 @@ export default {
     this.fetchStats();
     this.polling = setInterval(this.fetchStats, 10000);
   },
+
   beforeDestroy() {
-    if (this.polling) clearInterval(this.polling);
+    if (this.polling) {
+      clearInterval(this.polling)
+    };
   },
+
   methods: {
     async fetchStats() {
       try {

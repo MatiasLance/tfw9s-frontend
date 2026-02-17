@@ -264,9 +264,10 @@
 
                   <BaseButton
                     v-show="ActiveTab === 'tournament' || ActiveTab === 'coast'"
-                    class="w-full justify-center rounded-xl bg-indigo-600 px-4 py-3
-                    text-sm font-semibold text-white transition-all hover:bg-indigo-700
+                    class="w-full justify-center rounded-xl bg-emerald-600 px-4 py-3
+                    text-sm font-semibold text-white transition-all hover:bg-emerald-700
                     hover:shadow-lg hover:scale-105"
+                    :disabled="Boolean(data.is_paused)"
                     @click="handleOpenCheckRegistrationStatusModal(data)"
                   >
                     Check Registration Status

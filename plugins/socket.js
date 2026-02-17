@@ -21,11 +21,11 @@ export default function (context, inject) {
   })
 
   socket.on('connect', () => {
-    console.log('[Socket] Connected with ID:', socket.id)
+    // console.log('[Socket] Connected with ID:', socket.id)
   })
 
   socket.on('disconnect', (reason) => {
-    console.warn('[Socket] Disconnected:', reason)
+    // console.warn('[Socket] Disconnected:', reason)
 
     if (reason === 'io server disconnect') {
       socket.connect()
