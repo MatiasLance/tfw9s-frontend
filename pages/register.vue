@@ -1,6 +1,16 @@
 <template>
   <div class="min-h-full bg-[#1A1A1B]">
-    
+
+    <ClientOnly>
+      <CountDownTimer 
+        v-if="showCountdown && !hasCompleted &&
+        seriestype !== 'competitions'"
+        :target-date="registrationOpensDate"
+        @completed="handleCountdownComplete"
+        @dismiss="handleCountdownDismiss"
+      />
+    </ClientOnly>
+    {{ seriestype }}
     <div
      v-if="isInQueue"
      class="fixed inset-0 z-50 flex items-center
@@ -123,6 +133,7 @@ import TeamInformationForm from '~/components/registration/TeamInformationForm';
 import Stepper from '~/components/Stepper/Stepper';
 import currencyMixin from '~/mixins/currency';
 import PaymentForm from '~/components/payment/PaymentForm';
+import CountDownTimer from '~/components/CountDownTimer.vue'
 
 export default {
   name: 'register',
@@ -132,13 +143,17 @@ export default {
     IndividualInformationForm,
     TeamInformationForm,
     Stepper,
-    PaymentForm
+    PaymentForm,
+    CountDownTimer
   },
 
   mixins: [ currencyMixin ],
 
   data() {
     return {
+      showCountdown: false,
+      hasCompleted: false,
+      registrationOpensDate: '',
       clientSecret: '',
       activeStep: 1,
       isStepperLoading: false,
@@ -189,20 +204,47 @@ export default {
     },
   },
 
-  created() {
+  beforeDestroy() {
+    this.stopPolling();
+  },
+
+  async mounted() {
     this.clientId = uuidv4();
     
     this.retrieveSeries();
     this.series = this.$route.query.series
     this.price = this.$route.query.price
     this.$store.commit('registration/setBase64IMG', '');
-  },
 
-  beforeDestroy() {
-    this.stopPolling();
+    await this.$nextTick()
+    this.$socket.on('registration-form-status', this.handleRegistrationStatus);
+
+    if (this.registrationOpensDate !== '') {
+      if (Date.now() >= this.registrationOpensDate.getTime()) {
+        this.showCountdown = false
+      }
+    }
   },
 
   methods: {
+    handleRegistrationStatus(response) {
+      const data = response.data || response
+      
+      if (data && data.date) {
+        this.registrationOpensDate = new Date(data.date)
+        this.showCountdown = data.is_show_count_down_timer
+        
+        this.$forceUpdate()
+        
+        this.$emit('registration-status-updated', data)
+      }
+    },
+    handleCountdownComplete() {
+      this.hasCompleted = true
+    },
+    handleCountdownDismiss() {
+      this.showCountdown = false
+    },
     async checkLoungeAndProceed() {
       try {
         const response = await this.$axios.$post('/v1/lounge/check', {

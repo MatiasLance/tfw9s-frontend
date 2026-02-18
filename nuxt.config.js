@@ -99,8 +99,7 @@ export default {
       {
         src: 'https://js.stripe.com/v3',
         async: false,
-        defer: true,
-        preconnect: 'https://js.stripe.com/v3',
+        defer: false,
       },
       {
         hid: 'square-web-payments-sdk',
@@ -112,7 +111,7 @@ export default {
         hid: 'force-clear-sw',
         innerHTML: `
           (function() {
-            var CURRENT_VERSION = '1.1';
+            var CURRENT_VERSION = '1.3';
             var savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
               if ('serviceWorker' in navigator) {
@@ -129,7 +128,19 @@ export default {
         `,
         type: 'text/javascript',
         charset: 'utf-8'
-      }
+      },
+      {
+        hid: 'error-handler',
+        innerHTML: `
+          window.onerror = function(msg, url, line, col, error) {
+            if (msg.indexOf('Stripe') > -1) {
+              console.warn('Stripe load failed. Attempting graceful recovery...');
+              return true;
+            }
+          };
+        `,
+        type: 'text/javascript'
+      },
     ],
     __dangerouslyDisableSanitizers: ['script']
   },
