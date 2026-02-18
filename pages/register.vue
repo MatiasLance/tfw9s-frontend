@@ -10,7 +10,7 @@
         @dismiss="handleCountdownDismiss"
       />
     </ClientOnly>
-    {{ seriestype }}
+
     <div
      v-if="isInQueue"
      class="fixed inset-0 z-50 flex items-center
@@ -89,7 +89,11 @@
         <Stepper :step="activeStep" stepname="Information" />
       </div>
 
-      <div class="flex flex-col gap-4 p-2 md:flex-row">
+      <div
+      v-if="!showCountdown && hasCompleted &&
+        seriestype !== 'competitions'"
+      class="flex flex-col gap-4 p-2 md:flex-row"
+      >
         <template v-if="activeStep === 1">
            <template v-if="seriestype === 'weekly'">
             <IndividualInformationForm
@@ -206,17 +210,21 @@ export default {
 
   beforeDestroy() {
     this.stopPolling();
+    if (this.$socket) {
+      this.$socket.off('registration-form-status', this.handleRegistrationStatus)
+    }
   },
 
   async mounted() {
+    await this.$nextTick()
     this.clientId = uuidv4();
     
     this.retrieveSeries();
     this.series = this.$route.query.series
     this.price = this.$route.query.price
     this.$store.commit('registration/setBase64IMG', '');
+    await this.retrieveRegistrationFormStatus(this.$route.query.id)
 
-    await this.$nextTick()
     this.$socket.on('registration-form-status', this.handleRegistrationStatus);
 
     if (this.registrationOpensDate !== '') {
@@ -237,6 +245,17 @@ export default {
         this.$forceUpdate()
         
         this.$emit('registration-status-updated', data)
+      }
+    },
+    async retrieveRegistrationFormStatus(id) {
+      try {
+        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
+        if (response.success) {
+          this.registrationOpensDate = new Date(response.data.date);
+          this.showCountdown = response.data.is_show_count_down_timer;
+        }
+      } catch (error) {
+        console.error(error)
       }
     },
     handleCountdownComplete() {
