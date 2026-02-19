@@ -25,9 +25,9 @@
             <div class="relative min-h-screen bg-[#1A1A1B]">
               <div class="page-top">
                 <Nuxt />
+                <UpdateNotification />
               </div>
             </div>
-             <UpdateNotification />
             <Footer></Footer>
         </v-app>
     </div>

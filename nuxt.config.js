@@ -111,7 +111,7 @@ export default {
         hid: 'force-clear-sw',
         innerHTML: `
           (function() {
-            var CURRENT_VERSION = '1.8';
+            var CURRENT_VERSION = '1.0';
             var savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
               if ('serviceWorker' in navigator) {
