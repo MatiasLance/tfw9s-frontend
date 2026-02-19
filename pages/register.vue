@@ -90,8 +90,7 @@
       </div>
 
       <div
-      v-if="!showCountdown && hasCompleted &&
-        seriestype !== 'competitions'"
+      v-if="!showCountdown"
       class="flex flex-col gap-4 p-2 md:flex-row"
       >
         <template v-if="activeStep === 1">
@@ -239,8 +238,8 @@ export default {
       const data = response.data || response
       
       if (data && data.date) {
-        this.registrationOpensDate = new Date(data.date)
-        this.showCountdown = data.is_show_count_down_timer
+        this.registrationOpensDate = new Date(data.date);
+        this.showCountdown = data.is_show_count_down_timer;
         
         this.$forceUpdate()
         
