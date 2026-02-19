@@ -176,29 +176,56 @@
       </section>
     </section>
 
-    <section v-else class="flex h-screen flex-col items-center justify-center p-6 text-center">
-      <div class="rounded-full bg-red-500/10 p-8 mb-6">
-        <VIcon size="100" color="red accent-3">
-            mdi-alert-octagon
-        </VIcon>
+    <section v-else class="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+    <div class="max-w-md w-full text-center">
+      <div class="relative mb-8">
+        <div class="w-28 h-28 mx-auto bg-green-600 rounded-full rotate-45 
+          shadow-xl shadow-green-900/50 relative"
+          >
+          <div class="absolute inset-x-0 top-1/2 h-1.5
+          bg-green-800 transform -translate-y-1/2"
+          ></div>
+          <div class="absolute left-1/2 top-0 w-1.5 h-full
+          bg-green-800 transform -translate-x-1/2"
+          ></div>
+          <div class="absolute -left-2 top-1/2 w-4 h-4
+          bg-green-700 rounded-full transform -translate-y-1/2"
+          ></div>
+          <div class="absolute -right-2 top-1/2 w-4 h-4
+          bg-green-700 rounded-full transform -translate-y-1/2"
+          ></div>
+        </div>
       </div>
-      <h2 class="text-3xl font-black uppercase italic tracking-tight">
+
+      <h1 class="text-5xl font-black uppercase italic text-white mb-2">
         Record Not Found
-    </h2>
-      <p class="mt-2 text-gray-400 max-w-md">
-        We couldn't locate the transaction or tournament record.
-        It might have expired or the link is incorrect.
-    </p>
-      <button
-        type="button"
-        class="mt-8 bg-white px-10 py-3 font-black italic
-        uppercase text-black transition
-        hover:bg-green-500 hover:text-white"
-        @click="$router.back()"
-      >
-        Go Back
-      </button>
-    </section>
+      </h1>
+      
+      <div class="h-1 w-20 bg-green-500 mx-auto my-6"></div>
+
+      <p class="text-gray-400 text-lg mb-8">
+        This match or tournament doesn't exist. 
+        <span class="text-green-400 font-semibold">Knock-on!</span> 
+        Try checking the link or go back.
+      </p>
+
+      <div class="space-y-3">
+        <button
+          type="button"
+          class="w-full bg-green-600 hover:bg-green-500 
+                text-white font-black uppercase italic py-4 px-6
+                transition-all duration-200 transform hover:scale-105
+                shadow-lg hover:shadow-green-500/25
+                flex items-center justify-center gap-2"
+          @click="$router.push('/')"
+        >
+          <i class="ri-home-4-line"></i>
+          <span>Home Pitch</span>
+        </button>
+      </div>
+
+    </div>
+  </section>
 
     <OModal :active="showUploadModal" @close="showUploadModal = false">
       <div class="bg-[#1A1A1B] p-6 border border-gray-800 rounded-2xl">

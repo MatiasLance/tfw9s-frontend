@@ -151,8 +151,8 @@
         <div
           v-if="activeTab == 'rules'"
           class="rugby-tab-content bg-gradient-to-br from-gray-800 to-gray-900 
-                rounded-3xl p-6 sm:p-8 border border-green-500/20 
-                shadow-2xl backdrop-blur-sm"
+          rounded-3xl p-6 sm:p-8 border border-green-500/20 
+          shadow-2xl backdrop-blur-sm"
         >
           <div class="flex items-center gap-3 mb-6">
             <div class="rugby-content-badge bg-green-600 rounded-xl p-2">
@@ -167,12 +167,13 @@
               v-for="statement in filteredRules"
               :key="statement.id"
               class="rugby-content-card group bg-gray-700/30 rounded-2xl p-6 
-                    border border-gray-600/50 hover:border-green-500/30 
-                    transition-all duration-500 hover:shadow-lg cursor-pointer"
+              border border-gray-600/50 hover:border-green-500/30 
+              transition-all duration-500 hover:shadow-lg cursor-pointer"
             >
               <span 
-                class="info text-gray-200 leading-relaxed text-lg 
-                      group-hover:text-gray-100 transition-colors duration-300" 
+                class="info text-gray-200 text-lg leading-relaxed 
+                [&_p]:mb-4 [&_ul]:my-4 [&_li]:mb-2 last:[&_p]:mb-0
+                group-hover:text-gray-100 transition-colors duration-300" 
                 v-html="statement.content"
               ></span>
             </div>
