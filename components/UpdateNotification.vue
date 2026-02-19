@@ -1,6 +1,6 @@
 <template>
   <transition name="slide-up">
-    <div v-if="updateAvailable" class="fixed bottom-6 right-6 z-[9999] max-w-[320px] w-full">
+    <div v-if="updateAvailable" class="fixed bottom-6 right-6 z-[99999] max-w-[320px] w-full">
       <div class="bg-white border border-gray-200 shadow-2xl
       rounded-xl p-4 flex flex-col space-y-4"
       >

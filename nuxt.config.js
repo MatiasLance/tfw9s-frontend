@@ -111,7 +111,7 @@ export default {
         hid: 'force-clear-sw',
         innerHTML: `
           (function() {
-            var CURRENT_VERSION = '1.4';
+            var CURRENT_VERSION = '1.8';
             var savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
               if ('serviceWorker' in navigator) {
@@ -189,6 +189,7 @@ export default {
     '@nuxt/postcss8',
     '@oruga-ui/oruga/nuxt',
     '@nuxtjs/sitemap',
+    '@nuxtjs/pwa',
   ],
 
   publicRuntimeConfig: {
@@ -276,10 +277,10 @@ export default {
 
   pwa: {
     workbox: {
-      navigateFallback: '/index.html',
-      updateOnNavigation: true,
       skipWaiting: true,
       clientsClaim: true,
+      navigateFallback: '/index.html',
+      updateOnNavigation: true,
     }
   }
 }
