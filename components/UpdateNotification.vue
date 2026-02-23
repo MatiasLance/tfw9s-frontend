@@ -42,36 +42,20 @@ export default {
   data() {
     return {
       updateAvailable: false,
-      timer: null
     }
   },
 
   mounted() {
-    if (process.browser && 'serviceWorker' in navigator) {
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        this.updateAvailable = true;
+    if (process.browser && this.$socket) {
+      this.$socket.on('trigger-update-notification', (data) => {
+        console.log('Live update signal received!', data.version);
+        
+        this.updateAvailable = true; 
       });
-      this.checkForUpdates();
-
-      this.timer = setInterval(() => 
-        this.checkForUpdates(), 1000 * 60 * 30);
-    }
-  },
-  beforeDestroy() {
-    if (this.timer) {
-      clearInterval(this.timer);
     }
   },
 
   methods: {
-    checkForUpdates() {
-      navigator.serviceWorker.getRegistration().then(reg => {
-        if (reg) {
-          reg.update();
-          if (reg.waiting) this.updateAvailable = true;
-        }
-      });
-    },
     refreshApp() {
       window.location.reload(true);
     }

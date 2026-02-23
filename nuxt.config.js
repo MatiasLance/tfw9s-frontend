@@ -108,28 +108,6 @@ export default {
         defer: true
       },
       {
-        hid: 'force-clear-sw',
-        innerHTML: `
-          (function() {
-            var CURRENT_VERSION = '1.0';
-            var savedVersion = localStorage.getItem('app_version');
-            if (savedVersion !== CURRENT_VERSION) {
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(regs) {
-                  for(var i=0; i<regs.length; i++) { regs[i].unregister(); }
-                  localStorage.setItem('app_version', CURRENT_VERSION);
-                  if (savedVersion) window.location.reload(true);
-                });
-              } else {
-                localStorage.setItem('app_version', CURRENT_VERSION);
-              }
-            }
-          })();
-        `,
-        type: 'text/javascript',
-        charset: 'utf-8'
-      },
-      {
         hid: 'error-handler',
         innerHTML: `
           window.onerror = function(msg, url, line, col, error) {
@@ -162,8 +140,7 @@ export default {
     { src: '~/plugins/ChromePicker.js', mode: 'client' },
     { src: '~/plugins/PhotoshopPicker.js', mode: 'client' },
     { src: '~/plugins/vue-stripe.js', mode: 'client' },
-    { src: '~/plugins/socket.js', mode: 'client' },
-    { src: '~/plugins/version-check.client.js', mode: 'client' }
+    { src: '~/plugins/socket.js', mode: 'client' }
   ],
 
   router: {
@@ -189,7 +166,6 @@ export default {
     '@nuxt/postcss8',
     '@oruga-ui/oruga/nuxt',
     '@nuxtjs/sitemap',
-    '@nuxtjs/pwa',
   ],
 
   publicRuntimeConfig: {
@@ -274,13 +250,4 @@ export default {
       ].filter(Boolean)
     }
   },
-
-  pwa: {
-    workbox: {
-      skipWaiting: true,
-      clientsClaim: true,
-      navigateFallback: '/index.html',
-      updateOnNavigation: true,
-    }
-  }
 }

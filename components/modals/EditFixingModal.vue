@@ -48,7 +48,6 @@
               label="Choose Age Group"
               :rules="rules"
               solo
-              disabled
               >
               </VSelect>
             </div>
@@ -61,7 +60,6 @@
                 :items="filteredSeries"
                 label="Choose a Series"
                 solo
-                disabled
               >
               <template #prepend-item>
                 <div class="sticky-search-bar px-3">

@@ -161,7 +161,6 @@
     @confirm="handleRefresh"
     />
 
-
     <DeleteFixingModal
       :active="showDeleteFixingModal"
       :event="selectedFixing"
