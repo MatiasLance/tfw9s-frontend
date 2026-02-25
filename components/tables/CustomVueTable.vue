@@ -33,7 +33,7 @@
              :class="column.name === 'action'?
              'bg-transparent':'bg-white  border p-2 px-4'"
              @click="column.name !== 'action'&&!row.submit?
-             ManageResult(row):null"
+             manageResult(row):null"
             >
                 <slot :name="column.name" :data="row">
                   <template v-if="column.name === 'time'">
@@ -43,24 +43,37 @@
                     />
                   </template>
                   <template v-if="column.name === 'action'">
+                    <!-- Edit Button -->
                     <VBtn
-                    class="
-                    ml-2
-                    rounded-lg
-                    bg-gradient-to-tr
-                    py-2
-                    px-4
-                    text-xs
-                    font-medium
-                    text-white"
-                    :class="!row.submit?
-                   'from-[#5EE738] via-[#3e872a] to-[#050505]':
-                   'from-[#f37570] via-[#fb0d2b] to-[#050505]'"
-                    @click="row.submit?ManageResult(row):Submit(row)"
-                    dark
+                      class="ml-2 rounded-lg bg-gradient-to-tr py-2
+                      px-4 text-xs font-medium text-white transition-all
+                      hover:scale-105 active:scale-95"
+                      :class="row.submit 
+                        ? 'from-blue-400 via-blue-600 to-blue-400' 
+                        : 'from-green-400 via-green-600 to-black'"
+                      @click="row.submit ? manageResult(row) : submit(row)"
                     >
-                    {{!row.submit?'Submit':'Edit'}}
-                  </VBtn>
+                      <VIcon left size="14" class="mr-1">
+                        {{ row.submit ? 'ri-edit-line' : 'ri-send-plane-fill' }}
+                      </VIcon>
+                      
+                      <span>{{ row.submit ? 'Edit' : 'Submit' }}</span>
+                    </VBtn>
+                  <!-- Revert Button -->
+                   <VBtn
+                      class="ml-2 rounded-lg bg-gradient-to-tr py-2
+                      px-4 text-xs font-medium text-white transition-all"
+                      :class="row.submit 
+                        ? 'from-orange-400 via-orange-600 to-orange-400' 
+                        : 'from-green-400 via-green-600 to-black'"
+                      @click="row.submit ? revertResult(row) : submit(row)"
+                    >
+                      <VIcon left size="16" class="mr-1">
+                        {{ row.submit ? 'ri-refresh-line' : 'ri-check-line' }}
+                      </VIcon>
+                      
+                      {{ row.submit ? 'Revert' : 'Submit' }}
+                    </VBtn>
                   </template>
                   <template v-else-if="column.name === 'team1'">
                       {{ row.team1 ? row.team1.name: 'Bye' }}
@@ -93,10 +106,13 @@ export default {
     },
   },
   methods: {
-    ManageResult(data) {
+    manageResult(data) {
       this.$emit('match-data', data);
     },
-    Submit(data) {
+    revertResult(data) {
+      this.$emit('revert-data', data);
+    },
+    submit(data) {
       this.$emit('submit-data', data)
     },
   }

@@ -59,7 +59,7 @@
             font-semibold
             text-white"
             >
-            <i class="ri-search-line"/>
+            <i class="ri-search-line"></i>
             </button>
           </form>
           <div
@@ -121,6 +121,7 @@
               @match-data="openManageResultDialog"
               @submit-data="openSubmitResultDialog"
               @edit-data="openManageResultDialog"
+              @revert-data="openRevertResultModal"
             />
         </section>
           <section
@@ -133,12 +134,14 @@
           </section>
         </section>
         </div>
+
     <ManageResultModal
     :active="showManageResultModal"
     :match="selectedMatch"
     @close="closeManageResultDialog"
     @confirm="ManageResult"
     />
+
     <SubmitResultModal
     :active="showSubmitResultModal"
     :match="selectedMatch"
@@ -146,6 +149,14 @@
     @confirm="SubmitSuccess"
     @error="SubmitError"
     />
+
+    <RevertResultModal
+    :active="showRevertResultModal"
+    :match="selectedMatch"
+    @close="closeRevertResultModal"
+    @confirm="manageRevertResultResponse"
+    />
+
   </div>
 </template>
 
@@ -155,16 +166,18 @@ import CustomVueTable from '~/components/tables/CustomVueTable.vue';
 import ManageResultModal from '~/components/modals/ManageResultModal.vue';
 import SubmitResultModal from '~/components/modals/SubmitResultModal.vue';
 import LoadingAnimation from '~/components/loading/LoadingAnimation.vue';
+import RevertResultModal from '~/components/modals/RevertResultModal.vue';
 
 export default {
   components: {
     CustomVueTable,
     ManageResultModal,
     SubmitResultModal,
-    LoadingAnimation
+    LoadingAnimation,
+    RevertResultModal
   },
   props: {
-    Matches: {
+    matches: {
       type: Array,
       required: true
     },
@@ -178,6 +191,7 @@ export default {
       showManageResultModal: false,
       showSubmitResultModal: false,
       showModifyResultModal: false,
+      showRevertResultModal: false,
       selectedMatch: ({}),
       MatchList: [],
       Data: [],
@@ -276,7 +290,7 @@ export default {
   },
   computed: {
     EventDates() {
-      return this.Matches.map(event =>
+      return this.matches.map(event =>
         ({ date: new Date(event.date), type: event.submit?'danger':'success' }));
     },
     filteredMatches() {
@@ -333,6 +347,10 @@ export default {
       const formattedHour = (hour % 12) || 12; // Convert 0 to 12
       return `${formattedHour}:${minute} ${period}`;
     },
+    openRevertResultModal(data) {
+      this.selectedMatch = data
+      this.showRevertResultModal = true
+    },
     openManageResultDialog(data) {
       this.selectedMatch = data
       this.showManageResultModal = true
@@ -369,6 +387,10 @@ export default {
       this.selectedMatch = ({})
       this.showModifyResultModal = false
     },
+    closeRevertResultModal() {
+      this.selectedMatch = ({})
+      this.showRevertResultModal = false
+    },
     ManageResult(data) {
       this.$oruga.notification.open({
         duration: 5000,
@@ -378,6 +400,17 @@ export default {
         queue: true
       })
       this.showManageResultModal = false;
+      this.retrieveEvents();
+    },
+    manageRevertResultResponse(response) {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: response.message,
+        position: 'bottom',
+        variant: 'success',
+        queue: true
+      })
+      this.showRevertResultModal = false;
       this.retrieveEvents();
     },
     AMPMformat(time) {

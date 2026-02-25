@@ -57,12 +57,21 @@
           </div>
 
           <!-- Results Info & Pagination -->
-          <div v-if="totalPages > 0" class="mb-6 flex flex-col gap-4
-            sm:flex-row sm:items-center sm:justify-between">
-            <div class="text-gray-300 text-sm">
-              Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
-              of <span class="font-bold text-green-400">{{ totalItems }}</span> teams
+          <div v-if="totalPages > 0" class="flex flex-col gap-4 sm:flex-row sm:items-center 
+                  sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
+                  rounded-2xl p-6 border border-green-500/20 shadow-lg"
+            data-aos="flip-up">
+
+            <div class="flex items-center gap-3">
+              <div class="bg-green-600/20 rounded-lg p-2">
+                <i class="ri-list-check text-green-400 text-lg"></i>
+              </div>
+              <span class="text-gray-300 font-medium">
+                Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+                of <span class="font-bold text-green-400">{{ totalItems }}</span> regions
+              </span>
             </div>
+
             <VPagination
               v-model="page"
               :length="totalPages"
