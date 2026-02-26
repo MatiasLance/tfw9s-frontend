@@ -61,6 +61,7 @@
                     </VBtn>
                   <!-- Revert Button -->
                    <VBtn
+                   v-if="row.submit"
                       class="ml-2 rounded-lg bg-gradient-to-tr py-2
                       px-4 text-xs font-medium text-white transition-all"
                       :class="row.submit 
