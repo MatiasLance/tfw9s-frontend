@@ -99,10 +99,6 @@ export default {
       type: Boolean,
       required: true
     },
-    agegroup: {
-      type: Array,
-      required: true
-    },
     seriesid: {
       type: Number,
       required: true
@@ -115,6 +111,7 @@ export default {
       id: '',
       imgUrl: [],
       imgList: [],
+      agegroup: [],
       SeriesData: {},
       LimitId: {},
       teamCounts: {},
@@ -134,6 +131,9 @@ export default {
         this.retrieveTeamLimits();
       }
     }
+  },
+  mounted() {
+    this.retrieveAgeGroups();
   },
   methods: {
     toggleSelection(ageGroupId) {
@@ -226,6 +226,27 @@ export default {
               }
             }
           });
+        })
+    },
+    retrieveAgeGroups() {
+      const query = {
+        q: this.query,
+        page: this.page,
+        maxAgeGroupsPerPage: 10,
+      };
+
+      Object.keys(query).forEach((key) => {
+        if (query[key] == null) {
+          delete query[key]
+        }
+      })
+
+      const queryString = new URLSearchParams(query).toString()
+
+      this.$axios
+        .$get(`v1/agegroups?${queryString}`)
+        .then((response) => {
+          this.agegroup = response.data.ageGroups;
         })
     },
     closeDialog() {
