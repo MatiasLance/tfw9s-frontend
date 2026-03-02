@@ -3,10 +3,8 @@
 
     <ClientOnly>
       <CountDownTimer 
-        v-if="showCountdown && !hasCompleted &&
-        seriestype !== 'competitions'"
+        v-if="showCountdown && series.type !== 'competitions'"
         :target-date="registrationOpensDate"
-        @completed="handleCountdownComplete"
         @dismiss="handleCountdownDismiss"
       />
     </ClientOnly>
@@ -155,8 +153,7 @@ export default {
   data() {
     return {
       showCountdown: false,
-      hasCompleted: false,
-      registrationOpensDate: '',
+      registrationOpensDate: null,
       clientSecret: '',
       activeStep: 1,
       isStepperLoading: false,
@@ -223,42 +220,42 @@ export default {
     this.price = this.$route.query.price
     this.$store.commit('registration/setBase64IMG', '');
     await this.retrieveRegistrationFormStatus(this.$route.query.id)
-
     this.$socket.on('registration-form-status', this.handleRegistrationStatus);
-
-    if (this.registrationOpensDate !== '') {
-      if (Date.now() >= this.registrationOpensDate.getTime()) {
-        this.showCountdown = false
-      }
-    }
   },
 
   methods: {
     handleRegistrationStatus(response) {
       const data = response.data || response
       
-      if (data && data.date) {
+      if (data) {
         this.registrationOpensDate = new Date(data.date);
-        this.showCountdown = data.is_show_count_down_timer;
+        this.showCountdown = data.isShowCountDownTimer;
+
+        this.$forceUpdate();
         
-        this.$forceUpdate()
-        
-        this.$emit('registration-status-updated', data)
+        this.$emit('registration-status-updated', data);
       }
     },
     async retrieveRegistrationFormStatus(id) {
       try {
-        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
-        if (response.success) {
-          this.registrationOpensDate = new Date(response.data.date);
-          this.showCountdown = response.data.is_show_count_down_timer;
+        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`);
+        
+        if (response.success && response.data &&
+        response.data.date) {
+          const parsedDate = new Date(response.data.date);
+          
+          if (!isNaN(parsedDate.getTime())) {
+            this.registrationOpensDate = parsedDate;
+            this.showCountdown = response.data.isShowCountDownTimer;
+          } else {
+            console.warn('Invalid date received:', response.data.date);
+            this.showCountdown = false;
+          }
         }
       } catch (error) {
-        console.error(error)
+        console.error('Failed to fetch registration status:', error);
+        this.showCountdown = false;
       }
-    },
-    handleCountdownComplete() {
-      this.hasCompleted = true
     },
     handleCountdownDismiss() {
       this.showCountdown = false
