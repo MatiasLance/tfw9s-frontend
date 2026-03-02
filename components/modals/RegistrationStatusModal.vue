@@ -1,114 +1,195 @@
 <template>
   <OModal :active="active" @close="closeModal">
-    <div class="w-full rounded-lg bg-white p-4 sm:p-6">
-      <form @submit.prevent="handleSubmit" class="space-y-6">
-        <!-- Header -->
-        <div class="border-b border-gray-200 pb-4">
-          <h2 class="text-lg font-semibold text-gray-900">
-            Registration Form Settings
+    <div class="w-full max-w-md overflow-hidden rounded-xl
+    bg-white shadow-2xl border border-gray-100"
+    >
+      <div class="px-6 py-5 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+          <i class="ri-settings-4-line text-blue-600 text-xl"></i>
+          <h2 class="text-xl font-bold text-gray-900 leading-tight">
+            Registration Settings
           </h2>
-          <p class="mt-1 text-sm text-gray-500">
-            Configure countdown timer for the registration page
-          </p>
         </div>
+        <p class="text-sm text-gray-500 mt-1">
+          Configure how and when the registration opens.
+        </p>
+      </div>
 
-        <!-- Switch - Show Countdown Timer -->
-        <div class="flex items-center justify-between">
-          <div class="flex-1">
-            <label class="text-base font-medium text-gray-900">
-              Show countdown timer
-            </label>
-            <p class="mt-1 text-sm text-gray-500">
-              Display a countdown timer on the registration form
-            </p>
-          </div>
+      <form @submit.prevent="handleSubmit">
+        <div class="p-6 space-y-8">
           
-          <button
-            type="button"
-            @click="toggleSwitch"
-            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer
-            rounded-full border-2 border-transparent p-0.5
-            transition-colors duration-200 ease-in-out focus:outline-none
-            focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            :class="form.isShowCountDownTimer ? 'justify-end bg-blue-600' :
-            'justify-start bg-gray-300'"
+          <div 
+            class="flex items-center justify-between p-4
+            rounded-xl border transition-all duration-300"
+            :class="isShowCountDownTimer ?
+            'border-blue-200 bg-blue-50/40' :
+            'border-gray-200 bg-gray-50/50'"
           >
-            <span class="sr-only">Toggle countdown timer</span>
-            <span class="h-5 w-5 rounded-full bg-white shadow"></span>
-          </button>
-        </div>
-
-        <div>
-          <label for="date" class="block text-sm font-medium text-gray-700">
-            Countdown end date
-            <span class="ml-1 text-red-500">*</span>
-          </label>
-          
-          <input
-            id="date"
-            v-model="dateInput"
-            type="date"
-            :min="minDate"
-            required
-            class="mt-2 block w-full rounded-md border border-gray-300
-            px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            :class="dateError ? 'border-red-500' : ''"
-          />
-          
-          <p v-if="dateError" class="mt-2 text-sm text-red-600">
-            <i class="ri-error-warning-line mr-1"></i>
-            {{ dateError }}
-          </p>
-          
-          <p v-else class="mt-2 text-sm text-gray-500">
-            The countdown will expire on {{ new Date(date).toDateString() }}
-          </p>
-        </div>
-
-        <!-- Error Alert -->
-        <div v-if="submitError" class="rounded-md bg-red-50 p-4">
-          <div class="flex">
-            <i class="ri-error-warning-line text-red-400 mt-0.5"></i>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-red-800">
-                Unable to save settings
-              </h3>
-              <p class="mt-2 text-sm text-red-700">
-                {{ submitError }}
+            <div class="pr-4">
+              <label class="block text-sm font-bold text-gray-900">
+                Enable Countdown Timer
+              </label>
+              <p class="text-xs text-gray-500 mt-0.5">
+                Show a timer to users before registration opens.
               </p>
             </div>
+            
+            <button
+              type="button"
+              @click="form.isShowCountDownTimer = !form.isShowCountDownTimer"
+              class="relative inline-flex h-6 w-11 flex-shrink-0
+              cursor-pointer rounded-full border-2 border-transparent
+              transition-colors duration-200 focus:outline-none
+              focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              :class="form.isShowCountDownTimer ? 'bg-blue-600' : 'bg-gray-300'"
+            >
+              <span 
+                class="pointer-events-none inline-block h-5 w-5
+                transform rounded-full bg-white shadow-md
+                ring-0 transition duration-200 mt-[2px]"
+                :class="form.isShowCountDownTimer ? 'translate-x-5' : 'translate-x-1'"
+              ></span>
+            </button>
           </div>
+
+          <Transition 
+            enter-active-class="transition duration-300 ease-out"
+            enter-from-class="opacity-0 translate-y-4"
+            enter-to-class="opacity-100 translate-y-0"
+          >
+            <div v-if="form.isShowCountDownTimer" class="space-y-6">
+              <div>
+                <label class="text-[10px] font-black uppercase
+                tracking-[0.1em] text-gray-400 mb-3 block"
+                >
+                  Timer Type
+                </label>
+                <div class="flex p-1 bg-gray-100 rounded-lg">
+                  <button 
+                    v-for="timerMode in ['duration', 'date']" 
+                    :key="timerMode"
+                    type="button"
+                    @click="form.timerMode = timerMode"
+                    class="flex-1 flex items-center justify-center gap-2
+                    py-2 text-sm font-semibold rounded-md
+                    transition-all duration-200"
+                    :class="form.timerMode === timerMode 
+                      ? 'bg-white text-blue-600 shadow-sm' 
+                      : 'text-gray-500 hover:text-gray-700'"
+                  >
+                    <i :class="timerMode === 'duration' ?
+                    'ri-history-line' :
+                    'ri-calendar-event-line'"
+                    ></i>
+                    {{ timerMode === 'duration' ? 'Relative' : 'Specific' }}
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="form.timerMode === 'duration'" class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-bold text-gray-700 ml-1">
+                    Unit
+                  </label>
+                  <div class="relative">
+                    <select
+                      v-model="form.countdownUnit"
+                      class="block w-full rounded-lg border-gray-200
+                      bg-white px-3 py-2.5 text-sm focus:border-blue-500
+                      focus:ring-blue-500 appearance-none border shadow-sm"
+                    >
+                      <option value="days">
+                        Days
+                      </option>
+                      <option value="hours">
+                        Hours
+                      </option>
+                      <option value="minutes">
+                        Minutes
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-bold text-gray-700 ml-1">Value</label>
+                  <input
+                    v-model.number="form.countdownValue"
+                    type="number"
+                    min="1"
+                    class="block w-full rounded-lg border-gray-200 bg-white
+                    px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500
+                    border shadow-sm"
+                    :class="{
+                      'border-red-500 ring-1 ring-red-500':
+                      validationErrors.countdownValue
+                    }"
+                  />
+                </div>
+              </div>
+
+              <div v-else class="space-y-1.5">
+                <label class="block text-xs font-bold text-gray-700 ml-1">
+                  Countdown End Date
+                </label>
+                <input
+                  v-model="form.date"
+                  type="datetime-local"
+                  :min="minDate"
+                  class="block w-full rounded-lg border-gray-200 bg-white
+                  px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500
+                  border shadow-sm"
+                  :class="{ 'border-red-500 ring-1 ring-red-500': validationErrors.date }"
+                />
+              </div>
+
+              <div v-if="hasErrors"
+              class="flex items-start gap-3 bg-red-50 p-3
+              rounded-lg border border-red-100"
+              >
+                <i class="ri-error-warning-fill text-red-500 mt-0.5"></i>
+                <p class="text-xs font-semibold text-red-700 leading-relaxed">
+                  {{ currentErrorMessage }}
+                </p>
+              </div>
+            </div>
+          </Transition>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-6">
+        <div class="bg-gray-50 px-6 py-4 flex items-center
+        justify-between border-t border-gray-100"
+        >
           <button
             type="button"
-            @click="resetForm"
-            :disabled="loading"
-            class="rounded-md border border-gray-300 px-4 py-2 text-sm
-            font-medium text-gray-700 hover:bg-gray-50 focus:outline-none
-            focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            @click="initForm"
+            class="flex items-center gap-1.5 text-xs font-bold text-gray-400
+            hover:text-gray-600 transition-colors uppercase tracking-widest"
           >
+            <i class="ri-restart-line"></i>
             Reset
           </button>
           
-          <button
-            type="submit"
-            :disabled="loading || !hasChanges"
-            class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium
-            text-white hover:bg-blue-700 focus:outline-none focus:ring-2
-            focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50
-            disabled:cursor-not-allowed"
-          >
-            <template v-if="loading">
-              <i class="ri-loader-4-line animate-spin mr-2"></i>
-              Saving...
-            </template>
-            <template v-else>
-              Save Changes
-            </template>
-          </button>
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              @click="closeModal"
+              class="px-4 py-2 text-sm font-semibold text-gray-600
+              hover:text-gray-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              :disabled="loading || !hasChanges"
+              class="inline-flex items-center justify-center gap-2
+              px-6 py-2 text-sm font-bold text-white bg-blue-600
+              rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-100
+              disabled:opacity-50 transition-all shadow-md active:scale-95"
+            >
+              <i v-if="loading" class="ri-loader-4-line animate-spin"></i>
+              <i v-else class="ri-checkbox-circle-line"></i>
+              {{ loading ? 'Saving...' : 'Save Settings' }}
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -120,162 +201,119 @@ export default {
   name: 'RegistrationStatusModal',
 
   props: {
-    active: {
-      type: Boolean,
-      default: false,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
+    active: Boolean,
+    loading: Boolean,
+    seriesId: {
+      type: Number,
+      required: true
     },
     date: {
       type: String,
-      default: '',
+      default: ''
     },
     isShowCountDownTimer: {
       type: Boolean,
-      default: false,
+      default: false
     },
-    seriesId: {
+    timerMode: {
+      type: String,
+      default: 'date'
+    },
+    countdownUnit: {
+      type: [ String, Number ],
+      default: 'days'
+    },
+    countdownValue: {
       type: Number,
-      default: 0
+      default: 1
     }
   },
 
   data() {
     return {
       form: {
+        seriesId: null,
         date: '',
         isShowCountDownTimer: false,
-        seriesId: null
+        timerMode: 'date',
+        countdownUnit: 'days',
+        countdownValue: 1
       },
-      originalForm: null,
-      dateError: '',
-      submitError: '',
-      dateInput: '',
+      originalFormJson: '',
+      validationErrors: {}
     }
   },
 
   computed: {
     minDate() {
-      const today = new Date()
-      const year = today.getFullYear()
-      const month = String(today.getMonth() + 1).padStart(2, '0')
-      const day = String(today.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      return now.toISOString().slice(0, 16);
     },
 
     hasChanges() {
-      if (!this.originalForm) return false
-      return (
-        this.form.date !== this.originalForm.date ||
-        this.form.isShowCountDownTimer !== this.originalForm.isShowCountDownTimer
-      )
+      return JSON.stringify(this.form) !== this.originalFormJson;
     },
+
+    hasErrors() {
+      return Object.keys(this.validationErrors).length > 0;
+    },
+
+    currentErrorMessage() {
+      return Object.values(this.validationErrors) || '';
+    }
   },
 
   watch: {
-    active(isActive) {
-      if (isActive) {
-        this.initForm()
-      } else {
-        this.resetErrors()
+    active: {
+      immediate: true,
+      handler(val) {
+        if (val) this.initForm();
       }
     },
-
-    dateInput(value) {
-      this.form.date = value
-      this.validateDate()
-    }
   },
 
   methods: {
     initForm() {
-      this.form.date = this.date || ''
-      this.form.isShowCountDownTimer = this.isShowCountDownTimer
-      this.form.seriesId = this.seriesId
+      const data = {
+        seriesId: this.seriesId,
+        date: this.date || '',
+        isShowCountDownTimer: this.isShowCountDownTimer,
+        timerMode: this.timerMode || (this.date ? 'date' : 'duration'),
+        countdownUnit: this.countdownUnit || 'days',
+        countdownValue: this.countdownValue || 1
+      };
 
-      this.dateInput = this.date || ''
-
-      this.originalForm = { ...this.form }
-
-      this.resetErrors()
+      this.form = { ...data };
+      this.originalFormJson = JSON.stringify(data);
+      this.validationErrors = {};
     },
 
-    toggleSwitch() {
-      this.form.isShowCountDownTimer = !this.form.isShowCountDownTimer
-    },
-
-    validateDate() {
-      this.dateError = ''
+    validate() {
+      this.validationErrors = {};
       
-      if (!this.form.isShowCountDownTimer) {
-        return true
+      if (this.form.isShowCountDownTimer) {
+        if (this.form.timerMode === 'date' && !this.form.date) {
+          this.validationErrors.date = 'Please select a countdown end date.';
+        }
+        if (this.form.timerMode === 'duration' &&
+        (!this.form.countdownValue || this.form.countdownValue < 1)) {
+          this.validationErrors.countdownValue = 'Please enter a valid duration.';
+        }
       }
-
-      if (!this.form.date) {
-        this.dateError = 'Please select a date for the countdown'
-        return false
-      }
-
-      const selectedDate = new Date(this.form.date)
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-
-      if (isNaN(selectedDate.getTime())) {
-        this.dateError = 'Invalid date format'
-        return false
-      }
-
-      if (selectedDate < today) {
-        this.dateError = 'Please select a future date'
-        return false
-      }
-
-      return true
+      
+      return !this.hasErrors;
     },
 
     handleSubmit() {
-      this.submitError = ''
-      
-      if (this.form.isShowCountDownTimer && !this.validateDate()) {
-        return
-      }
+      if (!this.validate()) return;
 
-      const payload = {
-        date: this.form.date,
-        isShowCountDownTimer: this.form.isShowCountDownTimer,
-        seriesId: this.seriesId
-      }
-
-      this.$emit('save', payload)
-    },
-
-    resetForm() {
-      if (this.originalForm) {
-        this.form = { ...this.originalForm }
-        this.form.date = ''
-        this.form.isShowCountDownTimer = false
-        this.form.seriesId = null
-      }
-      this.resetErrors()
-    },
-
-    resetErrors() {
-      this.dateError = ''
-      this.submitError = ''
+      this.$emit('save', { ...this.form });
     },
 
     closeModal() {
-      this.$emit('close')
-    },
-  },
+      this.$emit('close');
+    }
+  }
 }
 </script>
-
-<style scoped>
-button[role="switch"]:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
-}
-</style>

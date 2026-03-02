@@ -350,6 +350,9 @@
     :date="formatDate"
     :isShowCountDownTimer="currentSettings.isShowCountDownTimer"
     :seriesId="seriesid"
+    :countdownUnit="currentSettings.countdownUnit"
+    :countdownValue="currentSettings.countdownValue"
+    :timerMode="currentSettings.timerMode"
     @close="handleCloseRegistrationStatusModal"
     @save="handleSave"
   />
@@ -446,6 +449,9 @@ export default {
       currentSettings: {
         date: '',
         isShowCountDownTimer: false,
+        countdownUnit: 0,
+        countdownValue: null,
+        timerMode: ''
       },
       openCheckRegistrationStatusModal: false,
     }
@@ -835,7 +841,7 @@ export default {
             queue: true,
           });
 
-          await this.retrieveRegistrationFormStatus(response.id)
+          await this.retrieveRegistrationFormStatus(response.data.series_id)
         } else {
           this.$oruga.notification.open({
             message: response.message,
@@ -845,7 +851,7 @@ export default {
             queue: true,
           });
 
-          await this.retrieveRegistrationFormStatus(response.id)
+          await this.retrieveRegistrationFormStatus(response.data.series_id)
         }
         this.openRegistrationModalStatus = false
       } catch (error) {
@@ -861,7 +867,10 @@ export default {
 
         if (response.success) {
           this.currentSettings.date = response.data.date;
-          this.currentSettings.isShowCountDownTimer = response.data.is_show_count_down_timer
+          this.currentSettings.isShowCountDownTimer = response.data.isShowCountDownTimer
+          this.currentSettings.countdownUnit = response.data.countdownUnit
+          this.currentSettings.countdownValue = response.data.countdownValue
+          this.currentSettings.timerMode = response.data.timerMode
         }
 
       } catch (error) {

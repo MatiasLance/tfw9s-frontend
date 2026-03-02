@@ -4,10 +4,8 @@
     
     <ClientOnly>
       <CountDownTimer 
-        v-if="showCountdown && !hasCompleted &&
-        series.type !== 'competitions'"
+        v-if="showCountdown && series.type !== 'competitions'"
         :target-date="registrationOpensDate"
-        @completed="handleCountdownComplete"
         @dismiss="handleCountdownDismiss"
       />
     </ClientOnly>
@@ -38,7 +36,7 @@
     </section>
 
     <!-- Main Content -->
-    <div v-else-if="!showCountdown || hasCompleted ||
+    <div v-else-if="!showCountdown ||
       series.type === 'competitions'" class="w-full"
     >
       <div class="grid h-auto w-screen grid-cols-1 gap-6 p-4 
@@ -291,7 +289,6 @@ export default {
   data() {
     return {
       showCountdown: false,
-      hasCompleted: false,
       isLoading: true,
       isSelected: '',
       addTaxOnCartPrice: 0,
@@ -332,7 +329,7 @@ export default {
         'Fourth',
         'Fifth',
       ],
-      registrationOpensDate: '',
+      registrationOpensDate: null,
       series: { type: '' },
       pollTimer: null,
       isPolling: false
@@ -410,30 +407,20 @@ export default {
     await this.retrieveSeries(this.$route.query.id);
     await this.retrieveRegistrationFormStatus(this.$route.query.id);
     this.$socket.on('registration-form-status', this.handleRegistrationStatus);
-
-    if (this.registrationOpensDate !== '') {
-      if (Date.now() >= this.registrationOpensDate.getTime()) {
-        this.showCountdown = false
-      }
-    }
   },
 
   methods: {
     handleRegistrationStatus(response) {
       const data = response.data || response
       
-      if (data && data.date) {
-        this.registrationOpensDate = new Date(data.date)
-        this.showCountdown = data.is_show_count_down_timer
-        
-        this.$forceUpdate()
-        
-        this.$emit('registration-status-updated', data)
-      }
-    },
+      if (data) {
+        this.registrationOpensDate = new Date(data.date);
+        this.showCountdown = data.isShowCountDownTimer;
 
-    handleCountdownComplete() {
-      this.hasCompleted = true
+        this.$forceUpdate();
+        
+        this.$emit('registration-status-updated', data);
+      }
     },
 
     handleCountdownDismiss() {
@@ -611,13 +598,23 @@ export default {
 
     async retrieveRegistrationFormStatus(id) {
       try {
-        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`)
-        if (response.success) {
-          this.registrationOpensDate = new Date(response.data.date);
-          this.showCountdown = response.data.is_show_count_down_timer;
+        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`);
+        
+        if (response.success && response.data &&
+        response.data.date) {
+          const parsedDate = new Date(response.data.date);
+          
+          if (!isNaN(parsedDate.getTime())) {
+            this.registrationOpensDate = parsedDate;
+            this.showCountdown = response.data.isShowCountDownTimer;
+          } else {
+            console.warn('Invalid date received:', response.data.date);
+            this.showCountdown = false;
+          }
         }
       } catch (error) {
-        console.error(error)
+        console.error('Failed to fetch registration status:', error);
+        this.showCountdown = false;
       }
     }
   },
