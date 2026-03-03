@@ -165,8 +165,7 @@ export default {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit' 
+        year: 'numeric',
       });
     },
     progressPercentage() {
