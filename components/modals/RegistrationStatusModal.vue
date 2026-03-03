@@ -133,7 +133,7 @@
                 </label>
                 <input
                   v-model="form.date"
-                  type="datetime-local"
+                  type="date"
                   :min="minDate"
                   class="block w-full rounded-lg border-gray-200 bg-white
                   px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500
@@ -274,10 +274,22 @@ export default {
   },
 
   methods: {
+    formatForInput(dateString) {
+      if (!dateString) return '';
+      
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    },
     initForm() {
       const data = {
         seriesId: this.seriesId,
-        date: this.date || '',
+        date: this.formatForInput(this.date) || '',
         isShowCountDownTimer: this.isShowCountDownTimer,
         timerMode: this.timerMode || (this.date ? 'date' : 'duration'),
         countdownUnit: this.countdownUnit || 'days',
