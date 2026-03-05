@@ -285,8 +285,8 @@ export default {
   },
   watch: {
     totalPages() {
-      if (this.page > this.totalPages && this.totalPages > 0) { // Check totalPages > 0
-        this.page = this.totalPages; // Go to the new last page
+      if (this.page > this.totalPages && this.totalPages > 0) {
+        this.page = this.totalPages;
         this.retrieveTeams();
       } else if (this.page > 1 && this.totalPages === 0) {
         this.page = 1;

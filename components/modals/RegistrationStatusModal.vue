@@ -133,7 +133,7 @@
                 </label>
                 <input
                   v-model="form.date"
-                  type="date"
+                  type="datetime-local"
                   :min="minDate"
                   class="block w-full rounded-lg border-gray-200 bg-white
                   px-3 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500

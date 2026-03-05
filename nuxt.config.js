@@ -10,7 +10,9 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-
+      { 'http-equiv': 'cache-control', content: 'no-cache, no-store, must-revalidate' },
+      { 'http-equiv': 'pragma', content: 'no-cache' },
+      { 'http-equiv': 'expires', content: '0' },
       {
           hid: 'description',
           name: 'description',
