@@ -54,16 +54,15 @@
         />
 
         <div
-        v-if="totalPages > 0"
-        class="col-span-1 flex flex-wrap items-center justify-around
-        gap-x-2 md:col-span-3 md:justify-between"
-        data-aos="flip-up" data-aos-once="true"
+          v-if="totalPages > 0"
+          class="col-span-1 flex flex-wrap items-center justify-around
+          gap-x-2 md:col-span-3 md:justify-between"
+          data-aos="flip-up" data-aos-once="true"
         >
-          <span
-          class="font-medium text-white"
-          >
-          Showing {{ from }}-{{ to }} of {{ totalItems }} items
+          <span class="font-medium text-white">
+            Showing {{ from }}-{{ to }} of {{ totalItems }} items
           </span>
+
           <VPagination
             v-model="page"
             :length="totalPages"
@@ -405,12 +404,12 @@ export default {
   },
   data() {
     return {
-      page: 1,
-      itemsPerPage: 5,
-      totalPages: 0,
+      query: '', 
       from: 0,
       to: 0,
+      page: 1,
       perPage: 10,
+      totalPages: 0,
       totalItems: 0,
       ActiveTab: 'weekly',
       SeriesTabs: [
@@ -427,7 +426,6 @@ export default {
       showDeleteSeriesModal: false,
       selecetedData: ({}),
       seriesList: [],
-      query: null,
       selectedEvent: null,
       selectedYear: null,
       selectedGroup: [],
@@ -511,14 +509,19 @@ export default {
       },
       immediate: true,
     },
-    totalPages(newTotalPages) {
-      if (this.page > this.totalPages && newTotalPages > 0) {
-        this.page = newTotalPages;
+    totalPages() {
+      if (this.page > this.totalPages && this.totalPages > 0) {
+        this.page = this.totalPages;
         this.retrieveSeries();
-      } else if (this.page > newTotalPages === 0) {
+      } else if (this.page > 1 && this.totalPages === 0) {
         this.page = 1;
         this.retrieveSeries();
       }
+    },
+    page: {
+      handler() {
+        this.retrieveSeries()
+      },
     },
   },
 
@@ -757,7 +760,7 @@ export default {
             };
           });
           this.totalItems = response.data.total_items;
-          this.totalPages = response.data.last_page; // This will trigger the watcher if it changes
+          this.totalPages = response.data.last_page;
           this.from = response.data.from;
           this.to = response.data.to;
         })
