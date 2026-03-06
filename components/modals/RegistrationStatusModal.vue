@@ -1,6 +1,6 @@
 <template>
   <OModal :active="active" @close="closeModal">
-    <div class="w-full max-w-md overflow-hidden rounded-xl
+    <div class="w-full overflow-hidden rounded-xl
     bg-white shadow-2xl border border-gray-100"
     >
       <div class="px-6 py-5 border-b border-gray-100">
@@ -208,8 +208,12 @@ export default {
       required: true
     },
     date: {
-      type: String,
-      default: ''
+      type: [
+        Date,
+        String,
+        Number
+      ],
+      required: true
     },
     isShowCountDownTimer: {
       type: Boolean,
@@ -274,22 +278,10 @@ export default {
   },
 
   methods: {
-    formatForInput(dateString) {
-      if (!dateString) return '';
-      
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return '';
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-
-      return `${year}-${month}-${day}`;
-    },
     initForm() {
       const data = {
         seriesId: this.seriesId,
-        date: this.formatForInput(this.date) || '',
+        date: this.date || '',
         isShowCountDownTimer: this.isShowCountDownTimer,
         timerMode: this.timerMode || (this.date ? 'date' : 'duration'),
         countdownUnit: this.countdownUnit || 'days',

@@ -164,8 +164,11 @@ export default {
       return new Date(this.targetDate).toLocaleDateString('en-US', { 
         weekday: 'short',
         month: 'short',
-        day: 'numeric',
+        day: '2-digit',
         year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
       });
     },
     progressPercentage() {

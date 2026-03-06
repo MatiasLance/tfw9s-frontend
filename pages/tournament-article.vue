@@ -414,7 +414,7 @@ export default {
       const data = response.data || response
       
       if (data) {
-        this.registrationOpensDate = new Date(data.date);
+        this.registrationOpensDate = data.date;
         this.showCountdown = data.isShowCountDownTimer;
 
         this.$forceUpdate();

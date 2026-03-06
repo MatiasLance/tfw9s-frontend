@@ -82,15 +82,15 @@
       </div>
     </BaseHeader>
 
-    <div class="mt-10 mb-10 rounded-lg mx-auto max-w-screen-xl bg-gray-200">
+    <div
+      v-if="!showCountdown"
+      class="mt-10 mb-10 rounded-lg mx-auto max-w-screen-xl bg-gray-200"
+    >
       <div class="mb-5 w-full rounded-t-lg bg-white">
         <Stepper :step="activeStep" stepname="Information" />
       </div>
 
-      <div
-      v-if="!showCountdown"
-      class="flex flex-col gap-4 p-2 md:flex-row"
-      >
+      <div class="flex flex-col gap-4 p-2 md:flex-row">
         <template v-if="activeStep === 1">
            <template v-if="seriestype === 'weekly'">
             <IndividualInformationForm

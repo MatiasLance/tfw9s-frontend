@@ -346,7 +346,7 @@
   <RegistrationStatusModal
     :active="openRegistrationModalStatus"
     :loading="saving"
-    :date="formatDate"
+    :date="currentSettings.date"
     :isShowCountDownTimer="currentSettings.isShowCountDownTimer"
     :seriesId="seriesid"
     :countdownUnit="currentSettings.countdownUnit"
@@ -491,15 +491,6 @@ export default {
       }));
 
       return formattedYears;
-    },
-    formatDate() {
-      const date = new Date(this.currentSettings.date);
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-
-      return `${year}-${month}-${day}`;
     }
   },
   watch: {
