@@ -103,6 +103,7 @@
             <TeamInformationForm
               :is-loading="isStepperLoading"
               :price="price"
+              :series-type="seriestype"
               @submit="toPayStep"
             />
           </template>
