@@ -241,9 +241,6 @@
                 </template>
               </option>
             </select>
-            <i class="ri-arrow-down-s-line pointer-events-none absolute
-            right-3 top-1/2 -translate-y-1/2 text-gray-400"
-            ></i>
           </div>
           
           <!-- Availability Indicator -->
@@ -295,6 +292,60 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Tournament Pool Selection -->
+      <div
+        v-if="seriesType.toLowerCase() === 'coast'"
+        class="w-full mt-6 space-y-4 p-4"
+      >
+        <div class="flex items-center gap-2 px-2">
+          <i class="ri-trophy-line text-brand-green"></i>
+          <span class="text-xs font-bold uppercase
+            tracking-widest text-gray-400"
+          >
+            Select Tournament Pool
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <label
+            v-for="pool in ['A', 'B', 'C', 'D']"
+            :key="pool"
+            :class="[
+              'relative flex cursor-pointer flex-col items-center justify-center',
+              'rounded-xl border-2 py-6 transition-all duration-200 group',
+              selectedPool === pool
+                ? 'border-brand-black bg-brand-black text-white shadow-lg'
+                : 'border-gray-100 bg-white text-gray-400 hover:border-gray-200'
+            ]"
+          >
+            <input
+              v-model="selectedPool"
+              type="radio"
+              :value="pool"
+              class="hidden"
+            />
+            
+            <span 
+              :class="[
+                'text-3xl font-black italic tracking-tighter font-montserrat',
+                selectedPool === pool ? 'text-brand-green' : 'text-gray-200'
+              ]"
+            >
+              {{ pool }}
+            </span>
+            
+            <span class="mt-1 text-[10px] font-bold uppercase tracking-widest">
+              Pool {{ pool }}
+            </span>
+
+            <div 
+              v-if="selectedPool === pool"
+              class="absolute top-2 right-2 h-2 w-2 rounded-full bg-brand-green"
+            ></div>
+          </label>
         </div>
       </div>
     </div>
@@ -465,6 +516,10 @@ export default {
       type: [ String ],
       required: true
     },
+    seriesType: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -492,6 +547,7 @@ export default {
       isAvailable: false,
       currentCount: null,
       remainingSlots: null,
+      selectedPool: 'A'
     }
   },
   computed: {
@@ -559,6 +615,7 @@ export default {
         teamName: this.teamName,
         ageGroup: this.ageGroup,
         price: this.price,
+        pool: this.selectedPool,
         idEmpotencyKey
       });
 
