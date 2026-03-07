@@ -34,6 +34,7 @@
     "core-js": "^3.19.3",
     "crypto-js": "^4.1.1",
     "currency.js": "^2.0.4",
+    "dayjs": "^1.11.19",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.11.13",
     "js-cookie": "^3.0.1",

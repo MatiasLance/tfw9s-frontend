@@ -146,7 +146,8 @@ export default {
     {
       src: '~/plugins/version-check.client.js',
       mode: 'client'
-    }
+    },
+    { src: '~/plugins/dayjs.js' }
   ],
 
   router: {

@@ -1,62 +1,107 @@
 <template>
   <OModal :active="active" @close="closeDialog">
-    <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-            <VForm ref="form" v-model="valid" lazy-validation>
-                <h3 class="mb-3 font-bold text-brand-black">
-                    Manage Result
-                </h3>
-                <hr class="my-3"/>
-                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <div class="col-span-1 p-4">
-                    <label for="team1score" class="mb-1 block">
-                      {{ MatchData.team1_name }}
-                    </label>
-                    <VTextField
-                    id="name"
-                    v-model="MatchData.team1_score"
-                    label="Team 1 Score"
-                    :rules="rules"
-                    type="number"
-                    solo
-                    />
-                  </div>
-                  <div class="col-span-1 p-4">
-                    <label for="team2score" class="mb-1 block">
-                      {{ MatchData.team2_name }}
-                    </label>
-                    <VTextField
-                    id="name"
-                    v-model="MatchData.team2_score"
-                    label="Team 2 Score"
-                    :rules="rules"
-                    type="number"
-                    solo
-                    />
-                  </div>
-                </div>
-                <hr class="my-3"/>
-                <div class="flex flex-col justify-end gap-2 md:flex-row">
-                  <VBtn
-                  depressed
-                  color="success"
-                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-                  :loading="processing"
-                  :disabled="!valid || processing"
-                  @click="validate"
-                  >
-                    Save
-                  </VBtn>
-                  <VBtn
-                  depressed
-                  color="error"
-                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-                  @click="closeDialog"
-                  >
-                    Close
-                  </VBtn>
-                </div>
-            </VForm>
+    <div class="w-full overflow-hidden rounded bg-white">
+      <!-- Header with Stadium Feel -->
+      <div class="bg-brand-black px-6 py-4 text-white">
+        <h3 class="flex items-center gap-2 text-lg font-black uppercase italic">
+          <i class="ri-numbers-line text-brand-green"></i>
+          Final Score Entry
+        </h3>
+      </div>
+
+      <VForm ref="form" v-model="valid" lazy-validation class="p-6">
+        <!-- Scoreboard Grid -->
+        <div class="mb-6 grid grid-cols-1 items-center gap-4 sm:grid-cols-7">
+          <!-- Team 1 -->
+          <div class="sm:col-span-3">
+            <label class="mb-2 block text-xs font-bold uppercase text-gray-500">
+              {{ MatchData.team1_name }}
+            </label>
+            <VTextField
+              v-model="MatchData.team1_score"
+              type="number"
+              placeholder="0"
+              solo
+              flat
+              class="scoreboard-input shadow-sm"
+              :rules="rules"
+            />
+          </div>
+
+          <!-- VS Divider -->
+          <div class="hidden text-center sm:col-span-1 sm:block">
+            <span class="text-sm font-black italic text-gray-800">VS</span>
+          </div>
+
+          <!-- Team 2 -->
+          <div class="sm:col-span-3">
+            <label class="mb-2 block text-xs font-bold uppercase text-gray-500">
+              {{ displayTeam2Name }}
+            </label>
+            <VTextField
+              v-model="MatchData.team2_score"
+              type="number"
+              placeholder="0"
+              solo
+              flat
+              class="scoreboard-input shadow-sm"
+              :rules="rules"
+            />
+          </div>
         </div>
+
+        <hr class="mb-6 border-gray-400" />
+
+        <!-- Tactical Actions -->
+        <div class="mb-8">
+          <button
+            type="button"
+            class="flex w-full items-center justify-center gap-2 rounded-lg 
+                   border-2 border-dashed border-red-200 py-3 text-xs 
+                   font-bold uppercase tracking-widest text-red-500 
+                   transition-all hover:bg-red-50 hover:border-red-400"
+            @click="handleMatchAbandoned"
+          >
+            <i class="ri-alert-line text-lg"></i>
+            Match Abandoned (Injury)
+          </button>
+        </div>
+
+        <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            class="
+              flex h-[52px] w-full items-center justify-center rounded-lg 
+              border-2 border-brand-black px-8 py-3 text-sm font-black 
+              uppercase tracking-widest text-white transition-all
+              bg-brand-black hover:bg-gray-700 hover:text-white
+              active:scale-95 sm:w-auto
+            "
+            @click="closeDialog"
+          >
+            Cancel
+          </button>
+          
+          <button
+            type="button"
+            :disabled="!valid || processing"
+            class="
+              flex h-[52px] w-full items-center justify-center gap-2 rounded-lg 
+              bg-emerald-600 px-10 py-3 text-sm font-black uppercase 
+              tracking-widest text-white shadow-lg transition-all 
+              hover:bg-emerald-500 active:scale-95 disabled:cursor-not-allowed 
+              disabled:opacity-50 sm:w-[280px]
+            "
+            @click="validate"
+          >
+            <i v-if="processing" class="ri-loader-4-line animate-spin text-xl"></i>
+            <i v-else class="ri-check-double-line text-xl"></i>
+            
+            <span>{{ processing ? 'Updating...' : 'Confirm Score' }}</span>
+          </button>
+        </div>
+      </VForm>
+    </div>
   </OModal>
 </template>
 
@@ -85,7 +130,20 @@ export default {
         team1: [],
         team2: [],
       },
-      rules: [ value => !!value || 'Required' ],
+      rules: [ 
+        value => (value !== null &&
+        value !== undefined &&
+        value !== '') || 'Required' 
+      ],
+    }
+  },
+  computed: {
+    displayTeam2Name() {
+      if (!this.MatchData) return 'Loading...';
+
+      return this.MatchData.team2_name ?
+        this.MatchData.team2_name :
+        'Bye';
     }
   },
   watch: {
@@ -94,7 +152,7 @@ export default {
         if (newActive) {
           this.MatchData = this.match;
           this.MatchData.team1_name = this.MatchData.team1.name
-          this.MatchData.team2_name = this.MatchData.team2.name
+          this.MatchData.team2_name = this.MatchData ? this.match.team2.name : 'Bye'
         }
       },
       immediate: true,
@@ -121,9 +179,9 @@ export default {
       this.$refs.form.resetValidation()
     },
     confirmResult() {
-      this.SaveResult()
+      this.saveResult()
     },
-    SaveResult() {
+    saveResult() {
       const formData = new FormData();
       formData.append('team1_score', this.MatchData.team1_score);
       formData.append('team2_score', this.MatchData.team2_score);
@@ -143,6 +201,9 @@ export default {
           }
         });
     },
+    handleMatchAbandoned() {
+      console.log('In progress');
+    },
     closeDialog() {
       this.$emit('close')
     },
@@ -154,38 +215,16 @@ export default {
 </script>
 
 <style scoped>
-.croppa-container {
-  background-color: #abb8c3;
-  border: 3px solid #1C1B1C;
+.scoreboard-input :deep(.v-input__slot) {
+  background: #f8fafc !important;
+  border: 2px solid #e2e8f0 !important;
+  font-size: 1.5rem !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  border-radius: 12px !important;
 }
-.o-inputit__item--danger {
-  background-color: #e73538 !important;
-}
-
-.part-item__actions [class^="ri-"] {
-  padding-right: 0.25rem;
-}
-
-::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
-> .v-input__control > .v-input__slot {
-box-shadow: none;
-border: 1px rgb(243 244 246 / var(--tw-border-opacity));
-background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-padding: 0.5rem 0.75rem;
-width: 100%;
-appearance: none;
-border-radius: 0;
-transition: border-color 0.3s;
-}
-
-::v-deep .v-text-field input::placeholder {
-font-size: 1rem !important;
-font-family: inherit !important;
-color: rgb(104, 104, 104) !important;
-}
-
-.custom-btn {
-  height: 50px !important;
+.scoreboard-input :deep(input) {
+  text-align: center;
 }
 </style>
 
