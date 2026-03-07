@@ -356,20 +356,8 @@ export default {
       this.showManageResultModal = true
     },
     openSubmitResultDialog(data) {
-      if (data.team1_score === 0 && data.team2_score ===0) {
-        this.$oruga.notification.open({
-          duration: 5000,
-          message: 'Please add a score before proceeding.',
-          position: 'bottom',
-          variant: 'info',
-          queue: true
-        })
-        this.selectedMatch = data
-        this.showManageResultModal = true
-      } else {
-        this.selectedMatch = data
-        this.showSubmitResultModal = true
-      }
+      this.selectedMatch = data
+      this.showSubmitResultModal = true
     },
     openModifyResultDialog(data) {
       this.selectedMatch = data

@@ -152,7 +152,7 @@ export default {
   },
   computed: {
     targetDateTime() {
-      return new Date(this.targetDate).getTime();
+      return this.$dayjs.tz(this.targetDate, "Australia/Sydney").valueOf();
     },
     startDateTime() {
       return new Date(this.startDate).getTime();
