@@ -29,7 +29,7 @@
           Registration Opens In
         </h1>
         <p class="text-gray-400 text-lg md:text-xl">
-          {{ formattedTargetDate }}
+          {{ formattedTargetDate }} || Official NSW Event Time
         </p>
       </div>
 
