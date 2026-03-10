@@ -25,7 +25,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
-              :disable="MatchData.is_abandoned_match"
+              :readonly="MatchData.is_abandoned_match"
             />
           </div>
 
@@ -47,7 +47,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
-              :disable="MatchData.is_abandoned_match"
+              :readonly="MatchData.is_abandoned_match"
             />
           </div>
         </div>
