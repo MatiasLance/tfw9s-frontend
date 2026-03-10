@@ -25,6 +25,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
+              :readonly="MatchData.is_abandoned_match"
             />
           </div>
 
@@ -46,6 +47,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
+              :readonly="MatchData.is_abandoned_match"
             />
           </div>
         </div>
@@ -53,19 +55,16 @@
         <hr class="mb-6 border-gray-400" />
 
         <!-- Tactical Actions -->
-        <div class="mb-8">
-          <button
-            type="button"
-            class="flex w-full items-center justify-center gap-2 rounded-lg 
-                   border-2 border-dashed border-red-200 py-3 text-xs 
-                   font-bold uppercase tracking-widest text-red-500 
-                   transition-all hover:bg-red-50 hover:border-red-400"
-            @click="handleMatchAbandoned"
+          <div
+            v-if="MatchData.is_abandoned_match"
+            class="mb-8 flex w-full items-center justify-center gap-2 rounded-lg 
+                  border-2 border-dashed border-red-200 py-3 text-xs 
+                  font-bold uppercase tracking-widest text-red-500 
+                  transition-all hover:bg-red-50 hover:border-red-400"
           >
             <i class="ri-alert-line text-lg"></i>
-            Match Abandoned (Injury)
-          </button>
-        </div>
+            Abandoned Matched
+          </div>
 
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
@@ -81,10 +80,24 @@
           >
             Cancel
           </button>
+
+          <button
+            type="button"
+            class="flex w-full items-center justify-center gap-2 rounded-lg 
+                  border-2 border-red-900 bg-red-900 py-3 text-xs 
+                  font-bold uppercase tracking-widest text-red-500 
+                  transition-all hover:bg-red-800 hover:border-red-800
+                  disabled:cursor-not-allowed disabled:opacity-50 sm:w-[280px]"
+            @click="handleMatchAbandoned(true)"
+            :disabled="MatchData.is_abandoned_match"
+          >
+            <i class="ri-alert-line text-lg"></i>
+              Abandoned Match
+          </button>
           
           <button
             type="button"
-            :disabled="!valid || processing"
+            :disabled="!valid || processing || MatchData.is_abandoned_match"
             class="
               flex h-[52px] w-full items-center justify-center gap-2 rounded-lg 
               bg-emerald-600 px-10 py-3 text-sm font-black uppercase 
@@ -135,6 +148,7 @@ export default {
         value !== undefined &&
         value !== '') || 'Required' 
       ],
+      isAbandonedMatched: false
     }
   },
   computed: {
@@ -185,10 +199,18 @@ export default {
       const formData = new FormData();
       formData.append('team1_score', this.MatchData.team1_score);
       formData.append('team2_score', this.MatchData.team2_score);
+      formData.append('is_abandoned_match', this.isAbandonedMatched);
       this.$axios
         .$post(`v1/eventmatches/update/${this.MatchData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
           this.processing = false;
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Match Abandoned: Standings updated with 1 point awarded to each team.',
+            position: 'bottom',
+            variant: 'success',
+            queue: true,
+          });
           this.reset();
           this.closeDialog()
           this.$emit('confirm')
@@ -201,8 +223,9 @@ export default {
           }
         });
     },
-    handleMatchAbandoned() {
-      console.log('In progress');
+    handleMatchAbandoned(val) {
+      this.isAbandonedMatched = val
+      this.confirmResult();
     },
     closeDialog() {
       this.$emit('close')

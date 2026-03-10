@@ -175,12 +175,6 @@ export default {
     DeleteRegistrationModal
   },
   mixins: [ currencyMixin ],
-  props: {
-    series: {
-      type: Array,
-      required: true
-    },
-  },
   data() {
     return {
       trashed: false,
@@ -252,7 +246,8 @@ export default {
       perPage: 10,
       totalPages: 1,
       totalItems: 0,
-      isLoading: false
+      isLoading: false,
+      series: []
     };
   },
   watch: {
@@ -355,8 +350,8 @@ export default {
   },
   computed: {
     formattedSeries() {
-      return this.series.map(series =>
-        ({ text: series.name, value: series.id }));
+      return this.series.map(data =>
+        ({ text: data.series.name, value: data.series.id }));
     },
   },
   methods: {
@@ -625,6 +620,7 @@ export default {
       this.$axios
         .$get(`v1/${endpoint}?${queryString}`)
         .then((response) => {
+          this.series = response.data.teams
           const EventList = response.data.teams
             .map(team => {
               return {

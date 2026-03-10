@@ -229,7 +229,7 @@ export default {
       const data = response.data || response
       
       if (data) {
-        this.registrationOpensDate = new Date(data.date);
+        this.registrationOpensDate = data.date;
         this.showCountdown = data.isShowCountDownTimer;
 
         this.$forceUpdate();
@@ -241,21 +241,12 @@ export default {
       try {
         const response = await this.$axios.$get(`/v1/registration-form-status/${id}`);
         
-        if (response.success && response.data &&
-        response.data.date) {
-          const parsedDate = new Date(response.data.date);
-          
-          if (!isNaN(parsedDate.getTime())) {
-            this.registrationOpensDate = parsedDate;
-            this.showCountdown = response.data.isShowCountDownTimer;
-          } else {
-            console.warn('Invalid date received:', response.data.date);
-            this.showCountdown = false;
-          }
+        if (response.success && response.data && response.data.date) {
+          this.registrationOpensDate = response.data.date;
+          this.showCountdown = response.data.isShowCountDownTimer;
         }
       } catch (error) {
         console.error('Failed to fetch registration status:', error);
-        this.showCountdown = false;
       }
     },
     handleCountdownDismiss() {
