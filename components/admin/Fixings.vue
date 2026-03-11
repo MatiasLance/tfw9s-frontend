@@ -305,8 +305,8 @@ export default {
 
     async loadSeries() {
       if (this.lists.series.length) return
-      const r = await this.$axios.$get(`v1/series`)
-      this.lists.series = r.data.series
+      const r = await this.$axios.$get(`v1/series/names`)
+      this.lists.series = r.series
     },
 
     async loadFields() {
