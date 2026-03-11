@@ -480,8 +480,6 @@ export default {
         ...team,
         pos: index + 1,
       }));
-
-      console.log(this.allTeamStats);
     },
 
     buildQueryParams(additionalParams = {}) {
@@ -546,13 +544,9 @@ export default {
 
     async retrieveSeries() {
       try {
-        const { series } = await this.$axios.$get('v1/series/names')
+        const response = await this.$axios.$get('v1/series/names')
 
-        this.seriesList = series ?
-          Object.entries(series).map(([ id, name ]) => ({
-            id: Number(id),
-            name
-          })) : []
+        this.seriesList = response.series
 
       } catch (error) {
         console.error('Error retrieving series:', error)
