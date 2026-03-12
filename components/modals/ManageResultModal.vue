@@ -25,7 +25,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
-              :readonly="MatchData.is_abandoned_match"
+              :readonly="MatchData.is_abandoned_match === 0 ? false : true"
             />
           </div>
 
@@ -47,7 +47,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
-              :readonly="MatchData.is_abandoned_match"
+              :readonly="MatchData.is_abandoned_match === 1 || displayTeam2Name === 'Bye'"
             />
           </div>
         </div>
@@ -56,7 +56,7 @@
 
         <!-- Tactical Actions -->
           <div
-            v-if="MatchData.is_abandoned_match"
+            v-if="MatchData.is_abandoned_match === 1"
             class="mb-8 flex w-full items-center justify-center gap-2 rounded-lg 
                   border-2 border-dashed border-red-200 py-3 text-xs 
                   font-bold uppercase tracking-widest text-red-500 
@@ -89,7 +89,7 @@
                   transition-all hover:bg-red-800 hover:border-red-800
                   disabled:cursor-not-allowed disabled:opacity-50 sm:w-[280px]"
             @click="handleMatchAbandoned(true)"
-            :disabled="MatchData.is_abandoned_match"
+            :disabled="MatchData.is_abandoned_match === 1"
           >
             <i class="ri-alert-line text-lg"></i>
               Abandoned Match
@@ -97,7 +97,7 @@
           
           <button
             type="button"
-            :disabled="!valid || processing || MatchData.is_abandoned_match"
+            :disabled="!valid || processing || MatchData.is_abandoned_match === 1"
             class="
               flex h-[52px] w-full items-center justify-center gap-2 rounded-lg 
               bg-emerald-600 px-10 py-3 text-sm font-black uppercase 
@@ -155,7 +155,7 @@ export default {
     displayTeam2Name() {
       if (!this.MatchData) return 'Loading...';
 
-      return this.MatchData.team2_name ?
+      return this.MatchData ?
         this.MatchData.team2_name :
         'Bye';
     }
@@ -164,9 +164,15 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.MatchData = this.match;
-          this.MatchData.team1_name = this.MatchData.team1.name
-          this.MatchData.team2_name = this.MatchData ? this.match.team2.name : 'Bye'
+          this.MatchData = JSON.parse(JSON.stringify(this.match));
+          
+          this.MatchData.team1_name = (this.MatchData.team1 && this.MatchData.team1.name) ?
+            this.MatchData.team1.name :
+            'Unknown';
+            
+          this.MatchData.team2_name = (this.MatchData.team2 && this.MatchData.team2.name) ?
+            this.MatchData.team2.name :
+            'Bye';
         }
       },
       immediate: true,
