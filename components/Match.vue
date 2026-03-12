@@ -5,12 +5,12 @@
         Field:
       </label>
       <VSelect
-      v-model="matchData.field_id"
-      :items="filteredFields"
-      label="Choose Field"
-      :rules="rules"
-      solo
-      :disabled="isMatchAlreadySubmitted"
+        v-model="matchData.field_id"
+        :items="filteredFields"
+        label="Choose Field"
+        :rules="rules"
+        solo
+        :disabled="isMatchAlreadySubmitted"
       >
         <template #prepend-item>
           <div class="sticky-search-bar px-3">
@@ -24,12 +24,12 @@
           Team 1:
       </label>
       <VSelect
-      v-model="matchData.team1.id"
-      :items="filteredTeam1"
-      label="Choose Team 1"
-      :rules="rules"
-      solo
-      :disabled="isMatchAlreadySubmitted"
+        v-model="matchData.team1.id"
+        :items="filteredTeam1"
+        label="Choose Team 1"
+        :rules="rules"
+        solo
+        :disabled="isMatchAlreadySubmitted"
       >
         <template #prepend-item>
           <div class="sticky-search-bar px-3">
@@ -43,11 +43,11 @@
           Team 2:
       </label>
       <VSelect
-      v-model="matchData.team2.id"
-      :items="filteredTeam2"
-      label="Choose Team 2"
-      solo
-      :disabled="isMatchAlreadySubmitted || isBye"
+        v-model="matchData.team2.id"
+        :items="filteredTeam2"
+        label="Choose Team 2"
+        solo
+        :disabled="isMatchAlreadySubmitted || isBye"
       >
         <template #prepend-item>
           <div class="sticky-search-bar px-3">
@@ -62,26 +62,9 @@
 <script>
 export default {
   props: {
-    match: {
-      type: Object,
-      required: true,
-    },
-    teamList: {
-      type: Array,
-      required: true,
-    },
-    fieldList: {
-      type: Array,
-      required: true,
-    },
-    series: {
-      type: Number,
-      required: true,
-    },
-    agegroup: {
-      type: Number,
-      required: true,
-    },
+    match: Object,
+    teamList: Array,
+    fieldList: Array,
     isBye: {
       type: Boolean,
       default: false,
@@ -96,20 +79,18 @@ export default {
       matchData: {
         id: this.match.id || null,
         // eslint-disable-next-line camelcase
-        field_id: this.match.field_id || '',
+        field_id: this.match.field_id || null,
         time: this.match.time,
-        team1: this.match.team1 ? this.match.team1 : { id: 0 },
-        team2: this.match.team2 ? this.match.team2 : { id: 1 },
+        team1: this.match.team1 && !Array.isArray(this.match.team1) ?
+          { id: this.match.team1.id } : { id: null },
+        team2: this.match.team2 && !Array.isArray(this.match.team2) ?
+          { id: this.match.team2.id } : { id: null },
       },
     }
   },
   computed: {
     formattedTeam() {
       const teams = this.teamList
-        .filter(
-          team => team.agegroup_id === this.agegroup &&
-          team.series_id === this.series
-        )
         .map(team => ({
           text: team.name,
           value: team.id,
@@ -143,6 +124,14 @@ export default {
     }
   },
   watch: {
+    match: {
+      handler(newMatch) {
+        if (!newMatch.team2 || (Array.isArray(newMatch.team2) && newMatch.team2.length === 0)) {
+          this.matchData.team2.id = { id: 0 };
+        }
+      },
+      deep: true
+    },
     matchData: {
       handler(newMatch) {
         this.$emit('update-event', newMatch);
@@ -161,13 +150,12 @@ export default {
         // eslint-disable-next-line camelcase
         field_id: match.field_id || null,
         time: match.time,
-        team1: match.team1 ? { id: match.team1.id } : null,
-        team2: match.team2 ? { id: match.team2.id } : { id: 0 },
+        team1: match.team1 && !Array.isArray(match.team1) ? { id: match.team1.id } : { id: null },
+        team2: match.team2 && !Array.isArray(match.team2) ? { id: match.team2.id } : { id: null },
       };
     }
   }
 }
-
 </script>
 
 <style scoped>

@@ -110,3 +110,4 @@ pages/register-v1.vue
 pages/transaction-v1.vue
 pages/thank-you1-old.vue
 plugins/vue-stripe-v1.js
+components/modals/EditFixingModalOld.vue
