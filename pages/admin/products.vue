@@ -118,9 +118,8 @@
             :is-hide-out-of-stock="product.isHideOutOfStock"
             data-aos="fade-up"
             data-aos-offset="30"
-            @update="editMerchItem"
+            @update="retrieveMerchItem"
             @duplicate="duplicateItem"
-            @addvariant="addVariant"
             @showvariant="showVariant"
             @delete="removeMerchItem"
           />
@@ -482,6 +481,11 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Color Picker -->
+            <div class="col-span-1 md:col-span-2">
+              <ColorPicker v-model="item.colors" />
             </div>
 
             <!-- Description -->
@@ -927,6 +931,10 @@
               </div>
             </div>
 
+            <div class="col-span-1 md:col-span-2">
+              <ColorPicker v-model="item.colors" />
+            </div>
+
             <!-- Description -->
             <div class="col-span-1 md:col-span-2">
               <label for="productdescription" class="mb-2 block
@@ -1148,6 +1156,7 @@ import currencyMixin from '@/mixins/currency';
 import ImageUpload from '~/components/ImageUpload'
 import ImageUploadEdit from '~/components/ImageUploadEdit'
 import ManageItemThumbnailView from '~/components/ManageItemThumbnailView';
+import ColorPicker from '~/components/ColorPicker.vue'
 import Tiptap from '~/components/Wysiwyg/Tiptap';
 
 const toNumber = (str) => +str;
@@ -1160,7 +1169,8 @@ export default {
     ImageUpload,
     ImageUploadEdit,
     ManageItemThumbnailView,
-    CategorySlider
+    CategorySlider,
+    ColorPicker
   },
   mixins: [
     aosMixin,
@@ -1174,8 +1184,10 @@ export default {
       item: {
         name: '',
         stock: 0,
-        price: 0.00,
+        price: 0,
+        saleprice: 0,
         description: '',
+        colors: [],
       },
       Taglist: [],
       tags: [],
@@ -1319,7 +1331,7 @@ export default {
         this.create()
         return true;
       } else if (type === 'Edit') {
-        this.edit()
+        this.updateMerchItem()
         return true;
       } else {
         return false;
@@ -1597,6 +1609,10 @@ export default {
         form.append('size_variants', JSON.stringify(cleanedSizeVariants));
       }
 
+      if (this.item.colors && this.item.colors.length > 0) {
+        form.append('colors', JSON.stringify(this.item.colors));
+      }
+
       form.append('selected_shippingid', '0')
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
@@ -1644,7 +1660,7 @@ export default {
           this.variant = '';
         })
     },
-    editMerchItem(index) {
+    retrieveMerchItem(index) {
       this.editingNo = toNumber(index);
       this.$axios
         .$get(`v1/items/${this.editingNo}`)
@@ -1694,6 +1710,16 @@ export default {
             }));
           }
 
+          if (typeof this.item.colors === 'string') {
+            try {
+              this.$set(this.item, 'colors', JSON.parse(this.item.colors));
+            } catch (e) {
+              this.$set(this.item, 'colors', []);
+            }
+          } else if (!Array.isArray(this.item.colors)) {
+            this.$set(this.item, 'colors', []);
+          }
+
           this.showEditMerchItemModal = true;
         })
         .catch((err) => {
@@ -1706,7 +1732,7 @@ export default {
           });
         });
     },
-    edit() {
+    updateMerchItem() {
       this.getSelected();
       const editObject = this.MerchItems.find(
         (item) => item.id === this.editingNo
@@ -1742,6 +1768,10 @@ export default {
         }));
         
         form.append('size_variants', JSON.stringify(cleanedSizeVariants));
+      }
+
+      if (this.item.colors && this.item.colors.length > 0) {
+        form.append('colors', JSON.stringify(this.item.colors));
       }
 
       form.append('selected_shippingid', '0')
@@ -1890,6 +1920,7 @@ export default {
         price: 0,
         saleprice: 0,
         stock: 0,
+        colors: [],
         is_featured: false,
         isHideOutOfStock: false,
         is_on_sale: false,
