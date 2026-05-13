@@ -36,6 +36,18 @@
                 Size: {{ size }}
               </span>
             </div>
+
+            <!-- Color badge -->
+            <div v-if="color" class="mt-2">
+              <span class="inline-flex items-center gap-1 px-3 py-1 
+                          rounded-full bg-gradient-to-r from-green-500/30 
+                          to-green-600/20 border border-green-500/40 
+                          text-green-300 text-sm font-medium">
+                <span class="w-3 h-3 rounded-full border border-green-400"
+                      :style="{ backgroundColor: color }"></span>
+                Color: {{ color }}
+              </span>
+            </div>
             
             <div class="grid grid-cols-2 gap-3 mt-3">
               <span
@@ -152,6 +164,10 @@ export default {
     sizeVariantId: {
       type: [ String, Number ],
       default: null
+    },
+    color: {
+      type: Array,
+      default: []
     }
   },
   data() {

@@ -83,6 +83,7 @@
               :thumbnail="getMediaURL(item.media[0])"
               :size="getItemSize(item)"
               :size-variant-id="getSizeVariantId(item)"
+              :color="getItemColor"
               @change="quantityChanged"
               @remove="removeCartItem"
               data-aos="fade-up"
@@ -244,6 +245,9 @@ export default {
         this.$store.commit('master/setToggleControl2', val)
       }
     },
+    getItemColor() {
+      return this.cartItems.map(item => item.color);
+    }
   },
   async mounted() {
     await this.retrieveTaxValue()

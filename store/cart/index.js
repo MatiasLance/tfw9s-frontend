@@ -22,13 +22,14 @@ export const state = () => ({
 
 /* eslint-disable camelcase */
 export const mutations = {
-  addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku }) {
+  addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku, color }) {
     // Create unique identifier for cart items
-    const itemKey = size_variant_id ? `${id}-${size_variant_id}` : `${id}`;
+    const itemKey = size_variant_id ? `${id}-${size_variant_id}-${color}` : `${id}`;
     
     const index = state.cart.findIndex(item => {
+      console.log(item)
       const currentItemKey = item.size_variant_id ?
-        `${item.id}-${item.size_variant_id}` : `${item.id}`;
+        `${item.id}-${item.size_variant_id}-${color}` : `${item.id}`;
       return currentItemKey === itemKey;
     });
     
@@ -40,7 +41,8 @@ export const mutations = {
         quantity,
         ...(size_variant_id && { size_variant_id }),
         ...(size && { size }),
-        ...(variant_sku && { variant_sku })
+        ...(variant_sku && { variant_sku }),
+        ...(color && { color })
       };
       state.cart.push(cartItem);
       state.shippingOptions.push(shippingOption);
@@ -163,16 +165,19 @@ export const mutations = {
 /* eslint-disable camelcase */
 export const actions = {
   addItemToCart({ state, commit },
-    { id, quantity = 1, stock, shippingOption, size_variant_id, size, variant_sku }) {
+    { id, quantity = 1, stock, shippingOption, size_variant_id, size, variant_sku, color }) {
+      console.log(color)
     return new Promise((resolve, reject) => {
-      const itemKey = size_variant_id ? `${id}-${size_variant_id}` : `${id}`;
+      const itemKey = size_variant_id ? `${id}-${size_variant_id}-${color}` : `${id}`;
       
       let newStockAmount = quantity;
       const index = state.cart.findIndex(item => {
         const currentItemKey = item.size_variant_id ?
-          `${item.id}-${item.size_variant_id}` : `${item.id}`;
+          `${item.id}-${item.size_variant_id}-${color}` : `${item.id}`;
         return currentItemKey === itemKey;
       });
+
+      console.log(index)
 
       if (index >= 0) {
         newStockAmount += state.cart[index].quantity;
@@ -187,7 +192,8 @@ export const actions = {
           shippingOption,
           ...(size_variant_id && { size_variant_id }),
           ...(size && { size }),
-          ...(variant_sku && { variant_sku })
+          ...(variant_sku && { variant_sku }),
+          ...(color && { color })
         });
         commit('setShippingAvailability');
         resolve();
@@ -200,7 +206,7 @@ export const actions = {
     commit('setShippingAvailability');
   },
   
-  updateCartItemQuantity({ state, commit }, { id, size_variant_id = null, quantity, stock }) {
+  updateCartItemQuantity({ state, commit }, { id, size_variant_id = null, quantity, stock, color }) {
     return new Promise((resolve, reject) => {
       const itemKey = size_variant_id ? `${id}-${size_variant_id}` : `${id}`;
       
@@ -216,7 +222,8 @@ export const actions = {
         commit('setCartItemQuantity', {
           id,
           size_variant_id,
-          quantity
+          quantity,
+          color
         });
         resolve();
       }

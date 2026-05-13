@@ -204,6 +204,50 @@
             </div>
           </div>
 
+          <!-- Color Selector -->
+          <div v-if="product.colors && product.colors.length > 0" class="mb-6">
+            <label class="block text-lg font-semibold text-white mb-3">
+              <i class="ri-palette-line mr-2 text-green-400"></i>
+              Colour:
+            </label>
+
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+              <label
+                v-for="color in product.colors"
+                :key="color"
+                class="relative flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer
+                      transition-all duration-300 transform hover:scale-105"
+                :class="selectedColor === color
+                  ? 'border-green-400 bg-green-500/20 shadow-lg ring-2 ring-green-400/30'
+                  : 'border-gray-600 bg-gray-700/40 hover:border-green-400 hover:bg-green-500/15'"
+              >
+                <input
+                  v-model="selectedColor"
+                  type="radio"
+                  :value="color"
+                  class="sr-only"
+                />
+
+                <span
+                  class="w-6 h-6 rounded-full border border-white/30 shadow-sm flex-shrink-0"
+                  :style="{ backgroundColor: getColorHex(color) }"
+                ></span>
+
+                <span class="text-sm font-medium text-gray-100">
+                  {{ getColorLabel(color) }}
+                </span>
+
+                <span
+                  v-if="selectedColor === color"
+                  class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full 
+                        flex items-center justify-center text-white text-xs"
+                >
+                  <i class="ri-check-line"></i>
+                </span>
+              </label>
+            </div>
+          </div>
+
           <!-- Description -->
           <div class="mb-8">
             <div class="rounded-xl bg-gray-700/30 p-4 border border-gray-600">
@@ -435,6 +479,7 @@ export default {
       quantity: 1,
       imageCarouselSettings: slickSettings,
       selectedSize: null,
+      selectedColor: null
     };
   },
   computed: {
@@ -567,6 +612,42 @@ export default {
         behavior: 'smooth',
       })
     },
+    getColorHex(colorString) {
+      const presets = {
+        black: '#000000',
+        white: '#FFFFFF',
+        navy: '#002147',
+        red: '#C8102E',
+        forestgreen: '#228B22',
+        royalblue: '#4169E1',
+        yellow: '#FFD700',
+        orange: '#FF8200',
+        grey: '#808080',
+        maroon: '#800000',
+        teal: '#008080',
+        pink: '#FFC0CB',
+      };
+
+      if (colorString.startsWith('#')) return colorString;
+      return presets[colorString.toLowerCase()] || '#888888';
+    },
+    getColorLabel(colorString) {
+      const labels = {
+        black: 'Black',
+        white: 'White',
+        navy: 'Navy Blue',
+        red: 'Red',
+        forestgreen: 'Forest Green',
+        royalblue: 'Royal Blue',
+        yellow: 'Yellow',
+        orange: 'Orange',
+        grey: 'Grey',
+        maroon: 'Maroon',
+        teal: 'Teal',
+        pink: 'Pink',
+      };
+      return labels[colorString.toLowerCase()] || colorString;
+    },
     setActiveMedia(path) {
       this.activeImageURL = this.getMediaURL(path)
     },
@@ -618,6 +699,19 @@ export default {
         return;
       }
 
+      if (this.product.colors &&
+       this.product.colors.length > 0 &&
+       !this.selectedColor) {
+        this.$oruga.notification.open({
+          duration: 3000,
+          message: 'Please select a colour',
+          position: 'bottom',
+          variant: 'warning',
+          queue: true,
+        });
+        return;
+      }
+
       const cartItem = {
         id: this.product.id,
         quantity: parseInt(this.quantity),
@@ -629,6 +723,10 @@ export default {
         cartItem.size_variant_id = this.selectedSize.id;
         cartItem.size = this.selectedSize.size;
         cartItem.variant_sku = this.selectedSize.sku;
+      }
+
+      if (this.selectedColor) {
+        cartItem.color = this.selectedColor;
       }
 
       this.$store
