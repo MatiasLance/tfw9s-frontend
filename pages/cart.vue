@@ -1,8 +1,7 @@
 <template>
-  <div class="min-h-full bg-gradient-to-br from-gray-900 to-green-900">
-
+  <div class="min-h-screen flex flex-col w-full bg-gradient-to-br from-gray-900 to-green-900">
     <BaseHeader
-      class="mx-auto max-w-full gap-4 relative overflow-hidden
+      class="mx-auto w-full gap-4 relative overflow-hidden
       bg-gradient-to-br from-green-900 via-green-700 to-gray-900
       lg:px-8"
     >
@@ -41,108 +40,111 @@
       </div>
     </BaseHeader>
 
-    <div class="mx-auto max-w-screen-xl gap-4 px-4 py-8">
-      <div class="flex flex-col gap-8 md:flex-row">
-        <!-- Main Cart Area -->
-        <main class="md:w-3/4">
-          <template v-if="!items.length">
-            <div class="text-center py-16 bg-gray-800/50 rounded-2xl" data-aos="fade-up">
-              <div class="text-6xl mb-6">
-                🏉
+    <div class="flex-1 flex items-center justify-center px-4 py-4">
+      <div class="mx-auto max-w-screen-xl w-full">
+        <div class="flex flex-col-reverse gap-4 md:flex-row">
+          <!-- Main Cart Area -->
+          <main class="md:w-3/4">
+            <template v-if="!items.length">
+              <div class="text-center py-16 bg-gray-800/50 rounded-2xl" data-aos="fade-up">
+                <div class="text-6xl mb-6">
+                  🏉
+                </div>
+                <h3 class="text-2xl font-semibold text-white mb-3">
+                  Your cart is empty
+                </h3>
+                <p class="text-green-200 text-lg mb-6">
+                  Add some team uniforms to get started
+                </p>
+                <NuxtLink to="/shop">
+                  <button type="button" 
+                          class="bg-green-600 hover:bg-green-700 text-white 
+                                font-semibold py-3 px-8 rounded-lg text-lg
+                                transition-colors">
+                    Browse Shop
+                  </button>
+                </NuxtLink>
               </div>
-              <h3 class="text-2xl font-semibold text-white mb-3">
-                Your cart is empty
-              </h3>
-              <p class="text-green-200 text-lg mb-6">
-                Add some team uniforms to get started
-              </p>
-              <NuxtLink to="/shop">
-                <button type="button" 
-                        class="bg-green-600 hover:bg-green-700 text-white 
-                               font-semibold py-3 px-8 rounded-lg text-lg
-                               transition-colors">
-                  Browse Shop
-                </button>
-              </NuxtLink>
-            </div>
-          </template>
-          
-          <template v-else>
-            <CartItem
-              v-for="item in items"
-              :key="getCartItemKey(item)"
-              :uid="item.id"
-              :name="item.name"
-              :price="getItemPrice(item)"
-              :saleprice="item.saleprice"
-              :is-on-sale="item.is_on_sale"
-              :show-rrp="item.show_rrp"
-              :stock="getItemStock(item)"
-              :categories="item.categories"
-              :quantity="getQuantity(item)"
-              :thumbnail="getMediaURL(item.media[0])"
-              :size="getItemSize(item)"
-              :size-variant-id="getSizeVariantId(item)"
-              :color="getItemColor"
-              @change="quantityChanged"
-              @remove="removeCartItem"
-              data-aos="fade-up"
-            />
-          </template>
-        </main>
-
-        <!-- Order Summary -->
-        <aside class="md:w-1/4" data-aos="fade-left">
-          <article class="bg-gray-800 rounded-2xl p-6 border border-green-500/30">
+            </template>
             
-            <div class="mb-6">
-              <h3 class="text-white font-bold text-xl mb-6 text-center">
-                Order Summary
-              </h3>
-              
-              <ul class="space-y-4">
-                <li class="flex justify-between text-white">
-                  <span class="text-lg">Sub-Total:</span>
-                  <span class="text-lg font-semibold">{{ formatCurrency(subtotal) }}</span>
-                </li>
-                <li class="flex justify-between text-green-300">
-                  <span>Tax:</span>
-                  <span>{{ formatCurrency(taxAmount) }}</span>
-                </li>
-                <li class="flex justify-between text-white border-t 
-                           border-gray-600 pt-4 text-xl font-bold">
-                  <span>Grand Total:</span>
-                  <span class="text-green-400">
-                    {{ formatCurrency(total) }}
-                  </span>
-                </li>
-              </ul>
-            </div>
+            <template v-else>
+              {{ cartItems }}
+              <CartItem
+                v-for="item in items"
+                :key="getCartItemKey(item)"
+                :uid="item.id"
+                :name="item.name"
+                :price="getItemPrice(item)"
+                :saleprice="item.saleprice"
+                :is-on-sale="item.is_on_sale"
+                :show-rrp="item.show_rrp"
+                :stock="getItemStock(item)"
+                :categories="item.categories"
+                :quantity="getQuantity(item)"
+                :thumbnail="getMediaURL(item.media[0])"
+                :size="getItemSize(item)"
+                :size-variant-id="getSizeVariantId(item)"
+                :color="getItemColor(item)"
+                @change="quantityChanged"
+                @remove="removeCartItem"
+                data-aos="fade-up"
+              />
+            </template>
+          </main>
 
-            <!-- Action Buttons -->
-            <div class="space-y-4">
-              <NuxtLink v-if="cartItems.length > 0" to="/checkout">
-                <button type="button"
-                        class="w-full bg-green-600 hover:bg-green-700 
-                               text-white font-bold py-4 px-6 rounded-lg
-                               text-md transition-colors"
-                        :class="cartItems.length > 0 ? 'mb-4' : 'mb-0'">
-                  Proceed to Checkout
-                </button>
-              </NuxtLink>
+          <!-- Order Summary -->
+          <aside class="md:w-1/4" data-aos="fade-left">
+            <article class="bg-gray-800 rounded-2xl p-6 border border-green-500/30">
               
-              <NuxtLink to="/shop">
-                <button type="button"
-                        class="w-full bg-gray-700 hover:bg-gray-600 
-                               text-white font-semibold py-3 px-6 rounded-lg
-                               border border-gray-500 transition-colors
-                               text-md">
-                  Continue Shopping
-                </button>
-              </NuxtLink>
-            </div>
-          </article>
-        </aside>
+              <div class="mb-6">
+                <h3 class="text-white font-bold text-xl mb-6 text-center">
+                  Order Summary
+                </h3>
+                
+                <ul class="space-y-4">
+                  <li class="flex justify-between text-white">
+                    <span class="text-lg">Sub-Total:</span>
+                    <span class="text-lg font-semibold">{{ formatCurrency(subtotal) }}</span>
+                  </li>
+                  <li class="flex justify-between text-green-300">
+                    <span>Tax:</span>
+                    <span>{{ formatCurrency(taxAmount) }}</span>
+                  </li>
+                  <li class="flex justify-between text-white border-t 
+                            border-gray-600 pt-4 text-xl font-bold">
+                    <span>Grand Total:</span>
+                    <span class="text-green-400">
+                      {{ formatCurrency(total) }}
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="space-y-4">
+                <NuxtLink v-if="cartItems.length > 0" to="/checkout">
+                  <button type="button"
+                          class="w-full bg-green-600 hover:bg-green-700 
+                                text-white font-bold py-4 px-6 rounded-lg
+                                text-md transition-colors"
+                          :class="cartItems.length > 0 ? 'mb-4' : 'mb-0'">
+                    Proceed to Checkout
+                  </button>
+                </NuxtLink>
+                
+                <NuxtLink to="/shop">
+                  <button type="button"
+                          class="w-full bg-gray-700 hover:bg-gray-600 
+                                text-white font-semibold py-3 px-6 rounded-lg
+                                border border-gray-500 transition-colors
+                                text-md">
+                    Continue Shopping
+                  </button>
+                </NuxtLink>
+              </div>
+            </article>
+          </aside>
+        </div>
       </div>
     </div>
   </div>
@@ -245,9 +247,6 @@ export default {
         this.$store.commit('master/setToggleControl2', val)
       }
     },
-    getItemColor() {
-      return this.cartItems.map(item => item.color);
-    }
   },
   async mounted() {
     await this.retrieveTaxValue()
@@ -258,22 +257,27 @@ export default {
     this.cullZeroQuantityItems()
   },
   methods: {
+    getItemColor(item) {
+      const cartItem = this.getCartItemFromStore(item);
+      return cartItem ? cartItem.color : null;
+    },
     // NEW: Generate unique key for cart items with size variants
     getCartItemKey(item) {
       const cartItem = this.getCartItemFromStore(item);
-      return cartItem && cartItem.size_variant_id ?
-        `${item.id}-${cartItem.size_variant_id}` :
-        `${item.id}`;
+      const parts = [item.id];
+      if (cartItem) {
+        if (cartItem.size_variant_id) parts.push(cartItem.size_variant_id);
+        if (cartItem.color) parts.push(cartItem.color);
+      }
+      return parts.join('-');
     },
     
     // UPDATED: Much simpler now that items have cart context
     getCartItemFromStore(item) {
-      if (!this.cartItems || !this.cartItems.length) return null;
-      
-      // Direct lookup using the cart context we stored
       return this.cartItems.find(cartItem => 
-        cartItem.id === item._cartItemId && 
-        cartItem.size_variant_id === item._sizeVariantId
+        cartItem.id === item._cartItemId &&
+        (cartItem.size_variant_id == item._sizeVariantId || (!cartItem.size_variant_id && !item._sizeVariantId)) &&
+        (cartItem.color == item._color || (!cartItem.color && !item._color))
       );
     },
     
@@ -396,18 +400,16 @@ export default {
     
     /* eslint-disable camelcase */
     quantityChanged(changeData) {
-      // Handle both old format { id, quantity } and new format { id, quantity, size_variant_id }
-      const { id, quantity, size_variant_id } = changeData;
-      
+      const { id, quantity, size_variant_id, color } = changeData;
+
       this.$store.dispatch('cart/updateCartItemQuantity', {
         id,
         size_variant_id: size_variant_id || null,
+        color: color || null,
         quantity,
-        stock: this.getItemStock({ id, size_variant_id })
+        stock: this.getItemStock({ id, size_variant_id, color })
       }).then(() => {
-        this.$nextTick(() => {
-          this.calculatePriceAggregates();
-        });
+        this.$nextTick(() => this.calculatePriceAggregates());
       }).catch(error => {
         this.$oruga.notification.open({
           message: error.message,
@@ -421,49 +423,34 @@ export default {
     removeCartItem(removeData) {
       const id = removeData.id || removeData;
       const size_variant_id = removeData.size_variant_id || null;
-      
-      // Remove from store first
+      const color = removeData.color || null;
+
       this.$store.dispatch('cart/removeItemFromCart', {
         id,
-        size_variant_id
+        size_variant_id,
+        color
       }).then(() => {
-        // After store is updated, find and remove the correct item from this.items
-        this.removeItemFromLocalArray(id, size_variant_id);
-        
-        this.$nextTick(() => {
-          this.calculatePriceAggregates();
-        });
+        this.removeItemFromLocalArray(id, size_variant_id, color);
+        this.$nextTick(() => this.calculatePriceAggregates());
       }).catch(error => {
-        this.$oruga.notification.open({
-          message: error.message,
-          variant: 'danger',
-          duration: 5000
-        });
+        this.$oruga.notification.open({ message: error.message, variant: 'danger', duration: 5000 });
       });
     },
 
     // Helper method to properly remove item from local items array
-    removeItemFromLocalArray(id, size_variant_id) {
+    removeItemFromLocalArray(id, size_variant_id, color) {
       this.items = this.items.filter(item => {
-        // If we're dealing with a specific size variant
-        if (size_variant_id) {
-          // Check if this item has the matching ID AND contains the specific size variant
-          if (item.id === id) {
-            const hasSizeVariant = this.doesItemHaveSizeVariant(item, size_variant_id);
-            // Keep the item only if it doesn't have this specific size variant in cart
-            return !hasSizeVariant;
-          }
-          return true;
-        } else {
-          // For regular items without size variants, remove the entire item
-          return item.id !== id;
-        }
-      });
-      
-      // Additional cleanup: remove items that have no cart entries left
-      this.items = this.items.filter(item => {
+        // Match cart entry based on all three identifiers
         const cartItem = this.getCartItemFromStore(item);
-        return cartItem !== undefined;
+        if (!cartItem) return false;
+
+        const sameId = cartItem.id === id;
+        const sameSize = (size_variant_id == null && cartItem.size_variant_id == null) ||
+                        (cartItem.size_variant_id == size_variant_id);
+        const sameColor = (color == null && cartItem.color == null) ||
+                          (cartItem.color == color);
+
+        return !(sameId && sameSize && sameColor);
       });
     },
     

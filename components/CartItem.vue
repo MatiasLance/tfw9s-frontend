@@ -166,8 +166,8 @@ export default {
       default: null
     },
     color: {
-      type: Array,
-      default: []
+      type: String,
+      default: null
     }
   },
   data() {
@@ -206,34 +206,27 @@ export default {
     },
     
     quantityChanged() {
-      // UPDATED: Include size variant ID in the emit
-      /* eslint-disable camelcase */
       const changeData = {
         id: this.uid,
-        quantity: parseInt(this.editableQuantity)
+        quantity: parseInt(this.editableQuantity),
       };
 
-      // Only add size_variant_id if it exists
       if (this.sizeVariantId) {
         changeData.size_variant_id = this.sizeVariantId;
       }
-      
+      if (this.color) {
+        changeData.color = this.color;
+      }
+
       this.$emit('change', changeData);
     },
     
     removeItem() {
-      // UPDATED: Maintain backward compatibility
-      // If no size variant, emit just the ID (old format)
-      // If has size variant, emit object with id and size_variant_id
-      if (this.hasSizeVariant) {
-        this.$emit('remove', {
-          id: this.uid,
-          size_variant_id: this.sizeVariantId
-        });
-      } else {
-        // Emit just the ID for backward compatibility
-        this.$emit('remove', this.uid);
-      }
+      this.$emit('remove', {
+        id: this.uid,
+        size_variant_id: this.hasSizeVariant ? this.sizeVariantId : null,
+        color: this.color
+      });
     },
     
     handleHighStockValue() {

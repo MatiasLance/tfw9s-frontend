@@ -11,7 +11,7 @@ export const state = () => ({
   own: {
     country: { active: true },
     state: { active: true },
-    city: { active: true }
+    city: { active: true }  
   },
   other: {
     country: { active: true },
@@ -21,18 +21,23 @@ export const state = () => ({
 })
 
 /* eslint-disable camelcase */
+function cartItemKey(id, size_variant_id = null, color = null) {
+  const parts = [ id ];
+  if (size_variant_id) parts.push(size_variant_id);
+  if (color) parts.push(color);
+  return parts.join('-');
+}
+
+/* eslint-disable camelcase */
 export const mutations = {
   addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku, color }) {
-    // Create unique identifier for cart items
-    const itemKey = size_variant_id ? `${id}-${size_variant_id}-${color}` : `${id}`;
-    
+    const itemKey = cartItemKey(id, size_variant_id, color);
+
     const index = state.cart.findIndex(item => {
-      console.log(item)
-      const currentItemKey = item.size_variant_id ?
-        `${item.id}-${item.size_variant_id}-${color}` : `${item.id}`;
-      return currentItemKey === itemKey;
+      const currentKey = cartItemKey(item.id);
+      return currentKey === itemKey;
     });
-    
+
     if (index >= 0) {
       state.cart[index].quantity += quantity;
     } else {
@@ -49,104 +54,61 @@ export const mutations = {
     }
   },
   
-  removeCartItem(state, { id, size_variant_id }) {
-    const itemKey = size_variant_id ? `${id}-${size_variant_id}` : `${id}`;
-    
+  removeCartItem(state, { id, size_variant_id, color }) {
+    const itemKey = cartItemKey(id, size_variant_id, color);
     const index = state.cart.findIndex(item => {
-      const currentItemKey = item.size_variant_id ?
-        `${item.id}-${item.size_variant_id}` : `${item.id}`;
-      return currentItemKey === itemKey;
+      const currentKey = cartItemKey(item.id);
+      return currentKey === itemKey;
     });
-    
+
     if (index >= 0) {
       state.cart.splice(index, 1);
       state.shippingOptions.splice(index, 1);
     }
   },
   
-  setCartItemQuantity(state, { id, quantity, size_variant_id }) {
-    const itemKey = size_variant_id ? `${id}-${size_variant_id}` : `${id}`;
-    
+  setCartItemQuantity(state, { id, quantity, size_variant_id, color }) {
+    const itemKey = cartItemKey(id, size_variant_id, color);
+
     const index = state.cart.findIndex(item => {
-      const currentItemKey = item.size_variant_id ?
-        `${item.id}-${item.size_variant_id}` : `${item.id}`;
-      return currentItemKey === itemKey;
+      const currentKey = cartItemKey(item.id);
+      return currentKey === itemKey;
     });
-    
+
     if (index >= 0) {
       state.cart[index].quantity = quantity;
     }
   },
   
-  setCartitems(state, cartItems) {
+ setCartitems(state, cartItems) {
     state.cart = cartItems;
   },
-  
-  setSubtotal(state, subtotal) {
-    state.subtotal = subtotal;
-  },
-  
-  setTax(state, tax) {
-    state.tax = tax;
-  },
-  
-  setTaxAmount(state, taxAmount) {
-    state.taxAmount = taxAmount;
-  },
-  
-  setShipping(state, shipping) {
-    state.shipping = shipping;
-  },
-  
-  setGst(state, gst) {
-    state.gst = gst;
-  },
-  
-  setTotal(state, total) {
-    state.total = total;
-  },
-  
-  setOwnCountryActive(state, active) {
-    state.own.country.active = active;
-  },
-  
-  setOwnStateActive(state, active) {
-    state.own.state.active = active;
-  },
-  
-  setOwnCityActive(state, active) {
-    state.own.city.active = active;
-  },
-  
-  setOtherCountryActive(state, active) {
-    state.other.country.active = active;
-  },
-  
-  setOtherStateActive(state, active) {
-    state.other.state.active = active;
-  },
-  
-  setOtherCityActive(state, active) {
-    state.other.city.active = active;
-  },
+
+  setSubtotal(state, subtotal) { state.subtotal = subtotal; },
+  setTax(state, tax) { state.tax = tax; },
+  setTaxAmount(state, taxAmount) { state.taxAmount = taxAmount; },
+  setShipping(state, shipping) { state.shipping = shipping; },
+  setGst(state, gst) { state.gst = gst; },
+  setTotal(state, total) { state.total = total; },
+
+  setOwnCountryActive(state, active) { state.own.country.active = active; },
+  setOwnStateActive(state, active) { state.own.state.active = active; },
+  setOwnCityActive(state, active) { state.own.city.active = active; },
+  setOtherCountryActive(state, active) { state.other.country.active = active; },
+  setOtherStateActive(state, active) { state.other.state.active = active; },
+  setOtherCityActive(state, active) { state.other.city.active = active; },
   
   setShippingAvailability(state) {
     if (state.shippingOptions.includes(0)) {
       state.shippingAvailability = 0;
     } else if (
       state.shippingOptions.includes(2) &&
-      (
-        !state.shippingOptions.includes(1) &&
-        !state.shippingOptions.includes(0)
-      )
+      (!state.shippingOptions.includes(1) && !state.shippingOptions.includes(0))
     ) {
       state.shippingAvailability = 2;
     } else if (
       state.shippingOptions.includes(1) &&
-      (
-        !state.shippingOptions.includes(2) &&
-        !state.shippingOptions.includes(0)
-      )
+      (!state.shippingOptions.includes(2) && !state.shippingOptions.includes(0))
     ) {
       state.shippingAvailability = 1;
     } else if (
@@ -166,15 +128,13 @@ export const mutations = {
 export const actions = {
   addItemToCart({ state, commit },
     { id, quantity = 1, stock, shippingOption, size_variant_id, size, variant_sku, color }) {
-      console.log(color)
     return new Promise((resolve, reject) => {
-      const itemKey = size_variant_id ? `${id}-${size_variant_id}-${color}` : `${id}`;
-      
+      const itemKey = cartItemKey(id, size_variant_id, color);
+
       let newStockAmount = quantity;
       const index = state.cart.findIndex(item => {
-        const currentItemKey = item.size_variant_id ?
-          `${item.id}-${item.size_variant_id}-${color}` : `${item.id}`;
-        return currentItemKey === itemKey;
+        const currentKey = cartItemKey(item.id);
+        return currentKey === itemKey;
       });
 
       console.log(index)
@@ -187,13 +147,8 @@ export const actions = {
         reject(new Error('Item quantity in cart cannot exceed item stock'));
       } else {
         commit('addCartItem', {
-          id,
-          quantity,
-          shippingOption,
-          ...(size_variant_id && { size_variant_id }),
-          ...(size && { size }),
-          ...(variant_sku && { variant_sku }),
-          ...(color && { color })
+          id, quantity, shippingOption,
+          size_variant_id, size, variant_sku, color
         });
         commit('setShippingAvailability');
         resolve();
@@ -201,30 +156,23 @@ export const actions = {
     });
   },
   
-  removeItemFromCart({ commit }, { id, size_variant_id = null }) {
-    commit('removeCartItem', { id, size_variant_id });
+  removeItemFromCart({ commit }, { id, size_variant_id = null, color = null }) {
+    commit('removeCartItem', { id, size_variant_id, color });
     commit('setShippingAvailability');
   },
   
-  updateCartItemQuantity({ state, commit }, { id, size_variant_id = null, quantity, stock, color }) {
+  updateCartItemQuantity({ state, commit }, { id, size_variant_id = null, color = null, quantity, stock }) {
     return new Promise((resolve, reject) => {
-      const itemKey = size_variant_id ? `${id}-${size_variant_id}` : `${id}`;
-      
+      const itemKey = cartItemKey(id, size_variant_id, color);
       const index = state.cart.findIndex(item => {
-        const currentItemKey = item.size_variant_id ?
-          `${item.id}-${item.size_variant_id}` : `${item.id}`;
-        return currentItemKey === itemKey;
+        const currentKey = cartItemKey(item.id);
+        return currentKey === itemKey;
       });
 
       if (index >= 0 && quantity > stock) {
         reject(new Error('Item quantity in cart cannot exceed item stock'));
       } else {
-        commit('setCartItemQuantity', {
-          id,
-          size_variant_id,
-          quantity,
-          color
-        });
+        commit('setCartItemQuantity', { id, size_variant_id, color, quantity });
         resolve();
       }
     });
@@ -234,7 +182,7 @@ export const actions = {
     const culled = state.cart.filter(x => x.quantity > 0);
     commit('setCartitems', culled);
   },
-  
+
   clearCart({ commit }) {
     commit('setCartitems', []);
   },
@@ -243,42 +191,34 @@ export const actions = {
 /* eslint-disable camelcase */
 export const getters = {
   cartCount(state) {
-    let totalItems = 0;
-    state.cart.forEach((x) => {
-      totalItems += parseInt(x.quantity);
-    });
-    return totalItems;
+    return state.cart.reduce((total, item) => total + item.quantity, 0);
   },
-  
-  // NEW: Get cart item by ID and optional size variant
-  getCartItem: (state) => (id, size_variant_id = null) => {
-    const itemKey = size_variant_id ? `${id}-${size_variant_id}` : `${id}`;
-    
+
+  // Updated: accepts optional color
+  getCartItem: (state) => (id, size_variant_id = null, color = null) => {
+    const itemKey = cartItemKey(id, size_variant_id, color);
     return state.cart.find(item => {
-      const currentItemKey = item.size_variant_id ?
-        `${item.id}-${item.size_variant_id}` : `${item.id}`;
-      return currentItemKey === itemKey;
+      const currentKey = cartItemKey(item.id);
+      return currentKey === itemKey;
     });
   },
-  
-  // NEW: Check if specific item variant is in cart
-  isItemInCart: (state) => (id, size_variant_id = null) => {
-    const itemKey = size_variant_id ? `${id}-${size_variant_id}` : `${id}`;
-    
+
+  // Updated: checks for specific item (with optional color)
+  isItemInCart: (state) => (id, size_variant_id = null, color = null) => {
+    const itemKey = cartItemKey(id, size_variant_id, color);
     return state.cart.some(item => {
-      const currentItemKey = item.size_variant_id ?
-        `${item.id}-${item.size_variant_id}` : `${item.id}`;
-      return currentItemKey === itemKey;
+      const currentKey = cartItemKey(item.id);
+      return currentKey === itemKey;
     });
   },
-  
-  // NEW: Get quantity for specific item variant
-  getItemQuantity: (state) => (id, size_variant_id = null) => {
-    const item = state.getters.getCartItem(id, size_variant_id);
+
+  // Updated: get quantity for specific variant/color
+  getItemQuantity: (state, getters) => (id, size_variant_id = null, color = null) => {
+    const item = getters.getCartItem(id, size_variant_id, color);
     return item ? item.quantity : 0;
   },
-  
-  // NEW: Get all cart items for a specific product ID (all sizes)
+
+  // Optional: get all cart items for a product id (regardless of size/color)
   getProductCartItems: (state) => (id) => {
     return state.cart.filter(item => item.id === id);
   }
