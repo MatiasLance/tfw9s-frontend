@@ -206,23 +206,6 @@ export default {
       showOutOfStock: true
     }
   },
-  computed: {
-    cartItems: {
-      get() {
-        return this.$store.state.cart.cart
-      },
-    },
-    cartCount: {
-      get() {
-        return this.$store.getters['cart/cartCount']
-      },
-    },
-    currencyCode: {
-      get() {
-        return CURRENCY_CODE
-      },
-    }
-  },
   mounted() {
     this.$nextTick(() => {
       if (this.isHideOutOfStock) {

@@ -482,18 +482,7 @@ export default {
       selectedColor: null
     };
   },
-  computed: {
-    cartItems: {
-      get() {
-        return this.$store.state.cart.cart
-      },
-    },
-    cartCount: {
-      get() {
-        return this.$store.getters['cart/cartCount']
-      },
-    },
-    
+  computed: {    
     // NEW: Computed properties for size variants
     hasSizeVariants() {
       return (this.product.size_variants && this.product.size_variants.length > 0) || 
@@ -699,9 +688,7 @@ export default {
         return;
       }
 
-      if (this.product.colors &&
-       this.product.colors.length > 0 &&
-       !this.selectedColor) {
+      if (!this.selectedColor) {
         this.$oruga.notification.open({
           duration: 3000,
           message: 'Please select a colour',

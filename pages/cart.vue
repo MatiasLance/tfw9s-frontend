@@ -68,7 +68,6 @@
             </template>
             
             <template v-else>
-              {{ cartItems }}
               <CartItem
                 v-for="item in items"
                 :key="getCartItemKey(item)"
@@ -378,6 +377,7 @@ export default {
               _cartItemId: cartItem.id,
               _sizeVariantId: cartItem.size_variant_id,
               _quantity: cartItem.quantity,
+              _color: cartItem.color,
               // For direct access in templates
               cartSizeVariantId: cartItem.size_variant_id,
               cartQuantity: cartItem.quantity
