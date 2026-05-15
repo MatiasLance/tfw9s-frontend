@@ -143,10 +143,10 @@ export default {
     { src: '~/plugins/PhotoshopPicker.js', mode: 'client' },
     { src: '~/plugins/vue-stripe.js', mode: 'client' },
     { src: '~/plugins/socket.js', mode: 'client' },
-    {
-      src: '~/plugins/version-check.client.js',
-      mode: 'client'
-    },
+    // {
+    //   src: '~/plugins/version-check.client.js',
+    //   mode: 'client'
+    // },
     { src: '~/plugins/dayjs.js' }
   ],
 

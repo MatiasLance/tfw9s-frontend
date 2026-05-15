@@ -27,6 +27,7 @@
             :id="player.card"
             :key="player.id"
             :player="player"
+            :series="series"
           />
         </div>
       </div>

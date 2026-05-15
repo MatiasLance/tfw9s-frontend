@@ -12,21 +12,32 @@
       >
     </article>
 
-    <article class="z-10 flex flex-1 flex-col">
-      <div
-      class="relative flex size-full flex-1 gap-2 px-6 py-2 sm:px-10"
+    <!-- NEW: Payment status badge (weekly series only) -->
+    <div
+      v-if="series && series.type === 'weekly'"
+      class="absolute top-3 right-3 z-20"
+    >
+      <span
+        class="inline-block rounded-full px-3 py-1 text-xs font-bold uppercase
+        tracking-wider shadow-md"
+        :class="playerIsPaid
+          ? 'bg-green-600 text-white'
+          : 'bg-red-500 text-white'"
       >
-        <div
-          class="flex h-full flex-1 flex-col items-start justify-center gap-2"
-        >
+        {{ playerIsPaid ? 'Paid' : 'Unpaid' }}
+      </span>
+    </div>
+
+    <!-- Main card content -->
+    <article class="z-10 flex flex-1 flex-col">
+      <div class="relative flex size-full flex-1 gap-2 px-6 py-2 sm:px-10">
+        <div class="flex h-full flex-1 flex-col items-start justify-center gap-2">
           <img
             src="~/assets/images/tfw9s.png"
             alt="logo"
             class="aspect-square w-3/5 max-w-24"
           >
-          <div
-          class="w-full text-left text-base tracking-widest sm:text-xl"
-          >
+          <div class="w-full text-left text-base tracking-widest sm:text-xl">
             <p class="font-semibold uppercase leading-5">
               {{ player.player_firstname }}
             </p>
@@ -52,18 +63,8 @@
           >
         </div>
       </div>
-      <div
-      class="
-      flex-none
-      p-2
-      bg-green-600
-      text-center
-      text-sm
-      font-bold
-      tracking-widest
-      text-white
-      sm:text-xl"
-      >
+      <div class="flex-none p-2 bg-green-600 text-center text-sm font-bold
+      tracking-widest text-white sm:text-xl">
         REGISTERED PLAYER
       </div>
     </article>
@@ -72,11 +73,16 @@
 
 <script>
 import handlesMedia from '~/mixins/shop/handlesMedia'
+
 export default {
-  mixins: [ handlesMedia ],
+  mixins: [handlesMedia],
   props: {
     player: {
-      type: [ Object, Array ],
+      type: [Object, Array],
+      default: () => ({}),
+    },
+    series: {
+      type: [Array, Object],
       default: () => ({}),
     },
   },
@@ -87,19 +93,32 @@ export default {
       debugInfo: null,
     }
   },
+  computed: {
+    playerIsPaid() {
+      if (!this.player) return false
+
+      if (this.player.registration_id != null) return true
+
+      if (
+        this.player.registration &&
+        typeof this.player.registration === 'object' &&
+        Object.keys(this.player.registration).length > 0
+      ) return true
+      return false
+    },
+  },
   methods: {
     formatDate(datestring) {
-      const date = new Date(datestring);
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const dd = String(date.getDate()).padStart(2, '0');
-      const yy = String(date.getFullYear()).slice();
-      return `${dd}/${mm}/${yy}`;
+      const date = new Date(datestring)
+      const mm = String(date.getMonth() + 1).padStart(2, '0')
+      const dd = String(date.getDate()).padStart(2, '0')
+      const yy = String(date.getFullYear()).slice()
+      return `${dd}/${mm}/${yy}`
     },
-  }
+  },
 }
-
 </script>
-   
+
 <style scoped>
 .card-ratio {
   aspect-ratio: 1.484 / 1;
@@ -107,6 +126,4 @@ export default {
 * {
   font-family: 'Courier Prime', monospace !important;
 }
-
 </style>
-<!-- aspect-ratio: 1.588 / 1; proper style ratio -->

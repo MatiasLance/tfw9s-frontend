@@ -1,5 +1,4 @@
 <template >
-  <!-- Footer fixed bottom-0 was removed so it won't stick in the page -->
   <footer class="w-screen bg-brand-black text-white">
     <section class="mx-auto max-w-screen-xl">
       <div class="p-4 flex flex-col md:flex-row md:justify-between gap-2">
@@ -17,50 +16,25 @@
             </span>
           </p>
         </div>
-        <div class="flex items-center justify-center">
-        <!--
-          <span
-          class="mr-5 transition
-          duration-300 ease-in-out hover:text-[#5EE738]"
-          >
-          Contact
-          </span>
-        -->
+        <div class="footer-menu-wrapper">
           <VMenu
           :top="true"
           :offset-y="true"
           origin="bottom left"
           transition="scale-transition"
+          content-class="footer-dropdown"
           >
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <span
-            class="transition
-            duration-300 ease-in-out hover:text-[#5EE738]"
-            v-bind="attrs"
-            v-on="on"
+              class="footer-menu-activator transition duration-300 ease-in-out hover:text-[#5EE738]"
+              v-bind="attrs"
+              v-on="on"
             >
-            Contact
+              Contact
             </span>
           </template>
+
             <VList dark class="rounded-lg border">
-              <!--
-                <VListItem>
-                <VListItemTitle>
-                <i
-                title="Visit Facebook Page"
-                class="ri-facebook-circle-fill text-3xl brightness-75
-                transition duration-200 hover:scale-110 hover:brightness-100"
-                @click="openLink('https://www.facebook.com/thefinalwhistleRL/')"
-                />
-                <i
-                title="Visit Instagram Page"
-                class="ri-instagram-fill text-3xl brightness-75
-                transition duration-200 hover:scale-110 hover:brightness-100"
-                @click="openLink('https://l.facebook.com/l.php?u=https%3A%2F%2Finstagram.com%2Ftfw9s%3Figshid%3DOGQ5ZDc2ODk2ZA%253D%253D%26utm_source%3Dqr%26fbclid%3DIwZXh0bgNhZW0CMTAAAR2BTIykFbgN7_LWAQ2FQNn0g7Qc8YTPyoOTPV9-UMQGtrOjtPntwhZKo6w_aem_AS0HPNsfcSzS1IUprNhe78jjaBZRTBO_BsnO2Eno2PYRiBQwkg9_74z8a5VbolGNRb_LMdw_hWzOQFhwc1fTLLUg&h=AT0qMKlBY3_pYjGjQxkBNR-qMUoooyU4VhqJgkw4W1XGXAyfPLh4OEcY5APVZIFozfyw_4QoI2m70QqCD_dazeutUpTN5hYmciEsQFwh6-wBs5rbKIoikdmdEflIJAkZlEGB8A')"
-                />
-                </VListItemTitle>
-                </VListItem>
-              -->
               <VListItem>
                 <VListItemTitle
                 title="Visit Facebook Page"
@@ -69,9 +43,7 @@
                 cursor-pointer"
                 @click="openLink('https://www.facebook.com/thefinalwhistleRL/')"
                 >
-                  <i
-                  class="ri-facebook-circle-fill text-2xl"
-                  />
+                  <i class="ri-facebook-circle-fill text-2xl"></i>
                   <span class="ml-2 text-sm">
                     TFW9's (@TFW9's)
                   </span>
@@ -85,9 +57,7 @@
                 cursor-pointer"
                 @click="openLink('https://www.instagram.com/tfw9s')"
                 >
-                  <i
-                  class="ri-instagram-fill text-2xl"
-                  />
+                    <i class="ri-instagram-fill text-2xl"></i>
                   <span class="ml-2 text-sm">
                     TFW9s (@tfw9s)
                   </span>
@@ -101,7 +71,7 @@
                 cursor-pointer"
                 @click="openLink('https://mail.google.com/mail/u/0/?fs=1&to=thefinalwhistlerl@hotmail.com&su=&body=&tf=cm')"
                 >
-                  <i class="ri-mail-add-fill text-2xl"/>
+                  <i class="ri-mail-add-fill text-2xl"></i>
                   <span class="ml-2 text-sm">
                     thefinalwhistlerl@hotmail.com
                   </span>
@@ -219,5 +189,13 @@ export default {
 .swlink:hover {
   color: #f1ebeb !important;
   font-weight: 600;
+}
+.footer-menu-wrapper {
+  position: relative;
+  z-index: 10;
+  display: inline-block;
+}
+.footer-dropdown {
+  z-index: 999 !important;
 }
 </style>

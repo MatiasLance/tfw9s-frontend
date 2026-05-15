@@ -1,6 +1,11 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
     <div class="container mx-auto px-4 py-8">
+      <!-- Loading indicator -->
+      <LoadingAnimation
+      :is-loading="isLoading"
+      loading-title="Product"
+      />
       <div class="grid gap-8 md:grid-cols-12">
         
         <!-- Product Gallery -->
@@ -217,12 +222,12 @@
                 :key="color"
                 class="relative flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer
                       transition-all duration-300 transform hover:scale-105"
-                :class="selectedColor === color
+                :class="product.selectedColor === color
                   ? 'border-green-400 bg-green-500/20 shadow-lg ring-2 ring-green-400/30'
                   : 'border-gray-600 bg-gray-700/40 hover:border-green-400 hover:bg-green-500/15'"
               >
                 <input
-                  v-model="selectedColor"
+                  v-model="product.selectedColor"
                   type="radio"
                   :value="color"
                   class="sr-only"
@@ -238,7 +243,7 @@
                 </span>
 
                 <span
-                  v-if="selectedColor === color"
+                  v-if="product.selectedColor === color"
                   class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full 
                         flex items-center justify-center text-white text-xs"
                 >
@@ -472,6 +477,7 @@ export default {
         has_variants: false,
         size_variants: [],
         available_sizes: [],
+        selectedColor: null
       },
       showOutOfStock: true,
       activeImageURL: '',
@@ -479,7 +485,7 @@ export default {
       quantity: 1,
       imageCarouselSettings: slickSettings,
       selectedSize: null,
-      selectedColor: null
+      isLoading: false
     };
   },
   computed: {    
@@ -641,6 +647,7 @@ export default {
       this.activeImageURL = this.getMediaURL(path)
     },
     retrieveItem(itemId) {
+      this.isLoading = true
       this.$axios
         .$get(`v1/items/${itemId}`)
         .then((response) => {
@@ -658,6 +665,7 @@ export default {
               this.selectedSize = firstAvailableSize;
             }
           }
+          this.isLoading = false
         })
     },
     handleHighStockValue() {
@@ -688,7 +696,7 @@ export default {
         return;
       }
 
-      if (!this.selectedColor) {
+      if (this.product.colors && !this.product.selectedColor) {
         this.$oruga.notification.open({
           duration: 3000,
           message: 'Please select a colour',
@@ -712,8 +720,8 @@ export default {
         cartItem.variant_sku = this.selectedSize.sku;
       }
 
-      if (this.selectedColor) {
-        cartItem.color = this.selectedColor;
+      if (this.product.selectedColor) {
+        cartItem.color = this.product.selectedColor;
       }
 
       this.$store

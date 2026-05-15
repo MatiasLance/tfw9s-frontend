@@ -6,17 +6,14 @@
         <v-app>
             <TopHeader v-if="showComponents.topheader"/>
             <button
-            v-if="showTopScroll" type="button"
-            class="UpBtn fixed bottom-24 right-2 z-[9999]
-            sm:bottom-16 md:right-6 lg:right-10 xl:right-12"
-            data-aos="fade-left" @click="scrollUp"
+              v-if="showTopScroll"
+              type="button"
+              class="scroll-to-top-btn group fixed bottom-6 right-6 z-[9999] flex h-12 w-12 items-center justify-center rounded-full border border-green-500/30 bg-gray-900/60 backdrop-blur-md shadow-lg shadow-black/20 transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-green-400 hover:bg-green-500/20 hover:shadow-green-500/30 active:translate-y-0 active:scale-95"
+              data-aos="fade-left"
+              @click="scrollUp"
+              aria-label="Scroll to top"
             >
-              <i
-              title="Scroll to Top"
-              class="ri-arrow-up-line rounded-lg bg-[#4cbe5c]
-              p-2 text-3xl font-bold text-white drop-shadow-xl
-              transition hover:brightness-125"
-              ></i>
+              <i class="ri-arrow-up-line text-2xl text-green-500 transition-colors duration-200 group-hover:text-white"></i>
             </button>
             <NavHeader
               class="font-montserrat sm:custom-py-4
@@ -54,6 +51,7 @@ export default {
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
     document.addEventListener('click', this.close)
+    document.documentElement.classList.add('nuxt-ready')
   },
 
   beforeDestroy() {
