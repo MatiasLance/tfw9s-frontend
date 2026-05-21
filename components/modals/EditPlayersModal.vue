@@ -406,10 +406,10 @@ export default {
       this.$refs.form.resetValidation()
     },
     confirm() {
-      this.editSeries()
+      this.editPlayerInformation()
       this.closeDialog()
     },
-    editSeries() {
+    editPlayerInformation() {
       this.SeriesData.phone_number = this.phoneNumber;
       const formData = new FormData();
       formData.append('contact_firstname', this.SeriesData.contact_firstname);
