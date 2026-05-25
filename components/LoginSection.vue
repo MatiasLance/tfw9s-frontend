@@ -47,7 +47,7 @@
         <i class="ri-arrow-right-line ri-lg ml-2"></i>
       </button>
 
-      <p class="forgot-password">
+      <p class="forgot-password underline-offset-8">
         <NuxtLink to="/forgot-password" class="forgot-link">
           Lost your password?
         </NuxtLink>

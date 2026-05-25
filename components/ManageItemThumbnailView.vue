@@ -124,6 +124,42 @@
         ></span>
       </div>
 
+      <!-- Variants Section -->
+      <div v-if="variants && variants.length > 0" class="mb-6">
+        <div class="flex items-center gap-2 mb-3">
+          <i class="ri-git-branch-line text-green-400"></i>
+          <span class="text-sm font-semibold text-gray-300">
+            {{ variants.length }} 
+            {{ variants.length === 1 ? 'Variant' : 'Variants' }}
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <div
+            v-for="(variant, index) in variants.slice(0, 3)"
+            :key="index"
+            class="inline-flex items-center gap-2 px-3 py-2 
+                   rounded-lg bg-gradient-to-r from-green-500/15 
+                   to-green-600/15 border border-green-500/40 
+                   text-green-300 text-xs font-medium 
+                   transition-all duration-200 hover:from-green-500/25 
+                   hover:to-green-600/25 hover:border-green-400/60 
+                   hover:shadow-md"
+          >
+            <i class="ri-shapes-line"></i>
+            <span class="truncate">{{ variant.name || `Variant ${index + 1}` }}</span>
+          </div>
+          <div
+            v-if="variants.length > 3"
+            class="inline-flex items-center gap-2 px-3 py-2 
+                   rounded-lg bg-gradient-to-r from-green-500/10 
+                   to-green-600/10 border border-green-500/30 
+                   text-green-400 text-xs font-medium"
+          >
+            +{{ variants.length - 3 }} more
+          </div>
+        </div>
+      </div>
+
       <!-- Action Buttons - Staggered Hover Effects -->
       <div class="mt-auto flex flex-wrap items-center gap-3 
                   bg-gradient-to-r from-gray-800/50 to-transparent 
@@ -142,7 +178,7 @@
                  duration-200 hover:from-green-500/30 
                  hover:to-green-600/30 hover:text-green-200 
                  hover:shadow-lg active:scale-95"
-          @click="$emit('update', uid)"
+          @click="$emit('update', uid, 'edit')"
         >
           <i class="ri-edit-line"></i> Edit
         </button>
@@ -174,9 +210,9 @@
                  duration-200 hover:from-purple-500/30 
                  hover:to-purple-600/30 hover:text-purple-200 
                  hover:shadow-lg active:scale-95"
-          @click="$emit('addvariant', uid)"
+          @click="$emit('addvariant', uid, 'variant')"
         >
-          <i class="ri-links-line"></i> Variant
+          <i class="ri-links-line"></i> Add Variant
         </button>
 
         <!-- Show Variants Button -->
@@ -192,7 +228,7 @@
                  hover:shadow-lg active:scale-95"
           @click="$emit('showvariant', uid)"
         >
-          <i class="ri-link"></i> Show
+          <i class="ri-link"></i> Show Variant
         </button>
 
         <!-- Remove Button -->
@@ -266,6 +302,10 @@ export default {
     },
     isHideOutOfStock: {
       type: [ Boolean, Number ],
+      required: true
+    },
+    variants: {
+      type: Array,
       required: true
     }
   },

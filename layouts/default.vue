@@ -19,7 +19,7 @@
               class="font-montserrat sm:custom-py-4
               custom-py-1 relative font-semibold"
             />
-            <div class="relative min-h-screen bg-[#1A1A1B]">
+            <div class="w-screen min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
               <div class="page-top">
                 <Nuxt />
                 <UpdateNotification />

@@ -37,29 +37,6 @@
                   <span class="pr-1">Add Merch Item</span>
                 </span>
               </button>
-              <button
-                type="button"
-                class="
-                  w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] p-1.5
-                  text-center
-                  font-semibold
-                  text-white
-                  sm:w-60"
-                @click="addMerchVariant"
-              >
-                <span
-                class="
-                flex items-center
-                justify-center"
-                aria-hidden="true"
-                >
-                  <i class="ri-add-line"></i>
-                  <span class="pr-1">Add Merch Variant</span>
-                </span>
-              </button>
               </div>
               <div class="w-full sm:w-80">
               <form @submit.prevent="retrieveMerchItems">
@@ -75,19 +52,19 @@
           />
         </div>
         <section class="mb-8" data-aos="fade-up">
-        <div
-          v-if="totalPages > 0"
-          class="
-            flex flex-wrap items-center justify-around
-            gap-x-2
-            md:justify-between
-          "
-        >
-          <span class="flex items-center">
-            <p class="text-base leading-[2.5em] text-white">
-              Showing {{ from }}-{{ to }} of {{ totalItems }} results
-            </p>
-          </span>
+          <div
+            v-if="totalPages > 0"
+            class="
+              flex flex-wrap items-center justify-around
+              gap-x-2
+              md:justify-between
+            "
+          >
+            <span class="flex items-center">
+              <p class="text-base leading-[2.5em] text-white">
+                Showing {{ from }}-{{ to }} of {{ totalItems }} results
+              </p>
+            </span>
             <BasePagination
               :active-page="page"
               :total-pages="totalPages"
@@ -102,7 +79,7 @@
           v-bind="$attrs"
         >
           <ManageItemThumbnailView
-            v-for="product in MerchItems"
+            v-for="product in merchItems"
             :key="product.id"
             :uid="product.id"
             :name="product.name"
@@ -116,10 +93,12 @@
             :is-rrp="product.show_rrp"
             :is-on-sale="product.is_on_sale"
             :is-hide-out-of-stock="product.isHideOutOfStock"
+            :variants="product.variants"
             data-aos="fade-up"
             data-aos-offset="30"
             @update="retrieveMerchItem"
             @duplicate="duplicateItem"
+            @addvariant="retrieveMerchItem"
             @showvariant="showVariant"
             @delete="removeMerchItem"
           />
@@ -133,85 +112,6 @@
           No Merch Available
         </section>
       </div>
-      
-      <!-- Show Add Merch Color Variant -->
-      <OModal
-       :active="showAddMerchVariantModal"
-       @close="showAddMerchVariantModal = false"
-      >
-        <VForm
-          ref="form" v-model="valid" lazy-validation
-          class="p-2 md:p-4"
-        >
-          <h3
-            class="
-            mb-3
-            font-bold"
-          >
-            Add Merch Variant
-          </h3>
-          <hr class="my-3">
-          <div class="grid grid-cols-1">
-            <div class="col-span-1">
-              <label for="productname" class="mb-1 block">
-                Variant Name:
-              </label>
-              <VTextField
-              id="name"
-              v-model="variant"
-              label="Enter Variant Name"
-              :rules="rules"
-              type="text"
-              solo
-              />
-            </div>
-          </div>
-          <hr class="my-3">
-          <div class="block lg:flex lg:flex-auto lg:justify-end">
-            <button
-              type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-green
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-green-700
-                lg:mx-4 lg:w-48
-              "
-              :disabled="!valid"
-              @click="saveVariant"
-            >
-              OK
-            </button>
-            <button
-              type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-red
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-[#B1271B]
-                lg:mx-4 lg:w-48
-              "
-              @click="closeVariant"
-            >
-              Cancel
-            </button>
-          </div>
-        </VForm>
-      </OModal>
 
       <!-- Add Merch Modal component -->
       <OModal
@@ -679,7 +579,7 @@
             <h3 class="text-2xl font-bold bg-gradient-to-r from-green-600
             to-gray-800 bg-clip-text text-transparent"
             >
-              Edit Rugby Merch
+              {{ editMerchModalTitle }}
             </h3>
           </div>
 
@@ -1062,10 +962,10 @@
               transform hover:scale-105 disabled:opacity-50
               disabled:cursor-not-allowed disabled:transform-none"
               :disabled="!valid"
-              @click="validate('Edit')"
+              @click=" isEdit ? validate('Edit') : validate('Variant')"
             >
               <i class="ri-check-line mr-2"></i>
-              Confirm Changes
+              {{ isEdit ? 'Confirm Changes' : 'Save Variant' }}
             </button>
             <button
               type="button"
@@ -1189,20 +1089,12 @@ export default {
         description: '',
         colors: [],
       },
-      Taglist: [],
-      tags: [],
       multipleCategoryCounter: 1,
       multipleCategoryBuffer: [ 1 ],
       categoryLineages: [],
       selectedCategory: {},
-      tagQuery: '',
-      MerchItems: [],
-      myCroppa: {},
-      myEditCroppa: {},
-      showGenerateCreatedImageBtn: false,
-      showGenerateEditedImageBtn: false,
+      merchItems: [],
       rules: [ value => !!value || 'Required' ],
-      imgUrl: [],
       imgUrlEdit: [],
       imgList: [],
       imgListEdit: [],
@@ -1211,42 +1103,30 @@ export default {
       to: 0,
       totalPages: 0,
       totalItems: 0,
-      newsList: [],
       variant: '',
-      variantList: [],
-      myVariantList: [],
-      prodId: '',
       editingNo: null,
-      isNewsLoading: false,
-      isNewsAdded: false,
+      isMerchItemsLoading: false,
       showAddMerchItemModal: false,
-      showAddMerchVariantModal: false,
       showEditMerchItemModal: false,
       showRemoveMerchItemModal: false,
-      showAddVariant: false,
-      showShowVariant: false,
-      showModal: false,
-      headline: '',
       content: '',
       pageSEO: {
         title: 'Products - TFW9s',
         description: 'Products Page',
       },
-      adminpage: { title: 'Products Codes' },
       checkedVariants: [],
       sizeVariants: [],
+      isEdit: true, // True for editing item, false for adding variant
     };
   },
   head() {
     return { title: this.pageSEO.title };
   },
   computed: {
-    checkedVariantObjects() {
-      return this.variantList.filter(
-        variant => this.checkedVariants.includes(
-          variant.id
-        )
-      );
+    editMerchModalTitle: {
+      get() {
+        return this.isEdit ? 'Edit Rugby Merch' : 'Add Merch Variant'
+      },
     },
     categories: {
       get() {
@@ -1263,20 +1143,6 @@ export default {
       set(value) {
         this.$store.commit('shop/setPage', value);
       },
-    },
-    formattedTags() {
-      return this.Taglist.map(cat =>
-        ({
-          text: cat.name,
-          value: cat.id,
-        }));
-    },
-    filteredTags() {
-      return this.formattedTags.filter(cat =>
-        cat && cat.text && typeof cat.text === 'string' ?
-          cat.text.toLowerCase().includes(this.tagQuery.toLowerCase()):
-          false
-      )
     },
     sizePriceRange() {
       if (this.sizeVariants.length === 0) {
@@ -1314,7 +1180,6 @@ export default {
   },
   methods: {
     addSizeVariant() {
-      /* eslint-disable camelcase */
       this.sizeVariants.push({
         value: 'M',
         price_override: null,
@@ -1333,6 +1198,9 @@ export default {
       } else if (type === 'Edit') {
         this.updateMerchItem()
         return true;
+      } else if (type === 'Variant') {
+        this.addMerchVariant();
+        return true;
       } else {
         return false;
       }
@@ -1344,27 +1212,14 @@ export default {
     close() {
       this.showAddMerchItemModal = false;
     },
-    addMerchVariant() {
-      this.showAddMerchVariantModal = true;
-      this.reset()
-    },
-    closeVariant() {
-      this.showAddMerchVariantModal = false;
-    },
     closeEdit() {
       this.showEditMerchItemModal = false;
     },
     closeRemove() {
       this.showRemoveMerchItemModal = false;
     },
-    closeAddVariant() {
-      this.showAddVariant = false;
-    },
-    closeShowVariant() {
-      this.showShowVariant = false;
-    },
     retrieveMerchItems() {
-      this.isNewsLoading = true;
+      this.isMerchItemsLoading = true;
 
       const query = {
         q: this.query,
@@ -1382,14 +1237,14 @@ export default {
         .$get(`v1/items?${queryString}`)
         .then((response) => {
           this.$store.commit('admin/setTotalItems', response.data.total_items)
-          this.MerchItems = response.data.items
+          this.merchItems = response.data.items
           this.totalItems = response.data.total_items
           this.totalPages = response.data.last_page
           this.from = response.data.from
           this.to = response.data.to
         })
         .finally(() => {
-          this.isNewsLoading = false;
+          this.isMerchItemsLoading = false;
         });
     },
     addCategoryPicker() {
@@ -1402,10 +1257,6 @@ export default {
       if (index > -1) {
         this.multipleCategoryBuffer.splice(index, 1)
       }
-    },
-    resetCategoryPicker() {
-      this.multipleCategoryCounter = 1
-      this.multipleCategoryBuffer = [ 1 ]
     },
     getSelected() {
       const categories = []
@@ -1420,151 +1271,6 @@ export default {
     setPage(page) {
       this.page = page
       this.retrieveMerchItems()
-    },
-    handleCroppaFileSizeExceed(file) {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'File size exceeds. Please choose a file smaller than 32mb.',
-        position: 'bottom',
-        variant: 'danger',
-        queue: true,
-      });
-    },
-    handleCroppaFileTypeMismatch(file) {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Invalid file type. Please choose a jpeg, png or webp file.',
-        position: 'bottom',
-        variant: 'danger',
-        queue: true,
-      });
-    },
-    /* ADD IMAGE */
-    zoomIn() {
-      this.myCroppa.zoomIn();
-    },
-    zoomOut() {
-      this.myCroppa.zoomOut();
-    },
-    rotateAnti() {
-      this.myCroppa.rotate(-1);
-    },
-    rotate() {
-      this.myCroppa.rotate();
-    },
-    flipx() {
-      this.myCroppa.flipX();
-    },
-    flipy() {
-      this.myCroppa.flipY();
-    },
-    setImagePreset() {
-      const metadata = this.myCroppa.getMetadata()
-      localStorage.setItem(
-        'metadata',
-        JSON.stringify(metadata)
-      );
-    },
-    clearImagePreset() {
-      localStorage.removeItem('metadata')
-      this.applyMetadata()
-    },
-    applyMetadata() {
-      this.$nextTick(() => {
-        const jsonMetadata = localStorage.getItem('metadata')
-        if (jsonMetadata !== null) {
-          const metadata = JSON.parse(jsonMetadata);
-          const currentMetadata = this.myCroppa.getMetadata()
-          currentMetadata.orientation = metadata.orientation
-          this.myCroppa.applyMetadata(currentMetadata);
-        }
-        // Force the canvas to update and display the metadata updates
-        this.myCroppa.moveUpwards(1)
-        this.myCroppa.moveDownwards(1)
-      })
-    },
-    applyEditMetadata() {
-      this.$nextTick(() => {
-        const jsonMetadata = localStorage.getItem('metadata')
-        if (jsonMetadata !== null) {
-          const metadata = JSON.parse(jsonMetadata);
-          const currentMetadata = this.myEditCroppa.getMetadata()
-          currentMetadata.orientation = metadata.orientation
-          this.myEditCroppa.applyMetadata(currentMetadata);
-        }
-        // Force the canvas to update and display the metadata updates
-        this.myEditCroppa.moveUpwards(1)
-        this.myEditCroppa.moveDownwards(1)
-      })
-    },
-    setEditImagePreset() {
-      const metadata = this.myEditCroppa.getMetadata()
-      localStorage.setItem(
-        'metadata',
-        JSON.stringify(metadata)
-      );
-    },
-    generateImage() {
-      this.myCroppa.generateBlob(
-        (blob) => {
-          this.imgUrl.push(URL.createObjectURL(blob));
-          this.imgList.push(blob)
-        },
-      );
-      this.myCroppa.refresh();
-    },
-    /** REMOVE IMAGE IN IMGURL AND IMGLIST */
-    removeImage(index) {
-      this.imgUrl.splice(index, 1)
-      this.imgList.splice(index, 1)
-    },
-    removeEditedImage(index) {
-      this.imgUrlEdit.splice(index, 1)
-      this.imgListEdit.splice(index, 1)
-    },
-    /** EDIT IMAGE */
-    zoomInEdit() {
-      this.myEditCroppa.zoomIn()
-    },
-    zoomOutEdit() {
-      this.myEditCroppa.zoomOut()
-    },
-    rotateAntiEdit() {
-      this.myEditCroppa.rotate(-1)
-    },
-    rotateEdit() {
-      this.myEditCroppa.rotate()
-    },
-    flipxEdit() {
-      this.myEditCroppa.flipX()
-    },
-    flipyEdit() {
-      this.myEditCroppa.flipY()
-    },
-    handleNewImage() {
-      this.showGenerateEditedImageBtn = true
-    },
-    handleImageRemove() {
-      this.showGenerateEditedImageBtn = false
-    },
-    handleNewImageCreate() {
-      this.showGenerateCreatedImageBtn = true;
-    },
-    handleImageRemoveCreate() {
-      this.showGenerateCreatedImageBtn = false;
-    },
-    generateEditedImage() {
-      this.myEditCroppa.generateBlob(
-        (blob) => {
-          this.imgUrlEdit.push(URL.createObjectURL(blob));
-          this.imgListEdit.push(blob);
-        }
-      );
-
-      this.myEditCroppa.refresh()
-    },
-    toDecimal(x) {
-      return Number.parseFloat(x/100).toFixed(2)
     },
     updateImage(image) {
       this.imgList = image
@@ -1587,12 +1293,10 @@ export default {
       form.append('isOnSale', this.item.is_on_sale)
       form.append('isRRP', this.item.show_rrp)
       
-      // Add categories
       for (let i = 0; i < categoryId.length; i++) {
         form.append('categoryId[]', categoryId[i]);
       }
       
-      // Add images
       for (let i = 0; i < this.imgList.length; i++) {
         form.append('photo[]', this.imgList[i], 'newsThumbnail.png');
       }
@@ -1619,8 +1323,6 @@ export default {
       this.$axios
         .$post('/v1/items', form, config)
         .then((response) => {
-          this.showAddNewsModal = false;
-          this.isNewsAdded = true;
           this.$oruga.notification.open({
             message: 'Merch Item Added' + (this.sizeVariants.length > 0 ? ' with Size Variants' : ''),
             variant: 'success',
@@ -1642,37 +1344,17 @@ export default {
           });
         });
     },
-    saveVariant() {
-      const formData = new FormData();
-      formData.append('name', this.variant);
-
-      this.$axios
-        .$post('/v1/variant/itemvariant', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Variant added',
-            position: 'bottom',
-            variant: 'success',
-            queue: true,
-          });
-          this.showAddMerchVariantModal = false;
-          this.variant = '';
-        })
-    },
-    retrieveMerchItem(index) {
+    retrieveMerchItem(index, type) {
       this.editingNo = toNumber(index);
       this.$axios
-        .$get(`v1/items/${this.editingNo}`)
+        .$get(`v1/items/${index}`)
         .then((response) => {
           this.item = response.data.item
           const categoryLineages = response.data.item.categoryLineages
           this.multipleCategoryCounter = categoryLineages.length
           this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
           this.categoryLineages = categoryLineages
-          this.imgUrlEdit = response.data.item.media.map((x) =>
-            `${this.$config.baseURL}/storage/${x.path}`);
-          // eslint-disable-next-line max-len, vue/max-len
+          this.imgUrlEdit = response.data.item.media.map((x) => `${this.$config.baseURL}/storage/${x.path}`);
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
 
           this.sizeVariants = [];
@@ -1720,6 +1402,7 @@ export default {
             this.$set(this.item, 'colors', []);
           }
 
+          this.isEdit = type === 'edit' ? true : false
           this.showEditMerchItemModal = true;
         })
         .catch((err) => {
@@ -1734,7 +1417,7 @@ export default {
     },
     updateMerchItem() {
       this.getSelected();
-      const editObject = this.MerchItems.find(
+      const editObject = this.merchItems.find(
         (item) => item.id === this.editingNo
       );
 
@@ -1780,7 +1463,6 @@ export default {
       this.$axios
         .$post(`v1/items/${editObject.id}`, form)
         .then((response) => {
-          this.showEditNewsModal = false;
           this.$oruga.notification.open({
             message: 'Merch Item Updated' + (this.sizeVariants.length > 0 ? ' with Size Variants' : ''),
             variant: 'success',
@@ -1827,64 +1509,99 @@ export default {
           });
         })
     },
-    showVariant(index) {
-      this.myVariantList = [];
-      this.editingNo = toNumber(index);
-      this.prodId = this.editingNo;
-      this.$axios.$get(`v1/variant/${this.editingNo}`)
-        .then((response) => {
-          this.myVariantList = response.data.variant;
-        });
-      setTimeout(() => {
-        this.showShowVariant = true;
-      }, 1000);
-    },
-    removeMerchItem(index) {
-      this.editingNo = toNumber(index);
-      this.$axios.$get(`v1/items/${this.editingNo}`)
-        .then((response) => {
-          // eslint-disable-next-line max-len, camelcase, vue/max-len
-          this.item.name = response.data.item.name;
-        });
-      setTimeout(() => {
-        this.showRemoveMerchItemModal = true;
-      }, 1000);
-    },
-    removeVariant(variantId) {
+    addMerchVariant() {
+      this.getSelected();
+      const editObject = this.merchItems.find(
+        (item) => item.id === this.editingNo
+      );
+
+      const categoryId = this.selectedCategory.map(x => x.id);
+
+      const form = new FormData();
+      form.append('name', this.item.name)
+      form.append('stock', this.item.stock)
+      form.append('price', this.item.price)
+      form.append('salePrice', this.item.saleprice ? this.item.saleprice : 0)
+      form.append('description', this.item.description)
+      form.append('isFeatured', this.item.is_featured)
+      form.append('isHideOutOfStock', this.item.isHideOutOfStock)
+      form.append('isOnSale', this.item.is_on_sale)
+      form.append('isRRP', this.item.show_rrp)
+      for (let i = 0; i < categoryId.length; i++) {
+        form.append('categoryId[]', categoryId[i]);
+      }
+      for (let i = 0; i < this.imgListEdit.length; i++) {
+        form.append('photo[]', this.imgListEdit[i]);
+      }
+
+      if (this.sizeVariants.length > 0) {
+        const cleanedSizeVariants = this.sizeVariants.map(size => ({
+          id: size.id,
+          value: size.value,
+          price_override: size.price_override ? parseFloat(size.price_override) : null,
+          stock_quantity: parseInt(size.stock_quantity) || 0,
+          sku_suffix: size.sku_suffix || `-${size.value}`,
+          type: 'size'
+        }));
+        
+        form.append('size_variants', JSON.stringify(cleanedSizeVariants));
+      }
+
+      if (this.item.colors && this.item.colors.length > 0) {
+        form.append('colors', JSON.stringify(this.item.colors));
+      }
+
+      form.append('selected_shippingid', '0')
+      form.append('id', this.item.id);
+
       this.$axios
-        .$delete(`v1/variant/${variantId}`)
+        .$post(`v1/items/addVariant/${editObject.id}`, form)
         .then((response) => {
           this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Item variant Deleted',
-            position: 'bottom',
+            message: response.title,
             variant: 'success',
+            duration: 5000,
+            position: 'bottom',
             queue: true,
           });
-          this.$axios.$get(`v1/variant/${this.prodId}`)
-            .then((res) => {
-              if (!res.data) {
-                this.showShowVariant = false;
-              } else {
-                this.myVariantList = res.data.variant;
-              }
-            })
-            .catch((error) => {
-              console.error('Error fetching variant:', error);
-            });
+          this.editingNo = '';
+          this.reset();
+          this.showEditMerchItemModal = false
+          this.retrieveMerchItems();
         })
-        .catch(() => {
+        .catch((err) => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Failed to remove item variant',
+            message: err.message,
             position: 'bottom',
             variant: 'danger',
             queue: true,
           });
         });
     },
+    showVariant(index) {
+      this.editingNo = toNumber(index);
+      this.$axios
+        .$get(`v1/items/${this.editingNo}`)
+        .then((response) => {
+          console.log(response);
+        });
+      setTimeout(() => {
+        // this.showEditMerchItemModal = true;
+      }, 1000);
+    },
+    removeMerchItem(index) {
+      this.editingNo = toNumber(index);
+      this.$axios.$get(`v1/items/${this.editingNo}`)
+        .then((response) => {
+          this.item.name = response.data.item.name;
+        });
+      setTimeout(() => {
+        this.showRemoveMerchItemModal = true;
+      }, 1000);
+    },
     remove(index) {
-      const editObject = this.MerchItems.find(
+      const editObject = this.merchItems.find(
         (item) => item.id === this.editingNo
       );
       this.$axios
