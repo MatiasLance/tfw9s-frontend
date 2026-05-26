@@ -60,11 +60,42 @@
               md:justify-between
             "
           >
-            <span class="flex items-center">
-              <p class="text-base leading-[2.5em] text-white">
-                Showing {{ from }}-{{ to }} of {{ totalItems }} results
-              </p>
-            </span>
+          <div class="flex flex-wrap items-center gap-4 py-4">
+              <template v-if="activeVariantItem !== null">
+                <button
+                  type="button"
+                  class="
+                    inline-flex items-center justify-center
+                    rounded-lg border border-[#5EE738]
+                    bg-gradient-to-br from-[#5EE738] via-[#3e872a]
+                    to-[#050505] px-4 py-2
+                    text-sm font-bold text-white
+                    transition-all duration-200
+                    hover:shadow-lg hover:border-[#7ff04d]
+                    active:scale-95
+                  "
+                  @click="popVariantBuffer"
+                >
+                  <i class="ri-arrow-left-s-line mr-1 text-lg"></i>
+                  Back
+                </button>
+
+                <div class="flex items-center">
+                  <p class="text-sm font-medium text-white">
+                    Viewing Variants
+                  </p>
+                  <!-- Subtle Divider -->
+                  <div class="mx-4 h-5 w-px bg-gray-600"></div>
+                </div>
+              </template>
+              
+              <span class="flex items-center">
+                <p class="text-base leading-[2.5em] text-white">
+                  Showing {{ from }}-{{ to }} of {{ totalItems }} results
+                </p>
+              </span>
+            </div>
+
             <BasePagination
               :active-page="page"
               :total-pages="totalPages"
@@ -99,7 +130,7 @@
             @update="retrieveMerchItem"
             @duplicate="duplicateItem"
             @addvariant="retrieveMerchItem"
-            @showvariant="showVariant"
+            @showvariant="showVariants"
             @delete="removeMerchItem"
           />
         </section>
@@ -1117,6 +1148,8 @@ export default {
       checkedVariants: [],
       sizeVariants: [],
       isEdit: true, // True for editing item, false for adding variant
+      activeVariantItem: null,
+      variantBuffer: [],
     };
   },
   head() {
@@ -1223,8 +1256,10 @@ export default {
 
       const query = {
         q: this.query,
+        sort: 'a_to_z',
         page: this.page,
         category: this.$store.state.shop.selectedCategory,
+        item_variant: this.activeVariantItem,
       };
 
       Object.keys(query).forEach((key) => {
@@ -1322,7 +1357,7 @@ export default {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
       this.$axios
         .$post('/v1/items', form, config)
-        .then((response) => {
+        .then(() => {
           this.$oruga.notification.open({
             message: 'Merch Item Added' + (this.sizeVariants.length > 0 ? ' with Size Variants' : ''),
             variant: 'success',
@@ -1352,7 +1387,7 @@ export default {
           this.item = response.data.item
           const categoryLineages = response.data.item.categoryLineages
           this.multipleCategoryCounter = categoryLineages.length
-          this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
+          this.multipleCategoryBuffer = categoryLineages.map(((x,i) => i+1))
           this.categoryLineages = categoryLineages
           this.imgUrlEdit = response.data.item.media.map((x) => `${this.$config.baseURL}/storage/${x.path}`);
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
@@ -1462,7 +1497,7 @@ export default {
       
       this.$axios
         .$post(`v1/items/${editObject.id}`, form)
-        .then((response) => {
+        .then(() => {
           this.$oruga.notification.open({
             message: 'Merch Item Updated' + (this.sizeVariants.length > 0 ? ' with Size Variants' : ''),
             variant: 'success',
@@ -1579,16 +1614,21 @@ export default {
           });
         });
     },
-    showVariant(index) {
-      this.editingNo = toNumber(index);
-      this.$axios
-        .$get(`v1/items/${this.editingNo}`)
-        .then((response) => {
-          console.log(response);
-        });
-      setTimeout(() => {
-        // this.showEditMerchItemModal = true;
-      }, 1000);
+    showVariants(index) {
+      this.variantBuffer.push(this.activeVariantItem)
+      console.log(this.variantBuffer);
+      this.activeVariantItem = index
+      this.retrieveMerchItems()
+    },
+    popVariantBuffer() {
+      if (this.variantBuffer.length > 0) {
+        const activeItem = this.variantBuffer.pop()
+        this.activeVariantItem = activeItem
+      } else {
+        this.activeVariantItem = null
+      }
+
+      this.retrieveMerchItems()
     },
     removeMerchItem(index) {
       this.editingNo = toNumber(index);
@@ -1600,13 +1640,13 @@ export default {
         this.showRemoveMerchItemModal = true;
       }, 1000);
     },
-    remove(index) {
+    remove() {
       const editObject = this.merchItems.find(
         (item) => item.id === this.editingNo
       );
       this.$axios
         .$delete(`/v1/items/${editObject.id}`)
-        .then((response) => {
+        .then(() => {
           this.$oruga.notification.open({
             duration: 5000,
             message: 'Merch Item Deleted',

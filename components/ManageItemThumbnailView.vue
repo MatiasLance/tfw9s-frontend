@@ -36,7 +36,7 @@
     </div>
 
     <!-- Product Content -->
-    <div class="md:col-span-3 m-6 flex w-full flex-col relative">
+    <div class="md:col-span-3 m-6 flex w-full md:max-w-[49rem] flex-col relative">
       
       <!-- Simplified Corner Accents -->
       <div class="absolute top-0 right-0 w-6 h-6 
@@ -135,7 +135,7 @@
         </div>
         <div class="flex flex-wrap gap-2">
           <div
-            v-for="(variant, index) in variants.slice(0, 3)"
+            v-for="(variant, index) in expandVariants ? variants : variants.slice(0, 3)"
             :key="index"
             class="inline-flex items-center gap-2 px-3 py-2 
                    rounded-lg bg-gradient-to-r from-green-500/15 
@@ -148,15 +148,34 @@
             <i class="ri-shapes-line"></i>
             <span class="truncate">{{ variant.name || `Variant ${index + 1}` }}</span>
           </div>
-          <div
-            v-if="variants.length > 3"
+          <button
+            v-if="!expandVariants && variants.length > 3"
+            type="button"
+            @click="expandVariants = true"
             class="inline-flex items-center gap-2 px-3 py-2 
                    rounded-lg bg-gradient-to-r from-green-500/10 
                    to-green-600/10 border border-green-500/30 
-                   text-green-400 text-xs font-medium"
+                   text-green-400 text-xs font-medium cursor-pointer
+                   transition-all duration-200 hover:from-green-500/20
+                   hover:to-green-600/20 hover:border-green-400/50
+                   hover:text-green-300 hover:shadow-md"
           >
             +{{ variants.length - 3 }} more
-          </div>
+          </button>
+          <button
+            v-if="expandVariants && variants.length > 3"
+            type="button"
+            @click="expandVariants = false"
+            class="inline-flex items-center gap-2 px-3 py-2 
+                   rounded-lg bg-gradient-to-r from-green-500/10 
+                   to-green-600/10 border border-green-500/30 
+                   text-green-400 text-xs font-medium cursor-pointer
+                   transition-all duration-200 hover:from-green-500/20
+                   hover:to-green-600/20 hover:border-green-400/50
+                   hover:text-green-300 hover:shadow-md"
+          >
+            <i class="ri-arrow-up-s-line"></i> Show Less
+          </button>
         </div>
       </div>
 
@@ -218,17 +237,16 @@
         <!-- Show Variants Button -->
         <button
           type="button"
-          class="flex cursor-pointer items-center gap-2 
-                 px-4 py-2 rounded-xl bg-gradient-to-r 
-                 from-yellow-500/20 to-yellow-600/20 
-                 text-yellow-300 text-sm font-semibold 
-                 border border-yellow-500/30 transition-all 
-                 duration-200 hover:from-yellow-500/30 
-                 hover:to-yellow-600/30 hover:text-yellow-200 
-                 hover:shadow-lg active:scale-95"
+          :disabled="!variants || variants.length === 0"
+          :class="[
+            'flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r text-sm font-semibold border transition-all duration-200',
+            (!variants || variants.length === 0) 
+              ? 'from-gray-500/10 to-gray-600/10 text-gray-400 border-gray-500/20 cursor-not-allowed opacity-50'
+              : 'cursor-pointer from-yellow-500/20 to-yellow-600/20 text-yellow-300 border-yellow-500/30 hover:from-yellow-500/30 hover:to-yellow-600/30 hover:text-yellow-200 hover:shadow-lg active:scale-95'
+          ]"
           @click="$emit('showvariant', uid)"
         >
-          <i class="ri-link"></i> Show Variant
+          <i class="ri-link"></i> {{ variants.length }} Variant
         </button>
 
         <!-- Remove Button -->
@@ -316,7 +334,8 @@ export default {
       showRRP: true, // remove when backend has showRRP field
       isOnSaleMock: true,
       showComponent: false,
-      showOutOfStock: true
+      showOutOfStock: true,
+      expandVariants: false
     }
   },
   computed: {
@@ -378,6 +397,9 @@ export default {
             queue: true,
           });
         })
+    },
+    toggleVariants() {
+      this.expandVariants = !this.expandVariants
     },
   },
 };
