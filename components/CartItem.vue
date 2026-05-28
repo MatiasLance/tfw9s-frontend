@@ -107,7 +107,7 @@
                  transition-all duration-200"
           @click="removeItem"
         >
-          <i class="ri-close-line text-xl"></i>
+          <i class="ri-close-line text-xl text-white"></i>
         </button>
       </div>
     </div>

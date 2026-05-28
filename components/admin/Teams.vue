@@ -25,7 +25,7 @@
               sm:w-36"
               @click="openAddTeamDialog"
             >
-              +
+              <span class="text-white">+</span>
             </button>
             
             <YearFilter

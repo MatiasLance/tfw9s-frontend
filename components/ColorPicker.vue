@@ -178,6 +178,11 @@ export default {
           label: 'Pink',
           value: 'pink',
           hex: '#FFC0CB'
+        },
+        {
+          label: 'Army Green',
+          value: 'armygreen',
+          hex: '#4B5320'
         }
       ]
     };

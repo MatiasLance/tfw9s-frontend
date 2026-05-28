@@ -2,7 +2,7 @@
   <VueSlickCarousel
     v-if="items.length > 0"
     v-bind="slickSettings"
-    class="flex w-full grow"
+    class="px-4"
   >
     <ProductThumbnailView
       v-for="item in items"
@@ -30,8 +30,8 @@ import ProductThumbnailView from '~/components/ProductThumbnailView'
 const slickSettings = {
   arrows: true,
   rows: 1,
-  slidesToShow: 6,
-  slidesToScroll: 6,
+  slidesToShow: 3,
+  slidesToScroll: 1,
   speed: 500,
   swipe: true,
   swipeToSlide: true,
@@ -39,26 +39,26 @@ const slickSettings = {
     {
       breakpoint: 1024,
       settings: {
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        initialSlide: 4,
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        initialSlide: 0,
         infinite: true,
       }
     },
     {
       breakpoint: 768,
       settings: {
-        slidesToShow: 3,
-        slidesToScroll: 3,
-        initialSlide: 3,
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        initialSlide: 0,
         infinite: true,
       }
     },
     {
       breakpoint: 480,
       settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2,
+        slidesToShow: 1,
+        slidesToScroll: 1,
         infinite: true,
       }
     },
@@ -90,15 +90,15 @@ export default {
     return { slickSettings }
   },
   computed: {
-    items: {
-      get() {
-        if (this.variants != null || typeof this.variants === 'undefined') {
-          return this.variants
-        } else {
-          return []
-        }
-      },
-    },
+    items() {
+      return Array.isArray(this.variants) ? this.variants : []
+    }
   },
 }
 </script>
+
+<style scoped>
+::v-deep .slick-slide[data-v-e4caeaf8] {
+  padding: 10px;
+}
+</style>

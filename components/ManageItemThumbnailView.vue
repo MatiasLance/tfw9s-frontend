@@ -160,7 +160,7 @@
                    hover:to-green-600/20 hover:border-green-400/50
                    hover:text-green-300 hover:shadow-md"
           >
-            +{{ variants.length - 3 }} more
+            <span class="text-green-400 hover:text-green-300">+{{ variants.length - 3 }} more</span>
           </button>
           <button
             v-if="expandVariants && variants.length > 3"
@@ -174,7 +174,7 @@
                    hover:to-green-600/20 hover:border-green-400/50
                    hover:text-green-300 hover:shadow-md"
           >
-            <i class="ri-arrow-up-s-line"></i> Show Less
+            <span class="text-green-400 hover:text-green-300"> <i class="ri-arrow-up-s-line"></i> Show Less</span>
           </button>
         </div>
       </div>
@@ -199,7 +199,7 @@
                  hover:shadow-lg active:scale-95"
           @click="$emit('update', uid, 'edit')"
         >
-          <i class="ri-edit-line"></i> Edit
+          <span class="text-gray-400 hover:text-gray-300"><i class="ri-edit-line"></i> Edit</span>
         </button>
 
         <!-- Duplicate Button -->
@@ -215,7 +215,7 @@
                  hover:shadow-lg active:scale-95"
           @click="$emit('duplicate', uid)"
         >
-          <i class="ri-file-copy-line"></i> Duplicate
+          <span class="text-gray-400 hover:text-gray-300"><i class="ri-file-copy-line"></i> Duplicate</span>
         </button>
 
         <!-- Add Variant Button -->
@@ -231,7 +231,7 @@
                  hover:shadow-lg active:scale-95"
           @click="$emit('addvariant', uid, 'variant')"
         >
-          <i class="ri-links-line"></i> Add Variant
+          <span class="text-gray-400 hover:text-gray-300"><i class="ri-links-line"></i> Add Variant</span>
         </button>
 
         <!-- Show Variants Button -->
@@ -246,7 +246,7 @@
           ]"
           @click="$emit('showvariant', uid)"
         >
-          <i class="ri-link"></i> {{ variants.length }} Variant
+          <span class="text-gray-400 hover:text-gray-300"><i class="ri-link"></i> {{ variants.length }} Variant</span>
         </button>
 
         <!-- Remove Button -->
@@ -262,7 +262,7 @@
                  hover:shadow-lg active:scale-95"
           @click="$emit('delete', uid)"
         >
-          <i class="ri-delete-bin-5-line"></i> Remove
+          <span class="text-gray-400 hover:text-gray-300"><i class="ri-delete-bin-5-line"></i> Remove</span>
         </button>
       </div>
     </div>

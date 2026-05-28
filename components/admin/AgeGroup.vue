@@ -17,7 +17,7 @@
             sm:w-36"
             @click="openAddageGroupDialog"
           >
-            +
+            <span class="text-white">+</span>
           </button>
           </div>
           <div

@@ -87,8 +87,9 @@
                  hover:scale-105 hover:shadow-green-500/50 
                  active:scale-95 flex items-center justify-center gap-2"
         >
-          <i class="ri-eye-line text-lg"></i>
-          View Product
+        <span class="text-gray-50">
+            <i class="ri-eye-line text-lg"></i> View Product
+        </span>
         </button>
       </div>
     </div>

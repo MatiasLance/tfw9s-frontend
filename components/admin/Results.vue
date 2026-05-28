@@ -47,7 +47,7 @@
             v-model="query"
             placeholder="Search..."
             type="text"
-            class="h-9 flex-1 rounded-l"
+            class="h-9 flex-1 rounded-l bg-gray-100"
             solo
             />
             <button
@@ -59,7 +59,7 @@
             font-semibold
             text-white"
             >
-            <i class="ri-search-line"></i>
+            <i class="ri-search-line text-white"></i>
             </button>
           </form>
           <div

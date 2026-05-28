@@ -40,6 +40,8 @@ COPY --from=builder --chown=node:node /home/node/nuxt.config.js ./
 # COPY --from=builder --chown=node:node /app/server ./server
 # COPY --from=builder --chown=node:node /app/plugins ./plugins
 
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 USER node
 EXPOSE 3000
 

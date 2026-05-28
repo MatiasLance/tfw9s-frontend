@@ -33,8 +33,8 @@
                 justify-center"
                 aria-hidden="true"
                 >
-                  <i class="ri-add-line"></i>
-                  <span class="pr-1">Add Merch Item</span>
+                  <i class="ri-add-line text-white"></i>
+                  <span class="pr-1 text-white">Add Merch Item</span>
                 </span>
               </button>
               </div>
@@ -76,8 +76,7 @@
                   "
                   @click="popVariantBuffer"
                 >
-                  <i class="ri-arrow-left-s-line mr-1 text-lg"></i>
-                  Back
+                <span class="text-white"><i class="ri-arrow-left-s-line mr-1 text-lg"></i> Back</span>
                 </button>
 
                 <div class="flex items-center">
@@ -270,8 +269,7 @@
                           shadow-md"
                     @click="addSizeVariant"
                   >
-                    <i class="ri-add-fill"></i>
-                    Add Size
+                    <span class="text-gray-50"><i class="ri-add-fill"></i> Add Size</span>
                   </button>
                 </div>
 
@@ -448,8 +446,7 @@
                           shadow-md"
                     @click="addCategoryPicker"
                   >
-                    <i class="ri-add-fill"></i>
-                    Add Category
+                    <span class="text-gray-50"><i class="ri-add-fill"></i> Add Category</span>
                   </button>
                 </div>
 
@@ -570,8 +567,7 @@
               :disabled="!valid"
               @click="validate('Add')"
             >
-              <i class="ri-check-double-line mr-2"></i>
-              Add Rugby Merch
+              <span class="text-white"><i class="ri-check-double-line mr-2"></i> Add Rugby Merch</span>
             </button>
             <button
               type="button"
@@ -581,8 +577,7 @@
                     shadow-lg"
               @click="close"
             >
-              <i class="ri-close-line mr-2"></i>
-              Cancel
+              <span class="text-white"><i class="ri-close-line mr-2"></i> Cancel</span>
             </button>
           </div>
         </VForm>
@@ -718,8 +713,7 @@
                           shadow-md"
                     @click="addSizeVariant"
                   >
-                    <i class="ri-add-fill"></i>
-                    Add Size
+                    <span class="text-gray-50"><i class="ri-add-fill"></i> Add Size</span>
                   </button>
                 </div>
 
@@ -840,7 +834,7 @@
                         @click="removeSizeVariant(index)"
                         title="Remove this size"
                       >
-                        <i class="ri-close-line text-sm"></i>
+                        <i class="ri-close-line text-sm text-gray-50"></i>
                       </button>
                     </div>
                   </div>
@@ -898,8 +892,7 @@
                   transition-all duration-200 transform hover:scale-105"
                   @click="addCategoryPicker"
                 >
-                  <i class="ri-add-fill mr-2"></i>
-                  Add Category
+                  <span class="text-white"><i class="ri-add-fill mr-2"></i> Add Category</span>
                 </button>
               </div>
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -995,8 +988,7 @@
               :disabled="!valid"
               @click=" isEdit ? validate('Edit') : validate('Variant')"
             >
-              <i class="ri-check-line mr-2"></i>
-              {{ isEdit ? 'Confirm Changes' : 'Save Variant' }}
+              <span class="text-white"><i class="ri-check-line mr-2"></i> {{ isEdit ? 'Confirm Changes' : 'Save Variant' }}</span>
             </button>
             <button
               type="button"
@@ -1005,8 +997,7 @@
               duration-200 transform hover:scale-105"
               @click="closeEdit"
             >
-              <i class="ri-close-line mr-2"></i>
-              Cancel
+              <span class="text-white"><i class="ri-close-line mr-2"></i> Cancel</span>
             </button>
           </div>
         </VForm>

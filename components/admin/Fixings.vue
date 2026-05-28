@@ -13,7 +13,7 @@
                      py-1.5 font-semibold text-white sm:w-36"
               @click="openAddFixingDialog"
             >
-              +
+              <span class="text-white">+</span>
             </button>
           </div>
 
@@ -28,7 +28,7 @@
               v-model="query"
               placeholder="Search..."
               type="text"
-              class="h-9 flex-1 rounded-l"
+              class="h-9 flex-1 rounded-l bg-gray-100"
             />
             <button
               type="submit"
@@ -36,7 +36,7 @@
                      from-[#5EE738] via-[#3e872a] to-[#050505]
                      px-4 text-xl font-semibold text-white"
             >
-              <i class="ri-search-line"></i>
+              <i class="ri-search-line text-white"></i>
             </button>
           </form>
 

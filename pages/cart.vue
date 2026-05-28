@@ -127,7 +127,7 @@
                                 text-white font-bold py-4 px-6 rounded-lg
                                 text-md transition-colors"
                           :class="cartItems.length > 0 ? 'mb-4' : 'mb-0'">
-                    Proceed to Checkout
+                    <span class="text-white">Proceed to Checkout</span>
                   </button>
                 </NuxtLink>
                 
@@ -137,7 +137,7 @@
                                 text-white font-semibold py-3 px-6 rounded-lg
                                 border border-gray-500 transition-colors
                                 text-md">
-                    Continue Shopping
+                    <span class="text-white">Continue Shopping</span>
                   </button>
                 </NuxtLink>
               </div>
