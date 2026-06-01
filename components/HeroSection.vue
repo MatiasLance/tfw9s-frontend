@@ -40,8 +40,9 @@
                      duration-300 transform hover:scale-105 border-2 
                      border-green-500 flex items-center gap-2"
             >
-              <i class="ri-trophy-line"></i>
-              {{ cta }}
+            <span class="text-white">
+              <i class="ri-trophy-line"></i> {{ cta }}
+            </span>
             </button>
           </NuxtLink>
           
@@ -55,8 +56,9 @@
                      border-green-400 flex items-center gap-2 shadow-lg 
                      hover:shadow-xl"
             >
-              <i class="ri-shopping-bag-line"></i>
-              Shop Merch
+              <span class="text-white">
+                <i class="ri-shopping-bag-line"></i> Shop Merch
+              </span>
             </button>
           </NuxtLink>
         </div>

@@ -390,7 +390,7 @@
                         @click="removeSizeVariant(index)"
                         title="Remove this size"
                       >
-                        <i class="ri-close-line text-sm"></i>
+                        <i class="ri-close-line text-sm text-gray-50"></i>
                       </button>
                     </div>
                   </div>
@@ -412,9 +412,19 @@
               </div>
             </div>
 
-            <!-- Color Picker -->
+            <!-- Color Variant Section -->
             <div class="col-span-1 md:col-span-2">
-              <ColorPicker v-model="item.colors" />
+              <!-- <ColorVariantManager
+                ref="colorVariantManager"
+                v-model="item.colors"
+                :product-id="item.id"
+                @error="handleColorVariantError"
+                @image-uploaded="handleColorImageUploaded"
+              /> -->
+              <ColorVariantManager
+                ref="colorVariantManager"
+                v-model="item.colors"
+              />
             </div>
 
             <!-- Description -->
@@ -474,7 +484,9 @@
                             shadow-sm"
                       @click="removeCategoryPicker(index)"
                     >
-                      <i class="ri-close-line text-sm"></i>
+                      <span class="text-gray-50">
+                        <i class="ri-close-line text-sm"></i>
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -857,7 +869,11 @@
             </div>
 
             <div class="col-span-1 md:col-span-2">
-              <ColorPicker v-model="item.colors" />
+              <ColorVariantManager
+                ref="colorVariantManager"
+                v-model="item.colors"
+                :product-id="item.id"
+              />
             </div>
 
             <!-- Description -->
@@ -1004,63 +1020,78 @@
       </OModal>
 
     <!-- Remove merch item modal -->
-    <OModal
-      :active="showRemoveMerchItemModal"
-      @close="showRemoveMerchItemModal = false"
-    >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-        <h3 class="text-swd-red mb-3 font-bold">
-          Remove Merch Item {{ item.name }}
-        </h3>
-        <hr class="my-3">
-        <p class="text-center text-lg font-semibold">
-          Are you sure you want to delete this ?
-        </p>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-center">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-800
-              lg:mx-4 lg:w-48
-              "
-            @click="remove(editingNo)"
+     <OModal
+        :active="showRemoveMerchItemModal"
+        @close="showRemoveMerchItemModal = false"
+        class="flex items-center justify-center"
+      >
+        <div 
+          class="relative w-full max-w-lg bg-gray-900 border border-gray-700 overflow-hidden"
+          @click.stop
+        >
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-green-400 to-green-600"></div>
+
+          <div class="px-6 pt-5 pb-3 flex items-center gap-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/20 border border-red-500/30">
+              <i class="ri-delete-bin-6-line text-xl text-red-400"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-lg font-bold tracking-wide uppercase text-white">
+                Confirm Deletion
+              </h3>
+              <p class="text-sm text-green-400 font-medium truncate max-w-[220px]">
+                {{ item?.name || 'Unnamed Record' }}
+              </p>
+            </div>
+            <button 
+              type="button" 
+              @click="showRemoveMerchItemModal = false" 
+              class="ml-auto text-gray-400 hover:text-white transition-colors p-1"
+              aria-label="Close modal"
             >
-            Yes, remove it
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-              "
-            @click="closeRemove"
+            <span class="text-gray-400 hover:text-white">
+              <i class="ri-close-line text-xl"></i>
+            </span>
+            </button>
+          </div>
+
+          <hr class="border-gray-700/50">
+
+          <div class="px-6 py-4">
+            <div class="rounded-lg bg-gray-800/50 p-4 border border-gray-700/50">
+              <p class="text-gray-300 text-sm leading-relaxed">
+                You are about to permanently delete <span class="font-semibold text-white">{{ item?.name || 'this record' }}</span>.
+              </p>
+              <p class="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
+                <i class="ri-warning-line text-yellow-500"></i>
+                This action cannot be undone and will remove all associated data.
+              </p>
+            </div>
+          </div>
+
+          <div class="px-6 pb-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              @click="closeRemove"
+              class="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-gray-600 bg-gray-800 text-white font-semibold text-sm uppercase tracking-wide hover:bg-gray-700 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-gray-400"
             >
-            No
-          </button>
+              <span class="text-white">
+                Cancel
+              </span>
+            </button>
+            <button
+              type="button"
+              @click="remove(editingNo)"
+              class="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-red-500/50 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold text-sm uppercase tracking-wide hover:from-red-700 hover:to-red-800 hover:shadow-lg hover:shadow-red-500/20 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-red-400"
+            >
+                <span class="text-white">
+                  Delete Record
+                </span>
+            </button>
+          </div>
         </div>
-      </div>
-    </OModal>
+      </OModal>
+
     </div>
 </template>
 
@@ -1078,7 +1109,7 @@ import currencyMixin from '@/mixins/currency';
 import ImageUpload from '~/components/ImageUpload'
 import ImageUploadEdit from '~/components/ImageUploadEdit'
 import ManageItemThumbnailView from '~/components/ManageItemThumbnailView';
-import ColorPicker from '~/components/ColorPicker.vue'
+import ColorVariantManager from '~/components/color/ColorVariantManager.vue'
 import Tiptap from '~/components/Wysiwyg/Tiptap';
 
 const toNumber = (str) => +str;
@@ -1092,7 +1123,7 @@ export default {
     ImageUploadEdit,
     ManageItemThumbnailView,
     CategorySlider,
-    ColorPicker
+    ColorVariantManager
   },
   mixins: [
     aosMixin,
@@ -1203,6 +1234,20 @@ export default {
     this.page = 1
   },
   methods: {
+    appendColorData(formData) {
+      const colorManager = this.$refs.colorVariantManager
+      if (!colorManager) return
+      
+      const cleanColors = colorManager.getApiPayload()
+      if (cleanColors.length > 0) {
+        formData.append('color_variants', JSON.stringify(cleanColors))
+      }
+      
+      const files = colorManager.getColorImageFiles()
+      files.forEach(({ fieldName, file }) => {
+        formData.append(fieldName, file, file.name)
+      })
+    },
     addSizeVariant() {
       this.sizeVariants.push({
         value: 'M',
@@ -1339,9 +1384,7 @@ export default {
         form.append('size_variants', JSON.stringify(cleanedSizeVariants));
       }
 
-      if (this.item.colors && this.item.colors.length > 0) {
-        form.append('colors', JSON.stringify(this.item.colors));
-      }
+      this.appendColorData(form)
 
       form.append('selected_shippingid', '0')
 
@@ -1384,18 +1427,18 @@ export default {
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
 
           this.sizeVariants = [];
-          if (response.data.item.size_variants && response.data.item.size_variants.length > 0) {
-            this.sizeVariants = response.data.item.size_variants.map(variant => ({
+          if (response.data.item.availableSizes && response.data.item.availableSizes.length > 0) {
+            this.sizeVariants = response.data.item.availableSizes.map(variant => ({
               id: variant.id,
-              value: variant.value,
-              price_override: variant.price_override ? parseFloat(variant.price_override) : null,
+              value: variant.size,
+              price_override: variant.price ? parseFloat(variant.price) : null,
               stock_quantity: variant.stock_quantity || 0,
-              sku_suffix: variant.sku_suffix || `-${variant.value}`,
+              sku_suffix: variant.sku || `-${variant.size}`,
               type: 'size'
             }));
-          } else if (response.data.item.available_sizes &&
-            response.data.item.available_sizes.length > 0) {
-            this.sizeVariants = response.data.item.available_sizes.map(size => ({
+          } else if (response.data.item.availableSizes &&
+            response.data.item.availableSizes.length > 0) {
+            this.sizeVariants = response.data.item.availableSizes.map(size => ({
               id: size.id,
               value: size.size,
               price_override: size.price !== response.data.item.price ?
@@ -1411,20 +1454,16 @@ export default {
             this.sizeVariants = sizeVariants.map(variant => ({
               id: variant.id,
               value: variant.value,
-              price_override: variant.price_override ? parseFloat(variant.price_override) : null,
+              price_override: variant.price ? parseFloat(variant.price) : null,
               stock_quantity: variant.stock_quantity || 0,
               sku_suffix: variant.sku || `-${variant.value}`,
               type: 'size'
             }));
           }
 
-          if (typeof this.item.colors === 'string') {
-            try {
-              this.$set(this.item, 'colors', JSON.parse(this.item.colors));
-            } catch (e) {
-              this.$set(this.item, 'colors', []);
-            }
-          } else if (!Array.isArray(this.item.colors)) {
+          if (response.data.item.availableColors && Array.isArray(response.data.item.availableColors)) {
+            this.$set(this.item, 'colors', response.data.item.availableColors);
+          } else {
             this.$set(this.item, 'colors', []);
           }
 
@@ -1627,9 +1666,8 @@ export default {
         .then((response) => {
           this.item.name = response.data.item.name;
         });
-      setTimeout(() => {
-        this.showRemoveMerchItemModal = true;
-      }, 1000);
+      this.showRemoveMerchItemModal = true;
+
     },
     remove() {
       const editObject = this.merchItems.find(

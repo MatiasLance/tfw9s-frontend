@@ -46,8 +46,10 @@
                    border border-green-300"
             @click="rotateAnti"
           >
-            <i class="ri-anticlockwise-line mr-1"></i>
-            Rotate Left
+            <span class="text-green-700">
+              <i class="ri-anticlockwise-line mr-1"></i>
+              Rotate Left
+            </span>
           </button>
           <button
             type="button"
@@ -55,8 +57,10 @@
                    border border-green-300"
             @click="rotate"
           >
-            <i class="ri-clockwise-line mr-1"></i>
-            Rotate Right
+            <span class="text-green-700">
+              <i class="ri-clockwise-line mr-1"></i>
+              Rotate Right
+            </span>
           </button>
           <button
             type="button"
@@ -64,8 +68,10 @@
                    border border-blue-300"
             @click="flipx"
           >
-            <i class="ri-arrow-left-right-line mr-1"></i>
-            Flip Horizontal
+            <span class="text-green-700">
+              <i class="ri-arrow-left-right-line mr-1"></i>
+              Flip Horizontal
+            </span>
           </button>
           <button
             type="button"
@@ -73,8 +79,10 @@
                    border border-blue-300"
             @click="flipy"
           >
-            <i class="ri-arrow-up-down-line mr-1"></i>
-            Flip Vertical
+            <span class="text-green-700">
+              <i class="ri-arrow-up-down-line mr-1"></i>
+              Flip Vertical
+            </span>
           </button>
         </div>
 
@@ -86,8 +94,10 @@
                    border border-purple-300"
             @click="zoomIn"
           >
-            <i class="ri-zoom-in-line mr-1"></i>
-            Zoom In
+            <span class="text-green-700">
+              <i class="ri-zoom-in-line mr-1"></i>
+              Zoom In
+            </span>
           </button>
           <button
             type="button"
@@ -95,8 +105,10 @@
                    border border-purple-300"
             @click="zoomOut"
           >
-            <i class="ri-zoom-out-line mr-1"></i>
-            Zoom Out
+            <span class="text-green-700">
+              <i class="ri-zoom-out-line mr-1"></i>
+              Zoom Out
+            </span>
           </button>
           <button
             type="button"
@@ -104,8 +116,10 @@
                    border border-amber-300"
             @click="setImagePreset"
           >
-            <i class="ri-checkbox-circle-line mr-1"></i>
-            Set Preset
+            <span class="text-green-700">
+              <i class="ri-checkbox-circle-line mr-1"></i>
+              Set Preset
+            </span>
           </button>
           <button
             type="button"
@@ -113,8 +127,10 @@
                    border border-red-300"
             @click="clearImagePreset"
           >
-            <i class="ri-close-circle-line mr-1"></i>
-            Clear
+            <span class="text-red-700">
+              <i class="ri-close-circle-line mr-1"></i>
+              Clear
+            </span>
           </button>
         </div>
       </div>
@@ -129,8 +145,10 @@
                  transform hover:scale-105 hover:shadow-xl"
           @click="generateImage"
         >
-          <i class="ri-team-line mr-2"></i>
-          GENERATE IMAGE
+          <span class="text-gray-50">
+            <i class="ri-team-line mr-2"></i>
+            GENERATE IMAGE
+          </span>
         </button>
       </div>
     </div>

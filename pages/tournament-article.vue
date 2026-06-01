@@ -178,8 +178,10 @@
                            active:scale-95 flex items-center 
                            justify-center gap-2"
                   >
+                  <span class="text-white">
                     <i class="ri-user-add-line"></i>
                     Register Now
+                  </span>
                   </button>
                 </NuxtLink>
               </div>
@@ -213,8 +215,10 @@
                            active:scale-95 flex items-center 
                            justify-center gap-2"
                   >
-                    <i class="ri-arrow-left-line"></i>
-                    Back to Tournaments
+                    <span class="text-white">
+                      <i class="ri-arrow-left-line"></i>
+                      Back to Tournaments
+                    </span>
                   </button>
                 </NuxtLink>
               </div>

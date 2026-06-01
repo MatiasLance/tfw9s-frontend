@@ -63,8 +63,9 @@
                      hover:text-white`"
                 @click="setTab(tab.name)"
               >
-                <i :class="tab.icon" class="mr-2"></i>
-                {{ tab.Label }}
+              <span class="text-white">
+                <i :class="tab.icon" class="mr-2"></i> {{ tab.Label }}
+              </span>
               </button>
             </div>
           </VueSlickCarousel>
