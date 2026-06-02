@@ -32,7 +32,7 @@ function getItemKey(item) {
 }
 
 export const mutations = {
-  addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku, color }) {
+  addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku, color, image, use_image }) {
     const itemKey = cartItemKey(id, size_variant_id, color)
 
     const index = state.cart.findIndex(item => {
@@ -48,7 +48,9 @@ export const mutations = {
         ...(size_variant_id && { size_variant_id }),
         ...(size && { size }),
         ...(variant_sku && { variant_sku }),
-        ...(color && { color })
+        ...(color && { color }),
+        ...(image && { image }),
+        ...(use_image && { use_image })
       }
       state.cart.push(cartItem)
       state.shippingOptions.push(shippingOption)
@@ -126,7 +128,7 @@ export const mutations = {
 
 export const actions = {
   addItemToCart({ state, commit },
-    { id, quantity = 1, stock, shippingOption, size_variant_id, size, variant_sku, color }) {
+    { id, quantity = 1, stock, shippingOption, size_variant_id, size, variant_sku, color, image, use_image }) {
     return new Promise((resolve, reject) => {
       const itemKey = cartItemKey(id, size_variant_id, color)
 
@@ -149,7 +151,9 @@ export const actions = {
           size_variant_id,
           size,
           variant_sku,
-          color
+          color,
+          image,
+          use_image
         })
         commit('setShippingAvailability')
         resolve()

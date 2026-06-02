@@ -26,7 +26,7 @@
             <!-- Thumbnail Carousel -->
             <div class="col-span-1" v-if="photos && photos.length > 0">
               <VueSlickCarousel v-bind="imageCarouselSettings">
-                <div v-for="photo in photos" :key="photo.id || photo">
+                <div v-for="photo in photos" :key="photo.id">
                   <button
                     type="button"
                     @click="setActiveMedia(photo)"
@@ -63,7 +63,7 @@
               <span v-if="product.categories && product.categories.length" class="flex flex-row items-center gap-3 flex-wrap">
                 <span
                   v-for="category in product.categories"
-                  :key="category.id || category.name"
+                  :key="category.id"
                   class="inline-flex items-center gap-1 px-3 py-1 
                          rounded-full bg-green-500/20 border 
                          border-green-500/30 text-green-300 text-sm"
@@ -211,7 +211,7 @@
           </div>
 
           <!-- Color Selector (multi‑select) -->
-          <div v-if="product.colors && product.colors.length > 0" class="mb-6">
+          <div v-if="product.availableColors && product.availableColors.length > 0" class="mb-6">
             <label class="block text-lg font-semibold text-white mb-3">
               <i class="ri-palette-line mr-2 text-green-400"></i>
               Colours (select all you want):
@@ -219,32 +219,45 @@
 
             <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
               <label
-                v-for="color in product.colors"
-                :key="color.id || color.value || color"
+                v-for="color in product.availableColors"
+                :key="color.id"
                 class="relative flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer
                       transition-all duration-300 transform hover:scale-105"
-                :class="isColorSelected(getColorValue(color))
+                :class="isColorSelected(color.name)
                   ? 'border-green-400 bg-green-500/20 shadow-lg ring-2 ring-green-400/30'
                   : 'border-gray-600 bg-gray-700/40 hover:border-green-400 hover:bg-green-500/15'"
               >
                 <input
                   type="checkbox"
-                  :value="getColorValue(color)"
+                  :value="color.name"
                   v-model="product.selectedColors"
                   class="sr-only"
+                  @change="handleColorSelection(color)" 
                 />
 
                 <span
+                  v-if="color.image_url && color.use_image"
+                  class="w-6 h-6 rounded-full border border-white/30 shadow-sm flex-shrink-0 overflow-hidden"
+                >
+                  <img
+                    :src="color.image_url"
+                    :alt="color.name"
+                    class="w-full h-full object-cover"
+                    @error="handleColorImageError(color)"
+                  />
+                </span>
+                <span
+                  v-else
                   class="w-6 h-6 rounded-full border border-white/30 shadow-sm flex-shrink-0"
-                  :style="{ backgroundColor: getColorHex(getColorValue(color)) }"
+                  :style="{ backgroundColor: color.hexcode || '#888888' }"
                 ></span>
 
                 <span class="text-sm font-medium text-gray-100">
-                  {{ getColorLabel(getColorValue(color)) }}
+                  {{ color.name }}
                 </span>
 
                 <span
-                  v-if="isColorSelected(getColorValue(color))"
+                  v-if="isColorSelected(color.name)"
                   class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full 
                         flex items-center justify-center text-white text-xs"
                 >
@@ -504,13 +517,13 @@ export default {
       return this.product.selectedColors && this.product.selectedColors.length > 0
     },
     hasSizeVariants() {
-      return (this.product.size_variants && this.product.size_variants.length > 0) || 
-             (this.product.available_sizes && this.product.available_sizes.length > 0);
+      return (this.product.availableSizes && this.product.availableSizes.length > 0) || 
+             (this.product.hasSizeVariants && this.product.availableSizes.length > 0);
     },
     
     availableSizes() {
-      if (this.product.size_variants && this.product.size_variants.length > 0) {
-        return this.product.size_variants.map(variant => ({
+      if (this.product.availableSizes && this.product.availableSizes.length > 0) {
+        return this.product.availableSizes.map(variant => ({
           id: variant.id,
           size: variant.value || variant.size,
           price: variant.price_override || variant.price || this.product.price || 0,
@@ -518,8 +531,8 @@ export default {
           in_stock: (variant.stock_quantity || 0) > 0,
           sku: variant.sku || ''
         }));
-      } else if (this.product.available_sizes && this.product.available_sizes.length > 0) {
-        return this.product.available_sizes.map(s => ({ ...s, in_stock: s.in_stock !== false }));
+      } else if (this.product.availableSizes && this.product.availableSizes.length > 0) {
+        return this.product.availableSizes.map(s => ({ ...s, in_stock: s.in_stock !== false }));
       }
       return [];
     },
@@ -605,14 +618,37 @@ export default {
     this.retrieveItem(this.$route.query.id);
   },
   methods: {
+    handleColorSelection(color) {
+      const isSelected = this.isColorSelected(this.getColorValue(color));
+      
+      if (isSelected && color.use_image) {
+        const imageUrl = (color.preview && color.preview.type === 'image') 
+          ? color.preview.value 
+          : color.image_url;
+          
+        if (imageUrl) {
+          this.activeImageURL = imageUrl;
+        }
+      } else if (!isSelected) {
+        const media = this.product.media || [];
+        if (media.length > 0) {
+          this.activeImageURL = this.getMediaURL(media[0]);
+        }
+      }
+    },
+
     getColorValue(color) {
       if (!color) return '';
-      if (typeof color === 'string') return color
       if (typeof color === 'object' && color !== null) {
-        return color.value || color.name || color.hex || color.slug || color
+        return color.id || color.name || color.value || color.slug || color;
       }
-      return color
+      return color;
     },
+
+    handleColorImageError(color) {
+      this.$set(color, 'image_url', null);
+    },
+
     getColorName(color) {
       const val = this.getColorValue(color)
       const hexToName = {
@@ -623,8 +659,8 @@ export default {
       }
       return hexToName[val] || val
     },
-    isColorSelected(colorVal) {
-      return this.product.selectedColors && this.product.selectedColors.includes(colorVal)
+    isColorSelected(colorName) {
+      return this.product.selectedColors && this.product.selectedColors.includes(colorName);
     },
     viewVariantSlider() {
       if (!process.client || !this.$refs.variantSlider) return;
@@ -635,44 +671,7 @@ export default {
         behavior: 'smooth',
       })
     },
-    getColorHex(colorString) {
-      if (!colorString) return '#888888';
-      const presets = {
-        black: '#000000',
-        white: '#FFFFFF',
-        navy: '#002147',
-        red: '#C8102E',
-        forestgreen: '#228B22',
-        royalblue: '#4169E1',
-        yellow: '#FFD700',
-        orange: '#FF8200',
-        grey: '#808080',
-        maroon: '#800000',
-        teal: '#008080',
-        pink: '#FFC0CB',
-      };
 
-      if (colorString.startsWith('#')) return colorString;
-      return presets[colorString.toLowerCase()] || '#888888';
-    },
-    getColorLabel(colorString) {
-      if (!colorString) return '';
-      const labels = {
-        black: 'Black',
-        white: 'White',
-        navy: 'Navy Blue',
-        red: 'Red',
-        forestgreen: 'Forest Green',
-        royalblue: 'Royal Blue',
-        yellow: 'Yellow',
-        orange: 'Orange',
-        grey: 'Grey',
-        maroon: 'Maroon',
-        teal: 'Teal',
-        pink: 'Pink',
-      };
-      return labels[colorString.toLowerCase()] || colorString;
-    },
     setActiveMedia(path) {
       if (!path) return;
       this.activeImageURL = this.getMediaURL ? this.getMediaURL(path) : path;
@@ -720,11 +719,28 @@ export default {
             }
           }
 
-          if (this.product.is_variant && this.product.colors && this.product.colors.length > 0) {
-            const allColorValues = this.product.colors.map(color => this.getColorValue(color));
-            
-            this.$set(this.product, 'selectedColors', allColorValues);
-          }
+          this.$set(this.product, 'selectedColors', []);
+
+          const variants = this.product.variants || this.product.related || [];
+          this.colorVariantMap = {};
+          variants.forEach(variant => {
+            if (Array.isArray(variant.colors)) {
+              variant.colors.forEach(c => {
+                const key = c.toLowerCase();
+                if (!this.colorVariantMap[key]) {
+                  this.colorVariantMap[key] = variant.id;
+                }
+              });
+            }
+          });
+
+          // Logic ni para e select niya tanan available color variant (Optional lang ni ug gusto ka mang bwesit ug PM)
+          // if (this.product.availableColors && this.product.availableColors.length > 0) {
+          //   const activeNames = this.product.availableColors
+          //     .filter(c => c.is_active !== false)
+          //     .map(c => c.name);
+          //   this.$set(this.product, 'selectedColors', activeNames);
+          // }
 
           this.isLoading = false;
         })
@@ -771,13 +787,22 @@ export default {
 
       // If multi-select colors are available, add one cart item per selected color
       if (this.product.selectedColors && this.product.selectedColors.length > 0) {
-        this.product.selectedColors.forEach((color) => {
+        this.product.selectedColors.forEach((colorName) => {
+          
+          const colorObj = this.product.availableColors.find(
+            c => c.name === colorName
+          );
+          const image = colorObj ? colorObj.image_url : null;
+          
+          
           const cartItem = {
             id: this.product.id,
             quantity: parseInt(this.quantity),
             stock: this.maxQuantity,
             shippingOption: 0,
-            color: color
+            color: colorName,
+            image: image,
+            use_image: colorObj.use_image
           };
 
           if (this.selectedSize) {

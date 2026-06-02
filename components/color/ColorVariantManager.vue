@@ -383,16 +383,17 @@ export default {
 
     getColorImageFiles() {
       return this.localVariants
+        .map((c, originalIndex) => ({ ...c, _origIndex: originalIndex }))
         .filter(c => c.use_image && c.image_file)
-        .map((c, arrayIndex) => {
-          const variantId = c.id || `temp_${arrayIndex}`
+        .map(c => {
+          const variantId = c.id || `temp_${c._origIndex}`;
           return {
             fieldName: `color_images[${variantId}]`,
             file: c.image_file,
             variantId,
-            index: arrayIndex
-          }
-        })
+            index: c._origIndex
+          };
+        });
     },
 
     getApiPayload() {

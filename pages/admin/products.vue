@@ -1507,7 +1507,6 @@ export default {
 
       if (this.sizeVariants.length > 0) {
         const cleanedSizeVariants = this.sizeVariants.map(size => ({
-          id: size.id,
           value: size.value,
           price_override: size.price_override ? parseFloat(size.price_override) : null,
           stock_quantity: parseInt(size.stock_quantity) || 0,
@@ -1518,9 +1517,7 @@ export default {
         form.append('size_variants', JSON.stringify(cleanedSizeVariants));
       }
 
-      if (this.item.colors && this.item.colors.length > 0) {
-        form.append('colors', JSON.stringify(this.item.colors));
-      }
+      this.appendColorData(form)
 
       form.append('selected_shippingid', '0')
       form.append('id', this.item.id);
@@ -1601,7 +1598,6 @@ export default {
 
       if (this.sizeVariants.length > 0) {
         const cleanedSizeVariants = this.sizeVariants.map(size => ({
-          id: size.id,
           value: size.value,
           price_override: size.price_override ? parseFloat(size.price_override) : null,
           stock_quantity: parseInt(size.stock_quantity) || 0,
@@ -1612,9 +1608,7 @@ export default {
         form.append('size_variants', JSON.stringify(cleanedSizeVariants));
       }
 
-      if (this.item.colors && this.item.colors.length > 0) {
-        form.append('colors', JSON.stringify(this.item.colors));
-      }
+      this.appendColorData(form)
 
       form.append('selected_shippingid', '0')
       form.append('id', this.item.id);

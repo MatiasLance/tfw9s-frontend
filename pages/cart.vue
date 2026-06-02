@@ -61,7 +61,9 @@
                           class="bg-green-600 hover:bg-green-700 text-white 
                                 font-semibold py-3 px-8 rounded-lg text-lg
                                 transition-colors">
-                    Browse Shop
+                    <span class="text-white">
+                      Browse Shop
+                    </span>
                   </button>
                 </NuxtLink>
               </div>
@@ -84,6 +86,8 @@
                 :size="getItemSize(item)"
                 :size-variant-id="getSizeVariantId(item)"
                 :color="getItemColor(item)"
+                :color-image="item._image"
+                :use-image="item._use_image"
                 @change="quantityChanged"
                 @remove="removeCartItem"
                 data-aos="fade-up"
@@ -153,9 +157,9 @@
 import 'remixicon/fonts/remixicon.css';
 import currency from 'currency.js';
 import BaseHeader from '../components/base/BaseHeader.vue';
-import CartItem from '~/components/CartItem'
+import CartItem from '~/components/CartItem';
 import currencyMixin from '~/mixins/currency';
-import handlesMedia from '~/mixins/shop/handlesMedia'
+import handlesMedia from '~/mixins/shop/handlesMedia';
 
 export default {
   name: 'cart',
@@ -163,104 +167,65 @@ export default {
     BaseHeader,
     CartItem,
   },
-  mixins: [
-    currencyMixin,
-    handlesMedia
-  ],
+  mixins: [currencyMixin, handlesMedia],
   data() {
     return {
       items: [],
-      showGSTIncluded: true,
-      showGST: false,
-      taxrate: '10%',
       taxrateValue: 0,
-      totalPrice: 0,
-      addTaxOnCartPrice: 0,
-      includeTaxOnCartPrice: 0,
-      showTaxInfo: true
-    }
+    };
   },
   computed: {
     cartItems: {
       get() {
-        return this.$store.state.cart.cart
+        return this.$store.state.cart.cart;
       },
-    },
-    tax: {
-      get() {
-        return this.$store.state.cart.tax
-      },
-      set(v) {
-        this.$store.commit('cart/setTax', v)
-      }
     },
     taxAmount: {
       get() {
-        return this.$store.state.cart.taxAmount
+        return this.$store.state.cart.taxAmount;
       },
       set(v) {
-        this.$store.commit('cart/setTaxAmount', v)
-      }
+        this.$store.commit('cart/setTaxAmount', v);
+      },
     },
     subtotal: {
       get() {
-        return this.$store.state.cart.subtotal
+        return this.$store.state.cart.subtotal;
       },
       set(v) {
-        this.$store.commit('cart/setSubtotal', v)
-      },
-    },
-    gst: {
-      get() {
-        return this.$store.state.cart.gst
-      },
-      set(v) {
-        this.$store.commit('cart/setGst', v)
+        this.$store.commit('cart/setSubtotal', v);
       },
     },
     total: {
       get() {
-        return this.$store.state.cart.total
+        return this.$store.state.cart.total;
       },
       set(v) {
-        this.$store.commit('cart/setTotal', v)
+        this.$store.commit('cart/setTotal', v);
       },
-    },
-    toggleControl1: {
-      get() {
-        return (
-          this.$store.state.master.toggleControl1
-        )
-      },
-      set(val) {
-        this.$store.commit('master/setToggleControl1', val)
-      }
     },
     toggleControl2: {
       get() {
-        return (
-          this.$store.state.master.toggleControl2
-        )
+        return this.$store.state.master.toggleControl2;
       },
       set(val) {
-        this.$store.commit('master/setToggleControl2', val)
-      }
+        this.$store.commit('master/setToggleControl2', val);
+      },
     },
   },
   async mounted() {
-    await this.retrieveTaxValue()
-    await this.retrieveToggleTaxControl()
-    await this.getItemData()
+    await this.retrieveTaxValue();
+    await this.retrieveToggleTaxControl();
+    await this.getItemData();
   },
   beforeDestroy() {
-    this.cullZeroQuantityItems()
+    this.cullZeroQuantityItems();
   },
   methods: {
     getItemColor(item) {
       const cartItem = this.getCartItemFromStore(item);
       return cartItem ? cartItem.color : null;
     },
-    // NEW: Generate unique key for cart items with size variants
     getCartItemKey(item) {
       const cartItem = this.getCartItemFromStore(item);
       const parts = [item.id];
@@ -270,247 +235,170 @@ export default {
       }
       return parts.join('-');
     },
-    
-    // UPDATED: Much simpler now that items have cart context
     getCartItemFromStore(item) {
-      return this.cartItems.find(cartItem => 
-        cartItem.id === item._cartItemId &&
-        (cartItem.size_variant_id == item._sizeVariantId || (!cartItem.size_variant_id && !item._sizeVariantId)) &&
-        (cartItem.color == item._color || (!cartItem.color && !item._color))
+      return this.cartItems.find(
+        (cartItem) =>
+          cartItem.id === item._cartItemId &&
+          (cartItem.size_variant_id == item._sizeVariantId ||
+            (!cartItem.size_variant_id && !item._sizeVariantId)) &&
+          (cartItem.color == item._color || (!cartItem.color && !item._color))
       );
     },
-    
-    // NEW: Check if item has a specific size variant
-    doesItemHaveSizeVariant(item, sizeVariantId) {
-      return (item.size_variants && item.size_variants.some(v => v.id === sizeVariantId)) ||
-             (item.available_sizes && item.available_sizes.some(s => s.id === sizeVariantId));
-    },
-    
-    // NEW: Check if item has any size variants
-    doesItemHaveSizeVariants(item) {
-      return (item.size_variants && item.size_variants.length > 0) ||
-             (item.available_sizes && item.available_sizes.length > 0);
-    },
-    
-    // UPDATED: Get quantity for item (with size variant support)
     getQuantity(item) {
       const cartItem = this.getCartItemFromStore(item);
       return cartItem ? cartItem.quantity : 0;
     },
-    
-    // NEW: Get size information for display
     getItemSize(item) {
       const cartItem = this.getCartItemFromStore(item);
-      if (cartItem && cartItem.size) {
-        return cartItem.size;
-      }
-      
-      // Fallback: try to get size from item data
-      if (cartItem && cartItem.size_variant_id) {
+      if (cartItem?.size) return cartItem.size;
+      if (cartItem?.size_variant_id) {
         const sizeVariant = this.findSizeVariant(item, cartItem.size_variant_id);
         return sizeVariant ? sizeVariant.size || sizeVariant.value : null;
       }
-      
       return null;
     },
-    
-    // NEW: Get size variant ID
     getSizeVariantId(item) {
       const cartItem = this.getCartItemFromStore(item);
       return cartItem ? cartItem.size_variant_id : null;
     },
-    
-    // NEW: Find size variant in item data
     findSizeVariant(item, sizeVariantId) {
-      if (item.size_variants) {
-        return item.size_variants.find(v => v.id === sizeVariantId);
-      }
-      if (item.available_sizes) {
-        return item.available_sizes.find(s => s.id === sizeVariantId);
+      const sizes = item.availableSizes;
+      if (Array.isArray(sizes)) {
+        return sizes.find((s) => s.id === parseInt(sizeVariantId));
       }
       return null;
     },
-    
-    // UPDATED: Get item price (consider size variant pricing)
     getItemPrice(item) {
       const cartItem = this.getCartItemFromStore(item);
-      
-      if (cartItem && cartItem.size_variant_id) {
+      if (cartItem?.size_variant_id) {
         const sizeVariant = this.findSizeVariant(item, cartItem.size_variant_id);
-        if (sizeVariant && sizeVariant.price) {
-          return sizeVariant.price;
-        }
+        if (sizeVariant?.price) return sizeVariant.price;
       }
-      
       return item.price;
     },
-    
-    // UPDATED: Simplified stock lookup using the enriched item data
     /* eslint-disable camelcase */
     getItemStock(item) {
-      // Now item already contains the cart context
       if (!item) return 0;
-      
-      // If this cart item has a size variant, get that stock
       if (item._sizeVariantId) {
         const sizeVariant = this.findSizeVariant(item, item._sizeVariantId);
         return sizeVariant ? sizeVariant.stock_quantity : item.stock;
       }
-      
-      // Otherwise return base item stock
       return item.stock;
     },
-        
     getItemData() {
-      // Process each cart item individually to preserve size variant context
-      const itemPromises = this.cartItems.map((cartItem) => {
-        return this.$axios
+      const itemPromises = this.cartItems.map((cartItem) =>
+        this.$axios
           .$get(`/v1/items/${cartItem.id}`)
           .then((response) => {
             const product = response.data.item;
-            
-            // Create a enriched item that combines product data WITH cart context
             return {
-              // Product data
               ...product,
-              // Cart-specific context (CRITICAL)
               _cartItemId: cartItem.id,
               _sizeVariantId: cartItem.size_variant_id,
               _quantity: cartItem.quantity,
               _color: cartItem.color,
-              // For direct access in templates
+              _image: cartItem.image,
+              _use_image: cartItem.use_image,
               cartSizeVariantId: cartItem.size_variant_id,
-              cartQuantity: cartItem.quantity
+              cartQuantity: cartItem.quantity,
             };
           })
-          .catch(error => {
+          .catch((error) => {
             console.error(`Failed to fetch product ${cartItem.id}:`, error);
             return null;
-          });
-      });
+          })
+      );
 
       Promise.all(itemPromises)
         .then((values) => {
-          this.items = values.filter(item => item !== null);
+          this.items = values.filter((item) => item !== null);
         })
         .then(() => {
           this.calculatePriceAggregates();
         });
     },
-    
-    /* eslint-disable camelcase */
     quantityChanged(changeData) {
       const { id, quantity, size_variant_id, color } = changeData;
-
-      this.$store.dispatch('cart/updateCartItemQuantity', {
-        id,
-        size_variant_id: size_variant_id || null,
-        color: color || null,
-        quantity,
-        stock: this.getItemStock({ id, size_variant_id, color })
-      }).then(() => {
-        this.$nextTick(() => this.calculatePriceAggregates());
-      }).catch(error => {
-        this.$oruga.notification.open({
-          message: error.message,
-          variant: 'danger',
-          duration: 5000
-        });
-      });
+      this.$store
+        .dispatch('cart/updateCartItemQuantity', {
+          id,
+          size_variant_id: size_variant_id || null,
+          color: color || null,
+          quantity,
+          stock: this.getItemStock({ id, size_variant_id, color }),
+        })
+        .then(() => this.$nextTick(() => this.calculatePriceAggregates()))
+        .catch((error) =>
+          this.$oruga.notification.open({
+            message: error.message,
+            variant: 'danger',
+            duration: 5000,
+          })
+        );
     },
-    
-    // Handle both old format (just ID) and new format (object with id and size_variant_id)
     removeCartItem(removeData) {
       const id = removeData.id || removeData;
       const size_variant_id = removeData.size_variant_id || null;
       const color = removeData.color || null;
 
-      this.$store.dispatch('cart/removeItemFromCart', {
-        id,
-        size_variant_id,
-        color
-      }).then(() => {
-        this.removeItemFromLocalArray(id, size_variant_id, color);
-        this.$nextTick(() => this.calculatePriceAggregates());
-      }).catch(error => {
-        this.$oruga.notification.open({ message: error.message, variant: 'danger', duration: 5000 });
-      });
+      this.$store
+        .dispatch('cart/removeItemFromCart', { id, size_variant_id, color })
+        .then(() => {
+          this.removeItemFromLocalArray(id, size_variant_id, color);
+          this.$nextTick(() => this.calculatePriceAggregates());
+        })
+        .catch((error) =>
+          this.$oruga.notification.open({
+            message: error.message,
+            variant: 'danger',
+            duration: 5000,
+          })
+        );
     },
-
-    // Helper method to properly remove item from local items array
     removeItemFromLocalArray(id, size_variant_id, color) {
-      this.items = this.items.filter(item => {
-        // Match cart entry based on all three identifiers
+      this.items = this.items.filter((item) => {
         const cartItem = this.getCartItemFromStore(item);
         if (!cartItem) return false;
-
         const sameId = cartItem.id === id;
-        const sameSize = (size_variant_id == null && cartItem.size_variant_id == null) ||
-                        (cartItem.size_variant_id == size_variant_id);
-        const sameColor = (color == null && cartItem.color == null) ||
-                          (cartItem.color == color);
-
+        const sameSize =
+          (size_variant_id == null && cartItem.size_variant_id == null) ||
+          cartItem.size_variant_id == size_variant_id;
+        const sameColor =
+          (color == null && cartItem.color == null) || cartItem.color == color;
         return !(sameId && sameSize && sameColor);
       });
     },
-    
     calculatePriceAggregates() {
       const itemCostData = this.items.map((item) => {
         const quantity = this.getQuantity(item);
         const price = this.getItemPrice(item);
         const finalPrice = item.is_on_sale && item.saleprice ? item.saleprice : price;
-        
-        return {
-          id: item.id, 
-          quantity, 
-          price: finalPrice
-        };
+        return { id: item.id, quantity, price: finalPrice };
       });
 
       const itemBasePrice = itemCostData.reduce((acc, item) => {
-        const itemTotal = currency(item.price, { fromCents: false })
-          .multiply(item.quantity)
-          .value;
-        return currency(acc, { fromCents: false })
-          .add(itemTotal)
-          .value;
+        const itemTotal = currency(item.price, { fromCents: false }).multiply(
+          item.quantity
+        ).value;
+        return currency(acc, { fromCents: false }).add(itemTotal).value;
       }, 0);
 
       const isInclusive = this.toggleControl2;
-
       const currentTaxRate = this.taxrateValue || this.$store.state.cart.tax || 0;
 
-      let taxAmount = 0;
-      let total = 0;
-      let subTotal = 0;
+      let taxAmount, total, subTotal;
 
       if (isInclusive) {
-        // INCLUSIVE MODE: Tax is hidden in product prices
-        // Customer sees prices that already include tax
-        
         subTotal = currency(itemBasePrice, { fromCents: false })
-          .divide(1 + (currentTaxRate / 100))
-          .value;
-        
+          .divide(1 + currentTaxRate / 100).value;
         taxAmount = currency(itemBasePrice, { fromCents: false })
-          .subtract(subTotal)
-          .value;
-        
+          .subtract(subTotal).value;
         total = itemBasePrice;
-        
       } else {
-        // EXCLUSIVE MODE: Tax is added on top of product prices
-        // Customer sees prices before tax
-        
         subTotal = itemBasePrice;
-        
         total = currency(itemBasePrice, { fromCents: false })
-          .multiply(1 + (currentTaxRate / 100))
-          .value;
-        
-        taxAmount = currency(total, { fromCents: false })
-          .subtract(subTotal)
-          .value;
+          .multiply(1 + currentTaxRate / 100).value;
+        taxAmount = currency(total, { fromCents: false }).subtract(subTotal).value;
       }
 
       this.subtotal = subTotal;
@@ -521,11 +409,9 @@ export default {
       this.$store.commit('cart/setTotal', total);
       this.$store.commit('cart/setTaxAmount', taxAmount);
     },
-
     cullZeroQuantityItems() {
       this.$store.dispatch('cart/cullZeroQuantityItems');
     },
-
     async retrieveToggleTaxControl() {
       try {
         const response = await this.$axios.$get('v1/toggletax/');
@@ -535,18 +421,16 @@ export default {
         console.error('Failed to load tax controls:', error);
       }
     },
-
     async retrieveTaxValue() {
       try {
         const response = await this.$axios.$get('v1/tax/');
         const taxValue = response.addTaxValue || 0;
-        
         this.taxrateValue = taxValue;
         this.$store.commit('cart/setTax', taxValue);
       } catch (error) {
         console.error('Failed to load tax value:', error);
       }
-    }
+    },
   },
 };
 </script>
