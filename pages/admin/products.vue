@@ -123,6 +123,7 @@
             :is-rrp="product.show_rrp"
             :is-on-sale="product.is_on_sale"
             :is-hide-out-of-stock="product.isHideOutOfStock"
+            :active="product.is_active"
             :variants="product.variants"
             data-aos="fade-up"
             data-aos-offset="30"
@@ -131,6 +132,7 @@
             @addvariant="retrieveMerchItem"
             @showvariant="showVariants"
             @delete="removeMerchItem"
+            @toggle-active="handleToggleActive"
           />
         </section>
         <section
@@ -306,8 +308,20 @@
                               rounded-lg text-gray-700 focus:ring-2 focus:ring-green-500 
                               focus:border-green-500 transition-all duration-200"
                       >
-                        <option value="XS">
-                          XS
+                        <option value="K6">
+                          K6
+                        </option>
+                        <option value="K8">
+                          K8
+                        </option>
+                        <option value="K10">
+                          K10
+                        </option>
+                        <option value="K12">
+                          K12
+                        </option>
+                        <option value="K14">
+                          K14
                         </option>
                         <option value="S">
                           S
@@ -321,11 +335,17 @@
                         <option value="XL">
                           XL
                         </option>
-                        <option value="XXL">
-                          XXL
+                        <option value="2XL">
+                          2XL
                         </option>
-                        <option value="XXXL">
-                          XXXL
+                        <option value="3XL">
+                          3XL
+                        </option>
+                        <option value="4XL">
+                          4XL
+                        </option>
+                        <option value="5XL">
+                          5XL
                         </option>
                       </select>
                     </div>
@@ -414,13 +434,6 @@
 
             <!-- Color Variant Section -->
             <div class="col-span-1 md:col-span-2">
-              <!-- <ColorVariantManager
-                ref="colorVariantManager"
-                v-model="item.colors"
-                :product-id="item.id"
-                @error="handleColorVariantError"
-                @image-uploaded="handleColorImageUploaded"
-              /> -->
               <ColorVariantManager
                 ref="colorVariantManager"
                 v-model="item.colors"
@@ -762,8 +775,20 @@
                               rounded-lg text-gray-700 focus:ring-2 focus:ring-green-500 
                               focus:border-green-500 transition-all duration-200"
                       >
-                        <option value="XS">
-                          XS
+                        <option value="K6">
+                          K6
+                        </option>
+                        <option value="K8">
+                          K8
+                        </option>
+                        <option value="K10">
+                          K10
+                        </option>
+                        <option value="K12">
+                          K12
+                        </option>
+                        <option value="K14">
+                          K14
                         </option>
                         <option value="S">
                           S
@@ -777,11 +802,17 @@
                         <option value="XL">
                           XL
                         </option>
-                        <option value="XXL">
-                          XXL
+                        <option value="2XL">
+                          2XL
                         </option>
-                        <option value="XXXL">
-                          XXXL
+                        <option value="3XL">
+                          3XL
+                        </option>
+                        <option value="4XL">
+                          4XL
+                        </option>
+                        <option value="5XL">
+                          5XL
                         </option>
                       </select>
                     </div>
@@ -1172,6 +1203,8 @@ export default {
       isEdit: true, // True for editing item, false for adding variant
       activeVariantItem: null,
       variantBuffer: [],
+      toggleDebounceTimers: {},
+      pendingToggles: new Set(),
     };
   },
   head() {
@@ -1234,6 +1267,71 @@ export default {
     this.page = 1
   },
   methods: {
+    // Show and hide product sa user side as per ben idea
+    handleToggleActive({ uid, active }) {
+      if (this.toggleDebounceTimers[uid]) {
+        clearTimeout(this.toggleDebounceTimers[uid])
+      }
+
+      if (this.pendingToggles.has(uid)) {
+        return
+      }
+
+      this.toggleDebounceTimers[uid] = setTimeout(() => {
+        this.performToggle(uid, active)
+        delete this.toggleDebounceTimers[uid]
+      }, 300)
+    },
+    async performToggle(uid, active) {
+      const previousState = active
+      this.pendingToggles.add(uid)
+
+      const itemIndex = this.merchItems.findIndex(item => item.uid === uid)
+      if (itemIndex !== -1) {
+        this.merchItems[itemIndex].active = active
+      }
+
+      try {
+        const response = await this.$axios.$post('v1/items/status', {
+          id: uid,
+          is_active: active,
+        })
+
+        this.$oruga.notification.open({
+          message: response.message,
+          variant: 'success',
+          duration: 5000,
+          position: 'bottom',
+          queue: true,
+        })
+      } catch (error) {
+        if (itemIndex !== -1) {
+          this.merchItems[itemIndex].active = previousState
+        }
+
+        if (error.response?.status === 429) {
+          const retryAfter = error.response.headers['retry-after'] || 5
+          this.$oruga.notification.open({
+            message: `Please wait ${retryAfter} seconds before trying again.`,
+            variant: 'warning',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          })
+        } else {
+          this.$oruga.notification.open({
+            message: error.response?.data?.message || 'Failed to update item status.',
+            variant: 'danger',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          })
+        }
+      } finally {
+        this.pendingToggles.delete(uid)
+        this.retrieveMerchItems()
+      }
+    },
     appendColorData(formData) {
       const colorManager = this.$refs.colorVariantManager
       if (!colorManager) return
@@ -1250,7 +1348,7 @@ export default {
     },
     addSizeVariant() {
       this.sizeVariants.push({
-        value: 'M',
+        value: 'K6',
         price_override: null,
         stock_quantity: 0,
         sku_suffix: '',
@@ -1711,6 +1809,9 @@ export default {
       this.sizeVariants = [];
       this.multipleCategoryBuffer = [];
     }
+  },
+  beforeDestroy() {
+    Object.values(this.toggleDebounceTimers).forEach(clearTimeout)
   },
 };
 

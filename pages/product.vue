@@ -211,62 +211,64 @@
           </div>
 
           <!-- Color Selector (multi‑select) -->
-          <div v-if="product.availableColors && product.availableColors.length > 0" class="mb-6">
+          <div
+            v-if="product.availableColors && product.availableColors.length > 0"
+            class="mb-6"
+          >
             <label class="block text-lg font-semibold text-white mb-3">
               <i class="ri-palette-line mr-2 text-green-400"></i>
               Colours (select all you want):
             </label>
 
-            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+            <div class="flex flex-wrap gap-3">
               <label
                 v-for="color in product.availableColors"
                 :key="color.id"
-                class="relative flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer
-                      transition-all duration-300 transform hover:scale-105"
+                class="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 
+                      transition-all duration-300 transform hover:scale-110 
+                      cursor-pointer flex-shrink-0 overflow-visible"
                 :class="isColorSelected(color.name)
-                  ? 'border-green-400 bg-green-500/20 shadow-lg ring-2 ring-green-400/30'
-                  : 'border-gray-600 bg-gray-700/40 hover:border-green-400 hover:bg-green-500/15'"
+                  ? 'border-white scale-110 shadow-lg shadow-green-400/40'
+                  : 'border-gray-500/50 hover:border-gray-300'"
               >
+                <!-- Hidden checkbox - this drives the state -->
                 <input
                   type="checkbox"
                   :value="color.name"
                   v-model="product.selectedColors"
                   class="sr-only"
-                  @change="handleColorSelection(color)" 
+                  @change="handleColorSelection(color)"
                 />
 
-                <span
+                <!-- Image-based color swatch -->
+                <img
                   v-if="color.image_url && color.use_image"
-                  class="w-6 h-6 rounded-full border border-white/30 shadow-sm flex-shrink-0 overflow-hidden"
-                >
-                  <img
-                    :src="color.image_url"
-                    :alt="color.name"
-                    class="w-full h-full object-cover"
-                    @error="handleColorImageError(color)"
-                  />
-                </span>
+                  :src="color.image_url"
+                  :alt="color.name"
+                  class="w-full h-full object-cover rounded-full"
+                  @error="handleColorImageError(color)"
+                />
+
+                <!-- Hex-based color swatch -->
                 <span
                   v-else
-                  class="w-6 h-6 rounded-full border border-white/30 shadow-sm flex-shrink-0"
+                  class="block w-full h-full rounded-full"
                   :style="{ backgroundColor: color.hexcode || '#888888' }"
                 ></span>
 
-                <span class="text-sm font-medium text-gray-100">
-                  {{ color.name }}
-                </span>
-
+                <!-- Selected checkmark badge -->
                 <span
                   v-if="isColorSelected(color.name)"
-                  class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full 
-                        flex items-center justify-center text-white text-xs"
+                  class="absolute -top-1.5 -right-1.5 w-5 h-5 
+                        bg-green-500 rounded-full flex items-center justify-center
+                        shadow-md border-2 border-white z-10"
                 >
-                  <i class="ri-check-line"></i>
+                  <i class="ri-check-line text-white text-xs font-bold"></i>
                 </span>
               </label>
             </div>
 
-            <p class="text-sm text-gray-400 mt-2">
+            <p class="text-sm text-gray-400 mt-3">
               <i class="ri-information-line mr-1"></i>
               You can choose more than one colour – each will be added as a separate item.
             </p>
@@ -313,7 +315,7 @@
             <div class="flex flex-col gap-4">
               <!-- Primary Action -->
               <div class="flex gap-4">
-                <template v-if="product.has_variants && product.variants.length > 0">
+                <template v-if="product.hasVariants && product.variants.length > 0 && isVariantIsActive">
                   <button
                     type="button"
                     @click="viewVariantSlider"
@@ -386,8 +388,10 @@
                            active:scale-95 flex items-center 
                            justify-center gap-2"
                   >
-                    <i class="ri-arrow-left-line"></i>
-                    Back to Shop
+                    <span class="text-gray-300">
+                      <i class="ri-arrow-left-line"></i>
+                      Back to Shop
+                    </span>
                   </button>
                 </NuxtLink>
               </div>
@@ -395,10 +399,9 @@
           </div>
         </div>
       </div>
-
       <!-- Variants Slider -->
       <div
-        v-if="product.has_variants && product.variants.length > 0"
+        v-if="product.hasVariants && product.variants.length > 0 && isVariantIsActive"
         ref="variantSlider"
         class="mt-12 p-6 bg-gradient-to-br from-gray-800 to-gray-900 
                rounded-2xl shadow-2xl border border-gray-700"
@@ -512,7 +515,10 @@ export default {
       isLoading: false
     };
   },
-  computed: {   
+  computed: {
+    isVariantIsActive() {
+      return this.product.variants.some(variant => variant.is_active);
+    },
     hasSelectedColors() {
       return this.product.selectedColors && this.product.selectedColors.length > 0
     },
