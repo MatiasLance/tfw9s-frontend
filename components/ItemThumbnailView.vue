@@ -1,5 +1,6 @@
 <template>
   <div
+  v-if="isActive"
     class="group flex w-full flex-col items-start rounded-2xl 
            bg-gradient-to-br from-gray-800 to-gray-900 
            border-2 border-green-500/20 transition-all 
@@ -87,8 +88,9 @@
                  hover:scale-105 hover:shadow-green-500/50 
                  active:scale-95 flex items-center justify-center gap-2"
         >
-          <i class="ri-eye-line text-lg"></i>
-          View Product
+        <span class="text-gray-50">
+            <i class="ri-eye-line text-lg"></i> View Product
+        </span>
         </button>
       </div>
     </div>
@@ -139,10 +141,17 @@ export default {
     isHideOutOfStock: {
       type: Boolean,
       required: true
+    },
+    active: {
+      type: [ Boolean, Number ],
+      default: true
     }
   },
   data() {
-    return { showOutOfStock: true }
+    return {
+      showOutOfStock: true,
+      isActive: this.active !== undefined ? Boolean(this.active) : true
+    }
   },
   computed: {
     cartItems: {
@@ -159,6 +168,11 @@ export default {
       get() {
         return CURRENCY_CODE
       },
+    }
+  },
+  watch: {
+    active(newVal) {
+      this.isActive = Boolean(newVal)
     }
   },
   mounted() {

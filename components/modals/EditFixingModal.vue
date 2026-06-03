@@ -26,7 +26,7 @@
               </label>
               <VSelect
               v-model="Event.region_id"
-              :items="filteredRegions"
+              :items="formattedRegion"
               label="Choose a Region"
               :rules="rules"
               solo
@@ -73,12 +73,12 @@
                 Date:
               </label>
               <ODatepicker
-              v-model="Event.date"
-              label="Click to select..."
-              icon="calendar"
-              :min-date="mindate"
-              :max-date="maxdate"
-              :rules="rules"
+                v-model="Event.date"
+                label="Click to select..."
+                icon="calendar"
+                :min-date="mindate"
+                :max-date="maxdate"
+                :rules="rules"
               />
             </div>
             <div class="col-span-2 md:col-span-1">
@@ -162,7 +162,7 @@
             >
               <div
               v-for="(matchBuffer, matchIndex) in multipleMatch"
-              :key="matchIndex"
+              :key="matchBuffer.id ? `match-${matchBuffer.id}` : `new-match-${matchIndex}`"
               class="flex justify-center gap-1"
               >
               <!-- data Map -->
@@ -190,11 +190,11 @@
                       color="primary"
                       hide-details
                       class="ma-0 pa-0"
-                      @click="matchBuffer.team2 = []"
+                      @change="handleByeToggle(matchBuffer)"
                     />
                     <label
                       class="text-sm font-medium text-gray-800 cursor-pointer -ml-[15px]"
-                      @click="matchBuffer.isBye = !matchBuffer.isBye"
+                      @click="matchBuffer.isBye = !matchBuffer.isBye; handleByeToggle(matchBuffer)"
                     >
                       Bye
                     </label>
@@ -312,8 +312,9 @@ export default {
         {
           time: null,
           field_id: null,
-          team1: [],
-          team2: [],
+          team1: null,
+          team2: null,
+          isBye: false
         }
       ],
       matchTime: null,
@@ -342,7 +343,6 @@ export default {
         { text: '4:45 PM', value: '16:45' },
         { text: '5:10 PM', value: '17:10' },
         { text: '5:35 PM', value: '17:35' },
-        { text: '6:00 PM', value: '18:00' },
         { text: '6:00 PM', value: '18:00' },
         { text: '6:25 PM', value: '18:25' },
         { text: '6:50 PM', value: '18:50' },
@@ -373,6 +373,7 @@ export default {
         { text: 'Pool D Grand Final', value: 'pool_d_grand_final' },
       ],
       rules: [ value => !!value || 'Required' ],
+      matchCache: {},
     }
   },
   computed: {
@@ -422,14 +423,25 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.Event = this.event;
-          this.multipleMatch = this.Event.eventmatch.map(event => ({
-            id: event.id,
-            field_id: event.field_id,
-            team1: event.team1,
-            team2: event.team2,
-            submitted: event.submitted,
-          }));
+          this.Event = JSON.parse(JSON.stringify(this.event));
+
+          if (this.Event.date) {
+            this.Event.date = new Date(this.Event.date);
+          }
+          
+          if (this.Event.eventmatch) {
+            this.multipleMatch = this.Event.eventmatch.map(event => ({
+              id: event.id,
+              field_id: event.field_id,
+              team1: event.team1,
+              team2: event.team2,
+              cachedTeam2: null,
+              submitted: event.submitted,
+              isBye: false
+            }));
+          } else {
+            this.multipleMatch = [];
+          }
         }
       },
       immediate: true,
@@ -446,17 +458,20 @@ export default {
     },
     multipleMatch: {
       handler(newVal, oldVal) {
-        const firstMatchTime = newVal.map(match => {
-          const matchTime = new Date(match.time);
-          return matchTime.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
+        if (newVal.length > 0) {
+          const firstMatchTime = newVal.map(match => {
+            if (!match.time) return null;
+            const matchTime = new Date(match.time);
+            return matchTime.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            });
+          })[0];
+          
+          if (firstMatchTime) {
+            this.matchTime = firstMatchTime;
           }
-          );
-        })[0];
-        if (firstMatchTime) {
-          this.matchTime = firstMatchTime;
         }
       },
       deep: true
@@ -467,12 +482,6 @@ export default {
       const date = new Date(dateString);
       date.setHours(0, 0, 0, 0);
       return date;
-    },
-    convertTimeToDate(timeString) {
-      const [ hours, minutes ] = timeString.split(':').map(Number);
-      const today = new Date();
-      today.setHours(hours, minutes, 0, 0);
-      return today;
     },
     validate() {
       if (!this.$refs.form.validate()) {
@@ -507,12 +516,10 @@ export default {
     editFixing() {
       let eventYear = this.Event.date.getUTCFullYear();
       let eventMonth = this.Event.date.getUTCMonth() + 1;
-      let eventDay = this.Event.date.getUTCDate(); // Get day
+      let eventDay = this.Event.date.getUTCDate();
 
-      // Increment the day by 1
       eventDay++;
 
-      // Get the last day of the current month
       const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
 
       if (eventDay > lastDayOfMonth) {
@@ -531,20 +538,25 @@ export default {
       const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
       const formData = new FormData();
-      formData.append('time', this.Event.time);
-      formData.append('round', this.Event.round);
-      formData.append('region_id', this.Event.region_id);
-      formData.append('agegroup_id', this.Event.agegroup_id);
+      formData.append('time', this.Event.time || '');
+      formData.append('round', this.Event.round || '');
+      formData.append('region_id', this.Event.region_id || '');
+      formData.append('agegroup_id', this.Event.agegroup_id || '');
       formData.append('datetime', event_date);
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
-        formData.append(`matches[${i}][id]`, match.id);
-        formData.append(`matches[${i}][time]`, this.matchTime);
-        formData.append(`matches[${i}][field_id]`, match.field_id);
-        formData.append(`matches[${i}][team1]`, match.team1.id);
-        formData.append(`matches[${i}][team2]`, match.isBye ? 0: match.team2.id);
+
+        const team1Id = match.team1 ? match.team1.id : '';
+        const team2Id = match.isBye ? 0 : (match.team2 ? match.team2.id : '');
+
+        formData.append(`matches[${i}][id]`, match.id || '');
+        formData.append(`matches[${i}][time]`, this.matchTime || '');
+        formData.append(`matches[${i}][field_id]`, match.field_id || '');
+        formData.append(`matches[${i}][team1]`, team1Id);
+        formData.append(`matches[${i}][team2]`, team2Id);
       }
+      
       this.$axios
         .$post(`v1/events/${this.Event.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
@@ -564,16 +576,26 @@ export default {
       this.$emit('close')
     },
     reset() {
-      this.Event = []
+      this.Event = {}
       this.multipleMatch = [
         {
-          time: null, field_id: null, team1: [], team2: []
+          time: null,
+          field_id: null,
+          team1: null,
+          team2: null,
+          cachedTeam2: null,
+          isBye: false
         }
       ]
     },
     addMatchForm() {
       this.multipleMatch.push({
-        time: null, field_id: null, team1: [], team2: [], isBye: false
+        time: null,
+        field_id: null,
+        team1: null,
+        team2: null,
+        cachedTeam2: null,
+        isBye: false
       });
     },
     updateMatch(matchIndex, newMatch) {
@@ -590,6 +612,14 @@ export default {
           position: 'bottom',
           queue: true,
         });
+      }
+    },
+    handleByeToggle(match) {
+      if (match.isBye) {
+        match.cachedTeam2 = match.team2 ? { ...match.team2 } : null;
+        match.team2 = { id: 0 };
+      } else {
+        match.team2 = match.cachedTeam2 ? { ...match.cachedTeam2 } : { id: null };
       }
     },
   }

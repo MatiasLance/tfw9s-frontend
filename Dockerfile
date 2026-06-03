@@ -1,20 +1,23 @@
-FROM node:16.14-buster
+# syntax=docker/dockerfile:1
 
-LABEL maintainer="tech1@sumomedia.co"
-LABEL app_environment="development"
+FROM node:16-alpine
+
+# Install native build deps for node-sass / etc.
+RUN apk add --no-cache python3 make g++
 
 WORKDIR /home/node
 
-# Copy package.json and package-lock.json first to leverage Docker cache
-COPY package*.json ./
+# Copy package manifests and install deps as root (or as node if you prefer)
+COPY --chown=node:node package*.json ./
 
-# Install npm globally and dependencies
-RUN npm install -g npm@8.5.0
-
-COPY . .
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 USER node
+RUN npm install --no-audit --no-fund
 
-CMD bash -c "npm install && npm run dev"
+# Create cache dir (will be inside node_modules volume at runtime)
+RUN mkdir -p node_modules/.cache
+
 
 EXPOSE 3000
+CMD ["npm", "run", "dev"]

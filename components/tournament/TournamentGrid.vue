@@ -41,7 +41,7 @@
                     bg-gradient-to-r from-yellow-500 to-yellow-600 
                     px-3 py-2 font-bold text-gray-900 shadow-lg"
         >
-          <div class="text-sm flex items-center">
+          <div class="text-sm text-gray-900 flex items-center">
             <i class="ri-money-dollar-circle-fill mr-1"></i>
             {{ formatCurrencyFromCent(item.price) }}
           </div>
@@ -83,8 +83,10 @@
                    hover:shadow-green-500/50 hover:scale-105 
                    active:scale-95"
           >
-            View Tournament Details
-            <i class="ri-arrow-right-line text-sm"></i>
+            <span class="text-white">
+              View Tournament Details
+              <i class="ri-arrow-right-line text-sm"></i>
+            </span>
           </button>
         </div>
       </div>

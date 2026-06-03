@@ -1,0 +1,48 @@
+# syntax=docker/dockerfile:1
+
+# ---- Stage 1: Build ----
+FROM node:16-alpine AS builder
+
+# Native build deps (node-sass etc.)
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /home/node
+
+# Install all dependencies (including devDependencies)
+COPY package*.json ./
+RUN npm ci --no-audit --no-fund
+
+# Copy source code
+COPY . .
+
+# Build the Nuxt production bundle
+RUN npm run build
+
+# ---- Stage 2: Production Runtime ----
+FROM node:16-alpine
+
+# Create the node user (already exists, but safe)
+RUN addgroup -S node && adduser -S -G node node
+
+WORKDIR /home/node
+
+# Copy only production dependencies and lockfile
+COPY package*.json ./
+RUN npm ci --production --no-audit --no-fund \
+    && npm cache clean --force
+
+# Copy built artefacts from the builder stage
+COPY --from=builder --chown=node:node /home/node/.nuxt ./.nuxt
+COPY --from=builder --chown=node:node /home/node/static ./static
+COPY --from=builder --chown=node:node /home/node/nuxt.config.js ./
+
+# If you have a custom server or plugins that export server middleware, copy them too
+# COPY --from=builder --chown=node:node /app/server ./server
+# COPY --from=builder --chown=node:node /app/plugins ./plugins
+
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+USER node
+EXPOSE 3000
+
+CMD ["npm", "start"]

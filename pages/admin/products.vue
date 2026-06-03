@@ -33,31 +33,8 @@
                 justify-center"
                 aria-hidden="true"
                 >
-                  <i class="ri-add-line"></i>
-                  <span class="pr-1">Add Merch Item</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                class="
-                  w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] p-1.5
-                  text-center
-                  font-semibold
-                  text-white
-                  sm:w-60"
-                @click="addMerchVariant"
-              >
-                <span
-                class="
-                flex items-center
-                justify-center"
-                aria-hidden="true"
-                >
-                  <i class="ri-add-line"></i>
-                  <span class="pr-1">Add Merch Variant</span>
+                  <i class="ri-add-line text-white"></i>
+                  <span class="pr-1 text-white">Add Merch Item</span>
                 </span>
               </button>
               </div>
@@ -75,19 +52,49 @@
           />
         </div>
         <section class="mb-8" data-aos="fade-up">
-        <div
-          v-if="totalPages > 0"
-          class="
-            flex flex-wrap items-center justify-around
-            gap-x-2
-            md:justify-between
-          "
-        >
-          <span class="flex items-center">
-            <p class="text-base leading-[2.5em] text-white">
-              Showing {{ from }}-{{ to }} of {{ totalItems }} results
-            </p>
-          </span>
+          <div
+            v-if="totalPages > 0"
+            class="
+              flex flex-wrap items-center justify-around
+              gap-x-2
+              md:justify-between
+            "
+          >
+          <div class="flex flex-wrap items-center gap-4 py-4">
+              <template v-if="activeVariantItem !== null">
+                <button
+                  type="button"
+                  class="
+                    inline-flex items-center justify-center
+                    rounded-lg border border-[#5EE738]
+                    bg-gradient-to-br from-[#5EE738] via-[#3e872a]
+                    to-[#050505] px-4 py-2
+                    text-sm font-bold text-white
+                    transition-all duration-200
+                    hover:shadow-lg hover:border-[#7ff04d]
+                    active:scale-95
+                  "
+                  @click="popVariantBuffer"
+                >
+                <span class="text-white"><i class="ri-arrow-left-s-line mr-1 text-lg"></i> Back</span>
+                </button>
+
+                <div class="flex items-center">
+                  <p class="text-sm font-medium text-white">
+                    Viewing Variants
+                  </p>
+                  <!-- Subtle Divider -->
+                  <div class="mx-4 h-5 w-px bg-gray-600"></div>
+                </div>
+              </template>
+              
+              <span class="flex items-center">
+                <p class="text-base leading-[2.5em] text-white">
+                  Showing {{ from }}-{{ to }} of {{ totalItems }} results
+                </p>
+              </span>
+            </div>
+
             <BasePagination
               :active-page="page"
               :total-pages="totalPages"
@@ -102,7 +109,7 @@
           v-bind="$attrs"
         >
           <ManageItemThumbnailView
-            v-for="product in MerchItems"
+            v-for="product in merchItems"
             :key="product.id"
             :uid="product.id"
             :name="product.name"
@@ -116,13 +123,16 @@
             :is-rrp="product.show_rrp"
             :is-on-sale="product.is_on_sale"
             :is-hide-out-of-stock="product.isHideOutOfStock"
+            :active="product.is_active"
+            :variants="product.variants"
             data-aos="fade-up"
             data-aos-offset="30"
-            @update="editMerchItem"
+            @update="retrieveMerchItem"
             @duplicate="duplicateItem"
-            @addvariant="addVariant"
-            @showvariant="showVariant"
+            @addvariant="retrieveMerchItem"
+            @showvariant="showVariants"
             @delete="removeMerchItem"
+            @toggle-active="handleToggleActive"
           />
         </section>
         <section
@@ -134,85 +144,6 @@
           No Merch Available
         </section>
       </div>
-      
-      <!-- Show Add Merch Color Variant -->
-      <OModal
-       :active="showAddMerchVariantModal"
-       @close="showAddMerchVariantModal = false"
-      >
-        <VForm
-          ref="form" v-model="valid" lazy-validation
-          class="p-2 md:p-4"
-        >
-          <h3
-            class="
-            mb-3
-            font-bold"
-          >
-            Add Merch Variant
-          </h3>
-          <hr class="my-3">
-          <div class="grid grid-cols-1">
-            <div class="col-span-1">
-              <label for="productname" class="mb-1 block">
-                Variant Name:
-              </label>
-              <VTextField
-              id="name"
-              v-model="variant"
-              label="Enter Variant Name"
-              :rules="rules"
-              type="text"
-              solo
-              />
-            </div>
-          </div>
-          <hr class="my-3">
-          <div class="block lg:flex lg:flex-auto lg:justify-end">
-            <button
-              type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-green
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-green-700
-                lg:mx-4 lg:w-48
-              "
-              :disabled="!valid"
-              @click="saveVariant"
-            >
-              OK
-            </button>
-            <button
-              type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-red
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-[#B1271B]
-                lg:mx-4 lg:w-48
-              "
-              @click="closeVariant"
-            >
-              Cancel
-            </button>
-          </div>
-        </VForm>
-      </OModal>
 
       <!-- Add Merch Modal component -->
       <OModal
@@ -340,8 +271,7 @@
                           shadow-md"
                     @click="addSizeVariant"
                   >
-                    <i class="ri-add-fill"></i>
-                    Add Size
+                    <span class="text-gray-50"><i class="ri-add-fill"></i> Add Size</span>
                   </button>
                 </div>
 
@@ -378,8 +308,20 @@
                               rounded-lg text-gray-700 focus:ring-2 focus:ring-green-500 
                               focus:border-green-500 transition-all duration-200"
                       >
-                        <option value="XS">
-                          XS
+                        <option value="K6">
+                          K6
+                        </option>
+                        <option value="K8">
+                          K8
+                        </option>
+                        <option value="K10">
+                          K10
+                        </option>
+                        <option value="K12">
+                          K12
+                        </option>
+                        <option value="K14">
+                          K14
                         </option>
                         <option value="S">
                           S
@@ -393,11 +335,17 @@
                         <option value="XL">
                           XL
                         </option>
-                        <option value="XXL">
-                          XXL
+                        <option value="2XL">
+                          2XL
                         </option>
-                        <option value="XXXL">
-                          XXXL
+                        <option value="3XL">
+                          3XL
+                        </option>
+                        <option value="4XL">
+                          4XL
+                        </option>
+                        <option value="5XL">
+                          5XL
                         </option>
                       </select>
                     </div>
@@ -462,7 +410,7 @@
                         @click="removeSizeVariant(index)"
                         title="Remove this size"
                       >
-                        <i class="ri-close-line text-sm"></i>
+                        <i class="ri-close-line text-sm text-gray-50"></i>
                       </button>
                     </div>
                   </div>
@@ -482,6 +430,14 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Color Variant Section -->
+            <div class="col-span-1 md:col-span-2">
+              <ColorVariantManager
+                ref="colorVariantManager"
+                v-model="item.colors"
+              />
             </div>
 
             <!-- Description -->
@@ -513,8 +469,7 @@
                           shadow-md"
                     @click="addCategoryPicker"
                   >
-                    <i class="ri-add-fill"></i>
-                    Add Category
+                    <span class="text-gray-50"><i class="ri-add-fill"></i> Add Category</span>
                   </button>
                 </div>
 
@@ -542,7 +497,9 @@
                             shadow-sm"
                       @click="removeCategoryPicker(index)"
                     >
-                      <i class="ri-close-line text-sm"></i>
+                      <span class="text-gray-50">
+                        <i class="ri-close-line text-sm"></i>
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -635,8 +592,7 @@
               :disabled="!valid"
               @click="validate('Add')"
             >
-              <i class="ri-check-double-line mr-2"></i>
-              Add Rugby Merch
+              <span class="text-white"><i class="ri-check-double-line mr-2"></i> Add Rugby Merch</span>
             </button>
             <button
               type="button"
@@ -646,8 +602,7 @@
                     shadow-lg"
               @click="close"
             >
-              <i class="ri-close-line mr-2"></i>
-              Cancel
+              <span class="text-white"><i class="ri-close-line mr-2"></i> Cancel</span>
             </button>
           </div>
         </VForm>
@@ -675,7 +630,7 @@
             <h3 class="text-2xl font-bold bg-gradient-to-r from-green-600
             to-gray-800 bg-clip-text text-transparent"
             >
-              Edit Rugby Merch
+              {{ editMerchModalTitle }}
             </h3>
           </div>
 
@@ -783,8 +738,7 @@
                           shadow-md"
                     @click="addSizeVariant"
                   >
-                    <i class="ri-add-fill"></i>
-                    Add Size
+                    <span class="text-gray-50"><i class="ri-add-fill"></i> Add Size</span>
                   </button>
                 </div>
 
@@ -821,8 +775,20 @@
                               rounded-lg text-gray-700 focus:ring-2 focus:ring-green-500 
                               focus:border-green-500 transition-all duration-200"
                       >
-                        <option value="XS">
-                          XS
+                        <option value="K6">
+                          K6
+                        </option>
+                        <option value="K8">
+                          K8
+                        </option>
+                        <option value="K10">
+                          K10
+                        </option>
+                        <option value="K12">
+                          K12
+                        </option>
+                        <option value="K14">
+                          K14
                         </option>
                         <option value="S">
                           S
@@ -836,11 +802,17 @@
                         <option value="XL">
                           XL
                         </option>
-                        <option value="XXL">
-                          XXL
+                        <option value="2XL">
+                          2XL
                         </option>
-                        <option value="XXXL">
-                          XXXL
+                        <option value="3XL">
+                          3XL
+                        </option>
+                        <option value="4XL">
+                          4XL
+                        </option>
+                        <option value="5XL">
+                          5XL
                         </option>
                       </select>
                     </div>
@@ -905,7 +877,7 @@
                         @click="removeSizeVariant(index)"
                         title="Remove this size"
                       >
-                        <i class="ri-close-line text-sm"></i>
+                        <i class="ri-close-line text-sm text-gray-50"></i>
                       </button>
                     </div>
                   </div>
@@ -925,6 +897,14 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div class="col-span-1 md:col-span-2">
+              <ColorVariantManager
+                ref="colorVariantManager"
+                v-model="item.colors"
+                :product-id="item.id"
+              />
             </div>
 
             <!-- Description -->
@@ -959,8 +939,7 @@
                   transition-all duration-200 transform hover:scale-105"
                   @click="addCategoryPicker"
                 >
-                  <i class="ri-add-fill mr-2"></i>
-                  Add Category
+                  <span class="text-white"><i class="ri-add-fill mr-2"></i> Add Category</span>
                 </button>
               </div>
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -1054,10 +1033,9 @@
               transform hover:scale-105 disabled:opacity-50
               disabled:cursor-not-allowed disabled:transform-none"
               :disabled="!valid"
-              @click="validate('Edit')"
+              @click=" isEdit ? validate('Edit') : validate('Variant')"
             >
-              <i class="ri-check-line mr-2"></i>
-              Confirm Changes
+              <span class="text-white"><i class="ri-check-line mr-2"></i> {{ isEdit ? 'Confirm Changes' : 'Save Variant' }}</span>
             </button>
             <button
               type="button"
@@ -1066,71 +1044,85 @@
               duration-200 transform hover:scale-105"
               @click="closeEdit"
             >
-              <i class="ri-close-line mr-2"></i>
-              Cancel
+              <span class="text-white"><i class="ri-close-line mr-2"></i> Cancel</span>
             </button>
           </div>
         </VForm>
       </OModal>
 
     <!-- Remove merch item modal -->
-    <OModal
-      :active="showRemoveMerchItemModal"
-      @close="showRemoveMerchItemModal = false"
-    >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-        <h3 class="text-swd-red mb-3 font-bold">
-          Remove Merch Item {{ item.name }}
-        </h3>
-        <hr class="my-3">
-        <p class="text-center text-lg font-semibold">
-          Are you sure you want to delete this ?
-        </p>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-center">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-800
-              lg:mx-4 lg:w-48
-              "
-            @click="remove(editingNo)"
+     <OModal
+        :active="showRemoveMerchItemModal"
+        @close="showRemoveMerchItemModal = false"
+        class="flex items-center justify-center"
+      >
+        <div 
+          class="relative w-full max-w-lg bg-gray-900 border border-gray-700 overflow-hidden"
+          @click.stop
+        >
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-green-400 to-green-600"></div>
+
+          <div class="px-6 pt-5 pb-3 flex items-center gap-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/20 border border-red-500/30">
+              <i class="ri-delete-bin-6-line text-xl text-red-400"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-lg font-bold tracking-wide uppercase text-white">
+                Confirm Deletion
+              </h3>
+              <p class="text-sm text-green-400 font-medium truncate max-w-[220px]">
+                {{ item?.name || 'Unnamed Record' }}
+              </p>
+            </div>
+            <button 
+              type="button" 
+              @click="showRemoveMerchItemModal = false" 
+              class="ml-auto text-gray-400 hover:text-white transition-colors p-1"
+              aria-label="Close modal"
             >
-            Yes, remove it
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-              "
-            @click="closeRemove"
+            <span class="text-gray-400 hover:text-white">
+              <i class="ri-close-line text-xl"></i>
+            </span>
+            </button>
+          </div>
+
+          <hr class="border-gray-700/50">
+
+          <div class="px-6 py-4">
+            <div class="rounded-lg bg-gray-800/50 p-4 border border-gray-700/50">
+              <p class="text-gray-300 text-sm leading-relaxed">
+                You are about to permanently delete <span class="font-semibold text-white">{{ item?.name || 'this record' }}</span>.
+              </p>
+              <p class="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
+                <i class="ri-warning-line text-yellow-500"></i>
+                This action cannot be undone and will remove all associated data.
+              </p>
+            </div>
+          </div>
+
+          <div class="px-6 pb-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              @click="closeRemove"
+              class="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-gray-600 bg-gray-800 text-white font-semibold text-sm uppercase tracking-wide hover:bg-gray-700 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-gray-400"
             >
-            No
-          </button>
+              <span class="text-white">
+                Cancel
+              </span>
+            </button>
+            <button
+              type="button"
+              @click="remove(editingNo)"
+              class="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-red-500/50 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold text-sm uppercase tracking-wide hover:from-red-700 hover:to-red-800 hover:shadow-lg hover:shadow-red-500/20 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-red-400"
+            >
+                <span class="text-white">
+                  Delete Record
+                </span>
+            </button>
+          </div>
         </div>
-      </div>
-    </OModal>
+      </OModal>
+
     </div>
 </template>
 
@@ -1148,6 +1140,7 @@ import currencyMixin from '@/mixins/currency';
 import ImageUpload from '~/components/ImageUpload'
 import ImageUploadEdit from '~/components/ImageUploadEdit'
 import ManageItemThumbnailView from '~/components/ManageItemThumbnailView';
+import ColorVariantManager from '~/components/color/ColorVariantManager.vue'
 import Tiptap from '~/components/Wysiwyg/Tiptap';
 
 const toNumber = (str) => +str;
@@ -1160,7 +1153,8 @@ export default {
     ImageUpload,
     ImageUploadEdit,
     ManageItemThumbnailView,
-    CategorySlider
+    CategorySlider,
+    ColorVariantManager
   },
   mixins: [
     aosMixin,
@@ -1174,23 +1168,17 @@ export default {
       item: {
         name: '',
         stock: 0,
-        price: 0.00,
+        price: 0,
+        saleprice: 0,
         description: '',
+        colors: [],
       },
-      Taglist: [],
-      tags: [],
       multipleCategoryCounter: 1,
       multipleCategoryBuffer: [ 1 ],
       categoryLineages: [],
       selectedCategory: {},
-      tagQuery: '',
-      MerchItems: [],
-      myCroppa: {},
-      myEditCroppa: {},
-      showGenerateCreatedImageBtn: false,
-      showGenerateEditedImageBtn: false,
+      merchItems: [],
       rules: [ value => !!value || 'Required' ],
-      imgUrl: [],
       imgUrlEdit: [],
       imgList: [],
       imgListEdit: [],
@@ -1199,42 +1187,34 @@ export default {
       to: 0,
       totalPages: 0,
       totalItems: 0,
-      newsList: [],
       variant: '',
-      variantList: [],
-      myVariantList: [],
-      prodId: '',
       editingNo: null,
-      isNewsLoading: false,
-      isNewsAdded: false,
+      isMerchItemsLoading: false,
       showAddMerchItemModal: false,
-      showAddMerchVariantModal: false,
       showEditMerchItemModal: false,
       showRemoveMerchItemModal: false,
-      showAddVariant: false,
-      showShowVariant: false,
-      showModal: false,
-      headline: '',
       content: '',
       pageSEO: {
         title: 'Products - TFW9s',
         description: 'Products Page',
       },
-      adminpage: { title: 'Products Codes' },
       checkedVariants: [],
       sizeVariants: [],
+      isEdit: true, // True for editing item, false for adding variant
+      activeVariantItem: null,
+      variantBuffer: [],
+      toggleDebounceTimers: {},
+      pendingToggles: new Set(),
     };
   },
   head() {
     return { title: this.pageSEO.title };
   },
   computed: {
-    checkedVariantObjects() {
-      return this.variantList.filter(
-        variant => this.checkedVariants.includes(
-          variant.id
-        )
-      );
+    editMerchModalTitle: {
+      get() {
+        return this.isEdit ? 'Edit Rugby Merch' : 'Add Merch Variant'
+      },
     },
     categories: {
       get() {
@@ -1251,20 +1231,6 @@ export default {
       set(value) {
         this.$store.commit('shop/setPage', value);
       },
-    },
-    formattedTags() {
-      return this.Taglist.map(cat =>
-        ({
-          text: cat.name,
-          value: cat.id,
-        }));
-    },
-    filteredTags() {
-      return this.formattedTags.filter(cat =>
-        cat && cat.text && typeof cat.text === 'string' ?
-          cat.text.toLowerCase().includes(this.tagQuery.toLowerCase()):
-          false
-      )
     },
     sizePriceRange() {
       if (this.sizeVariants.length === 0) {
@@ -1301,10 +1267,88 @@ export default {
     this.page = 1
   },
   methods: {
+    // Show and hide product sa user side as per ben idea
+    handleToggleActive({ uid, active }) {
+      if (this.toggleDebounceTimers[uid]) {
+        clearTimeout(this.toggleDebounceTimers[uid])
+      }
+
+      if (this.pendingToggles.has(uid)) {
+        return
+      }
+
+      this.toggleDebounceTimers[uid] = setTimeout(() => {
+        this.performToggle(uid, active)
+        delete this.toggleDebounceTimers[uid]
+      }, 300)
+    },
+    async performToggle(uid, active) {
+      const previousState = active
+      this.pendingToggles.add(uid)
+
+      const itemIndex = this.merchItems.findIndex(item => item.uid === uid)
+      if (itemIndex !== -1) {
+        this.merchItems[itemIndex].active = active
+      }
+
+      try {
+        const response = await this.$axios.$post('v1/items/status', {
+          id: uid,
+          is_active: active,
+        })
+
+        this.$oruga.notification.open({
+          message: response.message,
+          variant: 'success',
+          duration: 5000,
+          position: 'bottom',
+          queue: true,
+        })
+      } catch (error) {
+        if (itemIndex !== -1) {
+          this.merchItems[itemIndex].active = previousState
+        }
+
+        if (error.response?.status === 429) {
+          const retryAfter = error.response.headers['retry-after'] || 5
+          this.$oruga.notification.open({
+            message: `Please wait ${retryAfter} seconds before trying again.`,
+            variant: 'warning',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          })
+        } else {
+          this.$oruga.notification.open({
+            message: error.response?.data?.message || 'Failed to update item status.',
+            variant: 'danger',
+            duration: 5000,
+            position: 'bottom',
+            queue: true,
+          })
+        }
+      } finally {
+        this.pendingToggles.delete(uid)
+        this.retrieveMerchItems()
+      }
+    },
+    appendColorData(formData) {
+      const colorManager = this.$refs.colorVariantManager
+      if (!colorManager) return
+      
+      const cleanColors = colorManager.getApiPayload()
+      if (cleanColors.length > 0) {
+        formData.append('color_variants', JSON.stringify(cleanColors))
+      }
+      
+      const files = colorManager.getColorImageFiles()
+      files.forEach(({ fieldName, file }) => {
+        formData.append(fieldName, file, file.name)
+      })
+    },
     addSizeVariant() {
-      /* eslint-disable camelcase */
       this.sizeVariants.push({
-        value: 'M',
+        value: 'K6',
         price_override: null,
         stock_quantity: 0,
         sku_suffix: '',
@@ -1319,7 +1363,10 @@ export default {
         this.create()
         return true;
       } else if (type === 'Edit') {
-        this.edit()
+        this.updateMerchItem()
+        return true;
+      } else if (type === 'Variant') {
+        this.addMerchVariant();
         return true;
       } else {
         return false;
@@ -1332,32 +1379,21 @@ export default {
     close() {
       this.showAddMerchItemModal = false;
     },
-    addMerchVariant() {
-      this.showAddMerchVariantModal = true;
-      this.reset()
-    },
-    closeVariant() {
-      this.showAddMerchVariantModal = false;
-    },
     closeEdit() {
       this.showEditMerchItemModal = false;
     },
     closeRemove() {
       this.showRemoveMerchItemModal = false;
     },
-    closeAddVariant() {
-      this.showAddVariant = false;
-    },
-    closeShowVariant() {
-      this.showShowVariant = false;
-    },
     retrieveMerchItems() {
-      this.isNewsLoading = true;
+      this.isMerchItemsLoading = true;
 
       const query = {
         q: this.query,
+        sort: 'a_to_z',
         page: this.page,
         category: this.$store.state.shop.selectedCategory,
+        item_variant: this.activeVariantItem,
       };
 
       Object.keys(query).forEach((key) => {
@@ -1370,14 +1406,14 @@ export default {
         .$get(`v1/items?${queryString}`)
         .then((response) => {
           this.$store.commit('admin/setTotalItems', response.data.total_items)
-          this.MerchItems = response.data.items
+          this.merchItems = response.data.items
           this.totalItems = response.data.total_items
           this.totalPages = response.data.last_page
           this.from = response.data.from
           this.to = response.data.to
         })
         .finally(() => {
-          this.isNewsLoading = false;
+          this.isMerchItemsLoading = false;
         });
     },
     addCategoryPicker() {
@@ -1390,10 +1426,6 @@ export default {
       if (index > -1) {
         this.multipleCategoryBuffer.splice(index, 1)
       }
-    },
-    resetCategoryPicker() {
-      this.multipleCategoryCounter = 1
-      this.multipleCategoryBuffer = [ 1 ]
     },
     getSelected() {
       const categories = []
@@ -1408,151 +1440,6 @@ export default {
     setPage(page) {
       this.page = page
       this.retrieveMerchItems()
-    },
-    handleCroppaFileSizeExceed(file) {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'File size exceeds. Please choose a file smaller than 32mb.',
-        position: 'bottom',
-        variant: 'danger',
-        queue: true,
-      });
-    },
-    handleCroppaFileTypeMismatch(file) {
-      this.$oruga.notification.open({
-        duration: 5000,
-        message: 'Invalid file type. Please choose a jpeg, png or webp file.',
-        position: 'bottom',
-        variant: 'danger',
-        queue: true,
-      });
-    },
-    /* ADD IMAGE */
-    zoomIn() {
-      this.myCroppa.zoomIn();
-    },
-    zoomOut() {
-      this.myCroppa.zoomOut();
-    },
-    rotateAnti() {
-      this.myCroppa.rotate(-1);
-    },
-    rotate() {
-      this.myCroppa.rotate();
-    },
-    flipx() {
-      this.myCroppa.flipX();
-    },
-    flipy() {
-      this.myCroppa.flipY();
-    },
-    setImagePreset() {
-      const metadata = this.myCroppa.getMetadata()
-      localStorage.setItem(
-        'metadata',
-        JSON.stringify(metadata)
-      );
-    },
-    clearImagePreset() {
-      localStorage.removeItem('metadata')
-      this.applyMetadata()
-    },
-    applyMetadata() {
-      this.$nextTick(() => {
-        const jsonMetadata = localStorage.getItem('metadata')
-        if (jsonMetadata !== null) {
-          const metadata = JSON.parse(jsonMetadata);
-          const currentMetadata = this.myCroppa.getMetadata()
-          currentMetadata.orientation = metadata.orientation
-          this.myCroppa.applyMetadata(currentMetadata);
-        }
-        // Force the canvas to update and display the metadata updates
-        this.myCroppa.moveUpwards(1)
-        this.myCroppa.moveDownwards(1)
-      })
-    },
-    applyEditMetadata() {
-      this.$nextTick(() => {
-        const jsonMetadata = localStorage.getItem('metadata')
-        if (jsonMetadata !== null) {
-          const metadata = JSON.parse(jsonMetadata);
-          const currentMetadata = this.myEditCroppa.getMetadata()
-          currentMetadata.orientation = metadata.orientation
-          this.myEditCroppa.applyMetadata(currentMetadata);
-        }
-        // Force the canvas to update and display the metadata updates
-        this.myEditCroppa.moveUpwards(1)
-        this.myEditCroppa.moveDownwards(1)
-      })
-    },
-    setEditImagePreset() {
-      const metadata = this.myEditCroppa.getMetadata()
-      localStorage.setItem(
-        'metadata',
-        JSON.stringify(metadata)
-      );
-    },
-    generateImage() {
-      this.myCroppa.generateBlob(
-        (blob) => {
-          this.imgUrl.push(URL.createObjectURL(blob));
-          this.imgList.push(blob)
-        },
-      );
-      this.myCroppa.refresh();
-    },
-    /** REMOVE IMAGE IN IMGURL AND IMGLIST */
-    removeImage(index) {
-      this.imgUrl.splice(index, 1)
-      this.imgList.splice(index, 1)
-    },
-    removeEditedImage(index) {
-      this.imgUrlEdit.splice(index, 1)
-      this.imgListEdit.splice(index, 1)
-    },
-    /** EDIT IMAGE */
-    zoomInEdit() {
-      this.myEditCroppa.zoomIn()
-    },
-    zoomOutEdit() {
-      this.myEditCroppa.zoomOut()
-    },
-    rotateAntiEdit() {
-      this.myEditCroppa.rotate(-1)
-    },
-    rotateEdit() {
-      this.myEditCroppa.rotate()
-    },
-    flipxEdit() {
-      this.myEditCroppa.flipX()
-    },
-    flipyEdit() {
-      this.myEditCroppa.flipY()
-    },
-    handleNewImage() {
-      this.showGenerateEditedImageBtn = true
-    },
-    handleImageRemove() {
-      this.showGenerateEditedImageBtn = false
-    },
-    handleNewImageCreate() {
-      this.showGenerateCreatedImageBtn = true;
-    },
-    handleImageRemoveCreate() {
-      this.showGenerateCreatedImageBtn = false;
-    },
-    generateEditedImage() {
-      this.myEditCroppa.generateBlob(
-        (blob) => {
-          this.imgUrlEdit.push(URL.createObjectURL(blob));
-          this.imgListEdit.push(blob);
-        }
-      );
-
-      this.myEditCroppa.refresh()
-    },
-    toDecimal(x) {
-      return Number.parseFloat(x/100).toFixed(2)
     },
     updateImage(image) {
       this.imgList = image
@@ -1575,12 +1462,10 @@ export default {
       form.append('isOnSale', this.item.is_on_sale)
       form.append('isRRP', this.item.show_rrp)
       
-      // Add categories
       for (let i = 0; i < categoryId.length; i++) {
         form.append('categoryId[]', categoryId[i]);
       }
       
-      // Add images
       for (let i = 0; i < this.imgList.length; i++) {
         form.append('photo[]', this.imgList[i], 'newsThumbnail.png');
       }
@@ -1597,14 +1482,14 @@ export default {
         form.append('size_variants', JSON.stringify(cleanedSizeVariants));
       }
 
+      this.appendColorData(form)
+
       form.append('selected_shippingid', '0')
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
       this.$axios
         .$post('/v1/items', form, config)
-        .then((response) => {
-          this.showAddNewsModal = false;
-          this.isNewsAdded = true;
+        .then(() => {
           this.$oruga.notification.open({
             message: 'Merch Item Added' + (this.sizeVariants.length > 0 ? ' with Size Variants' : ''),
             variant: 'success',
@@ -1626,52 +1511,32 @@ export default {
           });
         });
     },
-    saveVariant() {
-      const formData = new FormData();
-      formData.append('name', this.variant);
-
-      this.$axios
-        .$post('/v1/variant/itemvariant', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then(() => {
-          this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Variant added',
-            position: 'bottom',
-            variant: 'success',
-            queue: true,
-          });
-          this.showAddMerchVariantModal = false;
-          this.variant = '';
-        })
-    },
-    editMerchItem(index) {
+    retrieveMerchItem(index, type) {
       this.editingNo = toNumber(index);
       this.$axios
-        .$get(`v1/items/${this.editingNo}`)
+        .$get(`v1/items/${index}`)
         .then((response) => {
           this.item = response.data.item
           const categoryLineages = response.data.item.categoryLineages
           this.multipleCategoryCounter = categoryLineages.length
-          this.multipleCategoryBuffer = categoryLineages.map(((x, i) => i+1))
+          this.multipleCategoryBuffer = categoryLineages.map(((x,i) => i+1))
           this.categoryLineages = categoryLineages
-          this.imgUrlEdit = response.data.item.media.map((x) =>
-            `${this.$config.baseURL}/storage/${x.path}`);
-          // eslint-disable-next-line max-len, vue/max-len
+          this.imgUrlEdit = response.data.item.media.map((x) => `${this.$config.baseURL}/storage/${x.path}`);
           this.imgListEdit = response.data.item.media.map((x) => x.hash);
 
           this.sizeVariants = [];
-          if (response.data.item.size_variants && response.data.item.size_variants.length > 0) {
-            this.sizeVariants = response.data.item.size_variants.map(variant => ({
+          if (response.data.item.availableSizes && response.data.item.availableSizes.length > 0) {
+            this.sizeVariants = response.data.item.availableSizes.map(variant => ({
               id: variant.id,
-              value: variant.value,
-              price_override: variant.price_override ? parseFloat(variant.price_override) : null,
+              value: variant.size,
+              price_override: variant.price ? parseFloat(variant.price) : null,
               stock_quantity: variant.stock_quantity || 0,
-              sku_suffix: variant.sku_suffix || `-${variant.value}`,
+              sku_suffix: variant.sku || `-${variant.size}`,
               type: 'size'
             }));
-          } else if (response.data.item.available_sizes &&
-            response.data.item.available_sizes.length > 0) {
-            this.sizeVariants = response.data.item.available_sizes.map(size => ({
+          } else if (response.data.item.availableSizes &&
+            response.data.item.availableSizes.length > 0) {
+            this.sizeVariants = response.data.item.availableSizes.map(size => ({
               id: size.id,
               value: size.size,
               price_override: size.price !== response.data.item.price ?
@@ -1687,13 +1552,20 @@ export default {
             this.sizeVariants = sizeVariants.map(variant => ({
               id: variant.id,
               value: variant.value,
-              price_override: variant.price_override ? parseFloat(variant.price_override) : null,
+              price_override: variant.price ? parseFloat(variant.price) : null,
               stock_quantity: variant.stock_quantity || 0,
               sku_suffix: variant.sku || `-${variant.value}`,
               type: 'size'
             }));
           }
 
+          if (response.data.item.availableColors && Array.isArray(response.data.item.availableColors)) {
+            this.$set(this.item, 'colors', response.data.item.availableColors);
+          } else {
+            this.$set(this.item, 'colors', []);
+          }
+
+          this.isEdit = type === 'edit' ? true : false
           this.showEditMerchItemModal = true;
         })
         .catch((err) => {
@@ -1706,9 +1578,9 @@ export default {
           });
         });
     },
-    edit() {
+    updateMerchItem() {
       this.getSelected();
-      const editObject = this.MerchItems.find(
+      const editObject = this.merchItems.find(
         (item) => item.id === this.editingNo
       );
 
@@ -1733,7 +1605,6 @@ export default {
 
       if (this.sizeVariants.length > 0) {
         const cleanedSizeVariants = this.sizeVariants.map(size => ({
-          id: size.id,
           value: size.value,
           price_override: size.price_override ? parseFloat(size.price_override) : null,
           stock_quantity: parseInt(size.stock_quantity) || 0,
@@ -1744,13 +1615,14 @@ export default {
         form.append('size_variants', JSON.stringify(cleanedSizeVariants));
       }
 
+      this.appendColorData(form)
+
       form.append('selected_shippingid', '0')
       form.append('id', this.item.id);
       
       this.$axios
         .$post(`v1/items/${editObject.id}`, form)
-        .then((response) => {
-          this.showEditNewsModal = false;
+        .then(() => {
           this.$oruga.notification.open({
             message: 'Merch Item Updated' + (this.sizeVariants.length > 0 ? ' with Size Variants' : ''),
             variant: 'success',
@@ -1797,69 +1669,105 @@ export default {
           });
         })
     },
-    showVariant(index) {
-      this.myVariantList = [];
-      this.editingNo = toNumber(index);
-      this.prodId = this.editingNo;
-      this.$axios.$get(`v1/variant/${this.editingNo}`)
-        .then((response) => {
-          this.myVariantList = response.data.variant;
-        });
-      setTimeout(() => {
-        this.showShowVariant = true;
-      }, 1000);
-    },
-    removeMerchItem(index) {
-      this.editingNo = toNumber(index);
-      this.$axios.$get(`v1/items/${this.editingNo}`)
-        .then((response) => {
-          // eslint-disable-next-line max-len, camelcase, vue/max-len
-          this.item.name = response.data.item.name;
-        });
-      setTimeout(() => {
-        this.showRemoveMerchItemModal = true;
-      }, 1000);
-    },
-    removeVariant(variantId) {
+    addMerchVariant() {
+      this.getSelected();
+      const editObject = this.merchItems.find(
+        (item) => item.id === this.editingNo
+      );
+
+      const categoryId = this.selectedCategory.map(x => x.id);
+
+      const form = new FormData();
+      form.append('name', this.item.name)
+      form.append('stock', this.item.stock)
+      form.append('price', this.item.price)
+      form.append('salePrice', this.item.saleprice ? this.item.saleprice : 0)
+      form.append('description', this.item.description)
+      form.append('isFeatured', this.item.is_featured)
+      form.append('isHideOutOfStock', this.item.isHideOutOfStock)
+      form.append('isOnSale', this.item.is_on_sale)
+      form.append('isRRP', this.item.show_rrp)
+      for (let i = 0; i < categoryId.length; i++) {
+        form.append('categoryId[]', categoryId[i]);
+      }
+      for (let i = 0; i < this.imgListEdit.length; i++) {
+        form.append('photo[]', this.imgListEdit[i]);
+      }
+
+      if (this.sizeVariants.length > 0) {
+        const cleanedSizeVariants = this.sizeVariants.map(size => ({
+          value: size.value,
+          price_override: size.price_override ? parseFloat(size.price_override) : null,
+          stock_quantity: parseInt(size.stock_quantity) || 0,
+          sku_suffix: size.sku_suffix || `-${size.value}`,
+          type: 'size'
+        }));
+        
+        form.append('size_variants', JSON.stringify(cleanedSizeVariants));
+      }
+
+      this.appendColorData(form)
+
+      form.append('selected_shippingid', '0')
+      form.append('id', this.item.id);
+
       this.$axios
-        .$delete(`v1/variant/${variantId}`)
+        .$post(`v1/items/addVariant/${editObject.id}`, form)
         .then((response) => {
           this.$oruga.notification.open({
-            duration: 5000,
-            message: 'Item variant Deleted',
-            position: 'bottom',
+            message: response.title,
             variant: 'success',
+            duration: 5000,
+            position: 'bottom',
             queue: true,
           });
-          this.$axios.$get(`v1/variant/${this.prodId}`)
-            .then((res) => {
-              if (!res.data) {
-                this.showShowVariant = false;
-              } else {
-                this.myVariantList = res.data.variant;
-              }
-            })
-            .catch((error) => {
-              console.error('Error fetching variant:', error);
-            });
+          this.editingNo = '';
+          this.reset();
+          this.showEditMerchItemModal = false
+          this.retrieveMerchItems();
         })
-        .catch(() => {
+        .catch((err) => {
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Failed to remove item variant',
+            message: err.message,
             position: 'bottom',
             variant: 'danger',
             queue: true,
           });
         });
     },
-    remove(index) {
-      const editObject = this.MerchItems.find(
+    showVariants(index) {
+      this.variantBuffer.push(this.activeVariantItem)
+      console.log(this.variantBuffer);
+      this.activeVariantItem = index
+      this.retrieveMerchItems()
+    },
+    popVariantBuffer() {
+      if (this.variantBuffer.length > 0) {
+        const activeItem = this.variantBuffer.pop()
+        this.activeVariantItem = activeItem
+      } else {
+        this.activeVariantItem = null
+      }
+
+      this.retrieveMerchItems()
+    },
+    removeMerchItem(index) {
+      this.editingNo = toNumber(index);
+      this.$axios.$get(`v1/items/${this.editingNo}`)
+        .then((response) => {
+          this.item.name = response.data.item.name;
+        });
+      this.showRemoveMerchItemModal = true;
+
+    },
+    remove() {
+      const editObject = this.merchItems.find(
         (item) => item.id === this.editingNo
       );
       this.$axios
         .$delete(`/v1/items/${editObject.id}`)
-        .then((response) => {
+        .then(() => {
           this.$oruga.notification.open({
             duration: 5000,
             message: 'Merch Item Deleted',
@@ -1890,6 +1798,7 @@ export default {
         price: 0,
         saleprice: 0,
         stock: 0,
+        colors: [],
         is_featured: false,
         isHideOutOfStock: false,
         is_on_sale: false,
@@ -1900,6 +1809,9 @@ export default {
       this.sizeVariants = [];
       this.multipleCategoryBuffer = [];
     }
+  },
+  beforeDestroy() {
+    Object.values(this.toggleDebounceTimers).forEach(clearTimeout)
   },
 };
 

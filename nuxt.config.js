@@ -143,10 +143,10 @@ export default {
     { src: '~/plugins/PhotoshopPicker.js', mode: 'client' },
     { src: '~/plugins/vue-stripe.js', mode: 'client' },
     { src: '~/plugins/socket.js', mode: 'client' },
-    {
-      src: '~/plugins/version-check.client.js',
-      mode: 'client'
-    },
+    // {
+    //   src: '~/plugins/version-check.client.js',
+    //   mode: 'client'
+    // },
     { src: '~/plugins/dayjs.js' }
   ],
 
@@ -159,8 +159,6 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://go.nuxtjs.dev/eslint
-    '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
     '@nuxtjs/vuetify',

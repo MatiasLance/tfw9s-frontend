@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
+  <div class="w-screen min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
     <!-- Enhanced Header -->
     <BaseHeader
       class="mx-auto max-w-full gap-4 relative overflow-hidden
@@ -63,8 +63,9 @@
                      hover:text-white`"
                 @click="setTab(tab.name)"
               >
-                <i :class="tab.icon" class="mr-2"></i>
-                {{ tab.Label }}
+              <span class="text-white">
+                <i :class="tab.icon" class="mr-2"></i> {{ tab.Label }}
+              </span>
               </button>
             </div>
           </VueSlickCarousel>

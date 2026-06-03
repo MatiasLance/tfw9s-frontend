@@ -60,6 +60,7 @@
         :is-rrp="product.show_rrp"
         :is-on-sale="product.is_on_sale"
         :is-hide-out-of-stock="product.isHideOutOfStock"
+        :active="product.is_active"
         data-aos="fade-up"
         data-aos-offset="30"
       />

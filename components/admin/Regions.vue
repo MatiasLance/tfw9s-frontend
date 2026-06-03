@@ -23,8 +23,8 @@
                   ]"
                   @click="activeTab = tab.id"
                 >
-                  <i :class="getTabIcon(tab.id)" class="text-base"></i>
-                  <span class="whitespace-nowrap">{{ tab.label }}</span>
+                  <i :class="getTabIcon(tab.id)" class="text-base text-white"></i>
+                  <span class="whitespace-nowrap text-white">{{ tab.label }}</span>
                 </button>
               </div>
             </div>
@@ -40,8 +40,8 @@
                     flex items-center gap-2 whitespace-nowrap"
               @click="openAddRegionDialog"
             >
-              <i class="ri-add-line text-xl"></i>
-              Add Region
+              <i class="ri-add-line text-xl text-white"></i>
+              <span class="text-white">Add Region</span>
             </button>
           </div>
         </div>

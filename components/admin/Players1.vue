@@ -17,7 +17,7 @@
           sm:w-36"
           @click="openAddPlayerDialog"
           >
-            +
+            <span class="text-white">+</span>
           </button>
         </div>
         <div class="col-span-1 md:col-span-2"></div>

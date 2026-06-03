@@ -1,6 +1,12 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
     <div class="container mx-auto px-4 py-8">
+      <!-- Loading indicator -->
+      <LoadingAnimation
+        :is-loading="isLoading"
+        loading-title="Product"
+      />
+      
       <div class="grid gap-8 md:grid-cols-12">
         
         <!-- Product Gallery -->
@@ -18,7 +24,7 @@
             </div>
             
             <!-- Thumbnail Carousel -->
-            <div class="col-span-1" v-if="photos.length > 0">
+            <div class="col-span-1" v-if="photos && photos.length > 0">
               <VueSlickCarousel v-bind="imageCarouselSettings">
                 <div v-for="photo in photos" :key="photo.id">
                   <button
@@ -36,7 +42,7 @@
                     <img
                       class="h-14 w-14 object-cover rounded-lg"
                       :src="getMediaURL(photo)"
-                      :alt="`Product thumbnail - ${photo.id}`"
+                      :alt="`Product thumbnail - ${photo.id || 'image'}`"
                     >
                   </button>
                 </div>
@@ -54,7 +60,7 @@
           <header class="mb-8">
             <!-- Categories -->
             <div class="mb-4">
-              <span class="flex flex-row items-center gap-3 flex-wrap">
+              <span v-if="product.categories && product.categories.length" class="flex flex-row items-center gap-3 flex-wrap">
                 <span
                   v-for="category in product.categories"
                   :key="category.id"
@@ -63,7 +69,7 @@
                          border-green-500/30 text-green-300 text-sm"
                 >
                   <i class="ri-price-tag-3-line text-xs"></i>
-                  {{ category.name }}
+                  {{ category.name || category }}
                 </span>
               </span>
             </div>
@@ -72,7 +78,7 @@
             <h2 class="text-3xl md:text-5xl font-bold 
                        bg-gradient-to-r from-green-400 to-white 
                        bg-clip-text text-transparent mb-4">
-              {{ product.name }}
+              {{ product.name || 'Product Details' }}
             </h2>
           </header>
 
@@ -90,7 +96,7 @@
                 <span v-if="product.show_rrp"
                   class="text-2xl font-medium text-gray-400 line-through"
                 >
-                  {{ formatCurrency(product.price) }}
+                  {{ formatCurrency(product.price || 0) }}
                 </span>
                 <span class="text-4xl md:text-5xl font-bold text-green-400 
                              bg-gradient-to-r from-green-500/20 to-transparent 
@@ -158,57 +164,121 @@
               </label>
               
               <!-- Enhanced Size Options -->
-            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-              <button
-                type="button"
-                v-for="size in availableSizes"
-                :key="size.id"
-                @click="selectSize(size)"
-                :class="[
-                  'py-3 px-4 rounded-xl border-2 text-center transition-all' +
-                  'duration-300 transform font-semibold text-sm md:text-base',
-                  selectedSize && selectedSize.id === size.id
-                    ? 'border-green-400 bg-gradient-to-br from-green-500/30' +
-                    'to-green-600/20 text-green-100 shadow-lg shadow-green-500/20' +
-                    'scale-105 ring-2 ring-green-400/30'
-                    :
-                  size.in_stock
-                    ? 'border-gray-500 bg-gray-700/40 text-gray-100 hover:border-green-400' +
-                    'hover:bg-green-500/15 hover:scale-105 hover:shadow-md' +
-                    'hover:shadow-green-500/10'
-                    :
-                  'border-gray-700 bg-gray-800/20 text-gray-500' +
-                  'cursor-not-allowed line-through opacity-60'
-                ]"
-                :disabled="!size.in_stock"
+              <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                <button
+                  type="button"
+                  v-for="size in availableSizes"
+                  :key="size.id"
+                  @click="selectSize(size)"
+                  :class="[
+                    'py-3 px-4 rounded-xl border-2 text-center transition-all' +
+                    'duration-300 transform font-semibold text-sm md:text-base',
+                    selectedSize && selectedSize.id === size.id
+                      ? 'border-green-400 bg-gradient-to-br from-green-500/30' +
+                      'to-green-600/20 text-green-100 shadow-lg shadow-green-500/20' +
+                      'scale-105 ring-2 ring-green-400/30'
+                      :
+                    size.in_stock
+                      ? 'border-gray-500 bg-gray-700/40 text-gray-100 hover:border-green-400' +
+                      'hover:bg-green-500/15 hover:scale-105 hover:shadow-md' +
+                      'hover:shadow-green-500/10'
+                      :
+                    'border-gray-700 bg-gray-800/20 text-gray-500' +
+                    'cursor-not-allowed line-through opacity-60'
+                  ]"
+                  :disabled="!size.in_stock"
+                >
+                  <div class="flex flex-col items-center">
+                    <span class="font-medium">{{ size.size }}</span>
+                    <span v-if="size.price !== product.price" 
+                          class="text-xs mt-1 font-normal"
+                          :class="selectedSize && selectedSize.id === size.id 
+                                ? 'text-green-200 bg-green-500/20 px-1 rounded' 
+                                : 'text-gray-400'">
+                      {{ formatCurrency(size.price) }}
+                    </span>
+                    <span v-else
+                          class="text-xs mt-1 font-normal"
+                          :class="selectedSize && selectedSize.id === size.id 
+                                ? 'text-green-200 bg-green-500/20 px-1 rounded' 
+                                : 'text-gray-400'">
+                      {{ formatCurrency(product.price || 0) }}
+                    </span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color Selector (multi‑select) -->
+          <div
+            v-if="product.availableColors && product.availableColors.length > 0"
+            class="mb-6"
+          >
+            <label class="block text-lg font-semibold text-white mb-3">
+              <i class="ri-palette-line mr-2 text-green-400"></i>
+              Colours (select all you want):
+            </label>
+
+            <div class="flex flex-wrap gap-3">
+              <label
+                v-for="color in product.availableColors"
+                :key="color.id"
+                class="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 
+                      transition-all duration-300 transform hover:scale-110 
+                      cursor-pointer flex-shrink-0 overflow-visible"
+                :class="isColorSelected(color.name)
+                  ? 'border-white scale-110 shadow-lg shadow-green-400/40'
+                  : 'border-gray-500/50 hover:border-gray-300'"
               >
-                <div class="flex flex-col items-center">
-                  <span class="font-medium">{{ size.size }}</span>
-                  <span v-if="size.price !== product.price" 
-                        class="text-xs mt-1 font-normal"
-                        :class="selectedSize && selectedSize.id === size.id 
-                              ? 'text-green-200 bg-green-500/20 px-1 rounded' 
-                              : 'text-gray-400'">
-                    {{ formatCurrency(size.price) }}
-                  </span>
-                  <span v-else
-                        class="text-xs mt-1 font-normal"
-                        :class="selectedSize && selectedSize.id === size.id 
-                              ? 'text-green-200 bg-green-500/20 px-1 rounded' 
-                              : 'text-gray-400'">
-                    {{ formatCurrency(product.price) }}
-                  </span>
-                </div>
-              </button>
+                <!-- Hidden checkbox - this drives the state -->
+                <input
+                  type="checkbox"
+                  :value="color.name"
+                  v-model="product.selectedColors"
+                  class="sr-only"
+                  @change="handleColorSelection(color)"
+                />
+
+                <!-- Image-based color swatch -->
+                <img
+                  v-if="color.image_url && color.use_image"
+                  :src="color.image_url"
+                  :alt="color.name"
+                  class="w-full h-full object-cover rounded-full"
+                  @error="handleColorImageError(color)"
+                />
+
+                <!-- Hex-based color swatch -->
+                <span
+                  v-else
+                  class="block w-full h-full rounded-full"
+                  :style="{ backgroundColor: color.hexcode || '#888888' }"
+                ></span>
+
+                <!-- Selected checkmark badge -->
+                <span
+                  v-if="isColorSelected(color.name)"
+                  class="absolute -top-1.5 -right-1.5 w-5 h-5 
+                        bg-green-500 rounded-full flex items-center justify-center
+                        shadow-md border-2 border-white z-10"
+                >
+                  <i class="ri-check-line text-white text-xs font-bold"></i>
+                </span>
+              </label>
             </div>
-            </div>
+
+            <p class="text-sm text-gray-400 mt-3">
+              <i class="ri-information-line mr-1"></i>
+              You can choose more than one colour – each will be added as a separate item.
+            </p>
           </div>
 
           <!-- Description -->
           <div class="mb-8">
             <div class="rounded-xl bg-gray-700/30 p-4 border border-gray-600">
               <p class="product-description text-gray-200 leading-relaxed"
-                 v-html="product.description"
+                 v-html="product.description || 'No description available.'"
               ></p>
             </div>
           </div>
@@ -237,7 +307,7 @@
               
               <!-- Available Stock -->
               <div v-if="selectedSize" class="text-sm text-gray-400">
-                {{ selectedSize.stock_quantity }} available
+                {{ selectedSize.stock_quantity || 0 }} available
               </div>
             </div>
 
@@ -245,7 +315,7 @@
             <div class="flex flex-col gap-4">
               <!-- Primary Action -->
               <div class="flex gap-4">
-                <template v-if="product.has_variants && !hasSizeVariants">
+                <template v-if="product.hasVariants && product.variants.length > 0 && isVariantIsActive">
                   <button
                     type="button"
                     @click="viewVariantSlider"
@@ -263,7 +333,7 @@
                   </button>
                 </template>
                 
-                <template v-else>
+                <template>
                   <button
                     type="button"
                     :disabled="!canAddToCart"
@@ -297,8 +367,7 @@
                              hover:scale-105 active:scale-95 
                              flex items-center justify-center gap-2"
                     >
-                      <i class="ri-arrow-left-line"></i>
-                      Back
+                    <span class="text-white"><i class="ri-arrow-left-line"></i> Back</span>
                     </button>
                   </NuxtLink>
                 </template>
@@ -319,8 +388,10 @@
                            active:scale-95 flex items-center 
                            justify-center gap-2"
                   >
-                    <i class="ri-arrow-left-line"></i>
-                    Back to Shop
+                    <span class="text-gray-300">
+                      <i class="ri-arrow-left-line"></i>
+                      Back to Shop
+                    </span>
                   </button>
                 </NuxtLink>
               </div>
@@ -328,10 +399,9 @@
           </div>
         </div>
       </div>
-
       <!-- Variants Slider -->
       <div
-        v-if="product && product.has_variants && !hasSizeVariants"
+        v-if="product.hasVariants && product.variants.length > 0 && isVariantIsActive"
         ref="variantSlider"
         class="mt-12 p-6 bg-gradient-to-br from-gray-800 to-gray-900 
                rounded-2xl shadow-2xl border border-gray-700"
@@ -356,6 +426,7 @@ import handlesMedia from '~/mixins/shop/handlesMedia'
 import handlesCoordinates from '~/mixins/utilities/handlesCoordinates'
 import currencyMixin from '~/mixins/currency'
 import VariantSlider from '~/components/VariantSlider';
+import fallbackImage from '~/assets/images/the-final-whistle-logo.png'; 
 
 const slickSettings = {
   arrows: true,
@@ -416,57 +487,58 @@ export default {
         id: 0,
         name: '',
         description: '',
-        price: '',
-        salePrice: '',
-        stock: '',
+        price: 0,
+        saleprice: 0,
+        sale_price: 0,
+        stock: 0,
         parent: null,
         categories: [],
         tags: [],
         variants: [],
         related: [],
+        media: [],
+        colors: [],
         /* eslint-disable camelcase */   
         has_variants: false,
         size_variants: [],
         available_sizes: [],
+        is_on_sale: false,
+        show_rrp: false,
+        selectedColors: []
       },
       showOutOfStock: true,
-      activeImageURL: '',
+      activeImageURL: fallbackImage,
       photos: [],
       quantity: 1,
       imageCarouselSettings: slickSettings,
       selectedSize: null,
+      isLoading: false
     };
   },
   computed: {
-    cartItems: {
-      get() {
-        return this.$store.state.cart.cart
-      },
+    isVariantIsActive() {
+      return this.product.variants.some(variant => variant.is_active);
     },
-    cartCount: {
-      get() {
-        return this.$store.getters['cart/cartCount']
-      },
+    hasSelectedColors() {
+      return this.product.selectedColors && this.product.selectedColors.length > 0
     },
-    
-    // NEW: Computed properties for size variants
     hasSizeVariants() {
-      return (this.product.size_variants && this.product.size_variants.length > 0) || 
-             (this.product.available_sizes && this.product.available_sizes.length > 0);
+      return (this.product.availableSizes && this.product.availableSizes.length > 0) || 
+             (this.product.hasSizeVariants && this.product.availableSizes.length > 0);
     },
     
     availableSizes() {
-      if (this.product.size_variants && this.product.size_variants.length > 0) {
-        return this.product.size_variants.map(variant => ({
+      if (this.product.availableSizes && this.product.availableSizes.length > 0) {
+        return this.product.availableSizes.map(variant => ({
           id: variant.id,
-          size: variant.value,
-          price: variant.price_override || this.product.price,
-          stock_quantity: variant.stock_quantity,
-          in_stock: variant.stock_quantity > 0,
-          sku: variant.sku
+          size: variant.value || variant.size,
+          price: variant.price_override || variant.price || this.product.price || 0,
+          stock_quantity: variant.stock_quantity || 0,
+          in_stock: (variant.stock_quantity || 0) > 0,
+          sku: variant.sku || ''
         }));
-      } else if (this.product.available_sizes && this.product.available_sizes.length > 0) {
-        return this.product.available_sizes;
+      } else if (this.product.availableSizes && this.product.availableSizes.length > 0) {
+        return this.product.availableSizes.map(s => ({ ...s, in_stock: s.in_stock !== false }));
       }
       return [];
     },
@@ -475,63 +547,53 @@ export default {
       if (!this.hasSizeVariants) return '';
       
       const prices = this.availableSizes
-        .filter(size => size.in_stock)
-        .map(size => size.price);
+        .filter(size => size && size.in_stock)
+        .map(size => Number(size.price) || 0);
       
       if (prices.length === 0) return 'No sizes in stock';
       
       const minPrice = Math.min(...prices);
       const maxPrice = Math.max(...prices);
       
+      if (!isFinite(minPrice) || !isFinite(maxPrice)) return '';
+
       if (minPrice === maxPrice) {
         return `All sizes: ${this.formatCurrency(minPrice)}`;
       }
-      
       return `Prices from ${this.formatCurrency(minPrice)} to ${this.formatCurrency(maxPrice)}`;
     },
     
     displayPrice() {
-      if (this.selectedSize) {
-        return this.formatCurrency(this.selectedSize.price);
-      }
-      return this.formatCurrency(this.product.price);
+      const price = this.selectedSize ? this.selectedSize.price : this.product.price;
+      return this.formatCurrency(price || 0);
     },
     
     displaySalePrice() {
       if (this.selectedSize) {
-        const salePrice = this.product.saleprice || this.product.price;
-        const sizePrice = this.selectedSize.price;
-        const basePrice = this.product.price;
-        
-        // Calculate sale price based on size override
+        const baseSale = this.product.saleprice || this.product.sale_price || this.product.price || 0;
+        const sizePrice = this.selectedSize.price || 0;
+        const basePrice = this.product.price || 0;
         if (sizePrice !== basePrice) {
-          const priceDifference = sizePrice - basePrice;
-          return this.formatCurrency(salePrice + priceDifference);
+          return this.formatCurrency(baseSale + (sizePrice - basePrice));
         }
-        return this.formatCurrency(salePrice);
+        return this.formatCurrency(baseSale);
       }
-      return this.formatCurrency(this.product.saleprice);
+      return this.formatCurrency(this.product.saleprice || this.product.sale_price || 0);
     },
     
     hasStock() {
-      if (this.selectedSize) {
-        return this.selectedSize.in_stock;
-      }
-      return this.product.stock > 0;
+      if (this.selectedSize) return this.selectedSize.in_stock;
+      return (Number(this.product.stock) || 0) > 0;
     },
     
     stockStatus() {
-      if (this.selectedSize) {
-        return `${this.selectedSize.stock_quantity} in stock`;
-      }
-      return `${this.product.stock} in stock`;
+      if (this.selectedSize) return `${this.selectedSize.stock_quantity || 0} in stock`;
+      return `${this.product.stock || 0} in stock`;
     },
     
     maxQuantity() {
-      if (this.selectedSize) {
-        return this.selectedSize.stock_quantity;
-      }
-      return this.product.stock;
+      if (this.selectedSize) return this.selectedSize.stock_quantity || 1;
+      return Number(this.product.stock) || 1;
     },
     
     canAddToCart() {
@@ -548,18 +610,66 @@ export default {
   watch: {
     $route() {
       this.retrieveItem(this.$route.query.id);
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth',
-      });
+      // SSR Guard for window object
+      if (process.client) {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'smooth',
+        });
+      }
     }
   },
   mounted() {
     this.retrieveItem(this.$route.query.id);
   },
   methods: {
+    handleColorSelection(color) {
+      const isSelected = this.isColorSelected(this.getColorValue(color));
+      
+      if (isSelected && color.use_image) {
+        const imageUrl = (color.preview && color.preview.type === 'image') 
+          ? color.preview.value 
+          : color.image_url;
+          
+        if (imageUrl) {
+          this.activeImageURL = imageUrl;
+        }
+      } else if (!isSelected) {
+        const media = this.product.media || [];
+        if (media.length > 0) {
+          this.activeImageURL = this.getMediaURL(media[0]);
+        }
+      }
+    },
+
+    getColorValue(color) {
+      if (!color) return '';
+      if (typeof color === 'object' && color !== null) {
+        return color.id || color.name || color.value || color.slug || color;
+      }
+      return color;
+    },
+
+    handleColorImageError(color) {
+      this.$set(color, 'image_url', null);
+    },
+
+    getColorName(color) {
+      const val = this.getColorValue(color)
+      const hexToName = {
+        '#000000': 'Black',
+        '#ffffff': 'White',
+        '#002147': 'Navy',
+        '#c8102e': 'Red',
+      }
+      return hexToName[val] || val
+    },
+    isColorSelected(colorName) {
+      return this.product.selectedColors && this.product.selectedColors.includes(colorName);
+    },
     viewVariantSlider() {
+      if (!process.client || !this.$refs.variantSlider) return;
       const sliderCoordinates = this.getCoordinates(this.$refs.variantSlider)
       window.scrollTo({
         top: sliderCoordinates.top,
@@ -567,28 +677,83 @@ export default {
         behavior: 'smooth',
       })
     },
+
     setActiveMedia(path) {
-      this.activeImageURL = this.getMediaURL(path)
+      if (!path) return;
+      this.activeImageURL = this.getMediaURL ? this.getMediaURL(path) : path;
     },
     retrieveItem(itemId) {
+      if (!itemId) return;
+      this.isLoading = true;
       this.$axios
         .$get(`v1/items/${itemId}`)
         .then((response) => {
-          this.product = response.data.item
-          if (this.product.stock === 0) {
-            this.quantity = 0
+          const item = response && response.data ? response.data.item : response;
+          if (!item) {
+            this.isLoading = false;
+            return;
           }
-          this.activeImageURL = this.getMediaURL(this.product.media[0])
-          this.photos = this.product.media
+
+          // Merge with defaults to prevent undefined properties
+          this.product = Object.assign({}, this.product, item, {
+            categories: item.categories || [],
+            tags: item.tags || [],
+            variants: item.variants || [],
+            related: item.related || [],
+            media: item.media || [],
+            colors: item.colors || [],
+            selectedColors: []
+          });
+
+          const stock = Number(this.product.stock) || 0;
+          if (stock === 0) this.quantity = 0;
+
+          // Safe image handling
+          const media = this.product.media || [];
+          this.photos = media;
+          if (media.length > 0) {
+            this.activeImageURL = this.getMediaURL(media[0]);
+          } else {
+            this.activeImageURL = fallbackImage;
+          }
           
-          // NEW: Auto-select first available size
+          // Auto-select first available size
           if (this.hasSizeVariants) {
-            const firstAvailableSize = this.availableSizes.find(size => size.in_stock);
+            const firstAvailableSize = this.availableSizes.find(size => size && size.in_stock);
             if (firstAvailableSize) {
               this.selectedSize = firstAvailableSize;
             }
           }
+
+          this.$set(this.product, 'selectedColors', []);
+
+          const variants = this.product.variants || this.product.related || [];
+          this.colorVariantMap = {};
+          variants.forEach(variant => {
+            if (Array.isArray(variant.colors)) {
+              variant.colors.forEach(c => {
+                const key = c.toLowerCase();
+                if (!this.colorVariantMap[key]) {
+                  this.colorVariantMap[key] = variant.id;
+                }
+              });
+            }
+          });
+
+          // Logic ni para e select niya tanan available color variant (Optional lang ni ug gusto ka mang bwesit ug PM)
+          // if (this.product.availableColors && this.product.availableColors.length > 0) {
+          //   const activeNames = this.product.availableColors
+          //     .filter(c => c.is_active !== false)
+          //     .map(c => c.name);
+          //   this.$set(this.product, 'selectedColors', activeNames);
+          // }
+
+          this.isLoading = false;
         })
+        .catch((err) => {
+          console.error('Error fetching product:', err);
+          this.isLoading = false;
+        });
     },
     handleHighStockValue() {
       const maxQty = this.maxQuantity;
@@ -597,12 +762,9 @@ export default {
       }
     },
     
-    // NEW: Size selection method
     selectSize(size) {
-      if (!size.in_stock) return;
-      
+      if (!size || !size.in_stock) return;
       this.selectedSize = size;
-      // Reset quantity to 1 when size changes
       this.quantity = 1;
     },
     
@@ -615,6 +777,65 @@ export default {
           variant: 'warning',
           queue: true,
         });
+        return;
+      }
+
+      if (this.product.colors && this.product.colors.length > 0 && this.product.selectedColors.length === 0) {
+        this.$oruga.notification.open({
+          duration: 3000,
+          message: 'Please select a colour',
+          position: 'bottom',
+          variant: 'warning',
+          queue: true,
+        });
+        return;
+      }
+
+      // If multi-select colors are available, add one cart item per selected color
+      if (this.product.selectedColors && this.product.selectedColors.length > 0) {
+        this.product.selectedColors.forEach((colorName) => {
+          
+          const colorObj = this.product.availableColors.find(
+            c => c.name === colorName
+          );
+          const image = colorObj ? colorObj.image_url : null;
+          
+          
+          const cartItem = {
+            id: this.product.id,
+            quantity: parseInt(this.quantity),
+            stock: this.maxQuantity,
+            shippingOption: 0,
+            color: colorName,
+            image: image,
+            use_image: colorObj.use_image
+          };
+
+          if (this.selectedSize) {
+            cartItem.size_variant_id = this.selectedSize.id;
+            cartItem.size = this.selectedSize.size;
+            cartItem.variant_sku = this.selectedSize.sku;
+          }
+
+          this.$store.dispatch('cart/addItemToCart', cartItem).catch((error) => {
+            this.$oruga.notification.open({
+              duration: 5000,
+              message: error.message || 'Item quantity in cart cannot exceed item stock',
+              position: 'bottom',
+              variant: 'danger',
+              queue: true,
+            });
+          });
+        });
+
+        this.$oruga.notification.open({
+          duration: 2000,
+          message: `${this.product.selectedColors.length} item(s) added to cart`,
+          position: 'bottom',
+          variant: 'success',
+          queue: true,
+        });
+        this.$router.push('/cart');
         return;
       }
 
@@ -662,9 +883,6 @@ export default {
 .v-btn:not(.v-btn--round).v-size--large {
   height: 62px;
 }
-</style>
-
-<style>
 .product-description p {
   min-height: 1.5rem;
 }

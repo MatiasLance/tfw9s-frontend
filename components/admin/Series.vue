@@ -24,7 +24,7 @@
               sm:w-36"
               @click="openAddSeriesDialog"
           >
-            +
+            <span class="text-white">+</span>
           </button>
 
           <button
@@ -39,7 +39,7 @@
               sm:w-36"
               @click="openEditThumbnailDialog"
           >
-            Edit Thumbnail
+          <span class="text-white">Edit Thumbnail</span>
           </button>
         </div>
 

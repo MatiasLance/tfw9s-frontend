@@ -314,10 +314,10 @@
 
       <button
         type="submit"
-        class="w-24 cursor-pointer bg-brand-black py-2 text-white"
+        class="w-24 cursor-pointer bg-brand-black py-2"
         :disabled="isLoading"
       >
-        <span v-if="!isLoading">
+        <span class="text-white" v-if="!isLoading">
           Confirm
         </span>
         <span v-if="isLoading">

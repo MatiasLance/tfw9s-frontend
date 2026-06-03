@@ -4,7 +4,7 @@
       <ul class="list-style-none page-numbers flex flex-wrap justify-end gap-2">
         <li class="page-item text-sm">
           <BasePaginationButton @click="setPage('prev')">
-            <i class="ri-arrow-left-s-line"></i>
+            <i class="ri-arrow-left-s-line text-white"></i>
           </BasePaginationButton>
         </li>
         <li
@@ -16,12 +16,12 @@
             :active="page == activePage"
             @click="setPage(page)"
           >
-            {{ page }}
+            <span class="text-white">{{ page }}</span>
           </BasePaginationButton>
         </li>
         <li class="page-item text-sm">
           <BasePaginationButton @click="setPage('next')">
-            <i class="ri-arrow-right-s-line"></i>
+            <i class="ri-arrow-right-s-line text-white"></i>
           </BasePaginationButton>
         </li>
       </ul>

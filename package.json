@@ -7,10 +7,6 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
-    "lint": "npm run lint:js",
-    "lint-fix:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore --fix .",
-    "lint-fix": "npm run lint-fix:js",
     "test": "jest"
   },
   "dependencies": {
@@ -47,7 +43,6 @@
     "vue": "^2.6.14",
     "vue-color": "^2.8.1",
     "vue-croppa": "^1.3.8",
-    "vue-eslint-parser": "^8.2.0",
     "vue-inner-image-zoom": "^1.1.1",
     "vue-server-renderer": "^2.6.14",
     "vue-slick-carousel": "^1.0.6",
@@ -59,10 +54,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.14.7",
     "@nuxt/postcss8": "^1.1.3",
-    "@nuxtjs/eslint-config": "^6.0.1",
-    "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/tailwindcss": "^4.2.1",
     "@nuxtjs/vuetify": "^1.12.3",
     "@tailwindcss/forms": "^0.5.2",
@@ -73,11 +65,6 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^27.4.4",
     "babel-plugin-transform-remove-console": "^6.9.4",
-    "eslint": "^7.29.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-nuxt": "^2.0.0",
-    "eslint-plugin-tailwindcss": "^3.17.5",
-    "eslint-plugin-vue": "^7.20.0",
     "jest": "^27.4.4",
     "postcss": "^8.4.14",
     "prettier": "^2.5.1",

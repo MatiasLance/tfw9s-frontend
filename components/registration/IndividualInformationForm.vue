@@ -196,7 +196,7 @@
     <hr class="my-4" />
 
     <div class="grid gap-x-3 lg:grid-cols-2">
-      <div class="mb-4">
+      <div class="mb-4 relative">
         <label class="mb-1 block"> Player First Name* </label>
         <input
           v-model="player.firstName"
@@ -214,7 +214,29 @@
           type="text"
           placeholder="Player First Name"
           required
+          @focus="showSuggestions = suggestions.length > 0"
+          @blur="hideSuggestions"
         />
+
+        <!-- Suggestions dropdown -->
+        <ul
+          v-if="showSuggestions && suggestions.length > 0"
+          class="
+            absolute z-10 w-full
+            bg-white border border-gray-200
+            rounded-b shadow-lg
+            max-h-48 overflow-y-auto
+          "
+        >
+          <li
+            v-for="suggestion in suggestions"
+            :key="suggestion.id"
+            class="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
+            @mousedown.prevent="selectSuggestion(suggestion)"
+          >
+            {{ suggestion.name }}
+          </li>
+        </ul>
       </div>
 
       <div class="mb-4">
@@ -421,6 +443,9 @@ export default {
       team: [],
       isPlayerLimitReached: false,
       cropping: false,
+      suggestions: [],
+      showSuggestions: false,
+      debounceTimer: null,
     }
   },
   computed: {
@@ -445,6 +470,11 @@ export default {
         this.$store.commit('registration/setBase64IMG', v);
       },
     },
+  },
+  watch: {
+    'player.firstName'(newVal) {
+      this.debounceSuggest();
+    }
   },
   created() {
     this.retrieveAgeGroups();
@@ -600,6 +630,47 @@ export default {
           this.player.ageGroup = this.team.agegroup_id
           this.player.discountCodeId = this.team.discount_codes_id
         })
+    },
+
+    async fetchSuggestions(query) {
+      if (!query || query.length < 2) {
+        this.suggestions = [];
+        this.showSuggestions = false;
+        return;
+      }
+
+      try {
+        const { data } = await this.$axios.$get('v1/players/name/suggest', {
+          params: { q: query }
+        });
+        this.suggestions = data.suggestions;
+        this.showSuggestions = this.suggestions.length > 0;
+      } catch (error) {
+        console.error('Error fetching suggestions:', error);
+        this.suggestions = [];
+        this.showSuggestions = false;
+      }
+    },
+
+    debounceSuggest() {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = setTimeout(() => {
+        this.fetchSuggestions(this.player.firstName);
+      }, 300);
+    },
+
+    selectSuggestion(suggestion) {
+      console.log(suggestion)
+      this.player.firstName = suggestion.first_name;
+      this.player.lastName = suggestion.last_name;
+      this.suggestions = [];
+      this.showSuggestions = false;
+    },
+
+    hideSuggestions() {
+      setTimeout(() => {
+        this.showSuggestions = false;
+      }, 200);
     },
   }
 }

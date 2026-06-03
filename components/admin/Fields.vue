@@ -13,7 +13,7 @@
               text-center font-semibold text-white"
               @click="showAddFieldModal = true"
             >
-              +
+              <span class="text-white">+</span>
             </button>
           </div>
 

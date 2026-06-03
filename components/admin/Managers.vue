@@ -17,7 +17,7 @@
           sm:w-36"
           @click="openAddManagerDialog"
         >
-          +
+          <span class="text-white">+</span>
         </button>
         </div>
         <div

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-full bg-[#1A1A1B] pt-8">
+  <div class="w-screen min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
     <BaseHeader
       class="mx-auto max-w-full gap-4 relative overflow-hidden
       bg-gradient-to-br from-green-900 via-green-700 to-gray-900

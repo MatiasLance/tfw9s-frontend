@@ -36,6 +36,36 @@
                 Size: {{ size }}
               </span>
             </div>
+
+            <!-- Color badge -->
+            <div v-if="color" class="mt-3">
+              <span class="group inline-flex items-center gap-2.5 px-3.5 py-1.5 
+                          rounded-full bg-gradient-to-r from-emerald-500/10 to-teal-500/20 
+                          border border-emerald-400/30 backdrop-blur-md
+                          shadow-sm shadow-emerald-500/10
+                          hover:shadow-md hover:shadow-emerald-500/20 hover:border-emerald-400/50 hover:scale-[1.02]
+                          transition-all duration-300 ease-out cursor-default">
+                
+                <img v-if="colorImage && useImage"
+                    :src="colorImage"
+                    class="w-5 h-5 rounded-full object-cover ring-2 ring-white/20 shadow-inner"
+                    :alt="`${color} visual`" />
+                    
+                <span v-else
+                      class="w-4 h-4 rounded-full ring-2 ring-white/20"
+                      :style="{ 
+                        backgroundColor: color, 
+                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 -1px 2px rgba(255,255,255,0.2)' 
+                      }"
+                      role="img"
+                      :aria-label="`Color swatch for ${color}`"></span>
+
+                <span class="flex items-baseline gap-1.5">
+                  <span class="text-emerald-200/60 text-[11px] font-semibold uppercase tracking-wider">Color:</span>
+                  <span class="text-white text-sm font-bold">{{ color }}</span>
+                </span>
+              </span>
+            </div>
             
             <div class="grid grid-cols-2 gap-3 mt-3">
               <span
@@ -95,7 +125,7 @@
                  transition-all duration-200"
           @click="removeItem"
         >
-          <i class="ri-close-line text-xl"></i>
+          <i class="ri-close-line text-xl text-white"></i>
         </button>
       </div>
     </div>
@@ -103,11 +133,11 @@
 </template>
 
 <script>
-import currency from 'currency.js'
+import currency from 'currency.js';
 import currencyMixin from '~/mixins/currency';
 
 export default {
-  mixins: [ currencyMixin ],
+  mixins: [currencyMixin],
   props: {
     uid: {
       type: Number,
@@ -123,11 +153,11 @@ export default {
     },
     saleprice: {
       type: Number,
-      required: true
+      required: true,
     },
     isOnSale: {
-      type: [ Boolean, Number ],
-      required: true
+      type: [Boolean, Number],
+      required: true,
     },
     stock: {
       type: Number,
@@ -147,88 +177,73 @@ export default {
     },
     size: {
       type: String,
-      default: null
+      default: null,
     },
     sizeVariantId: {
-      type: [ String, Number ],
-      default: null
-    }
+      type: [String, Number],
+      default: null,
+    },
+    color: {
+      type: String,
+      default: null,
+    },
+    colorImage: {
+      type: String,
+      default: null,
+    },
+    useImage: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       editableQuantity: 1,
-      originalPrice: this.price,
-      finalPrice: this.isOnSale ? this.saleprice : this.price
-    }
+      finalPrice: this.isOnSale ? this.saleprice : this.price,
+    };
   },
   computed: {
-    totalItemCost: {
-      get() {
-        return currency(this.editableQuantity, { fromCents: false })
-          .multiply(this.finalPrice)
-      },
+    totalItemCost() {
+      return currency(this.editableQuantity, { fromCents: false }).multiply(
+        this.finalPrice
+      );
     },
-    
-    // NEW: Check if this item has a size variant
     hasSizeVariant() {
       return this.size !== null && this.sizeVariantId !== null;
     },
-    
-    // NEW: Show price difference info for size variants
-    showSizePriceDifference() {
-      return this.hasSizeVariant && this.finalPrice !== this.originalPrice;
-    }
   },
   mounted() {
     this.editableQuantity = this.quantity;
-    this.updatePrices();
   },
   methods: {
-    updatePrices() {
-      this.originalPrice = this.price;
-      this.finalPrice = this.isOnSale ? this.saleprice : this.price;
-    },
-    
     quantityChanged() {
-      // UPDATED: Include size variant ID in the emit
-      /* eslint-disable camelcase */
       const changeData = {
         id: this.uid,
-        quantity: parseInt(this.editableQuantity)
+        quantity: parseInt(this.editableQuantity),
       };
-
-      // Only add size_variant_id if it exists
       if (this.sizeVariantId) {
         changeData.size_variant_id = this.sizeVariantId;
       }
-      
+      if (this.color) {
+        changeData.color = this.color;
+      }
       this.$emit('change', changeData);
     },
-    
     removeItem() {
-      // UPDATED: Maintain backward compatibility
-      // If no size variant, emit just the ID (old format)
-      // If has size variant, emit object with id and size_variant_id
-      if (this.hasSizeVariant) {
-        this.$emit('remove', {
-          id: this.uid,
-          size_variant_id: this.sizeVariantId
-        });
-      } else {
-        // Emit just the ID for backward compatibility
-        this.$emit('remove', this.uid);
-      }
+      this.$emit('remove', {
+        id: this.uid,
+        size_variant_id: this.hasSizeVariant ? this.sizeVariantId : null,
+        color: this.color,
+      });
     },
-    
     handleHighStockValue() {
       if (this.editableQuantity > this.stock) {
         this.editableQuantity = this.stock;
       }
-
       if (this.editableQuantity <= 0) {
         this.editableQuantity = 0;
       }
-    }
+    },
   },
-}
+};
 </script>

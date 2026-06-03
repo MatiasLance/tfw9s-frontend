@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <template>
-  <div class="w-screen min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+  <div class="w-screen min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
     <!-- Subtle Background Elements -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <!-- Rugby Field Lines -->
