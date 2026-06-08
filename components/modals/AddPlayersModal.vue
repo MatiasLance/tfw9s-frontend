@@ -159,7 +159,7 @@
                     </div>
                   </div>  
                 </div>
-                <div class="col-span-1 md:col-span-2">
+                <div class="col-span-1 md:col-span-2 mb-4">
                   <ImageUpload
                      @update-image="updateImage"
                   />

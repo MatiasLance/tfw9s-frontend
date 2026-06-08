@@ -141,19 +141,25 @@
               <button
                 type="button"
                 class="
-                  border-brand-black
+                  flex items-center justify-center
+                  border border-solid border-brand-black
                   bg-brand-black
-                  flex
-                  items-center justify-center border
-                  border-solid
-                  px-4
-                  py-2
+                  px-4 py-2
                   text-white
+                  rounded-md
+                  transition-all duration-200 ease-in-out
+                  hover:bg-gray-900 hover:border-gray-900
+                  hover:shadow-lg hover:shadow-black/20
+                  hover:-translate-y-0.5
+                  active:scale-95 active:translate-y-0 active:shadow-md
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-black
                 "
                 @click="addMatchForm"
               >
-                <i class="ri-add-fill"></i>
-                Add Match
+                <span class="flex items-center gap-1.5 text-white">
+                  <i class="ri-add-fill"></i>
+                  Add Match
+                </span>
               </button>
             </div>
             <div

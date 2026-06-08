@@ -13,91 +13,113 @@
               text-center font-semibold text-white"
               @click="showAddFieldModal = true"
             >
-              <span class="text-white">+</span>
+              <span class="text-white">+ Add Fields</span>
             </button>
           </div>
 
           <!-- Pagination Info -->
-          <div
+           <div
             v-if="totalPages > 0"
-            class="col-span-1 flex flex-wrap items-center
-            justify-around gap-x-2 md:justify-between"
+            class="flex flex-col gap-4 sm:flex-row sm:items-center 
+                  sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
+                  rounded-2xl p-6 border border-green-500/20 shadow-lg"
             data-aos="flip-up"
-            data-aos-once="true"
           >
-            <span class="font-medium text-white">
-              Showing {{ from }}-{{ to }} of {{ totalItems }} items
-            </span>
+            <div class="flex items-center gap-3">
+              <div class="bg-green-600/20 rounded-lg p-2">
+                <i class="ri-list-check text-green-400 text-lg"></i>
+              </div>
+              <span class="text-gray-300 font-medium">
+                Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+                of <span class="font-bold text-green-400">{{ totalItems }}</span> fields
+              </span>
+            </div>
+            
             <VPagination
               v-model="page"
               :length="totalPages"
               :total-visible="7"
+              class="text-white"
               color="success"
               dark
-              class="text-white"
               @change="retrieveFields"
             />
           </div>
 
           <!-- Table Header -->
           <section class="col-span-1">
-            <div class="grid grid-cols-1 overflow-x-scroll
-            overflow-y-hidden md:overflow-x-hidden"
-            >
+            <div class="overflow-x-auto bg-gray-800 border border-green-500/20 rounded-2xl">
+              <!-- Header -->
               <div
                 v-if="totalPages > 0"
-                class="col-span-1 flex w-[640px] pr-24 md:w-auto"
-                data-aos="flip-up"
+                class="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-900 border-b border-green-500/30"
               >
-                <span class="flex-1 px-4 py-2 text-[20px]
-                font-semibold text-[#555555]"
-                >
+                <span class="col-span-5 text-left text-sm font-semibold text-green-400 uppercase tracking-wide">
                   Field
                 </span>
-                <span class="flex-1 px-4 py-2 text-[20px]
-                font-semibold text-[#555555]"
-                >
+                <span class="col-span-5 text-left text-sm font-semibold text-green-400 uppercase tracking-wide">
                   Region
+                </span>
+                <span class="col-span-2 text-center text-sm font-semibold text-green-400 uppercase tracking-wide">
+                  Actions
                 </span>
               </div>
 
-              <!-- Fields List -->
-              <div
-                v-for="field in fieldsList"
-                :key="field.id"
-                class="col-span-1 mb-0.5 gap-0"
-                data-aos="flip-down"
-                data-aos-duration="500"
-                data-aos-offset="0"
-                data-aos-once="true"
-              >
-                <div class="flex min-w-[640px] items-center justify-center">
-                  <input
-                    v-model="field.name"
-                    :rules="Rules"
-                    placeholder="Enter Field"
-                    hide-details
-                    required
-                    disabled
-                    class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                    v-model="field.regionName"
-                    :rules="Rules"
-                    placeholder="Enter Region"
-                    hide-details
-                    required
-                    disabled
-                    class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <i
-                    class="ri-pencil-fill px-4 text-xl text-white cursor-pointer"
-                    @click="openEditFieldDialog(field)"
-                  ></i>
-                  <i
-                    class="ri-delete-bin-fill px-4 text-xl text-red-400 cursor-pointer"
-                    @click="openDeleteFieldDialog(field)"
-                  ></i>
+              <!-- Rows -->
+              <div class="divide-y divide-gray-700/50">
+                <div
+                  v-for="(field, index) in fieldsList"
+                  :key="field.id"
+                  :class="[
+                    'grid grid-cols-12 gap-4 px-6 py-4 transition-all duration-300',
+                    'hover:bg-gray-700/30',
+                    index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50'
+                  ]"
+                >
+                  <!-- Field Name -->
+                  <div class="col-span-5 flex items-center">
+                    <input
+                      v-model="field.name"
+                      placeholder="Enter Field"
+                      disabled
+                      class="w-full bg-transparent text-gray-200 font-medium truncate border-none outline-none p-0 placeholder-gray-500"
+                    />
+                  </div>
+
+                  <!-- Region -->
+                  <div class="col-span-5 flex items-center">
+                    <input
+                      v-model="field.regionName"
+                      placeholder="Enter Region"
+                      disabled
+                      class="w-full bg-transparent text-gray-300 border-none outline-none p-0 placeholder-gray-500"
+                    />
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="col-span-2 flex items-center justify-center gap-3">
+                    <button
+                      type="button"
+                      class="hover:text-green-300 transition-colors duration-200 p-2 rounded-lg hover:bg-green-600/20"
+                      @click="openEditFieldDialog(field)"
+                      title="Edit Field"
+                    >
+                      <span class="text-green-400">
+                        <i class="ri-pencil-line text-lg"></i>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="hover:text-red-300 transition-colors duration-200 p-2 rounded-lg hover:bg-red-600/20"
+                      @click="openDeleteFieldDialog(field)"
+                      title="Delete Field"
+                    >
+                      <span class="text-red-400">
+                        <i class="ri-delete-bin-line text-lg"></i>
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

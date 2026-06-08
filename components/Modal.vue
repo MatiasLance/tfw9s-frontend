@@ -24,7 +24,9 @@
                   px-5 text-center
                   font-bold text-white hover:bg-brand-grey lg:mx-4 lg:w-48"
                   @click="$emit('close')"
-                >OK</button>
+                >
+                  <span class="text-white">OK</span>
+                </button>
               </div>
             </slot>
           </div>

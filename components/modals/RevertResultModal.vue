@@ -28,7 +28,7 @@
             </p>
           </div>
 
-          <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
+          <div class="flex flex-col gap-3 sm:justify-center">
             <VBtn
               depressed
               color="error"

@@ -20,60 +20,97 @@
             <span class="text-white">+</span>
           </button>
           </div>
+
           <div
-          v-if="totalPages > 0"
-          class="col-span-1 flex flex-wrap items-center
-          justify-around gap-x-2 md:justify-between"
-          data-aos="flip-up" data-aos-once="true"
+            v-if="totalPages > 0"
+            class="flex flex-col gap-4 sm:flex-row sm:items-center 
+                  sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
+                  rounded-2xl p-6 border border-green-500/20 shadow-lg"
+            data-aos="flip-up"
           >
-            <span
-            class="font-medium text-white"
-            >
-            Showing {{ from }}-{{ to }} of {{ totalItems }} items
-            </span>
+            <div class="flex items-center gap-3">
+              <div class="bg-green-600/20 rounded-lg p-2">
+                <i class="ri-list-check text-green-400 text-lg"></i>
+              </div>
+              <span class="text-gray-300 font-medium">
+                Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+                of <span class="font-bold text-green-400">{{ totalItems }}</span> age groups
+              </span>
+            </div>
+            
             <VPagination
               v-model="page"
               :length="totalPages"
-              color="success"
-              class="text-white"
               :total-visible="7"
+              class="text-white"
+              color="success"
               dark
               @change="setPage"
-              />
+            />
           </div>
           
-          <section v-if="totalPages > 0" class="col-span-1">
-            <div
-            class="grid grid-cols-1 overflow-y-hidden
-            overflow-x-scroll md:overflow-x-hidden"
-            >
-            <table class="col-span-1 min-w-[640px]">
-              <tr
-              v-for="(agegroup) in ageGroupList"
-              :key="agegroup.id"
-              data-aos="flip-down" data-aos-duration="500"
-              data-aos-offset="0"  data-aos-once="true"
+          <section v-if="ageGroupList.length > 0" class="col-span-1">
+            <div class="overflow-x-auto bg-gray-800 border border-green-500/20 rounded-2xl">
+              <!-- Header -->
+              <div
+                class="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-900 border-b border-green-500/30"
               >
-                <td
-                class="flex-1 border-b-[2.5px] border-[#1a1a1b] bg-white
-                px-2 py-1"
+                <span class="col-span-10 text-left text-sm font-semibold text-green-400 uppercase tracking-wide">
+                  Age Group
+                </span>
+                <span class="col-span-2 text-center text-sm font-semibold text-green-400 uppercase tracking-wide">
+                  Actions
+                </span>
+              </div>
+
+              <!-- Rows -->
+              <div class="divide-y divide-gray-700/50">
+                <div
+                  v-for="(agegroup, index) in ageGroupList"
+                  :key="agegroup.id"
+                  class="grid grid-cols-12 gap-4 px-6 py-4 transition-all duration-300 hover:bg-gray-700/30"
+                  :class="index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50'"
+                  data-aos="flip-down"
+                  data-aos-duration="500"
+                  data-aos-offset="0"
+                  data-aos-once="true"
                 >
-                  {{agegroup.name ? agegroup.name:'Unknown'}}
-                </td>
-                <td class="w-[116px] text-center">
-                  <i
-                  class="ri-pencil-fill px-4 text-xl text-white"
-                  @click="openEditageGroupDialog(agegroup)"
-                  ></i>
-                  <i
-                  class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                  @click="openDeleteageGroupDialog(agegroup)"
-                  ></i>
-                </td>
-              </tr>
-            </table>
+                  <!-- Age Group Name -->
+                  <div class="col-span-10 flex items-center">
+                    <span class="text-gray-200 font-medium truncate">
+                      {{ agegroup.name || 'Unknown' }}
+                    </span>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="col-span-2 flex items-center justify-center gap-3">
+                    <button
+                      type="button"
+                      class="hover:text-green-300 transition-colors duration-200 p-2 rounded-lg hover:bg-green-600/20"
+                      @click="openEditageGroupDialog(agegroup)"
+                      title="Edit Age Group"
+                    >
+                      <span class="text-green-400">
+                        <i class="ri-pencil-line text-lg"></i>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="hover:text-red-300 transition-colors duration-200 p-2 rounded-lg hover:bg-red-600/20"
+                      @click="openDeleteageGroupDialog(agegroup)"
+                      title="Delete Age Group"
+                    >
+                      <span class="text-red-400">
+                        <i class="ri-delete-bin-line text-lg"></i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
+          
           <section
           v-if="totalPages=== 0"
           class="col-span-1 flex h-60 items-center
@@ -196,7 +233,6 @@ export default {
       })
       this.showAddageGroupModal = false;
       this.retrieveAgeGroups();
-      this.getAgeGroups();
     },
     UpdateAgeGroup(data) {
       this.$oruga.notification.open({
@@ -208,7 +244,6 @@ export default {
       })
       this.showEditageGroupModal = false;
       this.retrieveAgeGroups();
-      this.getAgeGroups();
     },
     DeleteAgeGroup(data) {
       this.$oruga.notification.open({
@@ -220,7 +255,6 @@ export default {
       })
       this.showDeleteageGroupModal = false;
       this.retrieveAgeGroups();
-      this.getAgeGroups();
     },
     retrieveAgeGroups() {
       const query = {

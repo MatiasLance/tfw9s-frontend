@@ -25,7 +25,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
-              :readonly="MatchData.is_abandoned_match === 0 ? false : true"
+              :readonly="MatchData.is_abandoned_match"
             />
           </div>
 
@@ -47,7 +47,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
-              :readonly="MatchData.is_abandoned_match === 1 || displayTeam2Name === 'Bye'"
+              :readonly="MatchData.is_abandoned_match || displayTeam2Name === 'Bye'"
             />
           </div>
         </div>
@@ -56,7 +56,7 @@
 
         <!-- Tactical Actions -->
           <div
-            v-if="MatchData.is_abandoned_match === 1"
+            v-if="MatchData.is_abandoned_match"
             class="mb-8 flex w-full items-center justify-center gap-2 rounded-lg 
                   border-2 border-dashed border-red-200 py-3 text-xs 
                   font-bold uppercase tracking-widest text-red-500 
@@ -78,7 +78,9 @@
             "
             @click="closeDialog"
           >
+          <span class="text-white">
             Cancel
+          </span>
           </button>
 
           <button
@@ -89,15 +91,17 @@
                   transition-all hover:bg-red-800 hover:border-red-800
                   disabled:cursor-not-allowed disabled:opacity-50 sm:w-[280px]"
             @click="handleMatchAbandoned(true)"
-            :disabled="MatchData.is_abandoned_match === 1"
+            :disabled="MatchData.is_abandoned_match"
           >
-            <i class="ri-alert-line text-lg"></i>
-              Abandoned Match
+            <span class="text-white">
+                <i class="ri-alert-line text-lg"></i>
+                Abandoned Match
+            </span>
           </button>
           
           <button
             type="button"
-            :disabled="!valid || processing || MatchData.is_abandoned_match === 1"
+            :disabled="!valid || processing || MatchData.is_abandoned_match"
             class="
               flex h-[52px] w-full items-center justify-center gap-2 rounded-lg 
               bg-emerald-600 px-10 py-3 text-sm font-black uppercase 
@@ -106,11 +110,12 @@
               disabled:opacity-50 sm:w-[280px]
             "
             @click="validate"
-          >
-            <i v-if="processing" class="ri-loader-4-line animate-spin text-xl"></i>
-            <i v-else class="ri-check-double-line text-xl"></i>
-            
-            <span>{{ processing ? 'Updating...' : 'Confirm Score' }}</span>
+          > 
+            <span class="text-white">
+              <i v-if="processing" class="ri-loader-4-line animate-spin text-xl"></i>
+              <i v-else class="ri-check-double-line text-xl"></i>
+              {{ processing ? 'Updating...' : 'Confirm Score' }}
+            </span>
           </button>
         </div>
       </VForm>
@@ -166,12 +171,12 @@ export default {
         if (newActive) {
           this.MatchData = JSON.parse(JSON.stringify(this.match));
           
-          this.MatchData.team1_name = (this.MatchData.team1 && this.MatchData.team1.name) ?
-            this.MatchData.team1.name :
+          this.MatchData.team1_name = this.MatchData.team1 ?
+            this.MatchData.team1 :
             'Unknown';
             
-          this.MatchData.team2_name = (this.MatchData.team2 && this.MatchData.team2.name) ?
-            this.MatchData.team2.name :
+          this.MatchData.team2_name = this.MatchData.team2 ?
+            this.MatchData.team2 :
             'Bye';
         }
       },

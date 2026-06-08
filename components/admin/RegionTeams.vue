@@ -18,13 +18,15 @@
               <!-- Add Team Button -->
               <button
                 type="button"
-                class="bg-green-600 hover:bg-green-700 text-gray-50 font-bold 
+                class="bg-green-600 hover:bg-green-700 font-bold 
                       py-3 px-6 rounded-xl transition-all duration-300 
                       flex items-center gap-2 w-full sm:w-auto justify-center"
                 @click="openAddTeamDialog"
               >
-                <i class="ri-add-line text-xl"></i>
-                Add Team
+                <span class="text-gray-50">
+                  <i class="ri-add-line text-xl"></i>
+                  Add Team
+                </span>
               </button>
             </div>
           </div>
@@ -59,7 +61,7 @@
           <!-- Results Info & Pagination -->
           <div v-if="totalPages > 0" class="flex flex-col gap-4 sm:flex-row sm:items-center 
                   sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
-                  rounded-2xl p-6 border border-green-500/20 shadow-lg"
+                  rounded-2xl p-6 border border-green-500/20 shadow-lg mb-6"
             data-aos="flip-up">
 
             <div class="flex items-center gap-3">
@@ -154,21 +156,26 @@
                 <div class="col-span-2 flex items-center justify-center gap-3">
                   <button
                     type="button"
-                    class="text-blue-400 hover:text-blue-300 transition-colors
-                    duration-200 p-2 rounded-lg hover:bg-blue-600/20"
+                    class="hover:text-green-300 transition-colors
+                    duration-200 p-2 rounded-lg hover:bg-green-600/20"
                     @click="openEditTeamDialog(team)"
                     title="Edit Team"
                   >
-                    <i class="ri-pencil-line text-lg"></i>
+                    <span class="text-green-400">
+                      <i class="ri-pencil-line text-lg"></i>
+                    </span>
                   </button>
+
                   <button
                     type="button"
-                    class="text-red-400 hover:text-red-300 transition-colors
+                    class="hover:text-red-300 transition-colors
                     duration-200 p-2 rounded-lg hover:bg-red-600/20"
                     @click="openDeleteTeamDialog(team)"
                     title="Delete Team"
                   >
-                    <i class="ri-delete-bin-line text-lg"></i>
+                    <span class="text-red-400">
+                      <i class="ri-delete-bin-line text-lg"></i>
+                    </span>
                   </button>
                 </div>
               </div>

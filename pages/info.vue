@@ -82,7 +82,7 @@
                   ></div>
                   
                   <!-- Tab Icon -->
-                  <div class="flex items-center justify-center gap-2">
+                  <div class="flex items-center text-gray-50 justify-center gap-2">
                     <i 
                       :class="getTabIcon(tab.name)" 
                       class="text-lg transition-transform duration-300 
