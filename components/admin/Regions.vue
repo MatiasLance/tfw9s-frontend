@@ -126,25 +126,27 @@
                           <!-- Edit Button -->
                           <button
                             type="button"
-                            class="rugby-action-btn bg-blue-600/20 hover:bg-blue-600 
-                                  text-blue-400 hover:text-gray-50 rounded-lg p-3 
-                                  transition-all duration-300 transform hover:scale-110 
-                                  border border-blue-500/30 hover:border-blue-400"
+                            class="hover:text-green-300 transition-colors
+                            duration-200 p-2 rounded-lg hover:bg-green-600/20"
                             @click="openEditRegionDialog(region)"
+                            title="Edit Region"
                           >
-                            <i class="ri-pencil-line text-lg"></i>
+                            <span class="text-green-400">
+                              <i class="ri-pencil-line text-lg"></i>
+                            </span>
                           </button>
                           
                           <!-- Delete Button -->
-                          <button
+                           <button
                             type="button"
-                            class="rugby-action-btn bg-red-600/20 hover:bg-red-600 
-                                  text-red-400 hover:text-gray-50 rounded-lg p-3 
-                                  transition-all duration-300 transform hover:scale-110 
-                                  border border-red-500/30 hover:border-red-400"
+                            class="hover:text-red-300 transition-colors
+                            duration-200 p-2 rounded-lg hover:bg-red-600/20"
                             @click="openDeleteRegionDialog(region)"
+                            title="Delete Region"
                           >
-                            <i class="ri-delete-bin-line text-lg"></i>
+                            <span class="text-red-400">
+                              <i class="ri-delete-bin-line text-lg"></i>
+                            </span>
                           </button>
                         </div>
                       </td>
@@ -156,22 +158,16 @@
           </section>
 
           <!-- Empty State -->
-          <section
+          <BaseEmptyState
             v-if="totalPages === 0"
-            class="col-span-1 flex h-80 items-center justify-center 
-                  rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 
-                  border-2 border-dashed border-green-500/30"
-          >
-            <div class="text-center">
-              <i class="ri-map-pin-line text-6xl text-green-500/50 mb-4"></i>
-              <h3 class="text-xl font-bold text-gray-300 mb-2">
-                No Regions Available
-              </h3>
-              <p class="text-gray-400">
-                Get started by adding your first region
-              </p>
-            </div>
-          </section>
+            title="o Regions Available"
+            description="Get started by adding your first region"
+            icon="ri-map-pin-line"
+            :show-button="false"
+            button-text="Add First Region"
+            button-icon="ri-add-fill"
+          />
+
         </div>
 
         <!-- Teams Tab Content -->

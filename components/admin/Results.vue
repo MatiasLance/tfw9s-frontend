@@ -16,7 +16,7 @@
               </div>
               
               <button
-              type="button"
+                type="button"
                 v-if="dateFilter"
                 @click="clearDate"
                 class="flex items-center gap-2 px-3 py-1 rounded-full
@@ -29,6 +29,7 @@
                 </span>
               </button>
             </div>
+
             <ODatepicker
               v-model="dateFilter"
               placeholder="Click to select..."
@@ -38,30 +39,32 @@
             >
             </ODatepicker>
           </div>
+
           <form
            class="col-span-1 flex items-end justify-between"
-          @submit.prevent="retrieveEvents"
+           @submit.prevent="retrieveEvents"
           >
             <input
-            id="query"
-            v-model="query"
-            placeholder="Search..."
-            type="text"
-            class="h-9 flex-1 rounded-l bg-gray-100"
-            solo
+              id="query"
+              v-model="query"
+              placeholder="Search..."
+              type="text"
+              class="h-9 flex-1 rounded-l bg-gray-100"
+              solo
             />
             <button
-            type="submit"
-            class="h-9 rounded-r bg-gradient-to-tr
-            from-[#5EE738] via-[#3e872a] to-[#050505]
-            px-4
-            text-xl
-            font-semibold
-            text-white"
+              type="submit"
+              class="h-9 rounded-r bg-gradient-to-tr
+              from-[#5EE738] via-[#3e872a] to-[#050505]
+              px-4
+              text-xl
+              font-semibold
+              text-white"
             >
-            <i class="ri-search-line text-white"></i>
+              <i class="ri-search-line text-white"></i>
             </button>
           </form>
+
           <div
           class="col-span-1 flex items-end justify-end lg:justify-center"
           >
@@ -78,34 +81,34 @@
 
           <div
             v-if="totalPages > 0"
-            class="col-span-3 flex flex-col items-center justify-between
-            gap-4 bg-white backdrop-blur-sm rounded-xl
-            p-4 sm:flex-row sm:gap-6"
-            data-aos="flip-up" 
-            data-aos-once="true"
+            class="col-span-3 flex flex-col gap-4 sm:flex-row sm:items-center 
+                  sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
+                  rounded-2xl p-6 border border-green-500/20 shadow-lg"
+            data-aos="flip-up"
           >
-            <div class="flex items-center space-x-2">
-              <span class="text-sm font-medium text-black">
-                Showing 
-                <span class="font-semibold text-black">{{ from }}-{{ to }}</span> 
-                of 
-                <span class="font-semibold text-black">{{ totalItems }}</span> 
-                {{ totalItems === 1 ? 'item' : 'items' }}
+            <div class="flex items-center gap-3">
+              <div class="bg-green-600/20 rounded-lg p-2">
+                <i class="ri-list-check text-green-400 text-lg"></i>
+              </div>
+              <span class="text-gray-300 font-medium">
+                Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+                of <span class="font-bold text-green-400">{{ totalItems }}</span> results
               </span>
             </div>
-
+            
             <VPagination
               v-model="page"
               :length="totalPages"
-              color="success"
               :total-visible="7"
-              class="text-black"
+              class="text-white"
+              color="success"
               dark
               @change="setPage"
-              />
+            />
           </div>
 
           <LoadingAnimation
+          v-if="isLoading"
           :is-loading="isLoading"
           loading-title="Results"
           />
@@ -124,16 +127,18 @@
               @revert-data="openRevertResultModal"
             />
         </section>
-          <section
-          v-if="MatchList.length === 0 && !isLoading"
-          class="col-span-1 flex h-60 items-center
-          justify-center font-semibold
-          text-[#555555] md:col-span-3"
-          >
-          Nothing Pending Today
-          </section>
+
+        <section
+        v-if="matchList.length === 0 && !isLoading"
+        class="col-span-1 flex h-60 items-center
+        justify-center font-semibold
+        text-[#555555] md:col-span-3"
+        >
+        Nothing Pending Today
         </section>
-        </div>
+
+        </section>
+      </div>
 
     <ManageResultModal
     :active="showManageResultModal"
@@ -193,12 +198,12 @@ export default {
       showModifyResultModal: false,
       showRevertResultModal: false,
       selectedMatch: ({}),
-      MatchList: [],
+      matchList: [],
       Data: [],
       selectedData: [],
       dataColumns: [
         { name: 'event_date', label: 'Date' },
-        { name: 'matchtime', label: 'Time' },
+        { name: 'matchTime', label: 'Time' },
         { name: 'series', label: 'Series' },
         { name: 'agegroup_id', label: 'Age Group' },
         { name: 'round', label: 'Match Round' },
@@ -293,8 +298,9 @@ export default {
       return this.matches.map(event =>
         ({ date: new Date(event.date), type: event.submit?'danger':'success' }));
     },
+
     filteredMatches() {
-      const filtered = this.MatchList.filter(match =>
+      const filtered = this.matchList.filter(match =>
         match && typeof match.submit === 'boolean' ?
           match.submit === this.submit :
           false
@@ -314,7 +320,7 @@ export default {
           return total;
         };
 
-        return timeToMinutes(a.matchtime) - timeToMinutes(b.matchtime);
+        return timeToMinutes(a.matchTime) - timeToMinutes(b.matchTime);
       });
     }
 
@@ -344,7 +350,7 @@ export default {
     convertTo12HourFormat(timeString) {
       const [ hour, minute ] = timeString.split(':');
       const period = hour >= 12 ? 'PM' : 'AM';
-      const formattedHour = (hour % 12) || 12; // Convert 0 to 12
+      const formattedHour = (hour % 12) || 12;
       return `${formattedHour}:${minute} ${period}`;
     },
     openRevertResultModal(data) {
@@ -521,35 +527,51 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
       this.$axios
-        .$get(`v1/events?${queryString}`)
+        .$get(`v1/eventmatches?${queryString}`)
         .then((response) => {
-          const EventList = response.data.events.map(event => {
-            const ageGroupName = event.agegroup.name;
-            const time = event.time;
+          // const EventList = response.data.eventMatches.map(eventMatch => {
+          //   const ageGroupName = eventMatch.event.agegroup.name;
+          //   const time = eventMatch.event.time;
+          //   return {
+          //     ...eventMatch,
+          //     date: this.formattedDate(eventMatch.event.event_date),
+          //     // eslint-disable-next-line camelcase
+          //     eventmatch: eventMatch.eventmatch.map(match => {
+          //       return {
+          //         ...match,
+          //         series: eventMatch.series.name || 'Unknown',
+          //         matchtime: this.AMPMformat(time),
+          //         round: this.roundFormat(eventMatch.round),
+          //         // eslint-disable-next-line camelcase
+          //         agegroup_id: ageGroupName,
+          //         // eslint-disable-next-line camelcase
+          //         event_date: this.formattedDate(eventMatch.event_date),
+          //         date: eventMatch.event_date,
+          //         // eslint-disable-next-line camelcase
+          //         field: match.field.name || 'Unknown',
+          //         submit: match.submitted === 1
+          //       };
+          //     })
+          //   };
+          // });
+          // this.MatchList = EventList.flatMap(data => {
+          //   return data.eventmatch;
+          // });
+          this.matchList = response.data.eventMatches.flatMap(eventMatch => {
             return {
-              ...event,
-              date: this.formattedDate(event.event_date),
-              // eslint-disable-next-line camelcase
-              eventmatch: event.eventmatch.map(match => {
-                return {
-                  ...match,
-                  series: event.series.name || 'Unknown',
-                  matchtime: this.AMPMformat(time),
-                  round: this.roundFormat(event.round),
-                  // eslint-disable-next-line camelcase
-                  agegroup_id: ageGroupName,
-                  // eslint-disable-next-line camelcase
-                  event_date: this.formattedDate(event.event_date),
-                  date: event.event_date,
-                  // eslint-disable-next-line camelcase
-                  field: match.field.name || 'Unknown',
-                  submit: match.submitted === 1
-                };
-              })
-            };
-          });
-          this.MatchList = EventList.flatMap(data => {
-            return data.eventmatch;
+              id: eventMatch.id,
+              team1: eventMatch.team1.name,
+              team2: eventMatch.team2.name,
+              team1_score: eventMatch.team1_score,
+              team2_score: eventMatch.team2_score,
+              series: eventMatch.event.series.name || 'Unknown',
+              matchTime: this.AMPMformat(eventMatch.event.time),
+              round: this.roundFormat(eventMatch.event.round),
+              agegroup_id: eventMatch.event.agegroup.name,
+              event_date: this.formattedDate(eventMatch.event.event_date),
+              field: eventMatch.field.name || 'Unknown',
+              submit: !!eventMatch.submitted,
+            }
           });
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;

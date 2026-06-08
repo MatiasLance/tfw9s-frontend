@@ -33,13 +33,13 @@
                     shadow-md hover:shadow-lg"
                   @click="addFaq"
                 >
-                  <i
-                  class="
-                  ri-add-line mr-2
-                  text-lg transition-transform
-                  group-hover:rotate-90"
-                  ></i>
-                  <span>Add FAQ</span>
+                  <span class="text-white">
+                    <i class="ri-add-line mr-2 text-lg
+                      transition-transform
+                      group-hover:rotate-90"
+                    ></i>
+                    Add FAQ
+                  </span>
                 </button>
               </div>
 

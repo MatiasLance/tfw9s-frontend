@@ -122,14 +122,14 @@
             </div>
           </section>
 
-          <!-- Empty -->
-          <section
+          <!-- Empty State -->
+           <BaseEmptyState
             v-if="totalPages === 0"
-            class="col-span-1 flex h-60 items-center justify-center
-                   font-semibold text-[#555] lg:col-span-3"
-          >
-            No Fixings Available
-          </section>
+            title="No Fixtures Available"
+            description="It looks like there are no matches scheduled yet. Check back later, or add a new match to get the season started."
+            icon="ri-calendar-event-line"
+            :show-button="false"
+          />
 
         </div>
       </section>
@@ -176,13 +176,15 @@ import FixingCustomTable from '~/components/tables/FixingCustomTable.vue'
 import AddFixingModal from '~/components/modals/AddFixingModal.vue'
 import EditFixingModal from '~/components/modals/EditFixingModal.vue'
 import DeleteFixingModal from '~/components/modals/DeleteFixingModal.vue'
+import BaseEmptyState from '~/components/base/BaseEmptyState.vue'
 
 export default {
   components: {
     FixingCustomTable,
     AddFixingModal,
     EditFixingModal,
-    DeleteFixingModal
+    DeleteFixingModal,
+    BaseEmptyState
   },
 
   props: {

@@ -25,7 +25,7 @@
               sm:w-36"
               @click="openAddTeamDialog"
             >
-              <span class="text-white">+</span>
+              <span class="text-white">+ Add Team</span>
             </button>
             
             <YearFilter
@@ -37,114 +37,146 @@
             />
           </div>
 
+          <!-- Pagination Info -->
           <div
-          v-if="totalPages > 0"
-          class="col-span-1 flex flex-wrap items-center
-          justify-around gap-x-2 md:justify-between"
-          data-aos="flip-up" data-aos-once="true"
+            v-if="totalPages > 0"
+            class="flex flex-col gap-4 sm:flex-row sm:items-center 
+                  sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
+                  rounded-2xl p-6 border border-green-500/20 shadow-lg"
+            data-aos="flip-up"
           >
-            <span
-            class="font-medium text-white"
-            >
-            Showing {{ from }}-{{ to }} of {{ totalItems }} items
-            </span>
+            <div class="flex items-center gap-3">
+              <div class="bg-green-600/20 rounded-lg p-2">
+                <i class="ri-list-check text-green-400 text-lg"></i>
+              </div>
+              <span class="text-gray-300 font-medium">
+                Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+                of <span class="font-bold text-green-400">{{ totalItems }}</span> teams
+              </span>
+            </div>
+            
             <VPagination
               v-model="page"
               :length="totalPages"
-              color="success"
               :total-visible="7"
               class="text-white"
+              color="success"
               dark
               @change="setPage"
-              />
+            />
           </div>
-            <section class="col-span-1">
-              <div class="overflow-x-auto">
-              <div class="inline-block min-w-full text-center">
-                <div 
-                    v-if="totalItems  > 0"
-                    class="flex min-w-[1200px] pr-24 md:w-auto"
-                    data-aos="flip-up"
-                >
-                  <span
-                  class="flex-1 px-4 py-2 text-center align-middle
-                  text-[20px] font-semibold text-[#555555]"
-                  >
+
+          <section class="col-span-1">
+            <div class="overflow-x-auto bg-gray-800 border border-green-500/20 rounded-2xl">
+              <!-- Header -->
+              <div
+                v-if="totalItems > 0"
+                class="grid grid-cols-12 gap-4 px-6 py-4
+                bg-gray-900 border-b border-green-500/30"
+              >
+                <span class="col-span-3 text-left text-sm font-semibold
+                text-green-400 uppercase tracking-wide">
                   Team
-                  </span>
-                  <span
-                  class="flex-1 px-4 py-2 text-center align-middle
-                  text-[20px] font-semibold text-[#555555]"
-                  >
+                </span>
+                <span class="col-span-2 text-left text-sm font-semibold
+                  text-green-400 uppercase tracking-wide">
                   Age Group
-                  </span>
-                  <span
-                  class="flex-1 px-4 py-2 text-center align-middle
-                  text-[20px] font-semibold text-[#555555]"
-                  >
+                </span>
+                <span class="col-span-3 text-left text-sm font-semibold
+                  text-green-400 uppercase tracking-wide">
                   Series
-                  </span>
-                  <span
-                  class="flex-1 px-4 py-2 text-center align-middle
-                  text-[20px] font-semibold text-[#555555]"
-                  >
+                </span>
+                <span class="col-span-2 text-left text-sm font-semibold
+                  text-green-400 uppercase tracking-wide">
                   Region
-                  </span>
-                </div>
+                </span>
+                <span class="col-span-2 text-center text-sm font-semibold
+                  text-green-400 uppercase tracking-wide">
+                  Actions
+                </span>
+              </div>
+
+              <!-- Rows -->
+              <div class="divide-y divide-gray-700/50">
                 <div
-                v-for="(data) in Teams"
-                :key="data.id" class="col-span-1 mb-0.5 gap-0"
-                data-aos="flip-down" data-aos-duration="500"
-                data-aos-offset="0"  data-aos-once="true"
+                  v-for="(team, index) in Teams"
+                  :key="team.id"
+                  :class="[
+                    'grid grid-cols-12 gap-4 px-6 py-4 transition-all duration-300',
+                    'hover:bg-gray-700/30',
+                    index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50'
+                  ]"
                 >
-                <div class="flex min-w-[640px] items-center justify-center">
-                  <input
-                  v-model="data.name"
-                  :rules="Rules"
-                  placeholder="Enter Team"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.agegroup.name"
-                  :rules="Rules"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  v-model="data.series.name"
-                  :rules="Rules"
-                  hide-details
-                  required
-                  :disabled="true"
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  />
-                  <input
-                  :value="getRegionName(data.region_id)"
-                  :rules="Rules"
-                  hide-details
-                  required
-                  readonly
-                  class="mr-0.5 flex-1 border-black bg-white p-1"
-                  @input="handleRegionInput(data, $event)"
-                  />
-                  <i
-                  class="ri-pencil-fill px-4 text-xl text-white"
-                  @click="openEditTeamDialog(data)"
-                  />
-                  <i
-                  class="ri-delete-bin-fill px-4 text-xl text-red-400"
-                  @click="openDeleteTeamDialog(data)"
-                  />              
-              </div>
-              </div>
+                  <!-- Team Name -->
+                  <div class="col-span-3 flex items-center">
+                    <input
+                      v-model="team.name"
+                      placeholder="Enter Team"
+                      :disabled="true"
+                      class="w-full bg-transparent text-gray-200 font-medium truncate border-none outline-none p-0 placeholder-gray-500"
+                    />
+                  </div>
+
+                  <!-- Age Group -->
+                  <div class="col-span-2 flex items-center">
+                    <input
+                      v-model="team.agegroup.name"
+                      placeholder="N/A"
+                      :disabled="true"
+                      class="w-full bg-transparent text-gray-300 border-none outline-none p-0 placeholder-gray-500"
+                    />
+                  </div>
+
+                  <!-- Series -->
+                  <div class="col-span-3 flex items-center">
+                    <input
+                      v-model="team.series.name"
+                      placeholder="N/A"
+                      :disabled="true"
+                      class="w-full bg-transparent text-gray-300 border-none outline-none p-0 placeholder-gray-500"
+                    />
+                  </div>
+
+                  <!-- Region -->
+                  <div class="col-span-2 flex items-center">
+                    <input
+                      :value="getRegionName(team.region_id) || ''"
+                      placeholder="N/A"
+                      readonly
+                      class="w-full bg-transparent text-gray-300 border-none outline-none p-0 placeholder-gray-500"
+                      @input="handleRegionInput(team, $event)"
+                    />
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="col-span-2 flex items-center justify-center gap-3">
+                    <button
+                      type="button"
+                      class="hover:text-green-300 transition-colors duration-200 p-2 rounded-lg hover:bg-green-600/20"
+                      @click="openEditTeamDialog(team)"
+                      title="Edit Team"
+                    >
+                      <span class="text-green-400">
+                        <i class="ri-pencil-line text-lg"></i>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="hover:text-red-300 transition-colors duration-200 p-2 rounded-lg hover:bg-red-600/20"
+                      @click="openDeleteTeamDialog(team)"
+                      title="Delete Team"
+                    >
+                      <span class="text-red-400">
+                        <i class="ri-delete-bin-line text-lg"></i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-            </section>
+          </section>
+
           <section
             v-if="totalPages === 0"
             class="col-span-1 md:col-span-3 flex flex-col
@@ -367,14 +399,7 @@ export default {
       
       this.showAddTeamModal = false;
       
-      this.retrieveTeams().then(() => {
-        if (typeof this.getTeams === 'function') {
-          this.getTeams();
-        }
-        if (typeof this.getEvents === 'function') {
-          this.getEvents();
-        }
-      });
+      this.retrieveTeams();
     },
     EditTeam() {
       this.$oruga.notification.open({
@@ -386,8 +411,6 @@ export default {
       })
       this.showEditTeamModal = false;
       this.retrieveTeams();
-      this.getTeams();
-      this.getEvents();
     },
     DeleteTeam() {
       this.$oruga.notification.open({
@@ -399,8 +422,6 @@ export default {
       })
       this.showDeleteTeamModal = false;
       this.retrieveTeams();
-      this.getTeams();
-      this.getEvents();
     },
     retrieveTeams: _debounce(async function() {
       try {

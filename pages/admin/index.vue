@@ -252,6 +252,13 @@ export default {
           desc: 'Manage',
           count: -1
         },
+        {
+          title: 'Terms And Condition',
+          icon: 'ri-article-line',
+          route: '/admin/terms-and-condition',
+          desc: 'Edit',
+          count: -1
+        },
       ]
     };
   },
@@ -265,7 +272,7 @@ export default {
       case 'MASTER':
         return this.panels.filter(panel => {
           return [
-            'News', 'Partner Sponsor', 'Tax', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info', 'Payment'
+            'News', 'Partner Sponsor', 'Tax', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info', 'Payment', 'Terms And Condition'
           ].includes(panel.title)
         })
       case 'DRAWS':

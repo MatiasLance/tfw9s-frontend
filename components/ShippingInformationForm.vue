@@ -331,16 +331,29 @@
       </button>
     </div>
 
-    <Modal :show="showTermsModal" @close="showTermsModal = false">
-      <template #header>
-        <h3>
-          Terms and Conditions
-        </h3>
-      </template>
-      <template #body>
-        <TermsSection />
-      </template>
-    </Modal>
+    <template>
+      <Modal :show="showTermsModal" @close="showTermsModal = false">
+        <template #header>
+          <h3>Terms and Conditions</h3>
+        </template>
+        <template #body>
+          <TermsSection
+            @all-read="enableAcceptButton"
+          />
+        </template>
+        <template #footer>
+          <div class="flex justify-end gap-3">
+            <button @click="showTermsModal = false">Cancel</button>
+            <button
+              :disabled="!termsAccepted"
+              @click="acceptTerms"
+            >
+              I agree
+            </button>
+          </div>
+        </template>
+      </Modal>
+    </template>
   </form>
 </template>
 
@@ -371,7 +384,8 @@ export default {
       remarks: '',
       hasAgreedToTerms: false,
       showTermsModal: false,
-      shipOption: ''
+      shipOption: '',
+      termsAccepted: false,
     }
   },
   computed: {
@@ -393,7 +407,16 @@ export default {
         postCode: this.postCode,
         remarks: this.remarks
       })
-    }
+    },
+
+    enableAcceptButton() {
+      this.termsAccepted = true
+      this.hasAgreedToTerms = true
+    },
+
+    acceptTerms() {
+      this.showTermsModal = false
+    },
   }
 }
 </script>
