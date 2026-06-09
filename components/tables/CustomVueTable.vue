@@ -50,14 +50,14 @@
               <!-- Team 1 (Bye fallback) -->
               <template v-else-if="column.name === 'team1'">
                 <span class="text-gray-300">
-                  {{ row.team1 ? row.team1 : 'Bye' }}
+                  {{ row.team1 ? row.team1.name : 'Bye' }}
                 </span>
               </template>
 
               <!-- Team 2 (Bye fallback) -->
               <template v-else-if="column.name === 'team2'">
                 <span class="text-gray-300">
-                  {{ row.team2 ? row.team2 : 'Bye' }}
+                  {{ row.team2 ? row.team2.name : 'Bye' }}
                 </span>
               </template>
 

@@ -35,7 +35,7 @@
               placeholder="Click to select..."
               icon="calendar"
               class="rounded bg-white"
-              :events="EventDates"
+              :events="eventDates"
             >
             </ODatepicker>
           </div>
@@ -50,7 +50,6 @@
               placeholder="Search..."
               type="text"
               class="h-9 flex-1 rounded-l bg-gray-100"
-              solo
             />
             <button
               type="submit"
@@ -83,7 +82,7 @@
               v-if="series"
               type="button"
               class="h-9 bg-gray-100 px-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-              @click="series = ''"
+              @click="clearSearchSeriesName"
             >
               <i class="ri-close-line"></i>
             </button>
@@ -110,7 +109,7 @@
 
           <div
             v-if="totalPages > 0"
-            class="col-span-4 flex flex-col gap-4 sm:flex-row sm:items-center 
+            class="col-span-1 md:col-span-4 flex flex-col gap-4 sm:flex-row sm:items-center 
                   sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
                   rounded-2xl p-6 border border-green-500/20 shadow-lg"
             data-aos="flip-up"
@@ -327,7 +326,7 @@ export default {
     };
   },
   computed: {
-    EventDates() {
+    eventDates() {
       return this.matches.map(event =>
         ({ date: new Date(event.date), type: event.submit?'danger':'success' }));
     },
@@ -380,6 +379,10 @@ export default {
     this.loadSeries()
   },
   methods: {
+    clearSearchSeriesName() {
+      this.series = '',
+      this.retrieveEvents();
+    },
     setPage() {
       this.retrieveEvents();
     },
@@ -537,16 +540,14 @@ export default {
       const eventMonthStr = eventMonth? eventMonth.toString().padStart(2, '0') : null;
       const eventDayStr = eventDay? eventDay.toString().padStart(2, '0') : null;
 
-      // eslint-disable-next-line camelcase
       let event_date = null
       if (eventYear && eventMonthStr && eventDayStr) {
-        // eslint-disable-next-line camelcase
         event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
       }
 
       const query = {
         q: this.query,
-        series: this.series,
+        series_name: this.series,
         sort: 'latest',
         page: this.page,
         per_page: this.perPage,
@@ -562,26 +563,47 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
       this.$axios
-        .$get(`v1/eventmatches?${queryString}`)
+        .$get(`v1/events?${queryString}`)
         .then((response) => {
-          this.matchList = response.data.eventMatches.flatMap(eventMatch => {
+          const eventList = response.data.events.map(eventMatch => {
             return {
               ...eventMatch,
-              id: eventMatch.id,
-              team1: eventMatch.team1.name,
-              team2: eventMatch.team2.name,
-              team1_score: eventMatch.team1_score,
-              team2_score: eventMatch.team2_score,
-              series: eventMatch.event.series.name || 'Unknown',
-              matchTime: this.AMPMformat(eventMatch.event.time),
-              round: this.roundFormat(eventMatch.event.round),
-              agegroup_id: eventMatch.event.agegroup.name,
-              event_date: this.formattedDate(eventMatch.event.event_date),
-              field: eventMatch.field.name || 'Unknown',
-              submit: !!eventMatch.submitted,
-              is_abandoned_match: eventMatch.is_abandoned_match
-            }
+              eventmatch: eventMatch.eventmatch.map(match => {
+                return {
+                  ...match,
+                  series: eventMatch.series.name || 'Unknown',
+                  matchTime: this.AMPMformat(eventMatch.time),
+                  round: this.roundFormat(eventMatch.round),
+                  agegroup_id: eventMatch.agegroup.name,
+                  event_date: this.formattedDate(eventMatch.event_date),
+                  field: match.field.name || 'Unknown',
+                  submit: !!match.submitted
+                };
+              })
+            };
           });
+          this.matchList = eventList.flatMap(data => {
+            return data.eventmatch;
+          });
+          
+          // this.matchList = response.data.eventMatches.flatMap(eventMatch => {
+          //   return {
+          //     ...eventMatch,
+          //     id: eventMatch.id,
+          //     team1: eventMatch.team1.name,
+          //     team2: eventMatch.team2.name,
+          //     team1_score: eventMatch.team1_score,
+          //     team2_score: eventMatch.team2_score,
+          //     series: eventMatch.event.series.name || 'Unknown',
+          //     matchTime: this.AMPMformat(eventMatch.event.time),
+          //     round: this.roundFormat(eventMatch.event.round),
+          //     agegroup_id: eventMatch.event.agegroup.name,
+          //     event_date: this.formattedDate(eventMatch.event.event_date),
+          //     field: eventMatch.field.name || 'Unknown',
+          //     submit: !!eventMatch.submitted,
+          //     is_abandoned_match: eventMatch.is_abandoned_match
+          //   }
+          // });
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;
