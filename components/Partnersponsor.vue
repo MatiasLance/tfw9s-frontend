@@ -55,7 +55,7 @@
 
     <!-- Empty State -->
     <div v-else class="text-center py-12" data-aos="fade-up">
-      <div class="bg-gray-800 rounded-2xl p-8 border border-green-500/30 
+      <div class="bg-gray-800 rounded-2xl p-8 border-2 border-dashed border-green-500/30 
                   max-w-md mx-auto">
         <i class="ri-team-line text-5xl text-green-500 mb-4"></i>
         <h3 class="text-xl font-bold text-gray-300 mb-2">
@@ -64,15 +64,6 @@
         <p class="text-gray-400 mb-6">
           Become a sponsor and support rugby excellence
         </p>
-        <button
-          type="button"
-          class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 
-                 text-gray-50 font-semibold px-6 py-3 rounded-lg transition-all 
-                 duration-300"
-        >
-          <i class="ri-mail-send-line"></i>
-          Partner With Us
-        </button>
       </div>
     </div>
   </section>

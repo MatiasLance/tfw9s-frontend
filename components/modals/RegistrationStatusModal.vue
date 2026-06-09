@@ -164,8 +164,10 @@
             class="flex items-center gap-1.5 text-xs font-bold text-gray-400
             hover:text-gray-600 transition-colors uppercase tracking-widest"
           >
-            <i class="ri-restart-line"></i>
-            Reset
+            <span class="text-gray-400">
+              <i class="ri-restart-line"></i>
+              Reset
+            </span>
           </button>
           
           <div class="flex items-center gap-3">
@@ -175,7 +177,9 @@
               class="px-4 py-2 text-sm font-semibold text-gray-600
               hover:text-gray-800 transition-colors"
             >
-              Cancel
+              <span class="text-gray-600">
+                Cancel
+              </span>
             </button>
             <button
               type="submit"
@@ -185,9 +189,11 @@
               rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-100
               disabled:opacity-50 transition-all shadow-md active:scale-95"
             >
+            <span class="text-white">
               <i v-if="loading" class="ri-loader-4-line animate-spin"></i>
               <i v-else class="ri-checkbox-circle-line"></i>
               {{ loading ? 'Saving...' : 'Save Settings' }}
+            </span>
             </button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 <template>
-  <div class="h-full bg-[#1A1A1B]">
+  <div class="min-h-screen w-screen bg-gradient-to-br
+  from-gray-900 via-gray-800 to-gray-900 transition">
     <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
       <BreadCrumbs title="Terms & Conditions Setting" />
     </BaseHeader>

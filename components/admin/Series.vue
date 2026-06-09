@@ -140,8 +140,10 @@
                     hover:bg-amber-500/30 hover:shadow-lg"
                     title="Pause Series"
                   >
-                    <i class="ri-pause-circle-line"></i>
-                    Pause
+                    <span class="text-amber-300">
+                      <i class="ri-pause-circle-line"></i>
+                      Pause
+                    </span>
                   </button>
                   <button
                     type="button"
@@ -152,8 +154,10 @@
                     hover:bg-green-500/30 hover:shadow-lg"
                     title="Resume Series"
                   >
-                    <i class="ri-play-circle-line"></i>
-                    Resume
+                    <span class="text-green-300">
+                      <i class="ri-play-circle-line"></i>
+                      Resume
+                    </span>
                   </button>
                 </div>
               </div>

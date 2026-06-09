@@ -530,7 +530,7 @@
           <section
             v-if="totalPages === 0"
             class="col-span-1 flex h-80 items-center justify-center 
-            md:col-span-3"
+            md:col-span-3 border-2 border-dashed border-green-500/30 rounded-3xl"
             data-aos="fade-up"
           >
             <div class="text-center">

@@ -4,7 +4,7 @@
     <div data-aos="fade-up">
       <section
       class="mx-auto max-w-full gap-4 p-4
-      grid grid-cols-1 md:grid-cols-3"
+      grid grid-cols-1 md:grid-cols-4"
       >
           <div class="flex flex-col">
             <div class="flex items-center justify-between mb-4">
@@ -65,23 +65,52 @@
             </button>
           </form>
 
-          <div
-          class="col-span-1 flex items-end justify-end lg:justify-center"
+          <form
+            class="col-span-1 flex items-end justify-between"
+            @submit.prevent="retrieveEvents"
           >
-            <label
-            class="flex h-9 items-center gap-2 font-semibold text-[#555555]"
+            <select
+              v-model="series"
+              class="h-9 flex-1 rounded-l bg-gray-100 border-none"
             >
+              <option disabled value="">Select series...</option>
+              <option v-for="series in seriesList" :key="series.id" :value="series.name">
+                {{ series.name }}
+              </option>
+            </select>
+
+            <button
+              v-if="series"
+              type="button"
+              class="h-9 bg-gray-100 px-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              @click="series = ''"
+            >
+              <i class="ri-close-line"></i>
+            </button>
+
+            <button
+              type="submit"
+              class="h-9 rounded-r bg-gradient-to-tr
+              from-[#5EE738] via-[#3e872a] to-[#050505]
+              px-4
+              text-xl
+              font-semibold
+              text-white"
+            >
+              <i class="ri-search-line text-white"></i>
+            </button>
+          </form>
+
+          <div class="col-span-1 flex items-end justify-end lg:justify-center">
+            <label class="flex h-9 items-center gap-2 font-semibold text-[#555555]">
               Show Submitted
-              <input
-              id="submitted" v-model="submit"
-              type="checkbox"
-              />
+              <input id="submitted" v-model="submit" type="checkbox"/>
             </label>
           </div>
 
           <div
             v-if="totalPages > 0"
-            class="col-span-3 flex flex-col gap-4 sm:flex-row sm:items-center 
+            class="col-span-4 flex flex-col gap-4 sm:flex-row sm:items-center 
                   sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
                   rounded-2xl p-6 border border-green-500/20 shadow-lg"
             data-aos="flip-up"
@@ -115,7 +144,7 @@
 
           <section
           v-if="!isLoading"
-          class="relative col-span-1 md:col-span-3"
+          class="relative col-span-1 md:col-span-4"
           >
           
             <CustomVueTable
@@ -128,14 +157,16 @@
             />
         </section>
 
-        <section
-        v-if="matchList.length === 0 && !isLoading"
-        class="col-span-1 flex h-60 items-center
-        justify-center font-semibold
-        text-[#555555] md:col-span-3"
-        >
-        Nothing Pending Today
-        </section>
+        <!-- Empty State -->
+         <div class="col-span-1 md:col-span-4">
+          <BaseEmptyState
+            v-if="matchList.length === 0 && !isLoading"
+            title="Nothing Pending Today"
+            description="We couldn't find anything matching your current filters. Try adjusting your search or removing some filters."
+            icon="ri-checkbox-circle-line"
+            :show-button="false"
+          />
+         </div>
 
         </section>
       </div>
@@ -190,6 +221,7 @@ export default {
   data() {
     return {
       query: null,
+      series: null,
       dateFilter: new Date(new Date().setHours(0, 0, 0, 0)),
       submit: false,
       showCustomVueTable: false,
@@ -201,6 +233,7 @@ export default {
       matchList: [],
       Data: [],
       selectedData: [],
+      seriesList: [],
       dataColumns: [
         { name: 'event_date', label: 'Date' },
         { name: 'matchTime', label: 'Time' },
@@ -342,6 +375,9 @@ export default {
         this.setPage(1)
       }
     },
+  },
+  mounted() {
+    this.loadSeries()
   },
   methods: {
     setPage() {
@@ -510,11 +546,10 @@ export default {
 
       const query = {
         q: this.query,
+        series: this.series,
         sort: 'latest',
         page: this.page,
-        // eslint-disable-next-line camelcase
         per_page: this.perPage,
-        // eslint-disable-next-line camelcase
         eventDate: event_date,
         submit: this.submit,
       };
@@ -529,36 +564,9 @@ export default {
       this.$axios
         .$get(`v1/eventmatches?${queryString}`)
         .then((response) => {
-          // const EventList = response.data.eventMatches.map(eventMatch => {
-          //   const ageGroupName = eventMatch.event.agegroup.name;
-          //   const time = eventMatch.event.time;
-          //   return {
-          //     ...eventMatch,
-          //     date: this.formattedDate(eventMatch.event.event_date),
-          //     // eslint-disable-next-line camelcase
-          //     eventmatch: eventMatch.eventmatch.map(match => {
-          //       return {
-          //         ...match,
-          //         series: eventMatch.series.name || 'Unknown',
-          //         matchtime: this.AMPMformat(time),
-          //         round: this.roundFormat(eventMatch.round),
-          //         // eslint-disable-next-line camelcase
-          //         agegroup_id: ageGroupName,
-          //         // eslint-disable-next-line camelcase
-          //         event_date: this.formattedDate(eventMatch.event_date),
-          //         date: eventMatch.event_date,
-          //         // eslint-disable-next-line camelcase
-          //         field: match.field.name || 'Unknown',
-          //         submit: match.submitted === 1
-          //       };
-          //     })
-          //   };
-          // });
-          // this.MatchList = EventList.flatMap(data => {
-          //   return data.eventmatch;
-          // });
           this.matchList = response.data.eventMatches.flatMap(eventMatch => {
             return {
+              ...eventMatch,
               id: eventMatch.id,
               team1: eventMatch.team1.name,
               team2: eventMatch.team2.name,
@@ -571,6 +579,7 @@ export default {
               event_date: this.formattedDate(eventMatch.event.event_date),
               field: eventMatch.field.name || 'Unknown',
               submit: !!eventMatch.submitted,
+              is_abandoned_match: eventMatch.is_abandoned_match
             }
           });
           this.totalItems = response.data.total_items;
@@ -583,8 +592,15 @@ export default {
           this.isLoading = false
         });
     }, 100),
+
     clearDate() {
       this.dateFilter = null;
+    },
+
+    async loadSeries() {
+      if (this.seriesList.length) return
+      const r = await this.$axios.$get(`v1/series/names`)
+      this.seriesList = r.series
     },
   }
 };

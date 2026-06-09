@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-full bg-[#1A1A1B]">
+  <div class="min-h-screen w-screen bg-gradient-to-br from-gray-900 to-gray-950">
 
     <ClientOnly>
       <CountDownTimer 

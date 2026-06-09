@@ -21,13 +21,23 @@
         />
       </div>
     </section>
+
     <section
       v-if="totalPages === 0"
-      class="col-span-1 flex h-60 items-center
-      justify-center font-semibold
-      text-[#555555] md:col-span-3"
-      >
-      No Merch Available
+      class="flex h-80 items-center justify-center rounded-3xl 
+            bg-gradient-to-br from-gray-800 to-gray-900 
+            border-2 border-dashed border-green-500/30"
+    >
+      <div class="text-center">
+        <i class="ri-article-line text-6xl text-green-500/40 mb-4"></i>
+        <h3 class="text-2xl font-bold text-gray-300 mb-2">
+          No Merch Available
+        </h3>
+        <p class="text-gray-400">
+          It looks like this category is currently empty. 
+          Check back soon for new team gear, exclusive drops, and official merchandise!
+        </p>
+      </div>
     </section>
 
     <section

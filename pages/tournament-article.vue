@@ -155,7 +155,7 @@
             <!-- Action Buttons -->
             <div class="space-y-4">
               <!-- Register Button -->
-              <div v-if="!article.pause && article.type !== 'weekly'" 
+              <div v-if="!article.pause || article.type === 'weekly'" 
                    class="flex justify-center">
                 <NuxtLink
                   :to="{
