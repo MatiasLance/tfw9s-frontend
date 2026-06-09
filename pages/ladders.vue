@@ -130,24 +130,6 @@
             </div>
           </span>
 
-          <!--
-            <section v-if="totalPages > 0" class="my-8 col-span-3" data-aos="zoom-in">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-            <span class="text-gray-300">
-            Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
-            of <span class="font-bold text-green-400">{{ totalItems }}</span> matches
-            </span>
-            </div>
-            <BasePagination
-            :active-page="page"
-            :total-pages="totalPages"
-            @change="setPage"
-            />
-            </div>
-            </section>
-          -->
-
           <section
           v-if="isLoading"
           class="w-full"
@@ -158,42 +140,22 @@
             />
           </section>
 
-
           <section
             v-else-if="allTeamStats.length === 0"
-            class="col-span-1 flex h-80 flex-col items-center
-                  justify-center rounded-2xl bg-gradient-to-br
-                  from-green-50 to-gray-100 p-8 text-center
-                  shadow-lg md:col-span-3"
+            class="flex h-80 items-center justify-center rounded-3xl 
+                  bg-gradient-to-br from-gray-800 to-gray-900 
+                  border-2 border-dashed border-green-500/30"
           >
-            <!-- Rugby Ball Icon -->
-            <div class="mb-4 transform transition-transform
-                        hover:scale-110 duration-300">
-              <div class="relative">
-                <div class="h-16 w-10 rounded-full bg-green-600
-                            shadow-md border-2 border-green-700">
-                  <div class="absolute left-1/2 top-1/2 h-12 w-8
-                              -translate-x-1/2 -translate-y-1/2
-                              rounded-full bg-white/20"></div>
-                  <div class="absolute left-1/2 top-3 h-0.5 w-6
-                              -translate-x-1/2 bg-white/50"></div>
-                  <div class="absolute left-1/2 bottom-3 h-0.5 w-6
-                              -translate-x-1/2 bg-white/50"></div>
-                </div>
-              </div>
+            <div class="text-center">
+              <i class="ri-article-line text-6xl text-green-500/40 mb-4"></i>
+              <h3 class="text-2xl font-bold text-gray-300 mb-2">
+                No Match Data
+              </h3>
+              <p class="text-gray-400">
+                No team statistics recorded for the selected 
+                filters. Try adjusting your search criteria.
+              </p>
             </div>
-
-            <!-- Message -->
-            <p class="text-xl font-bold text-green-800
-                      uppercase tracking-wider mb-2">
-              No Match Data
-            </p>
-            
-            <p class="text-green-600/80 text-sm max-w-xs
-                      leading-relaxed mb-4">
-              No team statistics recorded for the selected 
-              filters. Try adjusting your search criteria.
-            </p>
           </section>
 
           <section

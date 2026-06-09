@@ -15,7 +15,7 @@
           <!-- Team 1 -->
           <div class="sm:col-span-3">
             <label class="mb-2 block text-xs font-bold uppercase text-gray-500">
-              {{ MatchData.team1_name }}
+              {{ displayTeam1Name }}
             </label>
             <VTextField
               v-model="MatchData.team1_score"
@@ -25,7 +25,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
-              :readonly="MatchData.is_abandoned_match"
+              :readonly="displayTeam1Name === 'Bye'"
             />
           </div>
 
@@ -47,7 +47,7 @@
               flat
               class="scoreboard-input shadow-sm"
               :rules="rules"
-              :readonly="MatchData.is_abandoned_match || displayTeam2Name === 'Bye'"
+              :readonly="displayTeam2Name === 'Bye'"
             />
           </div>
         </div>
@@ -101,7 +101,7 @@
           
           <button
             type="button"
-            :disabled="!valid || processing || MatchData.is_abandoned_match"
+            :disabled="!valid || processing"
             class="
               flex h-[52px] w-full items-center justify-center gap-2 rounded-lg 
               bg-emerald-600 px-10 py-3 text-sm font-black uppercase 
@@ -161,8 +161,13 @@ export default {
       if (!this.MatchData) return 'Loading...';
 
       return this.MatchData ?
-        this.MatchData.team2_name :
+        this.MatchData.team2.name :
         'Bye';
+    },
+    displayTeam1Name() {
+      if (!this.MatchData) return 'Loading...';
+
+      return this.MatchData ? this.MatchData.team1.name : 'Bye';
     }
   },
   watch: {
@@ -181,6 +186,13 @@ export default {
         }
       },
       immediate: true,
+      isAbandonedMatched: {
+        handler(isTrue) {
+          if (isTrue) {
+            this.MatchData.is_abandoned_match = isTrue
+          }
+        }
+      }
     },
   },
   methods: {

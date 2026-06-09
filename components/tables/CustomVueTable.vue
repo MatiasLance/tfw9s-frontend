@@ -50,14 +50,14 @@
               <!-- Team 1 (Bye fallback) -->
               <template v-else-if="column.name === 'team1'">
                 <span class="text-gray-300">
-                  {{ row.team1 ? row.team1 : 'Bye' }}
+                  {{ row.team1 ? row.team1.name : 'Bye' }}
                 </span>
               </template>
 
               <!-- Team 2 (Bye fallback) -->
               <template v-else-if="column.name === 'team2'">
                 <span class="text-gray-300">
-                  {{ row.team2 ? row.team2 : 'Bye' }}
+                  {{ row.team2 ? row.team2.name : 'Bye' }}
                 </span>
               </template>
 
@@ -71,7 +71,7 @@
                       : 'from-green-400 via-green-600 to-green-800'"
                     @click="row.submit ? manageResult(row) : submit(row)"
                   >
-                    <VIcon left size="14" class="mr-1">
+                    <VIcon left size="14" class="mr-1" color="white">
                         {{ row.submit ? 'ri-edit-line' : 'ri-send-plane-fill' }}
                     </VIcon>
                     <span class="text-white">
@@ -84,7 +84,7 @@
                     class="rounded-lg bg-gradient-to-tr from-orange-400 via-orange-600 to-orange-400 py-2 px-4 text-xs font-medium text-white transition-all hover:scale-105 active:scale-95"
                     @click="row.submit ? revertResult(row) : submit(row)"
                   >
-                    <VIcon left size="16" class="mr-1">
+                    <VIcon left size="16" class="mr-1" color="white">
                         {{ row.submit ? 'ri-refresh-line' : 'ri-check-line' }}
                     </VIcon>
                     <span class="text-white">

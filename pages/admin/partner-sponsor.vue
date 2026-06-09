@@ -192,8 +192,10 @@
                   "
                   @click="removeSponsor(sponsor.id)"
                 >
-                  <i class="ri-delete-bin-5-line"></i>
-                  <span>Remove</span>
+                  <span class="text-white">
+                    <i class="ri-delete-bin-5-line"></i>
+                    Remove
+                  </span>
                 </button>
               </div>
             </div>

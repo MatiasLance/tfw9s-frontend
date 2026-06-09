@@ -1,7 +1,8 @@
 <template>
   <form
-    class="mb-5 w-full rounded border
-    border-gray-200 bg-white p-4 shadow-sm lg:p-6"
+    class="w-full max-w-screen mx-auto border
+    border-gray-100 bg-white p-6 shadow-lg transition-all
+    duration-300 hover:shadow-xl lg:p-8"
     @submit.prevent="submit"
   >
     <h2 class="mb-5 text-xl font-semibold">
@@ -348,7 +349,7 @@
           required
         />
         <span class="mt-1 inline-block cursor-pointer text-gray-500">
-          I agree with
+          I have read and agree to the
           <a
             class="decoration-none hover:text-brand-black hover:underline"
             href="#"
@@ -368,7 +369,7 @@
         }"
         :disabled="isLoading"
       >
-        <span v-if="!isLoading">
+        <span v-if="!isLoading" class="text-white">
           Confirm
         </span>
         <span v-if="isLoading">
@@ -390,6 +391,49 @@
       </template>
       <template #body>
         <TermsSection />
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-3">
+          <button
+            type="button"
+            @click="showTermsModal = false"
+            class="group inline-flex items-center justify-center gap-2 px-5 py-2.5 
+              rounded-xl text-sm font-semibold 
+              bg-transparent border border-gray-500/40 
+              text-gray-300 
+              hover:border-gray-400 hover:text-gray-100 hover:bg-gray-700
+              hover:-translate-y-0.5 
+              active:translate-y-0 active:scale-[0.98] 
+              focus:outline-none focus-visible:outline-none 
+              focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2 focus:ring-offset-gray-800
+              transition-all duration-200 ease-out"
+          >
+            <i class="ri-close-line text-lg transition-transform duration-200 group-hover:-translate-x-0.5"></i>
+            <span>Cancel</span>
+          </button>
+          <button
+            type="button"
+            @click="agreeAndClose"
+            class="group inline-flex items-center justify-center gap-2 px-6 py-2.5 
+            rounded-xl text-sm font-semibold 
+            bg-gradient-to-b from-green-500 to-green-700 
+            border border-green-400/30 
+            shadow-lg shadow-green-900/30 
+            text-white 
+            hover:from-green-400 hover:to-green-600 
+            hover:border-green-300/40 
+            hover:-translate-y-0.5 hover:shadow-xl hover:shadow-green-500/40
+            active:translate-y-0 active:shadow-md active:scale-[0.98]
+            focus:outline-none focus-visible:outline-none focus:ring-0
+            disabled:opacity-60 disabled:cursor-not-allowed 
+            disabled:hover:translate-y-0 disabled:hover:shadow-lg disabled:hover:shadow-green-900/30
+            disabled:hover:from-green-500 disabled:hover:to-green-700 disabled:hover:border-green-400/30
+            transition-all duration-200 ease-out"
+          >
+            <i class="ri-check-line text-white text-lg transition-transform duration-200 group-hover:scale-110"></i>
+            <span class="text-white">I Agree</span>
+          </button>
+        </div>
       </template>
     </Modal>
   </form>
@@ -671,6 +715,11 @@ export default {
       setTimeout(() => {
         this.showSuggestions = false;
       }, 200);
+    },
+
+    agreeAndClose() {
+      this.hasAgreedToTerms = true;
+      this.showTermsModal = false;
     },
   }
 }
