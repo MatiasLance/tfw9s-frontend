@@ -352,6 +352,9 @@ export default {
   },
   methods: {
     filterSubmittedResults() {
+      if (this.page > this.totalPages) {
+        this.setPage(1)
+      }
       this.retrieveEvents();
     },
     clearSearchSeriesName() {
@@ -526,7 +529,7 @@ export default {
         sort: 'latest',
         page: this.page,
         per_page: this.perPage,
-        event_date: this.event_date,
+        event_date: event_date,
         submit: this.submit
       };
 
