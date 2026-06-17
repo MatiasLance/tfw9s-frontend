@@ -1,197 +1,175 @@
-<!-- eslint-disable tailwindcss/classnames-order -->
 <template>
   <div>
     <div data-aos="fade-up">
-      <section
-      class="mx-auto max-w-full gap-4 p-4
-      grid grid-cols-1 md:grid-cols-4"
-      >
-          <div class="flex flex-col">
-            <div class="flex items-center justify-between mb-4">
+      <section class="mx-auto max-w-full p-4">
+        <!-- ==================== FILTER BAR ==================== -->
+        <div class="flex items-end gap-4" style="flex-wrap: wrap;">
+          <!-- 1. Date picker -->
+          <div class="flex flex-col min-w-[200px] flex-1">
+            <div class="flex items-center justify-between mb-2">
               <div class="flex items-center gap-2">
-                <i class="ri-calendar-check-line text-lg text-[#555555]"></i>
-                <span class="text-lg font-bold text-[#555555]">
-                  Select Date
-                </span>
+                <i class="ri-calendar-check-line text-lg text-gray-600"></i>
+                <span class="text-sm font-bold text-gray-600 uppercase tracking-wide">Date</span>
               </div>
-              
               <button
-                type="button"
                 v-if="dateFilter"
+                type="button"
                 @click="clearDate"
-                class="flex items-center gap-2 px-3 py-1 rounded-full
-                cursor-pointer bg-red-50 text-red-500 hover:bg-red-100
-                hover:text-red-600 transition-all duration-200 group"
+                class="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+                       bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
               >
-                <i class="ri-close-line text-sm group-hover:scale-110"></i>
-                <span class="text-xs font-semibold">
-                  Clear Filter
-                </span>
+                <i class="ri-close-line text-xs"></i> Clear
               </button>
             </div>
-
             <ODatepicker
               v-model="dateFilter"
-              placeholder="Click to select..."
+              placeholder="Select date..."
               icon="calendar"
-              class="rounded bg-white"
+              class="rounded bg-white w-full"
               :events="eventDates"
-            >
-            </ODatepicker>
+            />
           </div>
 
-          <form
-           class="col-span-1 flex items-end justify-between"
-           @submit.prevent="retrieveEvents"
-          >
-            <input
-              id="query"
-              v-model="query"
-              placeholder="Search..."
-              type="text"
-              class="h-9 flex-1 rounded-l bg-gray-100"
-            />
-            <button
-              type="submit"
-              class="h-9 rounded-r bg-gradient-to-tr
-              from-[#5EE738] via-[#3e872a] to-[#050505]
-              px-4
-              text-xl
-              font-semibold
-              text-white"
-            >
-              <i class="ri-search-line text-white"></i>
-            </button>
+          <!-- 2. Search input -->
+          <form class="flex flex-col min-w-[180px] flex-1" @submit.prevent="retrieveEvents">
+            <label class="text-sm font-bold text-gray-600 uppercase tracking-wide mb-2">Search</label>
+            <div class="flex h-9">
+              <input
+                v-model="query"
+                placeholder="Search..."
+                type="text"
+                class="flex-1 rounded-l bg-gray-100 px-3 text-sm border-none outline-none"
+              />
+              <button
+                type="submit"
+                class="rounded-r bg-gradient-to-tr from-[#5EE738] via-[#3e872a] to-[#050505] px-4 text-white"
+              >
+                <i class="ri-search-line text-white"></i>
+              </button>
+            </div>
           </form>
 
-          <form
-            class="col-span-1 flex items-end justify-between"
-            @submit.prevent="retrieveEvents"
-          >
-            <select
-              v-model="series"
-              class="h-9 flex-1 rounded-l bg-gray-100 border-none"
-            >
-              <option disabled value="">Select series...</option>
-              <option v-for="series in seriesList" :key="series.id" :value="series.name">
-                {{ series.name }}
-              </option>
-            </select>
-
-            <button
-              v-if="series"
-              type="button"
-              class="h-9 bg-gray-100 px-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-              @click="clearSearchSeriesName"
-            >
-              <i class="ri-close-line"></i>
-            </button>
-
-            <button
-              type="submit"
-              class="h-9 rounded-r bg-gradient-to-tr
-              from-[#5EE738] via-[#3e872a] to-[#050505]
-              px-4
-              text-xl
-              font-semibold
-              text-white"
-            >
-              <i class="ri-search-line text-white"></i>
-            </button>
+          <!-- 3. Series select -->
+          <form class="flex flex-col min-w-[180px] flex-1" @submit.prevent="retrieveEvents">
+            <label class="text-sm font-bold text-gray-600 uppercase tracking-wide mb-2">Series</label>
+            <div class="flex h-9">
+              <select
+                v-model="series"
+                class="flex-1 rounded-l bg-gray-100 px-3 text-sm border-none outline-none"
+              >
+                <option disabled value="">Select series...</option>
+                <option v-for="s in seriesList" :key="s.id" :value="s.name">
+                  {{ s.name }}
+                </option>
+              </select>
+              <button
+                v-if="series"
+                type="button"
+                class="bg-gray-100 px-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                @click="clearSearchSeriesName"
+              >
+                <i class="ri-close-line"></i>
+              </button>
+              <button
+                type="submit"
+                class="rounded-r bg-gradient-to-tr from-[#5EE738] via-[#3e872a] to-[#050505] px-4 text-white"
+              >
+                <i class="ri-search-line text-white"></i>
+              </button>
+            </div>
           </form>
 
-          <div class="col-span-1 flex items-end justify-end lg:justify-center">
-            <label class="flex h-9 items-center gap-2 font-semibold text-[#555555]">
+          <!-- 4. Show Submitted checkbox -->
+            <div class="flex items-center pb-1 min-w-[140px]">
+            <label class="flex items-center gap-2 text-sm font-bold text-gray-600 uppercase tracking-wide cursor-pointer">
+              <input v-model="submit" type="checkbox" class="w-4 h-4" @click="filterSubmittedResults" />
               Show Submitted
-              <input id="submitted" v-model="submit" type="checkbox"/>
             </label>
           </div>
+        </div>
 
-          <div
-            v-if="totalPages > 0"
-            class="col-span-1 md:col-span-4 flex flex-col gap-4 sm:flex-row sm:items-center 
-                  sm:justify-between bg-gradient-to-br from-gray-800 to-gray-900 
-                  rounded-2xl p-6 border border-green-500/20 shadow-lg"
-            data-aos="flip-up"
-          >
-            <div class="flex items-center gap-3">
-              <div class="bg-green-600/20 rounded-lg p-2">
-                <i class="ri-list-check text-green-400 text-lg"></i>
-              </div>
-              <span class="text-gray-300 font-medium">
-                Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
-                of <span class="font-bold text-green-400">{{ totalItems }}</span> results
-              </span>
+        <!-- ==================== PAGINATION & RESULTS ==================== -->
+        <div
+          v-if="totalPages > 0"
+          class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between 
+                 bg-gradient-to-br from-gray-800 to-gray-900 
+                 rounded-2xl p-6 border border-green-500/20 shadow-lg"
+          data-aos="flip-up"
+        >
+          <div class="flex items-center gap-3">
+            <div class="bg-green-600/20 rounded-lg p-2">
+              <i class="ri-list-check text-green-400 text-lg"></i>
             </div>
-            
-            <VPagination
-              v-model="page"
-              :length="totalPages"
-              :total-visible="7"
-              class="text-white"
-              color="success"
-              dark
-              @change="setPage"
-            />
+            <span class="text-gray-300 font-medium">
+              Showing <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+              of <span class="font-bold text-green-400">{{ totalItems }}</span> results
+            </span>
           </div>
+          
+          <VPagination
+            v-model="page"
+            :length="totalPages"
+            :total-visible="7"
+            class="text-white"
+            color="success"
+            dark
+            @change="setPage"
+          />
+        </div>
 
-          <LoadingAnimation
+        <!-- ==================== LOADING ==================== -->
+        <LoadingAnimation
           v-if="isLoading"
           :is-loading="isLoading"
           loading-title="Results"
-          />
+        />
 
-          <section
-          v-if="!isLoading"
-          class="relative col-span-1 md:col-span-4"
-          >
-          
-            <CustomVueTable
-              :columns="dataColumns"
-              :data="filteredMatches"
-              @match-data="openManageResultDialog"
-              @submit-data="openSubmitResultDialog"
-              @edit-data="openManageResultDialog"
-              @revert-data="openRevertResultModal"
-            />
+        <!-- ==================== TABLE ==================== -->
+        <section v-if="!isLoading" class="relative mt-6">
+          <CustomVueTable
+            :columns="dataColumns"
+            :data="filteredMatches"
+            @match-data="openManageResultDialog"
+            @submit-data="openSubmitResultDialog"
+            @edit-data="openManageResultDialog"
+            @revert-data="openRevertResultModal"
+          />
         </section>
 
-        <!-- Empty State -->
-         <div class="col-span-1 md:col-span-4">
+        <!-- ==================== EMPTY STATE ==================== -->
+        <div v-if="matchList.length === 0 && !isLoading" class="mt-6">
           <BaseEmptyState
-            v-if="matchList.length === 0 && !isLoading"
             title="Nothing Pending Today"
             description="We couldn't find anything matching your current filters. Try adjusting your search or removing some filters."
             icon="ri-checkbox-circle-line"
             :show-button="false"
           />
-         </div>
+        </div>
+      </section>
+    </div>
 
-        </section>
-      </div>
-
+    <!-- ==================== MODALS ==================== -->
     <ManageResultModal
-    :active="showManageResultModal"
-    :match="selectedMatch"
-    @close="closeManageResultDialog"
-    @confirm="ManageResult"
+      :active="showManageResultModal"
+      :match="selectedMatch"
+      @close="closeManageResultDialog"
+      @confirm="ManageResult"
     />
 
     <SubmitResultModal
-    :active="showSubmitResultModal"
-    :match="selectedMatch"
-    @close="closeSubmitResultDialog"
-    @confirm="SubmitSuccess"
-    @error="SubmitError"
+      :active="showSubmitResultModal"
+      :match="selectedMatch"
+      @close="closeSubmitResultDialog"
+      @confirm="SubmitSuccess"
+      @error="SubmitError"
     />
 
     <RevertResultModal
-    :active="showRevertResultModal"
-    :match="selectedMatch"
-    @close="closeRevertResultModal"
-    @confirm="manageRevertResultResponse"
+      :active="showRevertResultModal"
+      :match="selectedMatch"
+      @close="closeRevertResultModal"
+      @confirm="manageRevertResultResponse"
     />
-
   </div>
 </template>
 
@@ -332,13 +310,7 @@ export default {
     },
 
     filteredMatches() {
-      const filtered = this.matchList.filter(match =>
-        match && typeof match.submit === 'boolean' ?
-          match.submit === this.submit :
-          false
-      );
-
-      return filtered.sort((a, b) => {
+      return this.matchList.sort((a, b) => {
         const timeToMinutes = (timeStr) => {
           const [ time, period ] = timeStr.split(' ');
           const [ hours, minutes ] = time.split(':').map(Number);
@@ -379,6 +351,10 @@ export default {
     this.loadSeries()
   },
   methods: {
+    filterSubmittedResults() {
+      this.page = 1;
+      this.retrieveEvents();
+    },
     clearSearchSeriesName() {
       this.series = '',
       this.retrieveEvents();
@@ -517,11 +493,10 @@ export default {
     },
     retrieveEvents: _debounce(function() {
       this.isLoading = true
+      
       let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
-      let eventMonth = this.dateFilter ?
-        (this.dateFilter.getUTCMonth() + 1) : null;
-      let eventDay = this.dateFilter ?
-        (this.dateFilter.getUTCDate()): null;
+      let eventMonth = this.dateFilter ? (this.dateFilter.getUTCMonth() + 1) : null;
+      let eventDay = this.dateFilter ? (this.dateFilter.getUTCDate()): null;
 
       eventDay++;
 
@@ -551,8 +526,8 @@ export default {
         sort: 'latest',
         page: this.page,
         per_page: this.perPage,
-        eventDate: event_date,
-        submit: this.submit,
+        event_date: event_date,
+        submit: this.submit
       };
 
       Object.keys(query).forEach((key) => {
@@ -585,25 +560,6 @@ export default {
           this.matchList = eventList.flatMap(data => {
             return data.eventmatch;
           });
-          
-          // this.matchList = response.data.eventMatches.flatMap(eventMatch => {
-          //   return {
-          //     ...eventMatch,
-          //     id: eventMatch.id,
-          //     team1: eventMatch.team1.name,
-          //     team2: eventMatch.team2.name,
-          //     team1_score: eventMatch.team1_score,
-          //     team2_score: eventMatch.team2_score,
-          //     series: eventMatch.event.series.name || 'Unknown',
-          //     matchTime: this.AMPMformat(eventMatch.event.time),
-          //     round: this.roundFormat(eventMatch.event.round),
-          //     agegroup_id: eventMatch.event.agegroup.name,
-          //     event_date: this.formattedDate(eventMatch.event.event_date),
-          //     field: eventMatch.field.name || 'Unknown',
-          //     submit: !!eventMatch.submitted,
-          //     is_abandoned_match: eventMatch.is_abandoned_match
-          //   }
-          // });
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
           this.from = response.data.from;

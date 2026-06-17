@@ -89,7 +89,7 @@
         </template>
         
         <template v-else>
-          <span class="flex items-center justify-center">
+          <span class="flex items-center justify-center text-gray-200">
             <i class="ri-lock-line"></i>
             <span class="ml-2">
               Pay Now

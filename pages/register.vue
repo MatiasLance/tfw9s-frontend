@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen w-screen bg-gradient-to-br from-gray-900 to-gray-950">
 
+    <!-- Countdown overlay (does NOT destroy form) -->
     <ClientOnly>
       <CountDownTimer 
         v-if="showCountdown && series.type !== 'competitions'"
@@ -9,10 +10,11 @@
       />
     </ClientOnly>
 
+    <!-- Queue overlay (kept as before) -->
     <div
-     v-if="isInQueue"
-     class="fixed inset-0 z-50 flex items-center
-     justify-center bg-black/90 backdrop-blur-sm"
+      v-if="isInQueue"
+      class="fixed inset-0 z-50 flex items-center
+      justify-center bg-black/90 backdrop-blur-sm"
     >
       <div class="bg-white rounded-lg p-8 max-w-md w-full
       text-center shadow-2xl border-t-4 border-green-600"
@@ -21,7 +23,7 @@
           <div class="spinner !text-green-600 !w-12 !h-12 !border-green-200"></div>
         </div>
         <h2 class="text-2xl font-bold text-gray-800 mb-2">
-            You are in line
+          You are in line
         </h2>
         <p class="text-gray-600 mb-6">
           Due to high traffic, we have placed you in a virtual waiting room. 
@@ -33,7 +35,7 @@
           </p>
           <p class="text-4xl font-bold text-green-700">
             {{ queuePosition }}
-         </p>
+          </p>
         </div>
 
         <p class="text-xs text-gray-400">
@@ -47,7 +49,7 @@
       bg-gradient-to-br from-green-900 via-green-700 to-gray-900
       lg:px-8"
     >
-    <!-- Animated Rugby Field Background -->
+      <!-- Animated Rugby Field Background -->
       <div class="absolute inset-0 opacity-20">
         <div class="absolute top-1/4 left-0 w-full h-1 bg-white/30 
                     animate-pulse"></div>
@@ -83,7 +85,7 @@
     </BaseHeader>
 
     <div
-      v-if="!showCountdown"
+      v-show="!showCountdown"
       class="mt-10 mb-10 rounded-lg mx-auto max-w-screen-xl bg-gray-200"
     >
       <div class="mb-5 w-full rounded-t-lg bg-white">
@@ -92,7 +94,7 @@
 
       <div class="flex flex-col gap-4 p-2 md:flex-row">
         <template v-if="activeStep === 1">
-           <template v-if="seriestype === 'weekly'">
+          <template v-if="seriestype === 'weekly'">
             <IndividualInformationForm
               :is-loading="isStepperLoading"
               :price="price"
@@ -167,6 +169,7 @@ export default {
       isInQueue: false,
       queuePosition: 0,
       pollingInterval: null,
+      statusDebounceTimer: null,
     };
   },
 
@@ -207,6 +210,9 @@ export default {
 
   beforeDestroy() {
     this.stopPolling();
+    if (this.statusDebounceTimer) {
+      clearTimeout(this.statusDebounceTimer);
+    }
     if (this.$socket) {
       this.$socket.off('registration-form-status', this.handleRegistrationStatus)
     }
@@ -226,16 +232,18 @@ export default {
 
   methods: {
     handleRegistrationStatus(response) {
-      const data = response.data || response
-      
-      if (data) {
-        this.registrationOpensDate = data.date;
-        this.showCountdown = data.isShowCountDownTimer;
-
-        this.$forceUpdate();
-        
-        this.$emit('registration-status-updated', data);
-      }
+      clearTimeout(this.statusDebounceTimer);
+      this.statusDebounceTimer = setTimeout(() => {
+        const data = response.data || response;
+        if (data) {
+          if (data.isShowCountDownTimer !== this.showCountdown) {
+            this.showCountdown = data.isShowCountDownTimer;
+          }
+          if (data.date !== this.registrationOpensDate) {
+            this.registrationOpensDate = data.date;
+          }
+        }
+      }, 500);
     },
     async retrieveRegistrationFormStatus(id) {
       try {
@@ -256,7 +264,6 @@ export default {
       try {
         const response = await this.$axios.$post('/v1/lounge/check', {
           item: this.$route.query.id,
-          /* eslint-disable camelcase */
           client_id: this.clientId
         });
 
@@ -290,7 +297,9 @@ export default {
     },
 
     moveToPaymentStep() {
-      this.activeStep = 2;
+      if (this.activeStep !== 2) {
+        this.activeStep = 2;
+      }
       this.isStepperLoading = false;
     },
 

@@ -1,44 +1,61 @@
 <template>
   <OModal :active="active" @close="closeDialog">
-    <div class="w-full rounded bg-white p-2 sm:w-full sm:p-4">
-            <form @submit.prevent="submitDelete">
-                <h3 class="text-brand-black mb-3 font-bold">
-                    Delete Series
-                </h3>
-                <hr class="my-3"/>
-                  <p>
-                    Are you sure you want to remove
-                    <strong>
-                      {{ seriesData.name }}
-                    </strong> ?
-                  </p>
-                  <i class="text-red-500">
-                    Deleting {{ seriesData.name }} will remove all related Teams and Fixings.
-                  </i>
-                <hr class="my-3"/>
-                <div class="flex flex-col justify-end gap-2 md:flex-row">
-                  <VBtn
-                  depressed
-                  color="success"
-                  class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-                  type="submit"
-                  :loading="isDeleting"
-                  :disabled="isDeleting"
-                  >
-                    OK
-                  </VBtn>
-                  <VBtn
-                    depressed
-                    color="error"
-                    class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-                    @click="closeDialog"
-                    :disabled="isDeleting"
-                  >
-                    Cancel
-                  </VBtn>
-                </div>
-            </form>
+    <div class="relative w-full overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6 shadow-[0_8px_32px_rgba(0,0,0,0.6)] ring-1 ring-red-500/20 sm:w-full sm:p-8">
+      
+      <div class="pointer-events-none absolute inset-0 opacity-10">
+        <div class="absolute left-1/4 top-0 h-full w-0 border-l-2 border-dashed border-green-500"></div>
+        <div class="absolute left-3/4 top-0 h-full w-0 border-l-2 border-dashed border-green-500"></div>
+        <div class="absolute left-0 top-1/2 h-0 w-full border-t-2 border-dashed border-green-500"></div>
+      </div>
+
+      <form @submit.prevent="submitDelete" class="relative z-10">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-600/20 shadow-[0_0_20px_rgba(239,68,68,0.3)] ring-1 ring-red-400/30">
+            <i class="ri-error-warning-line text-2xl text-red-400" aria-hidden="true"></i>
+          </div>
+          <h3 class="text-xl font-extrabold uppercase tracking-wider text-white">
+            Delete Series
+          </h3>
         </div>
+
+        <hr class="my-4 border-white/10" />
+
+        <p class="text-base leading-relaxed text-gray-300">
+          Are you sure you want to remove
+          <strong class="font-bold text-white">{{ seriesData.name }}</strong>?
+        </p>
+        <div class="mt-3 flex items-center gap-2 rounded-lg bg-red-600/10 px-4 py-3 text-sm text-red-400 ring-1 ring-red-500/30">
+          <i class="ri-alert-line flex-shrink-0 text-lg" aria-hidden="true"></i>
+          <span>
+            Deleting <strong class="font-semibold">{{ seriesData.name }}</strong> will remove all related Teams and Fixings.
+          </span>
+        </div>
+
+        <hr class="my-4 border-white/10" />
+
+        <div class="flex flex-col justify-end gap-3 sm:flex-row">
+          <VBtn
+            depressed
+            color="success"
+            class="custom-btn w-full sm:w-[185px] !bg-gradient-to-br !from-[#5EE738] !via-[#3e872a] !to-[#050505] !text-white !font-bold !uppercase !tracking-wider !shadow-[0_4px_12px_rgba(94,231,56,0.3)] hover:!shadow-[0_6px_20px_rgba(94,231,56,0.5)] hover:!brightness-110"
+            type="submit"
+            :loading="isDeleting"
+            :disabled="isDeleting"
+          >
+            <i class="ri-check-line mr-1" aria-hidden="true"></i> OK
+          </VBtn>
+          <VBtn
+            depressed
+            color="error"
+            class="custom-btn w-full sm:w-[185px] !bg-transparent !border !border-red-500/40 !text-red-400 !font-bold !uppercase !tracking-wider hover:!bg-red-500/10 hover:!border-red-400"
+            @click="closeDialog"
+            :disabled="isDeleting"
+          >
+            <i class="ri-close-line mr-1" aria-hidden="true"></i> Cancel
+          </VBtn>
+        </div>
+      </form>
+    </div>
   </OModal>
 </template>
 

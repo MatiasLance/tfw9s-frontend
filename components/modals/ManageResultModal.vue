@@ -160,14 +160,14 @@ export default {
     displayTeam2Name() {
       if (!this.MatchData) return 'Loading...';
 
-      return this.MatchData ?
+      return this.MatchData && this.MatchData.team2 ?
         this.MatchData.team2.name :
         'Bye';
     },
     displayTeam1Name() {
       if (!this.MatchData) return 'Loading...';
 
-      return this.MatchData ? this.MatchData.team1.name : 'Bye';
+      return this.MatchData && this.MatchData.team1 ? this.MatchData.team1.name : 'Bye';
     }
   },
   watch: {
