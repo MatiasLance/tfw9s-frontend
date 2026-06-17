@@ -1,9 +1,7 @@
 <template>
-  <div class="h-full">
-    <BaseHeader
-      class="mx-auto max-w-full gap-4 relative overflow-hidden
-      bg-gradient-to-br from-green-900 via-green-700 to-gray-900 lg:px-8"
-    >
+  <div class="min-h-screen bg-gray-950 text-white">
+    <!-- Header -->
+    <BaseHeader class="mx-auto max-w-full gap-4 relative overflow-hidden bg-gradient-to-br from-green-900 via-green-700 to-gray-900 lg:px-8">
       <div class="absolute inset-0 opacity-20">
         <div class="absolute top-1/2 left-0 w-full h-1 bg-white/40 animate-pulse"></div>
       </div>
@@ -22,79 +20,108 @@
       </div>
     </BaseHeader>
 
-    <div class="flex flex-col items-center justify-center px-8 py-20">
-      <template v-if="status === 'loading'">
-        <VProgressCircular size="125" width="10" indeterminate color="green lighten-2" />
-        <div class="mt-8 text-2xl font-bold text-white">
-          {{ bannerText }}
-        </div>
-        <div class="text-base text-gray-300">
-          Please do not close your browser. Confirming with the bank...
-        </div>
-      </template>
+    <!-- Status card -->
+    <div class="flex flex-col items-center justify-center px-4 py-20">
+      <div class="w-full max-w-lg bg-gray-900/80 backdrop-blur-md border border-green-500/20 rounded-2xl p-8 shadow-2xl shadow-black/50 transition-all duration-500">
 
-      <template v-else-if="status === 'success'">
-        <VIcon size="150" color="green">
-          mdi-check-circle
-        </VIcon>
-        <div class="mt-8 text-2xl font-bold text-white">
-          Payment Success!
-        </div>
-        <div class="mt-4 flex flex-col items-center gap-3">
-          <span
-            v-if="transactionUrl"
-            class="cursor-pointer rounded bg-gradient-to-tr from-[#5EE738]
-            to-[#050505] px-6 py-2 text-white"
-            @click="redirectTo(transactionUrl)"
-          >
-            Registration Details
-          </span>
-          <NuxtLink to="/tournaments">
-            <span class="bg-brand-black cursor-pointer rounded px-6 py-2 text-white">
-              Back to Tournaments
-            </span>
-          </NuxtLink>
-        </div>
-      </template>
+        <!-- Loading state -->
+        <template v-if="status === 'loading'">
+          <div class="flex flex-col items-center gap-8">
+            <div class="relative">
+              <VProgressCircular size="125" width="10" indeterminate color="green lighten-2" />
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i class="ri-football-line text-3xl text-green-400 animate-bounce" aria-hidden="true"></i>
+              </div>
+            </div>
+            <h2 class="text-2xl font-bold text-green-200">Confirming payment…</h2>
+            <p class="text-gray-300 text-center">
+              Please don’t close this page.<br/>
+              We’re waiting for the bank to confirm.
+            </p>
+          </div>
+        </template>
 
-      <template v-else-if="status === 'processing'">
-        <VIcon size="150" color="blue lighten-2">
-          mdi-information
-        </VIcon>
-        <div class="mt-8 text-2xl font-bold text-white">
-          Processing takes longer than usual
-        </div>
-        <div class="text-base text-gray-300 text-center">
-          We haven't received confirmation yet. It's safe to close this tab;<br> 
-          we will email you once confirmed.
-        </div>
-        <div class="mt-4">
-          <span class="bg-brand-black cursor-pointer px-4 py-2 text-white"
-          @click="resetAndVerify"
-          >
-            Check Again
-          </span>
-        </div>
-      </template>
+        <!-- Success state -->
+        <template v-else-if="status === 'success'">
+          <div class="flex flex-col items-center gap-6 text-center">
+            <!-- Success icon with subtle glow -->
+            <div class="relative">
+              <div class="absolute inset-0 bg-green-500/30 rounded-full blur-2xl animate-pulse"></div>
+              <VIcon size="150" color="green" class="relative z-10 drop-shadow-lg">
+                mdi-check-circle
+              </VIcon>
+            </div>
+            <h2 class="text-3xl font-extrabold text-white">Payment Success!</h2>
+            <p class="text-gray-300">
+              Your registration has been confirmed.
+            </p>
 
-      <template v-else>
-        <VIcon size="150" color="red darken-2">
-          mdi-alert-circle
-        </VIcon>
-        <div class="mt-8 text-2xl font-bold text-white">
-          Verification Failed
-        </div>
-        <div class="text-base text-gray-300">
-          {{ bannerText }}
-        </div>
-        <div class="mt-4 flex gap-4">
-          <NuxtLink to="/tournaments"
-          class="bg-brand-black px-4 py-2 text-white"
-          >
-            Try Checkout Again
-          </NuxtLink>
-        </div>
-      </template>
+            <!-- Action buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 w-full mt-4">
+              <button
+                v-if="transactionUrl"
+                @click="redirectTo(transactionUrl)"
+                class="flex-1 rounded-lg bg-gradient-to-tr from-[#5EE738] to-[#050505] px-6 py-3 font-semibold text-white shadow-lg hover:scale-105 transition-transform focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <i class="ri-file-text-line mr-2"></i>
+                View Registration Details
+              </button>
+              <NuxtLink to="/tournaments" class="flex-1">
+                <span class="flex items-center justify-center rounded-lg bg-brand-black px-6 py-3 font-semibold text-white hover:bg-gray-800 transition-colors border border-green-500/30">
+                  <i class="ri-trophy-line mr-2"></i>
+                  Back to Tournaments
+                </span>
+              </NuxtLink>
+            </div>
+          </div>
+        </template>
+
+        <!-- Processing state -->
+        <template v-else-if="status === 'processing'">
+          <div class="flex flex-col items-center gap-6">
+            <div class="relative">
+              <div class="absolute inset-0 bg-blue-500/20 rounded-full blur-2xl animate-pulse"></div>
+              <VIcon size="150" color="blue lighten-2" class="relative z-10">
+                mdi-information
+              </VIcon>
+            </div>
+            <h2 class="text-2xl font-bold text-blue-200">Still processing…</h2>
+            <p class="text-gray-300 text-center">
+              The bank hasn’t confirmed yet. <br/>
+              You can safely close this page – we’ll email you as soon as it goes through.
+            </p>
+            <button
+              @click="resetAndVerify"
+              class="rounded-lg bg-brand-black px-6 py-3 text-white font-semibold hover:bg-gray-800 transition-colors border border-blue-500/30"
+            >
+              <i class="ri-refresh-line mr-2"></i>
+              Check Again
+            </button>
+          </div>
+        </template>
+
+        <!-- Error state -->
+        <template v-else>
+          <div class="flex flex-col items-center gap-6">
+            <div class="relative">
+              <div class="absolute inset-0 bg-red-500/20 rounded-full blur-2xl animate-pulse"></div>
+              <VIcon size="150" color="red darken-2" class="relative z-10">
+                mdi-alert-circle
+              </VIcon>
+            </div>
+            <h2 class="text-2xl font-bold text-red-300">Verification Failed</h2>
+            <p class="text-gray-300 text-center">
+              {{ bannerText }}
+            </p>
+            <NuxtLink to="/tournaments">
+              <span class="inline-flex items-center rounded-lg bg-red-600 px-6 py-3 font-semibold text-white hover:bg-red-700 transition-colors">
+                <i class="ri-arrow-go-back-line mr-2"></i>
+                Try Checkout Again
+              </span>
+            </NuxtLink>
+          </div>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -282,3 +309,13 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+@keyframes glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+.animate-pulse {
+  animation: glow 2s ease-in-out infinite;
+}
+</style>

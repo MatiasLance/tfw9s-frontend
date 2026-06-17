@@ -6,58 +6,70 @@
       <h3 class="pt-8 font-bold text-white">
           Manage Series Teams
       </h3>
+      
       <hr class="my-2"/>
-      <div class="mb-2 flex w-full items-center gap-2">
-        <input
-          v-model="searchQuery"
-          type="text"
-          class="
-            block
-            flex-1
-            appearance-none
-            rounded-md
-            border border-gray-200
-            bg-gray-100
-            px-3
-            py-1.5
-            font-normal
-            outline-inherit
-            hover:border-gray-400
-            focus:border-gray-400
-            focus:bg-white
-            focus:outline-none
-            focus:ring-0
-          "
-          placeholder="Search..."
-          @input="search"
-        >
+
+      <div class="relative mb-2 flex w-full items-stretch gap-3 rounded-xl bg-gradient-to-r from-gray-900/80 to-gray-800/80 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-sm ring-1 ring-white/10">
+        
+        <div class="relative flex-1">
+          <i class="ri-search-line absolute left-3 top-1/2 -translate-y-[15px] text-lg text-gray-400" aria-hidden="true"></i>
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="
+              block w-full rounded-lg border border-white/5 bg-black/40 py-2.5 pl-10 pr-4
+              text-sm font-medium text-white placeholder-gray-400
+              transition-all duration-200 ease-out
+              focus:border-green-500/70 focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-green-500/20
+              hover:border-white/10
+            "
+            placeholder="Find players, teams, stats..."
+            @input="search"
+            aria-label="Search rugby data"
+          />
+          <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-[20px] text-3xl text-gray-700/30" aria-hidden="true">
+            <i class="ri-football-line"></i>
+          </div>
+        </div>
+
         <button
-        type="button"
-        class="
-        whitespace-nowrap
-        rounded-md
-        bg-gradient-to-br from-[#5EE738]
-        via-[#3e872a] to-[#050505] px-3
-        py-1.5
-        text-center
-        font-medium
-        text-white
-        "
-        @click="openManageTeamModal([])"
+          type="button"
+          class="
+            group relative flex items-center gap-2 overflow-hidden rounded-lg
+            bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505] px-5
+            text-sm font-bold uppercase tracking-wider text-white
+            shadow-[0_4px_12px_rgba(94,231,56,0.3)] transition-all duration-300
+            hover:shadow-[0_6px_20px_rgba(94,231,56,0.5)] hover:brightness-110
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+          "
+          @click="openManageTeamModal([])"
+          aria-label="Insert new rugby team or player"
         >
-          Insert
+          <i class="ri-add-line text-white text-lg transition-transform duration-200 group-hover:scale-110" aria-hidden="true"></i>
+          <span class="text-white">Insert</span>
+
+          <span class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><line x1=%220%22 y1=%2250%22 x2=%22100%22 y2=%2250%22 stroke=%22white%22 stroke-width=%221%22 stroke-dasharray=%2210,10%22/></svg>')] bg-repeat"></span>
         </button>
       </div>
+
       <div
-      class="col-span-1 flex flex-wrap items-center justify-around
-      gap-x-2 md:col-span-3 md:justify-between"
-      data-aos="flip-up" data-aos-once="true"
+        class="col-span-1 md:col-span-3 mb-2 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-gradient-to-r from-gray-900/90 to-gray-800/90 p-4 shadow-[0_8px_24px_rgba(0,0,0,0.5)] ring-1 ring-green-500/20 backdrop-blur-sm"
+        data-aos="flip-up"
+        data-aos-once="true"
       >
-        <span
-        class="font-medium text-white"
-        >
-        Showing {{ from }}-{{ to }} of {{ totalItems }} items
-        </span>
+        <div class="flex items-center gap-3">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-600/20 ring-1 ring-green-400/30">
+            <i class="ri-football-line text-lg text-green-400" aria-hidden="true"></i>
+          </div>
+          <span class="text-sm font-semibold uppercase tracking-wider text-gray-300">
+            Showing
+            <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+            of
+            <span class="font-bold text-green-400">{{ totalItems }}</span>
+            matches
+          </span>
+        </div>
+
         <VPagination
           v-model="page"
           :length="totalPages"
@@ -66,7 +78,7 @@
           class="text-white"
           dark
           @change="quickFetch"
-          />
+        />
       </div>
 
       <section
@@ -82,7 +94,6 @@
             shadow-2xl transition-all duration-300 hover:scale-105
             hover:shadow-green-500/20 border-2 border-green-600/30"
           > 
-            <!-- Rugby Jersey Stripe Design -->
             <div class="absolute left-0 top-1/2 h-8 w-3 -translate-y-1/2
             bg-white/20 rounded-r-lg"></div>
             
@@ -168,7 +179,7 @@
             </article>
 
             <!-- Team Content -->
-            <div class="flex items-start gap-4 pt-8"> <!-- Added pt-8 for spacing -->
+            <div class="flex items-start gap-4 pt-8">
               <!-- Team Logo -->
               <div class="relative">
                 <img
@@ -182,10 +193,10 @@
               </div>
 
               <!-- Team Info -->
-              <article class="flex flex-1 flex-col space-y-3 min-w-0"> <!-- Added min-w-0 -->
-                <div class="min-w-0"> <!-- Added for text truncation -->
+              <article class="flex flex-1 flex-col space-y-3 min-w-0">
+                <div class="min-w-0">
                   <h3 class="text-lg font-bold text-white truncate" 
-                      :title="team.name"> <!-- Added truncate and title -->
+                      :title="team.name">
                     {{ team.name }}
                   </h3>
                   <p class="text-sm text-green-300">
@@ -196,7 +207,6 @@
 
                 <!-- Status Badges Row -->
                 <div class="flex flex-wrap gap-2">
-                  <!-- Discount Badge -->
                   <div v-if="team.discount_codes_id" class="inline-flex">
                     <span class="rounded-full bg-amber-500/20 px-3 py-1 text-xs
                     font-semibold text-amber-300 ring-1 ring-amber-500/30">
@@ -218,7 +228,6 @@
 
                 <!-- Action Buttons -->
                 <div class="grid grid-cols-2 gap-2 pt-2">
-                  <!-- Copy Link for Team and Individual -->
                   <button
                     type="button"
                     class="flex items-center justify-center gap-1 rounded-xl
@@ -234,7 +243,6 @@
                     {{ teamUrlGenerating === team.id ? 'Copied!' : 'Link' }}
                   </button>
 
-                   <!-- Copy Link for Player Registration -->
                   <button
                     type="button"
                     class="items-center justify-center gap-1 rounded-xl
@@ -250,7 +258,6 @@
                     {{ playerRegistrationUrlGenerating === team.id ? 'Copied!' : 'Link' }}
                   </button>
 
-                  <!-- SMS Link -->
                   <button
                     type="button"
                     class="flex items-center justify-center gap-1 rounded-xl
@@ -266,7 +273,6 @@
                     {{ teamUrlGeneratingPerID === team.id ? 'Sending...' : 'SMS' }}
                   </button>
 
-                  <!-- Update -->
                   <button
                     type="button"
                     class="flex items-center justify-center gap-1 rounded-xl
@@ -278,7 +284,6 @@
                     Edit
                   </button>
 
-                  <!-- Delete -->
                   <button
                     type="button"
                     class="flex items-center justify-center gap-1 rounded-xl
@@ -293,7 +298,6 @@
               </article>
             </div>
 
-            <!-- Rugby Field Background Pattern -->
             <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r
             from-transparent via-green-500 to-transparent opacity-50"></div>
           </div>
@@ -302,38 +306,52 @@
 
       <section
         v-else
-        class="relative flex flex-1 flex-col items-center justify-center
-        py-16 px-4 text-center md:col-span-3 overflow-hidden
-        bg-gradient-to-br from-green-50 to-gray-100"
+        class="relative flex flex-1 flex-col items-center justify-center py-16 px-4 text-center md:col-span-3 overflow-hidden
+              bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
       >
-        <!-- Rugby Field Pattern -->
-        <div class="absolute inset-0 opacity-10">
-          <div class="absolute left-1/4 top-0 h-full w-0.5 bg-green-500"></div>
-          <div class="absolute left-3/4 top-0 h-full w-0.5 bg-green-500"></div>
-          <div class="absolute left-0 top-1/4 h-0.5 w-full bg-green-500"></div>
-          <div class="absolute left-0 top-3/4 h-0.5 w-full bg-green-500"></div>
+        <div class="absolute inset-0 opacity-20">
+          <div class="absolute left-1/4 top-0 h-full w-0 border-l-2 border-dashed border-green-500/50"></div>
+          <div class="absolute left-3/4 top-0 h-full w-0 border-l-2 border-dashed border-green-500/50"></div>
+          <div class="absolute left-0 top-1/4 w-full h-0 border-t-2 border-dashed border-green-500/50"></div>
+          <div class="absolute left-0 top-3/4 w-full h-0 border-t-2 border-dashed border-green-500/50"></div>
         </div>
 
-        <!-- Content -->
-        <div class="relative z-10">
-          <div class="mb-6 flex justify-center">
-            <div class="flex size-20 items-center justify-center rounded-full
-            bg-white shadow-lg border border-green-200">
-              <i class="ri-football-line text-3xl text-green-600"></i>
-            </div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="mb-6 flex size-20 items-center justify-center rounded-full
+                      bg-gradient-to-br from-green-600/30 to-green-900/30
+                      shadow-[0_0_40px_rgba(94,231,56,0.3)] ring-1 ring-green-400/30
+                      backdrop-blur-sm">
+            <i class="ri-football-line text-4xl text-green-400 drop-shadow-[0_0_12px_rgba(94,231,56,0.7)]" aria-hidden="true"></i>
           </div>
 
-          <h3 class="mb-3 text-2xl font-bold text-gray-800">
-            Ready to Play?
+          <h3 class="mb-3 text-2xl font-extrabold uppercase tracking-wider text-white">
+            Ready to <span class="text-green-400">Play</span>?
           </h3>
-          
-          <p class="mb-8 text-gray-600 max-w-md leading-relaxed">
-            The field is set but no teams are registered yet. 
-            <span class="font-semibold text-green-600">
-              Create your first rugby team
-            </span> 
-            and kick off the competition!
+
+          <p class="mb-8 max-w-md text-base leading-relaxed text-gray-300">
+            The pitch is marked, the floodlights are on, but no team has taken the field yet.
+            <span class="font-semibold text-green-400">
+              Create your first rugby squad
+            </span>
+            and kick off the tournament.
           </p>
+
+          <button
+            type="button"
+            class="group relative flex items-center gap-2 overflow-hidden rounded-lg
+                  bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505]
+                  px-6 py-3 text-sm font-bold uppercase tracking-wider text-white
+                  shadow-[0_4px_20px_rgba(94,231,56,0.3)]
+                  transition-all duration-300
+                  hover:shadow-[0_8px_30px_rgba(94,231,56,0.5)] hover:brightness-110
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            @click="openManageTeamModal([])"
+            aria-label="Create first rugby team"
+          >
+            <i class="ri-add-line text-white text-lg transition-transform duration-200 group-hover:scale-110" aria-hidden="true"></i>
+            <span class="text-white">Create First Team</span>
+            <span class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><line x1=%220%22 y1=%2250%22 x2=%22100%22 y2=%2250%22 stroke=%22white%22 stroke-width=%221%22 stroke-dasharray=%2210,10%22/></svg>')] bg-repeat"></span>
+          </button>
         </div>
       </section>
 

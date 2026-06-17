@@ -1,67 +1,70 @@
-<!-- eslint-disable vue/no-v-html -->
 <template>
   <div>
   <div data-aos="fade-up">
     <section class="mx-auto max-w-screen-xl gap-4 p-4">
       <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
+        
+        <div class="col-span-1 md:col-span-3 mb-2">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl bg-gradient-to-r from-gray-900/90 to-gray-800/90 p-4 shadow-[0_8px_24px_rgba(0,0,0,0.5)] ring-1 ring-green-500/20 backdrop-blur-sm">
+            
+            <div class="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                class="group flex items-center gap-2 rounded-lg bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505] px-4 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-[0_4px_12px_rgba(94,231,56,0.3)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(94,231,56,0.5)] hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                @click="openAddSeriesDialog"
+                aria-label="Add new series"
+              >
+                <i class="ri-add-line text-white text-lg transition-transform group-hover:scale-110" aria-hidden="true"></i>
+                <span class="text-white">Add Series</span>
+              </button>
 
-        <div
-          class="
-            col-span-1 flex flex-col
-            items-center gap-2
-            md:col-span-3 md:flex-row"
-          >
-          <button
-            type="button"
-            class="
-              w-full rounded-md
-              bg-gradient-to-br
-              from-[#5EE738] via-[#3e872a]
-              to-[#050505] py-1.5
-              text-center
-              font-semibold
-              text-white
-              sm:w-36"
-              @click="openAddSeriesDialog"
-          >
-            <span class="text-white">+</span>
-          </button>
+              <button
+                type="button"
+                class="group flex items-center gap-2 rounded-lg bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505] px-4 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-[0_4px_12px_rgba(94,231,56,0.3)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(94,231,56,0.5)] hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                @click="openEditThumbnailDialog"
+                aria-label="Edit thumbnail"
+              >
+                <i class="ri-image-edit-line text-white text-lg transition-transform group-hover:scale-110" aria-hidden="true"></i>
+                <span class="text-white">Edit Thumbnail</span>
+              </button>
+            </div>
 
-          <button
-            type="button"
-            class="
-              w-full rounded-md
-              bg-gradient-to-br
-              from-[#5EE738] via-[#3e872a]
-              to-[#050505] py-1.5
-              text-center
-              text-white
-              sm:w-36"
-              @click="openEditThumbnailDialog"
-          >
-          <span class="text-white">Edit Thumbnail</span>
-          </button>
+            <div class="min-w-[200px]">
+              <label for="event-year-select" class="mb-1.5 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-gray-300">
+                <i class="ri-calendar-event-line text-green-400" aria-hidden="true"></i>
+                <span>Select Series</span>
+              </label>
+              <VSelect
+                id="event-year-select"
+                v-model="ActiveTab"
+                :items="SeriesTabs"
+                label="Select Event Year"
+                solo
+                class="dark-select"
+              />
+            </div>
+          </div>
         </div>
-
-        <div class="col-span-1 md:col-span-2"></div>
-
-        <VSelect
-        v-model="ActiveTab"
-        :items="SeriesTabs"
-        label="Select Event Year"
-        solo
-        class="col-span-1"
-        />
 
         <div
           v-if="totalPages > 0"
-          class="col-span-1 flex flex-wrap items-center justify-around
-          gap-x-2 md:col-span-3 md:justify-between"
-          data-aos="flip-up" data-aos-once="true"
+          class="col-span-1 md:col-span-3 mb-2 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-gradient-to-r from-gray-900/90 to-gray-800/90 p-4 shadow-[0_8px_24px_rgba(0,0,0,0.5)] ring-1 ring-green-500/20 backdrop-blur-sm"
+          data-aos="flip-up"
+          data-aos-once="true"
         >
-          <span class="font-medium text-white">
-            Showing {{ from }}-{{ to }} of {{ totalItems }} items
-          </span>
+
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-600/20 ring-1 ring-green-400/30">
+              <i class="ri-football-line text-lg text-green-400" aria-hidden="true"></i>
+            </div>
+            <span class="text-sm font-semibold uppercase tracking-wider text-gray-300">
+              Showing
+              <span class="font-bold text-green-400">{{ from }}-{{ to }}</span>
+              of
+              <span class="font-bold text-green-400">{{ totalItems }}</span>
+              matches
+            </span>
+          </div>
 
           <VPagination
             v-model="page"
@@ -71,7 +74,7 @@
             class="text-white"
             dark
             @change="setPage"
-            />
+          />
         </div>
 
         <section
@@ -486,8 +489,6 @@ export default {
       });
 
       const uniqueYears = [ ...new Set(years) ];
-
-      // uniqueYears.sort();
 
       const formattedYears = uniqueYears.map(year => ({
         text: `Year ${year.toString()}`,

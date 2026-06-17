@@ -352,9 +352,7 @@ export default {
   },
   methods: {
     filterSubmittedResults() {
-      if (this.page > this.totalPages) {
-        this.setPage(1)
-      }
+      this.page = 1;
       this.retrieveEvents();
     },
     clearSearchSeriesName() {
@@ -495,11 +493,10 @@ export default {
     },
     retrieveEvents: _debounce(function() {
       this.isLoading = true
+      
       let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
-      let eventMonth = this.dateFilter ?
-        (this.dateFilter.getUTCMonth() + 1) : null;
-      let eventDay = this.dateFilter ?
-        (this.dateFilter.getUTCDate()): null;
+      let eventMonth = this.dateFilter ? (this.dateFilter.getUTCMonth() + 1) : null;
+      let eventDay = this.dateFilter ? (this.dateFilter.getUTCDate()): null;
 
       eventDay++;
 
