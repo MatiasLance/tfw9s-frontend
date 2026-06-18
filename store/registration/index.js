@@ -18,7 +18,7 @@ export const state = () => ({
     managerPhoneNumber: '',
     discountCodeId: null,
     pool: '',
-    idEmpotencyKey: ''
+    idEmpotencyKey: '',
   },
   paymentMethod: '',
   toggleMasterSetting1: true,
