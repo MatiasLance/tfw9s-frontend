@@ -134,7 +134,8 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
+    await this.$nextTick()
     this.debouncedSearch = debounce(this.retrieveProducts, 800);
     this.retrieveProducts();
     this.page = 1
@@ -144,8 +145,19 @@ export default {
       }
       this.retrieveProductsWithScroll()
     })
+    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
   },
+  
   methods: {
+    realTimeRetrieveProducts(response) {
+      const payload = JSON.parse(response.data.original);
+      this.products = payload.data.items
+      this.totalItems = payload.data.total_items
+      this.totalPages = payload.data.last_page
+      this.from = payload.data.from
+      this.to = payload.data.to
+    },
+
     retrieveProducts() {
       const query = {
         q: this.query,
@@ -221,6 +233,12 @@ export default {
       this.page = page
       this.retrieveProducts()
     },
+  },
+
+  beforeDestroy() {
+    if (this.$socket) {
+      this.$socket.off('rrender-item-list', this.realTimeRetrieveProducts)
+    }
   },
 };
 </script>

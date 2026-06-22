@@ -111,21 +111,45 @@
       </template>
 
       <template v-else-if="status === 'success'">
-        <VIcon size="150" color="green">
-          mdi-check-circle
-        </VIcon>
+        <div class="rugby-celebration" aria-label="Order successful – rugby goal scored">
+          <svg 
+            viewBox="0 0 200 180" 
+            class="goalposts" 
+            width="150" 
+            height="135" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line x1="30" y1="160" x2="30" y2="20" stroke="white" stroke-width="8" stroke-linecap="round"/>
+            <line x1="170" y1="160" x2="170" y2="20" stroke="white" stroke-width="8" stroke-linecap="round"/>
+            <line x1="30" y1="60" x2="170" y2="60" stroke="white" stroke-width="8" stroke-linecap="round"/>
+            
+            <g class="rugby-ball">
+              <ellipse 
+                cx="100" cy="30" rx="14" ry="8" 
+                fill="#2BC769" 
+                stroke="white" 
+                stroke-width="2"
+                transform="rotate(-15, 100, 30)"
+              />
+              <line x1="95" y1="24" x2="95" y2="36" stroke="white" stroke-width="1.5" transform="rotate(-15, 100, 30)"/>
+              <line x1="100" y1="23" x2="100" y2="37" stroke="white" stroke-width="1.5" transform="rotate(-15, 100, 30)"/>
+              <line x1="105" y1="24" x2="105" y2="36" stroke="white" stroke-width="1.5" transform="rotate(-15, 100, 30)"/>
+            </g>
+          </svg>
+        </div>
+
         <div class="mt-8 text-2xl font-bold text-white">
-          Order Success!
+          Goal! Order Successful
         </div>
         <div class="text-base text-gray-400">
-          You can go now back to the merch to continue shopping
+          You’ve kicked it straight through the posts.  
+          Now head back to the merch stand.
         </div>
+
         <div class="mt-4 flex items-center justify-center">
           <NuxtLink to="/shop">
-            <span
-              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
-            >
-              Merch
+            <span class="mx-2 cursor-pointer bg-green-500 px-4 py-2 text-white hover:bg-green-700 transition">
+              Back to Merch
             </span>
           </NuxtLink>
         </div>
@@ -153,33 +177,61 @@
       </template>
 
       <template v-else>
-        <VIcon size="150" color="red darken-2">
-          mdi-alert-circle
-        </VIcon>
+        <div class="rugby-fail" aria-label="Order failed – conversion missed">
+          <svg 
+            viewBox="0 0 200 180" 
+            class="goalposts" 
+            width="150" 
+            height="135" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line x1="30" y1="160" x2="30" y2="20" stroke="white" stroke-width="8" stroke-linecap="round"/>
+            <line x1="170" y1="160" x2="170" y2="20" stroke="white" stroke-width="8" stroke-linecap="round"/>
+            <line x1="30" y1="60" x2="170" y2="60" stroke="white" stroke-width="8" stroke-linecap="round"/>
+            
+            <g class="rugby-ball-miss">
+              <ellipse 
+                cx="100" cy="55" rx="12" ry="7" 
+                fill="#EF3849" 
+                stroke="white" 
+                stroke-width="2"
+                transform="rotate(10, 100, 55)"
+              />
+              <line x1="95" y1="50" x2="95" y2="60" stroke="white" stroke-width="1.5" transform="rotate(10, 100, 55)"/>
+              <line x1="100" y1="49" x2="100" y2="61" stroke="white" stroke-width="1.5" transform="rotate(10, 100, 55)"/>
+              <line x1="105" y1="50" x2="105" y2="60" stroke="white" stroke-width="1.5" transform="rotate(10, 100, 55)"/>
+            </g>
+            
+            <g class="impact" opacity="0">
+              <line x1="80" y1="60" x2="70" y2="50" stroke="#EF3849" stroke-width="3" stroke-linecap="round"/>
+              <line x1="120" y1="60" x2="130" y2="50" stroke="#EF3849" stroke-width="3" stroke-linecap="round"/>
+              <line x1="100" y1="60" x2="100" y2="45" stroke="#EF3849" stroke-width="3" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+
         <div class="mt-8 text-2xl font-bold text-white">
-          Your order failed
+          Conversion Missed
         </div>
         <div class="text-base text-gray-400">
-          You can go back to the merch to continue shopping
-          or attempt to checkout again
+          Your order didn’t go through this time.<br />
+          Hit the lineout, reset, and try again.
         </div>
-        <div class="mt-4 flex items-center justify-center">
+
+        <div class="mt-4 flex items-center justify-center gap-4">
           <NuxtLink to="/shop">
-            <span
-              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
-            >
-              Merch
+            <span class="mx-2 cursor-pointer bg-red-600 px-4 py-2 text-white hover:bg-red-700 transition">
+              Back to Merch
             </span>
           </NuxtLink>
           <NuxtLink to="/checkout">
-            <span
-              class="mx-2 cursor-pointer bg-brand-black px-4 py-2 text-white"
-            >
-              Checkout
+            <span class="mx-2 cursor-pointer bg-red-600 px-4 py-2 text-white hover:bg-red-700 transition">
+              Try Checkout Again
             </span>
           </NuxtLink>
         </div>
       </template>
+
     </div>
   </div>
 </template>
@@ -268,3 +320,77 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.rugby-ball {
+  animation: fly-through 0.8s ease-out forwards;
+  opacity: 0;
+}
+@keyframes fly-through {
+  0% {
+    transform: translateY(-30px) scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) scale(1.1);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+.goalposts line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw-posts 0.6s ease-out forwards;
+}
+@keyframes draw-posts {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes draw-posts {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Ball hits crossbar and bounces away */
+.rugby-ball-miss {
+  animation: hit-post 1.2s ease-in-out forwards;
+  opacity: 0;
+}
+@keyframes hit-post {
+  0% {
+    transform: translateY(-30px) scale(0.5);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(0) scale(1);
+  }
+  60% {
+    transform: translateY(5px) scale(0.9);
+  }
+  80% {
+    transform: translateY(40px) scale(0.3);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(80px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.impact {
+  animation: show-impact 0.2s ease-out 0.6s forwards;
+}
+@keyframes show-impact {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+</style>
