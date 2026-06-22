@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <!-- ========== MAINTENANCE NOTICE ========== -->
+  <div class="w-full max-w-screen">
     <div
       v-if="isUnderMaintenance"
       class="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-950 px-4"
@@ -19,13 +18,11 @@
       </div>
     </div>
 
-    <!-- ========== REGULAR FORM (when maintenance is off) ========== -->
     <form
       v-else
       class="w-full max-w-screen mx-auto border border-gray-100 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl lg:p-8"
       @submit.prevent="submit"
     >
-      <!-- ========== HEADER: Team & Age Group (always visible) ========== -->
       <div class="grid gap-x-3 lg:grid-cols-2 mb-6">
         <div class="mb-4">
           <label for="team-select-header" class="mb-1.5 flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-black">
@@ -102,14 +99,12 @@
         </div>
       </div>
 
-      <!-- ========== CONTENT AFTER SELECTION ========== -->
       <template v-if="registrationType">
         <!-- ===== OPTION 1: PLAYER CARD ===== -->
         <template v-if="registrationType === 'card'">
           <h2 class="mb-5 text-xl font-semibold">Player Card Registration</h2>
           <hr class="my-4" />
 
-          <!-- Search your child (with debounce & abort) -->
           <div class="mb-4 relative">
             <label class="mb-1.5 flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-black">
               <i class="ri-search-line text-green-600"></i>
@@ -125,7 +120,6 @@
               @input="debouncedCardSearch"
             />
 
-            <!-- Duplicate name DOB filter (appears only if duplicates detected) -->
             <div v-if="showDobFilter" class="mt-3">
               <label class="mb-1.5 flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-black">
                 <i class="ri-calendar-line text-green-600"></i>
@@ -139,7 +133,6 @@
               />
             </div>
 
-            <!-- Suggestions dropdown (filtered if DOB is active) -->
             <ul
               v-if="showCardSuggestions && filteredSuggestions.length > 0"
               class="absolute z-10 mt-1 w-full rounded-lg border border-green-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)] max-h-48 overflow-y-auto ring-1 ring-green-500/10"
@@ -161,7 +154,6 @@
             </ul>
           </div>
 
-          <!-- Selected player summary & continue button -->
           <div v-if="selectedCardPlayer" class="mt-4">
             <div class="mb-4 rounded-lg bg-green-50 p-4 border border-green-200">
               <div class="flex items-center justify-between">
@@ -203,7 +195,6 @@
 
           <!-- Parent Details -->
           <div class="grid gap-x-3 lg:grid-cols-2">
-            <!-- First Name -->
             <div class="mb-4">
               <label for="first-name" class="mb-1.5 flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-black">
                 <i class="ri-user-line text-green-600" aria-hidden="true"></i>
@@ -220,7 +211,6 @@
               />
             </div>
 
-            <!-- Last Name -->
             <div class="mb-4">
               <label for="last-name" class="mb-1.5 flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-black">
                 <i class="ri-user-line text-green-600" aria-hidden="true"></i>
@@ -237,7 +227,6 @@
               />
             </div>
 
-            <!-- Phone Number -->
             <div class="mb-4">
               <label for="phone-code" class="mb-1.5 flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-black">
                 <i class="ri-phone-line text-green-600" aria-hidden="true"></i>
@@ -265,7 +254,6 @@
               </div>
             </div>
 
-            <!-- Email -->
             <div class="mb-4">
               <label for="email" class="mb-1.5 flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-black">
                 <i class="ri-mail-line text-green-600" aria-hidden="true"></i>
@@ -478,10 +466,7 @@ export default {
   },
   data() {
     return {
-      // ===== MAINTENANCE FLAG =====
-      isUnderMaintenance: true,   // ← Set to false to enable the form
-      // ==========================
-
+      isUnderMaintenance: false,
       registrationType: null,
       cardSearchQuery: '',
       cardSuggestions: [],
@@ -540,7 +525,6 @@ export default {
     },
   },
   mounted() {
-    // Only fetch data if not in maintenance mode
     if (this.isUnderMaintenance) return;
 
     const token = this.$route.query.token;
@@ -640,12 +624,17 @@ export default {
       }
     },
 
-    selectCardPlayer(suggestion) {
+    selectCardPlayer(suggestion) {  
       this.selectedCardPlayer = {
         id: suggestion.id,
+        parentFirstName: suggestion.parent_first_name,
+        parentLastName: suggestion.parent_last_name,
+        phoneNumber: suggestion.phone_number,
+        email: suggestion.email,
         first_name: suggestion.first_name,
         last_name: suggestion.last_name,
         date_of_birth: suggestion.date_of_birth || '',
+        ageGroupId: suggestion.ageGroup_id
       };
       this.player.firstName = suggestion.first_name;
       this.player.lastName = suggestion.last_name;
@@ -673,13 +662,17 @@ export default {
     },
     proceedToPayment() {
       this.$emit('submit', {
-        playerId: this.selectedCardPlayer.id,
-        firstName: this.selectedCardPlayer.first_name,
-        lastName: this.selectedCardPlayer.last_name,
+        contactFirstName: this.selectedCardPlayer.parentFirstName,
+        contactLastName: this.selectedCardPlayer.parentLastName,
+        contactPhoneNumber: this.selectedCardPlayer.phoneNumber,
+        contactEmail: this.selectedCardPlayer.email,
+        playerFirstName: this.selectedCardPlayer.first_name,
+        playerLastName: this.selectedCardPlayer.last_name,
         dob: this.selectedCardPlayer.date_of_birth,
-        teamName: this.player.teamName,
-        ageGroup: this.player.ageGroup,
+        teamName: this.teams.find(t => t.name.toLowerCase() === this.player.teamName.toLowerCase())?.id,
+        ageGroup: this.selectedCardPlayer.ageGroupId,
         price: this.price,
+        discountCodeId: this.player.discountCodeId,
       });
     },
     submit() {
@@ -697,6 +690,8 @@ export default {
         price: this.price,
         photo: this.photo,
         discountCodeId: this.player.discountCodeId,
+        renewal: false,
+        playerId: null
       });
       return false;
     },

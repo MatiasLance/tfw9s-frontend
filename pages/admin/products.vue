@@ -568,6 +568,46 @@
                     <span class="rugby-toggle-slider"></span>
                     <span class="ml-3 font-medium text-gray-700">Show RRP</span>
                   </label>
+
+                  <!-- NEW: Shipping toggle -->
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.has_shipping"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">Has Shipping</span>
+                  </label>
+                </div>
+
+                <!-- Shipping charge input – appears only when shipping is enabled -->
+                <div v-if="item.has_shipping" class="mt-4">
+                  <label
+                    for="shipping-charge"
+                    class="mb-2 flex justify-between font-semibold text-gray-700"
+                  >
+                    <span>
+                      <i class="ri-truck-line mr-2 text-green-600"></i>
+                      Shipping Charge:
+                    </span>
+                    <span
+                      v-if="item.shipping_charge"
+                      class="font-bold text-green-700 bg-green-100 px-3 py-1 rounded-lg"
+                    >
+                      {{ formatCurrency(item.shipping_charge) }}
+                    </span>
+                  </label>
+                  <VTextField
+                    id="shipping-charge"
+                    v-model="item.shipping_charge"
+                    label="Enter Shipping Charge"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    solo
+                    class="rugby-input"
+                  />
                 </div>
               </div>
             </div>
@@ -969,48 +1009,92 @@
 
             <!-- Toggle Switches -->
             <div class="col-span-1 md:col-span-2">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4
-              bg-white rounded-lg border border-gray-200"
-              >
-                <label class="rugby-toggle">
-                  <input
-                    v-model="item.is_featured"
-                    type="checkbox"
-                    class="rugby-checkbox"
-                  />
-                  <span class="rugby-toggle-slider"></span>
-                  <span class="ml-3 font-medium text-gray-700">Featured</span>
-                </label>
+              <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                  <i class="ri-toggle-line mr-2 text-green-600"></i>
+                  Product Settings
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.is_featured"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">Featured Item</span>
+                  </label>
 
-                <label class="rugby-toggle">
-                  <input
-                    v-model="item.isHideOutOfStock"
-                    type="checkbox"
-                    class="rugby-checkbox"
-                  />
-                  <span class="rugby-toggle-slider"></span>
-                  <span class="ml-3 font-medium text-gray-700">Out of Stock</span>
-                </label>
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.isHideOutOfStock"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">Out of Stock</span>
+                  </label>
 
-                <label class="rugby-toggle">
-                  <input
-                    v-model="item.is_on_sale"
-                    type="checkbox"
-                    class="rugby-checkbox"
-                  />
-                  <span class="rugby-toggle-slider"></span>
-                  <span class="ml-3 font-medium text-gray-700">On Sale</span>
-                </label>
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.is_on_sale"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">On Sale</span>
+                  </label>
 
-                <label class="rugby-toggle">
-                  <input
-                    v-model="item.show_rrp"
-                    type="checkbox"
-                    class="rugby-checkbox"
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.show_rrp"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">Show RRP</span>
+                  </label>
+
+                  <!-- NEW: Shipping toggle -->
+                  <label class="rugby-toggle">
+                    <input
+                      v-model="item.has_shipping"
+                      type="checkbox"
+                      class="rugby-checkbox"
+                    />
+                    <span class="rugby-toggle-slider"></span>
+                    <span class="ml-3 font-medium text-gray-700">Has Shipping</span>
+                  </label>
+                </div>
+
+                <!-- Shipping charge input – appears only when shipping is enabled -->
+                <div v-if="item.has_shipping" class="mt-4">
+                  <label
+                    for="shipping-charge"
+                    class="mb-2 flex justify-between font-semibold text-gray-700"
+                  >
+                    <span>
+                      <i class="ri-truck-line mr-2 text-green-600"></i>
+                      Shipping Charge:
+                    </span>
+                    <span
+                      v-if="item.shipping_charge"
+                      class="font-bold text-green-700 bg-green-100 px-3 py-1 rounded-lg"
+                    >
+                      {{ formatCurrency(item.shipping_charge) }}
+                    </span>
+                  </label>
+                  <VTextField
+                    id="shipping-charge"
+                    v-model="item.shipping_charge"
+                    label="Enter Shipping Charge"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    solo
+                    class="rugby-input"
                   />
-                  <span class="rugby-toggle-slider"></span>
-                  <span class="ml-3 font-medium text-gray-700">Show RRP</span>
-                </label>
+                </div>
               </div>
             </div>
 
@@ -1261,12 +1345,25 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
+    await this.$nextTick()
     this.debouncedSearch = debounce(this.retrieveMerchItems, 800);
     this.retrieveMerchItems();
     this.page = 1
+    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
   },
+
   methods: {
+    realTimeRetrieveProducts(response) {
+      const payload = JSON.parse(response.data.original);
+      this.$store.commit('admin/setTotalItems', payload.data.total_items)
+        this.merchItems = payload.data.items
+        this.totalItems = payload.data.total_items
+        this.totalPages = payload.data.last_page
+        this.from = payload.data.from
+        this.to = payload.data.to
+    },
+    
     // Show and hide product sa user side as per ben idea
     handleToggleActive({ uid, active }) {
       if (this.toggleDebounceTimers[uid]) {
@@ -1485,6 +1582,8 @@ export default {
       this.appendColorData(form)
 
       form.append('selected_shippingid', '0')
+      form.append('has_shipping', this.item.has_shipping)
+      form.append('shipping_charge', this.item.shipping_charge)
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
       this.$axios
@@ -1618,7 +1717,8 @@ export default {
       this.appendColorData(form)
 
       form.append('selected_shippingid', '0')
-      form.append('id', this.item.id);
+      form.append('has_shipping', this.item.has_shipping)
+      form.append('shipping_charge', this.item.shipping_charge)
       
       this.$axios
         .$post(`v1/items/${editObject.id}`, form)
@@ -1810,9 +1910,14 @@ export default {
       this.multipleCategoryBuffer = [];
     }
   },
+
   beforeDestroy() {
     Object.values(this.toggleDebounceTimers).forEach(clearTimeout)
-  },
+
+    if (this.$socket) {
+      this.$socket.off('rrender-item-list', this.realTimeRetrieveProducts)
+    }
+  }
 };
 
 </script>

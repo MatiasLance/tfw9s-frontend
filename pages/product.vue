@@ -7,7 +7,7 @@
         loading-title="Product"
       />
       
-      <div class="grid gap-8 md:grid-cols-12">
+      <div v-if="product.is_active" class="grid gap-8 md:grid-cols-12">
         
         <!-- Product Gallery -->
         <div class="product-gallery col-span-6">
@@ -298,11 +298,12 @@
                        focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 
                        transition-all"
                 step="1"
-                min="0"
+                min="1"
                 :max="maxQuantity"
                 :disabled="!canAddToCart"
                 name="quantity"
                 @keyup="handleHighStockValue"
+                @keydown.backspace.prevent
               />
               
               <!-- Available Stock -->
@@ -401,7 +402,7 @@
       </div>
       <!-- Variants Slider -->
       <div
-        v-if="product.hasVariants && product.variants.length > 0 && isVariantIsActive"
+        v-if="product.hasVariants && product.variants.length > 0 && isVariantIsActive && product.is_active"
         ref="variantSlider"
         class="mt-12 p-6 bg-gradient-to-br from-gray-800 to-gray-900 
                rounded-2xl shadow-2xl border border-gray-700"
@@ -413,6 +414,53 @@
         </h3>
         <VariantSlider :variants="product.related" />
       </div>
+
+       <div v-if="!product.is_active" class="product-unavailable" aria-label="Product currently not available">
+        <svg 
+          viewBox="0 0 200 160" 
+          class="unavailable-icon" 
+          width="150" 
+          height="120" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line x1="140" y1="20" x2="140" y2="120" stroke="white" stroke-width="8" stroke-linecap="round"/>
+          <line x1="90" y1="60" x2="190" y2="60" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+          
+          <g class="resting-ball">
+            <ellipse 
+              cx="70" cy="110" rx="18" ry="10" 
+              fill="#EBEBEB" 
+              stroke="#AFAFAF" 
+              stroke-width="2"
+              transform="rotate(-25, 70, 110)"
+            />
+            <line x1="62" y1="104" x2="62" y2="116" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
+            <line x1="70" y1="102" x2="70" y2="118" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
+            <line x1="78" y1="104" x2="78" y2="116" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
+          </g>
+          
+          <circle cx="70" cy="110" r="12" fill="#EF3849" stroke="white" stroke-width="2" class="unavailable-badge"/>
+          <line x1="64" y1="104" x2="76" y2="116" stroke="white" stroke-width="2.5" stroke-linecap="round" transform="rotate(-25, 70, 110)"/>
+          <line x1="76" y1="104" x2="64" y2="116" stroke="white" stroke-width="2.5" stroke-linecap="round" transform="rotate(-25, 70, 110)"/>
+        </svg>
+
+        <div class="mt-6 text-2xl font-bold text-white">
+          Product Unavailable
+        </div>
+        <div class="text-base text-gray-400 max-w-sm mx-auto">
+          This item is currently off the pitch.<br />
+          The admin may bring it back soon.
+        </div>
+
+        <div class="mt-4 flex items-center justify-center">
+          <NuxtLink to="/shop">
+            <span class="mx-2 cursor-pointer bg-green-600 px-4 py-2 text-white hover:bg-green-700 transition">
+              Browse Other Products
+            </span>
+          </NuxtLink>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -504,7 +552,8 @@ export default {
         available_sizes: [],
         is_on_sale: false,
         show_rrp: false,
-        selectedColors: []
+        selectedColors: [],
+        is_active: false
       },
       showOutOfStock: true,
       activeImageURL: fallbackImage,
@@ -623,6 +672,7 @@ export default {
   mounted() {
     this.retrieveItem(this.$route.query.id);
   },
+
   methods: {
     handleColorSelection(color) {
       const isSelected = this.isColorSelected(this.getColorValue(color));
@@ -892,10 +942,41 @@ export default {
       height: 2fr;
       width: 2fr;
 }
-
 .selected {
   background: #1a1d18;
   color: #ffffff;
   border: 1px solid transparent;
+}
+.product-unavailable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw-line 0.6s ease-out forwards;
+}
+@keyframes draw-line {
+  to { stroke-dashoffset: 0; }
+}
+.resting-ball {
+  opacity: 0;
+  animation: fade-in 0.8s ease-out forwards;
+}
+@keyframes fade-in {
+  to { opacity: 1; }
+}
+.unavailable-badge {
+  opacity: 0;
+  transform: scale(0);
+  animation: pop-in 0.3s ease-out 0.5s forwards;
+}
+@keyframes pop-in {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>
