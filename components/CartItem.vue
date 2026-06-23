@@ -1,5 +1,5 @@
 <template>
-  <article class="mb-5 bg-gradient-to-br from-gray-800 to-gray-900 p-4 
+  <article v-if="isActive" class="mb-5 bg-gradient-to-br from-gray-800 to-gray-900 p-4 
                   border border-green-500/20 rounded-xl shadow-lg 
                   hover:shadow-green-500/10 transition-all duration-300">
     <div class="mb-4 flex flex-wrap gap-5 lg:flex-row">
@@ -195,6 +195,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isActive: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

@@ -2,7 +2,7 @@
   <section class="mx-auto max-w-screen-xl gap-6 p-4 sm:p-8">
     <div class="grid grid-cols-1 items-center gap-6 lg:grid-cols-2">
       <!-- Content Section -->
-      <div class="relative col-span-1 w-full p-4 lg:p-6" data-aos="fade-right">
+      <div class="col-span-1 mb-10 md:mb-0 w-full p-4 lg:p-6" data-aos="fade-right">
         <!-- Rugby Badge -->
         <div class="mb-6 flex items-center gap-3">
           <div class="bg-green-600 rounded-full p-2 shadow-lg">
@@ -65,7 +65,7 @@
       </div>
 
       <!-- Image Section -->
-      <div class="relative col-span-1 w-full" data-aos="fade-up">
+      <div class="col-span-1 w-full" data-aos="fade-up">
         <!-- TFW Logo - Floating Above Everything -->
         <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 z-30">
           <div class="bg-gradient-to-r from-green-600 to-green-800 

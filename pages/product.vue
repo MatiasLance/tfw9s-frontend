@@ -400,6 +400,7 @@
           </div>
         </div>
       </div>
+
       <!-- Variants Slider -->
       <div
         v-if="product.hasVariants && product.variants.length > 0 && isVariantIsActive && product.is_active"
@@ -671,9 +672,20 @@ export default {
   },
   mounted() {
     this.retrieveItem(this.$route.query.id);
+    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
   },
 
   methods: {
+    realTimeRetrieveProducts(response) {
+      const payload = JSON.parse(response.data.original);
+      const items = payload.data.items
+      for (let i = 0; i < items.length; i++) {
+        if (parseInt(this.$route.query.id) === items[i].id) {
+          this.product.is_active = items[i].is_active
+        }
+      }
+    },
+
     handleColorSelection(color) {
       const isSelected = this.isColorSelected(this.getColorValue(color));
       
@@ -925,6 +937,12 @@ export default {
           });
         });
     },
+  },
+
+  beforeDestroy() {
+    if (this.$socket) {
+      this.$socket.off('rrender-item-list', this.realTimeRetrieveProducts)
+    }
   },
 };
 </script>

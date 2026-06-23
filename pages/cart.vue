@@ -88,6 +88,7 @@
                 :color="getItemColor(item)"
                 :color-image="item._image"
                 :use-image="item._use_image"
+                :is-active="item.is_active"
                 @change="quantityChanged"
                 @remove="removeCartItem"
                 data-aos="fade-up"
@@ -213,15 +214,47 @@ export default {
       },
     },
   },
+
   async mounted() {
     await this.retrieveTaxValue();
     await this.retrieveToggleTaxControl();
     await this.getItemData();
+    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
   },
+
   beforeDestroy() {
     this.cullZeroQuantityItems();
+    if (this.$socket) {
+      this.$socket.off('rrender-item-list', this.realTimeRetrieveProducts)
+    }
   },
+
   methods: {
+    realTimeRetrieveProducts(response) {
+      const payload = JSON.parse(response.data.original);
+      const items = payload.data.items
+      const itemPromises = this.cartItems.map((cartItem) => {
+        return {
+            ...items,
+            _cartItemId: cartItem.id,
+            _sizeVariantId: cartItem.size_variant_id,
+            _quantity: cartItem.quantity,
+            _color: cartItem.color,
+            _image: cartItem.image,
+            _use_image: cartItem.use_image,
+            cartSizeVariantId: cartItem.size_variant_id,
+            cartQuantity: cartItem.quantity,
+          }
+      });
+
+      Promise.all(itemPromises)
+        .then((values) => {
+          this.items = values.filter((item) => item !== null);
+        })
+        .then(() => {
+          this.calculatePriceAggregates();
+        });
+    },
     getItemColor(item) {
       const cartItem = this.getCartItemFromStore(item);
       return cartItem ? cartItem.color : null;
