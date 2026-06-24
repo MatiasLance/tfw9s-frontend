@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
+  <div class="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-900 to-gray-950 text-white">
     <div class="container mx-auto px-4 py-8">
       <!-- Loading indicator -->
       <LoadingAnimation
@@ -416,51 +416,69 @@
         <VariantSlider :variants="product.related" />
       </div>
 
-       <div v-if="!product.is_active" class="product-unavailable" aria-label="Product currently not available">
-        <svg 
-          viewBox="0 0 200 160" 
-          class="unavailable-icon" 
-          width="150" 
-          height="120" 
-          xmlns="http://www.w3.org/2000/svg"
+       <div
+          v-if="!product.is_active"
+          class="relative mx-auto my-12 w-full max-w-lg px-4"
         >
-          <line x1="140" y1="20" x2="140" y2="120" stroke="white" stroke-width="8" stroke-linecap="round"/>
-          <line x1="90" y1="60" x2="190" y2="60" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
-          
-          <g class="resting-ball">
-            <ellipse 
-              cx="70" cy="110" rx="18" ry="10" 
-              fill="#EBEBEB" 
-              stroke="#AFAFAF" 
-              stroke-width="2"
-              transform="rotate(-25, 70, 110)"
-            />
-            <line x1="62" y1="104" x2="62" y2="116" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
-            <line x1="70" y1="102" x2="70" y2="118" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
-            <line x1="78" y1="104" x2="78" y2="116" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
-          </g>
-          
-          <circle cx="70" cy="110" r="12" fill="#EF3849" stroke="white" stroke-width="2" class="unavailable-badge"/>
-          <line x1="64" y1="104" x2="76" y2="116" stroke="white" stroke-width="2.5" stroke-linecap="round" transform="rotate(-25, 70, 110)"/>
-          <line x1="76" y1="104" x2="64" y2="116" stroke="white" stroke-width="2.5" stroke-linecap="round" transform="rotate(-25, 70, 110)"/>
-        </svg>
+          <div
+            class="relative overflow-hidden rounded-2xl border border-gray-800
+            bg-gradient-to-br from-gray-900 to-gray-950 p-8 text-center shadow-2xl shadow-green-900/20"
+          >
+            <div class="absolute left-0 right-0 top-0 h-1 bg-green-500"></div>
 
-        <div class="mt-6 text-2xl font-bold text-white">
-          Product Unavailable
-        </div>
-        <div class="text-base text-gray-400 max-w-sm mx-auto">
-          This item is currently off the pitch.<br />
-          The admin may bring it back soon.
-        </div>
+            <div class="flex justify-center">
+              <svg
+                viewBox="0 0 200 160"
+                class="unavailable-icon"
+                width="150"
+                height="120"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line x1="140" y1="20" x2="140" y2="120" stroke="white" stroke-width="8" stroke-linecap="round"/>
+                <line x1="90" y1="60" x2="190" y2="60" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+                
+                <g class="resting-ball">
+                  <ellipse
+                    cx="70" cy="110" rx="18" ry="10"
+                    fill="#EBEBEB"
+                    stroke="#AFAFAF"
+                    stroke-width="2"
+                    transform="rotate(-25, 70, 110)"
+                  />
+                  <line x1="62" y1="104" x2="62" y2="116" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
+                  <line x1="70" y1="102" x2="70" y2="118" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
+                  <line x1="78" y1="104" x2="78" y2="116" stroke="#AFAFAF" stroke-width="1.2" transform="rotate(-25, 70, 110)"/>
+                </g>
+                
+                <circle cx="70" cy="110" r="12" fill="#EF3849" stroke="white" stroke-width="2" class="unavailable-badge"/>
+                <line x1="64" y1="104" x2="76" y2="116" stroke="white" stroke-width="2.5" stroke-linecap="round" transform="rotate(-25, 70, 110)"/>
+                <line x1="76" y1="104" x2="64" y2="116" stroke="white" stroke-width="2.5" stroke-linecap="round" transform="rotate(-25, 70, 110)"/>
+              </svg>
+            </div>
 
-        <div class="mt-4 flex items-center justify-center">
-          <NuxtLink to="/shop">
-            <span class="mx-2 cursor-pointer bg-green-600 px-4 py-2 text-white hover:bg-green-700 transition">
-              Browse Other Products
-            </span>
-          </NuxtLink>
+            <h2 class="mt-6 font-montserrat text-2xl font-extrabold text-white">
+              Product Unavailable
+            </h2>
+
+            <p class="mt-2 text-sm leading-relaxed text-gray-400 max-w-sm mx-auto">
+              This item has been taken off the pitch by the admin.<br />
+              It might return soon – keep an eye on the squad.
+            </p>
+
+            <div class="my-6 border-t border-gray-800"></div>
+
+            <NuxtLink to="/shop">
+              <span
+                class="inline-flex items-center gap-2 rounded-lg bg-green-600
+                px-6 py-3 text-sm font-semibold text-white transition-all
+                hover:bg-green-500 hover:shadow-lg hover:shadow-green-500/30"
+              >
+                <i class="ri-football-line text-lg"></i>
+                Browse Other Products
+              </span>
+            </NuxtLink>
+          </div>
         </div>
-      </div>
 
     </div>
   </div>
@@ -941,7 +959,7 @@ export default {
 
   beforeDestroy() {
     if (this.$socket) {
-      this.$socket.off('rrender-item-list', this.realTimeRetrieveProducts)
+      this.$socket.off('render-item-list', this.realTimeRetrieveProducts)
     }
   },
 };

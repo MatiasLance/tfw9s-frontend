@@ -225,35 +225,44 @@ export default {
   beforeDestroy() {
     this.cullZeroQuantityItems();
     if (this.$socket) {
-      this.$socket.off('rrender-item-list', this.realTimeRetrieveProducts)
+      this.$socket.off('render-item-list', this.realTimeRetrieveProducts)
     }
   },
 
   methods: {
     realTimeRetrieveProducts(response) {
       const payload = JSON.parse(response.data.original);
-      const items = payload.data.items
-      const itemPromises = this.cartItems.map((cartItem) => {
-        return {
-            ...items,
-            _cartItemId: cartItem.id,
-            _sizeVariantId: cartItem.size_variant_id,
-            _quantity: cartItem.quantity,
-            _color: cartItem.color,
-            _image: cartItem.image,
-            _use_image: cartItem.use_image,
-            cartSizeVariantId: cartItem.size_variant_id,
-            cartQuantity: cartItem.quantity,
-          }
+      const products = payload.data.items;
+
+      const productMap = new Map(products.map(p => [p.id, p]));
+
+      const removalPromises = [];
+
+      this.cartItems.forEach((cartItem) => {
+        const product = productMap.get(cartItem.id);
+        if (product && !product.is_active) {
+          const { id, size_variant_id, color } = cartItem;
+
+          removalPromises.push(
+            this.$store
+              .dispatch('cart/removeItemFromCart', { id, size_variant_id, color })
+              .then(() => {
+                this.removeItemFromLocalArray(id, size_variant_id, color);
+              })
+              .catch((error) =>
+                this.$oruga.notification.open({
+                  message: error.message,
+                  variant: 'danger',
+                  duration: 5000,
+                })
+              )
+          );
+        }
       });
 
-      Promise.all(itemPromises)
-        .then((values) => {
-          this.items = values.filter((item) => item !== null);
-        })
-        .then(() => {
-          this.calculatePriceAggregates();
-        });
+      Promise.all(removalPromises).finally(() => {
+        this.$nextTick(() => this.calculatePriceAggregates());
+      });
     },
     getItemColor(item) {
       const cartItem = this.getCartItemFromStore(item);
