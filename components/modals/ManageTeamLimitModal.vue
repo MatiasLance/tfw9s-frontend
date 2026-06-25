@@ -229,24 +229,10 @@ export default {
         })
     },
     retrieveAgeGroups() {
-      const query = {
-        q: this.query,
-        page: this.page,
-        maxAgeGroupsPerPage: 10,
-      };
-
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
-        }
-      })
-
-      const queryString = new URLSearchParams(query).toString()
-
       this.$axios
-        .$get(`v1/agegroups?${queryString}`)
+        .$get('v1/agegroups/retrieve-age-groups')
         .then((response) => {
-          this.agegroup = response.data.ageGroups;
+          this.agegroup = response;
         })
     },
     closeDialog() {
