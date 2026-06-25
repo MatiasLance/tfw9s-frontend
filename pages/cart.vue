@@ -88,6 +88,7 @@
                 :color="getItemColor(item)"
                 :color-image="item._image"
                 :use-image="item._use_image"
+                :is-active="item.is_active"
                 @change="quantityChanged"
                 @remove="removeCartItem"
                 data-aos="fade-up"
@@ -213,15 +214,56 @@ export default {
       },
     },
   },
+
   async mounted() {
     await this.retrieveTaxValue();
     await this.retrieveToggleTaxControl();
     await this.getItemData();
+    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
   },
+
   beforeDestroy() {
     this.cullZeroQuantityItems();
+    if (this.$socket) {
+      this.$socket.off('render-item-list', this.realTimeRetrieveProducts)
+    }
   },
+
   methods: {
+    realTimeRetrieveProducts(response) {
+      const payload = JSON.parse(response.data.original);
+      const products = payload.data.items;
+
+      const productMap = new Map(products.map(p => [p.id, p]));
+
+      const removalPromises = [];
+
+      this.cartItems.forEach((cartItem) => {
+        const product = productMap.get(cartItem.id);
+        if (product && !product.is_active) {
+          const { id, size_variant_id, color } = cartItem;
+
+          removalPromises.push(
+            this.$store
+              .dispatch('cart/removeItemFromCart', { id, size_variant_id, color })
+              .then(() => {
+                this.removeItemFromLocalArray(id, size_variant_id, color);
+              })
+              .catch((error) =>
+                this.$oruga.notification.open({
+                  message: error.message,
+                  variant: 'danger',
+                  duration: 5000,
+                })
+              )
+          );
+        }
+      });
+
+      Promise.all(removalPromises).finally(() => {
+        this.$nextTick(() => this.calculatePriceAggregates());
+      });
+    },
     getItemColor(item) {
       const cartItem = this.getCartItemFromStore(item);
       return cartItem ? cartItem.color : null;

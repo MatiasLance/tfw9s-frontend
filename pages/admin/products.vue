@@ -1579,11 +1579,11 @@ export default {
         form.append('size_variants', JSON.stringify(cleanedSizeVariants));
       }
 
-      this.appendColorData(form)
+      this.appendColorData(form);
 
-      form.append('selected_shippingid', '0')
-      form.append('has_shipping', this.item.has_shipping)
-      form.append('shipping_charge', this.item.shipping_charge)
+      form.append('selected_shippingid', '0');
+      form.append('has_shipping', this.item.has_shipping ?? false);
+      form.append('shipping_charge', this.item.shipping_charge ?? 0.00);
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
       this.$axios
@@ -1717,8 +1717,8 @@ export default {
       this.appendColorData(form)
 
       form.append('selected_shippingid', '0')
-      form.append('has_shipping', this.item.has_shipping)
-      form.append('shipping_charge', this.item.shipping_charge)
+      form.append('has_shipping', this.item.has_shipping ?? false);
+      form.append('shipping_charge', this.item.shipping_charge ?? 0.00);
       
       this.$axios
         .$post(`v1/items/${editObject.id}`, form)
@@ -1810,6 +1810,9 @@ export default {
 
       form.append('selected_shippingid', '0')
       form.append('id', this.item.id);
+
+      form.append('has_shipping', this.item.has_shipping ?? false);
+      form.append('shipping_charge', this.item.shipping_charge ?? 0.00);
 
       this.$axios
         .$post(`v1/items/addVariant/${editObject.id}`, form)

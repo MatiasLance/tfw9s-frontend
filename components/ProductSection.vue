@@ -134,8 +134,7 @@ export default {
       }
     },
   },
-  async mounted() {
-    await this.$nextTick()
+  mounted() {
     this.debouncedSearch = debounce(this.retrieveProducts, 800);
     this.retrieveProducts();
     this.page = 1
