@@ -4,7 +4,7 @@
     <!-- Countdown overlay (does NOT destroy form) -->
     <ClientOnly>
       <CountDownTimer 
-        v-if="showCountdown && series.type !== 'competitions'"
+        v-show="showCountdown && series.type !== 'competitions'"
         :target-date="registrationOpensDate"
         @dismiss="handleCountdownDismiss"
       />
@@ -170,6 +170,7 @@ export default {
       queuePosition: 0,
       pollingInterval: null,
       statusDebounceTimer: null,
+      countdownPermanentlyDismissed: false
     };
   },
 
@@ -210,11 +211,9 @@ export default {
 
   beforeDestroy() {
     this.stopPolling();
-    if (this.statusDebounceTimer) {
-      clearTimeout(this.statusDebounceTimer);
-    }
+    clearTimeout(this.statusDebounceTimer);
     if (this.$socket) {
-      this.$socket.off('registration-form-status', this.handleRegistrationStatus)
+      this.$socket.off('registration-form-status', this.handleRegistrationStatus);
     }
   },
 
@@ -232,6 +231,8 @@ export default {
 
   methods: {
     handleRegistrationStatus(response) {
+      if (this.countdownPermanentlyDismissed) return;
+
       clearTimeout(this.statusDebounceTimer);
       this.statusDebounceTimer = setTimeout(() => {
         const data = response.data || response;
@@ -245,21 +246,30 @@ export default {
         }
       }, 500);
     },
+
     async retrieveRegistrationFormStatus(id) {
       try {
         const response = await this.$axios.$get(`/v1/registration-form-status/${id}`);
-        
         if (response.success && response.data && response.data.date) {
-          this.registrationOpensDate = response.data.date;
-          this.showCountdown = response.data.isShowCountDownTimer;
+          if (!this.countdownPermanentlyDismissed) {
+            this.registrationOpensDate = response.data.date;
+            this.showCountdown = response.data.isShowCountDownTimer;
+          }
         }
       } catch (error) {
         console.error('Failed to fetch registration status:', error);
       }
     },
+
     handleCountdownDismiss() {
-      this.showCountdown = false
+      this.showCountdown = false;
+      this.countdownPermanentlyDismissed = true;
+      if (this.$socket) {
+        this.$socket.off('registration-form-status', this.handleRegistrationStatus);
+      }
+      clearTimeout(this.statusDebounceTimer);
     },
+
     async checkLoungeAndProceed() {
       try {
         const response = await this.$axios.$post('/v1/lounge/check', {
