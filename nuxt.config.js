@@ -99,11 +99,6 @@ export default {
     ],
     script: [
       {
-        src: 'https://js.stripe.com/v3',
-        async: false,
-        defer: false,
-      },
-      {
         hid: 'square-web-payments-sdk',
         type: 'text/javascript',
         src: `${process.env.ENVIRONMENT === 'production' ? 'https://web.squarecdn.com/v1/square.js' : 'https://sandbox.web.squarecdn.com/v1/square.js'}`,
@@ -141,12 +136,9 @@ export default {
     { src: '~/plugins/croppa.js' },
     { src: '~/plugins/ChromePicker.js', mode: 'client' },
     { src: '~/plugins/PhotoshopPicker.js', mode: 'client' },
-    { src: '~/plugins/vue-stripe.js', mode: 'client' },
+    // { src: '~/plugins/vue-stripe.js', mode: 'client' },
+    { src: '~/plugins/stripe.client.js', ssr: false },
     { src: '~/plugins/socket.js', mode: 'client' },
-    // {
-    //   src: '~/plugins/version-check.client.js',
-    //   mode: 'client'
-    // },
     { src: '~/plugins/dayjs.js' }
   ],
 
