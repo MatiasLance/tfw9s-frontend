@@ -373,17 +373,15 @@ export default {
         });
     },
 
-    async retrieveSeries() {
-      try {
-        const response = await this.$axios.$get('v1/series');
-        this.seriesList = (response.data.series || response.data || []).filter(series =>
-          series.type !== 'weekly'
-        );
-      } catch (error) {
-        console.error('Error fetching series list:', error);
-        this.seriesList = [];
-        throw error;
-      }
+    retrieveSeries() {
+      this.$axios
+        .$get('v1/series')
+        .then((response) => {
+          this.seriesList = response.data.series
+        })
+        .finally(() => {
+          this.showVueTable = true;
+        });
     },
 
     async retrieveRegions() { // Make it async or ensure promise return

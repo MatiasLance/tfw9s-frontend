@@ -3,9 +3,10 @@
               from-gray-900 to-gray-950 text-white">
     
     <ClientOnly>
-      <CountDownTimer 
-        v-if="showCountdown && series.type !== 'competitions'"
+      <CountDownTimer
+        v-if="showCountdown && series.type !== 'competitions' && registrationOpensDate !== null"
         :target-date="registrationOpensDate"
+        :server-time="serverTime"
         @dismiss="handleCountdownDismiss"
       />
     </ClientOnly>
@@ -155,35 +156,24 @@
             <!-- Action Buttons -->
             <div class="space-y-4">
               <!-- Register Button -->
-              <div v-if="!article.pause || article.type === 'weekly'" 
-                   class="flex justify-center">
-                <NuxtLink
-                  :to="{
-                    path: '/register/?id=' + article.id,
-                    query: {
-                      series: article.name,
-                      price: article.price,
-                    }
-                  }"
-                  class="w-full"
+              <div v-if="!article.pause" class="flex justify-center">
+                <button
+                  type="button"
+                  @click="handleRegistration(article)"
+                  class="w-full rounded-2xl bg-gradient-to-r 
+                        from-green-500 to-green-600 px-8 py-4 
+                        text-lg font-bold text-white shadow-2xl 
+                        transition-all duration-300 transform 
+                        hover:from-green-600 hover:to-green-700 
+                        hover:scale-105 hover:shadow-green-500/50 
+                        active:scale-95 flex items-center 
+                        justify-center gap-2"
                 >
-                  <button
-                    type="button"
-                    class="w-full rounded-2xl bg-gradient-to-r 
-                           from-green-500 to-green-600 px-8 py-4 
-                           text-lg font-bold text-white shadow-2xl 
-                           transition-all duration-300 transform 
-                           hover:from-green-600 hover:to-green-700 
-                           hover:scale-105 hover:shadow-green-500/50 
-                           active:scale-95 flex items-center 
-                           justify-center gap-2"
-                  >
                   <span class="text-white">
                     <i class="ri-user-add-line"></i>
                     Register Now
                   </span>
-                  </button>
-                </NuxtLink>
+                </button>
               </div>
 
               <!-- Event Unavailable -->
@@ -334,9 +324,12 @@ export default {
         'Fifth',
       ],
       registrationOpensDate: null,
+      serverTime: null,
       series: { type: '' },
       pollTimer: null,
-      isPolling: false
+      isPolling: false,
+      statusDebounceTimer: null,
+      countdownPermanentlyDismissed: false
     };
   },
   computed: {
@@ -394,8 +387,11 @@ export default {
     },
   },
   watch: {
-    $route() {
-      this.retrieveSeries(this.$route.query.id);
+    $route(to) {
+      if (to.query.id) {
+        this.retrieveSeries(to.query.id);
+      }
+
       window.scrollTo({
         top: 0,
         left: 0,
@@ -403,6 +399,14 @@ export default {
       });
     }
   },
+
+  beforeDestroy() {
+    clearTimeout(this.statusDebounceTimer);
+    if (this.$socket) {
+      this.$socket.off('registration-form-status', this.handleRegistrationStatus)
+    }
+  },
+  
   async mounted() {
     await this.$nextTick()
     this.series.type = this.$route.query.type
@@ -414,21 +418,63 @@ export default {
   },
 
   methods: {
-    handleRegistrationStatus(response) {
-      const data = response.data || response
-      
-      if (data) {
-        this.registrationOpensDate = data.date;
-        this.showCountdown = data.isShowCountDownTimer;
+    handleRegistration(article) {
+      if (article.type === 'weekly') {
+        this.$oruga.notification.open({
+            message: 'Access denied. Please contact your team organiser for the registration link.',
+            duration: 5000,
+            variant: 'warning',
+            queue: true,
+            position: 'bottom'
+          })
 
-        this.$forceUpdate();
+        return;
+      }
+
+      this.$router.push({
+        path: '/register/',
+        query: {
+          id: article.id,
+          series: article.name,
+          price: article.price,
+        },
+      });
+    },
+
+    handleRegistrationStatus(response) {
+      if (this.countdownPermanentlyDismissed) return;
+
+      this.statusDebounceTimer = setTimeout(() => {
+        const data = response.data || response;
+        if (data) {
+          this.registrationOpensDate = data.date;
+          this.showCountdown = data.isShowCountDownTimer;
+          this.serverTime = data.serverTime
+        }
+      }, 500);
+    },
+
+    async retrieveRegistrationFormStatus(id) {
+      try {
+        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`);
         
-        this.$emit('registration-status-updated', data);
+        if (response.success && response.data) {
+          this.registrationOpensDate = response.data.date;
+          this.showCountdown = response.data.isShowCountDownTimer;
+          this.serverTime = response.data.serverTime
+        }
+      } catch (error) {
+        console.error('Failed to fetch registration status:', error);
       }
     },
 
     handleCountdownDismiss() {
-      this.showCountdown = false
+      this.showCountdown = false;
+      this.countdownPermanentlyDismissed = true;
+      if (this.$socket) {
+        this.$socket.off('registration-form-status', this.handleRegistrationStatus);
+      }
+      clearTimeout(this.statusDebounceTimer);
     },
 
     setActiveMedia(path) {
@@ -598,25 +644,6 @@ export default {
           position: 'bottom'
         })
       }
-    },
-
-    async retrieveRegistrationFormStatus(id) {
-      try {
-        const response = await this.$axios.$get(`/v1/registration-form-status/${id}`);
-        
-        if (response.success && response.data && response.data.date) {
-          this.registrationOpensDate = response.data.date;
-          this.showCountdown = response.data.isShowCountDownTimer;
-        }
-      } catch (error) {
-        console.error('Failed to fetch registration status:', error);
-      }
-    }
-  },
-
-  beforeDestroy() {
-    if (this.$socket) {
-      this.$socket.off('registration-form-status', this.handleRegistrationStatus)
     }
   }
 };

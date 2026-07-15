@@ -10,7 +10,7 @@
             <div class="flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                class="group flex items-center gap-2 rounded-lg bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505] px-4 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-[0_4px_12px_rgba(94,231,56,0.3)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(94,231,56,0.5)] hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                class="group flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-[0_4px_12px_rgba(94,231,56,0.3)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(94,231,56,0.5)] hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 @click="openAddSeriesDialog"
                 aria-label="Add new series"
               >
@@ -20,7 +20,7 @@
 
               <button
                 type="button"
-                class="group flex items-center gap-2 rounded-lg bg-gradient-to-br from-[#5EE738] via-[#3e872a] to-[#050505] px-4 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-[0_4px_12px_rgba(94,231,56,0.3)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(94,231,56,0.5)] hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                class="group flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-[0_4px_12px_rgba(94,231,56,0.3)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(94,231,56,0.5)] hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 @click="openEditThumbnailDialog"
                 aria-label="Edit thumbnail"
               >
@@ -452,7 +452,7 @@ export default {
       openRegistrationModalStatus: false,
       saving: false,
       currentSettings: {
-        date: '',
+        date: null,
         isShowCountDownTimer: false,
         countdownUnit: 0,
         countdownValue: null,
@@ -829,7 +829,7 @@ export default {
     async handleSave(payload) {
       this.saving = true
       try {
-        const response =  await this.$axios.$post('/v1/registration-form-status', payload)
+        const response = await this.$axios.$post('/v1/registration-form-status', payload)
 
         if (response.success) {
           this.$oruga.notification.open({
@@ -839,8 +839,6 @@ export default {
             position: 'bottom',
             queue: true,
           });
-
-          await this.retrieveRegistrationFormStatus(response.data.series_id)
         } else {
           this.$oruga.notification.open({
             message: response.message,
@@ -849,9 +847,16 @@ export default {
             position: 'bottom',
             queue: true,
           });
-
-          await this.retrieveRegistrationFormStatus(response.data.series_id)
         }
+
+        if (response.data) {
+          this.currentSettings.date = response.data.date;
+          this.currentSettings.isShowCountDownTimer = response.data.isShowCountDownTimer;
+          this.currentSettings.countdownUnit = response.data.countdownUnit;
+          this.currentSettings.countdownValue = response.data.countdownValue;
+          this.currentSettings.timerMode = response.data.timerMode;
+        }
+
         this.openRegistrationModalStatus = false
       } catch (error) {
         console.error('Save failed:', error)

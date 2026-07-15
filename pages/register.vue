@@ -4,8 +4,10 @@
     <!-- Countdown overlay (does NOT destroy form) -->
     <ClientOnly>
       <CountDownTimer 
+        v-if="registrationOpensDate !== null"
         v-show="showCountdown && series.type !== 'competitions'"
         :target-date="registrationOpensDate"
+        :server-time="serverTime"
         @dismiss="handleCountdownDismiss"
       />
     </ClientOnly>
@@ -157,6 +159,7 @@ export default {
     return {
       showCountdown: false,
       registrationOpensDate: null,
+      serverTime: null,
       clientSecret: '',
       activeStep: 1,
       isStepperLoading: false,
@@ -233,16 +236,12 @@ export default {
     handleRegistrationStatus(response) {
       if (this.countdownPermanentlyDismissed) return;
 
-      clearTimeout(this.statusDebounceTimer);
       this.statusDebounceTimer = setTimeout(() => {
         const data = response.data || response;
         if (data) {
-          if (data.isShowCountDownTimer !== this.showCountdown) {
-            this.showCountdown = data.isShowCountDownTimer;
-          }
-          if (data.date !== this.registrationOpensDate) {
-            this.registrationOpensDate = data.date;
-          }
+          this.registrationOpensDate = data.date;
+          this.showCountdown = data.isShowCountDownTimer;
+          this.serverTime = data.serverTime
         }
       }, 500);
     },
@@ -250,10 +249,12 @@ export default {
     async retrieveRegistrationFormStatus(id) {
       try {
         const response = await this.$axios.$get(`/v1/registration-form-status/${id}`);
-        if (response.success && response.data && response.data.date) {
+        
+        if (response.success && response.data) {
           if (!this.countdownPermanentlyDismissed) {
             this.registrationOpensDate = response.data.date;
             this.showCountdown = response.data.isShowCountDownTimer;
+            this.serverTime = response.data.serverTime
           }
         }
       } catch (error) {
