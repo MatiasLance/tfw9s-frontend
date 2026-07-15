@@ -256,9 +256,7 @@ export default {
 
   computed: {
     minDate() {
-      const now = new Date();
-      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-      return now.toISOString().slice(0, 16);
+      return this.$dayjs().format("YYYY-MM-DDTHH:mm");
     },
 
     hasChanges() {
@@ -284,10 +282,22 @@ export default {
   },
 
   methods: {
+    sydneyToLocal(sydneyStr) {
+      if (!sydneyStr) return ''
+      return this.$dayjs.tz(sydneyStr, 'Australia/Sydney')
+        .local().format('YYYY-MM-DDTHH:mm')
+    },
+
+    localToSydney(localStr) {
+      if (!localStr) return ''
+      return this.$dayjs(localStr)
+        .tz('Australia/Sydney').format('YYYY-MM-DDTHH:mm')
+    },
+
     initForm() {
       const data = {
         seriesId: this.seriesId,
-        date: this.date || '',
+        date: this.sydneyToLocal(this.date) || '',
         isShowCountDownTimer: this.isShowCountDownTimer,
         timerMode: this.timerMode || (this.date ? 'date' : 'duration'),
         countdownUnit: this.countdownUnit || 'days',
@@ -318,7 +328,9 @@ export default {
     handleSubmit() {
       if (!this.validate()) return;
 
-      this.$emit('save', { ...this.form });
+      const payload = { ...this.form };
+      if (payload.date) payload.date = this.localToSydney(payload.date);
+      this.$emit('save', payload);
     },
 
     closeModal() {

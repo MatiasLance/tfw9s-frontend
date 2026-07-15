@@ -281,6 +281,11 @@ export default {
       required: false,
       default: () => []
     },
+    agegroup: {
+      type: Array,
+      required: true,
+      default: () => []
+    },
     series: {
       type: Array,
       required: true
@@ -300,10 +305,18 @@ export default {
       eventId: null,
       TeamData: {
         name: null,
-        description: null
+        agegroup_id: null,
+        series_id: null,
+        region_id: this.initialRegionId || null,
+        coach_name: null,
+        coach_mobile: null,
+        coach_email: null,
+        manager_name: null,
+        manager_mobile: null,
+        manager_email: null,
+        type: 'default'
       },
       rules: [ value => !!value || 'Required' ],
-      agegroup: []
     }
   },
   computed: {
@@ -312,10 +325,14 @@ export default {
         ({ text: field.name, value: field.id }));
     },
     formattedAgeGroup() {
-      return this.agegroup.map(agegroup =>
-        ({ text: agegroup.name, value: agegroup.id }));
+      if (!Array.isArray(this.agegroup)) return [];
+      return this.agegroup.map(agegroup => 
+        ({ text: agegroup.name || '', value: parseInt(agegroup.id || 0) }));
     },
     formattedSeries() {
+      if (!this.series || this.series.length === 0) {
+        return [];
+      }
       return this.series.map(series => ({
         text: series.name,
         value: series.id,

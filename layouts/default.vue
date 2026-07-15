@@ -21,7 +21,7 @@
             />
             <div class="w-screen min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
               <div class="page-top">
-                <Nuxt />
+                <Nuxt keep-alive />
                 <UpdateNotification />
               </div>
             </div>

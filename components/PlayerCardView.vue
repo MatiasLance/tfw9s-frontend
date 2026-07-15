@@ -13,7 +13,8 @@
     </article>
 
     <!-- NEW: Payment status badge (weekly series only) -->
-    <div
+    <!-- Client request to remove this (July 10, 2026) -->
+    <!-- <div
       v-if="series && series.type === 'weekly'"
       class="absolute top-3 right-3 z-20"
     >
@@ -26,7 +27,7 @@
       >
         {{ playerIsPaid ? 'Paid' : 'Unpaid' }}
       </span>
-    </div>
+    </div> -->
 
     <!-- Main card content -->
     <article class="z-10 flex flex-1 flex-col">

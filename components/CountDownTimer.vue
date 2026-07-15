@@ -113,11 +113,17 @@ export default {
       type: [
         Date,
         String,
-        Number
+        Number,
       ],
       required: true,
       validator: (value) => !isNaN(new Date(value).getTime())
     },
+
+    serverTime: {
+      type: [Date, String, Number],
+      required: true
+    },
+
     startDate: {
       type: [
         Date,
@@ -129,8 +135,8 @@ export default {
   },
   data() {
     return {
+      currentServerTime: 0,
       mounted: false,
-      now: Date.now(),
       days: 0,
       hours: 0,
       minutes: 0,
@@ -147,7 +153,7 @@ export default {
         'bg-green-400',
         'bg-teal-400',
         'bg-white'
-      ]
+      ],
     }
   },
   computed: {
@@ -155,26 +161,19 @@ export default {
       return this.$dayjs.tz(this.targetDate, "Australia/Sydney").valueOf();
     },
     startDateTime() {
-      return new Date(this.startDate).getTime();
+      return this.$dayjs.tz(this.startDate, "Australia/Sydney").valueOf();
     },
     isComplete() {
-      return this.now >= this.targetDateTime;
+      return this.currentServerTime >= this.targetDateTime;
     },
     formattedTargetDate() {
-      return new Date(this.targetDate).toLocaleDateString('en-US', { 
-        weekday: 'short',
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      });
+      return this.$dayjs.tz(this.targetDate, "Australia/Sydney")
+        .format("ddd, MMM DD, YYYY h:mm A");
     },
     progressPercentage() {
       const start = this.startDateTime;
       const end = this.targetDateTime;
-      const current = this.now;
+      const current = this.currentServerTime
 
       if (current >= end) return 100;
       if (current <= start) return 0;
@@ -186,12 +185,20 @@ export default {
   },
   watch: {
     targetDate: {
-      handler: 'resetTimer',
-      immediate: true
+      immediate: true,
+      handler() {
+        this.currentServerTime = this.$dayjs.tz(this.serverTime, "Australia/Sydney").valueOf();
+        this.resetTimer();
+      }
+    },
+
+    serverTime(newValue) {
+      this.currentServerTime = this.$dayjs.tz(newValue, "Australia/Sydney").valueOf();
     }
   },
   mounted() {
     this.mounted = true;
+    this.currentServerTime = this.$dayjs.tz(this.serverTime, "Australia/Sydney").valueOf();
     this.startTimer();
   },
   beforeDestroy() {
@@ -202,13 +209,13 @@ export default {
       this.updateTimer();
       
       this.interval = setInterval(() => {
+        this.currentServerTime += 1000;
         this.updateTimer();
       }, 1000);
     },
     
     resetTimer() {
       this.cleanupTimer();
-      this.now = Date.now();
       this.startTimer();
     },
     
@@ -228,14 +235,15 @@ export default {
           s: this.seconds
         };
         
-        this.now = Date.now();
-        
         if (this.isComplete) {
           this.triggerCompletion();
           return;
         }
 
-        const diff = Math.max(0, this.targetDateTime - this.now);
+        const diff = Math.max(
+          0,
+          this.targetDateTime - this.currentServerTime
+        );
 
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

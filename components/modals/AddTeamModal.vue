@@ -561,7 +561,6 @@ export default {
       this.$axios
         .$get(`v1/teamlimit/${this.TeamData.series_id}`)
         .then((response) => {
-          // eslint-disable-next-line vue/no-mutating-props
           this.agegroup = response.data
             .filter(limit => limit.is_selected === 1)
             .map(limit => limit.age_groups)

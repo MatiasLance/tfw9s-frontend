@@ -7,10 +7,9 @@
           <div class="col-span-1 flex items-center">
             <button
               type="button"
-              class="w-full sm:w-36 rounded-md
-              bg-gradient-to-br from-[#5EE738]
-              via-[#3e872a] to-[#050505] py-1.5
-              text-center font-semibold text-white"
+              class="w-full sm:w-36 rounded-lg text-sm text-white
+              bg-green-600 py-2 px-4 flex items-center
+              gap-2 justify-center font-semibold"
               @click="showAddFieldModal = true"
             >
               <span class="text-white">+ Add Fields</span>
