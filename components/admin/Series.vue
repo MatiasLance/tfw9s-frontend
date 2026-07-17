@@ -583,7 +583,6 @@ export default {
     AddSeries(data) {
       this.seriesList.unshift(data);
       this.showAddSeriesModal = false;
-      this.showAddPlayersModal = false
       this.retrieveSeries();
     },
     openEditSeriesDialog(data) {

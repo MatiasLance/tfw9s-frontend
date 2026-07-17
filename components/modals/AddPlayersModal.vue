@@ -376,11 +376,11 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    confirm() {
-      this.addPlayer()
+    async confirm() {
+      await this.addPlayer()
       this.closeDialog()
     },
-    addPlayer() {
+    async addPlayer() {
       const formData = new FormData();
       formData.append('contact_firstname', this.contact.firstName);
       formData.append('contact_lastname', this.contact.lastName);
@@ -398,19 +398,17 @@ export default {
         formData.append('photo[]', this.imgList[i], 'newsThumbnail.png');
       }
 
-      this.$axios
-        .$post('/v1/players', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then(() => {
-          this.reset();
-          this.$emit('confirm')
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 403) {
-            this.$router.push('/unauthorized');
-          } else {
-            console.error('Error:', error);
-          }
-        });
+      try {
+        await this.$axios.$post('/v1/players', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        this.reset();
+        this.$emit('confirm')
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          this.$router.push('/unauthorized');
+        } else {
+          console.error('Error:', error);
+        }
+      }
     },
     closeDialog() {
       this.$emit('close')

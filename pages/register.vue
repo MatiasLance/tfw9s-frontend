@@ -173,7 +173,8 @@ export default {
       queuePosition: 0,
       pollingInterval: null,
       statusDebounceTimer: null,
-      countdownPermanentlyDismissed: false
+      countdownPermanentlyDismissed: false,
+      seriesId: null
     };
   },
 
@@ -223,7 +224,8 @@ export default {
   async mounted() {
     await this.$nextTick()
     this.clientId = uuidv4();
-    
+    this.seriesId = Number(this.$route.query.id);
+
     this.retrieveSeries();
     this.series = this.$route.query.series
     this.price = this.$route.query.price
@@ -236,8 +238,10 @@ export default {
     handleRegistrationStatus(response) {
       if (this.countdownPermanentlyDismissed) return;
 
+      const data = response.data || response;
+      if (data.seriesId && data.seriesId !== this.seriesId) return;
+
       this.statusDebounceTimer = setTimeout(() => {
-        const data = response.data || response;
         if (data) {
           this.registrationOpensDate = data.date;
           this.showCountdown = data.isShowCountDownTimer;

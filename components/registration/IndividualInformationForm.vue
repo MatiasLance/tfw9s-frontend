@@ -60,7 +60,7 @@
             <option
               v-for="age in ageGroups"
               :key="age.id"
-              :value="age.name"
+              :value="age.id"
             >
               {{ age.name }}
             </option>
@@ -684,7 +684,7 @@ export default {
         contactEmail: this.contact.email,
         playerFirstName: this.player.firstName,
         playerLastName: this.player.lastName,
-        teamName: this.player.teamName,
+        teamName: this.teams.find(t => t.name.toLowerCase() === this.player.teamName.toLowerCase())?.id,
         dob: this.player.dob,
         ageGroup: this.player.ageGroup,
         price: this.price,
@@ -754,7 +754,7 @@ export default {
         this.ageGroups = Array.from(seen.values());
 
         this.player.teamName = this.teams.length > 0 ? this.teams[0].name : '';
-        this.player.ageGroup = this.ageGroups.length > 0 ? this.ageGroups[0].name : '';
+        this.player.ageGroup = this.ageGroups.length > 0 ? this.ageGroups[0].id : '';
 
         const firstTeam = this.teams[0] || {};
         const registered = firstTeam.registered_players_count || 0;
@@ -798,7 +798,7 @@ export default {
 
         if (teamData.name) {
           this.player.teamName = teamData.name;
-          this.player.ageGroup = teamData.agegroup?.name || '';
+          this.player.ageGroup = teamData.agegroup?.id || '';
           this.player.discountCodeId = teamData.discount_codes_id;
 
           this.teams = [{ id: teamData.id, name: teamData.name }];
