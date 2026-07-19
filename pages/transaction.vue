@@ -232,7 +232,13 @@
         <h3 class="text-xl font-black uppercase italic mb-4 text-green-500">
             Update Player Photo
         </h3>
-        <ImageCropper :width="400" :height="500" @upload="handleUpload" />
+        <ImageCropper
+          :width="400"
+          :height="400"
+          :prevent-white-space="true"
+          initial-size="cover"
+          @upload="handleUpload"
+        />
         <button
           type="button"
           @click="showUploadModal = false"

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[480px]">
+  <div class="w-full max-w-[480px]">
     <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
       
       <!-- Header -->
@@ -21,9 +21,9 @@
           accept=".png, .webp, .jpeg, .jpg"
           :file-size-limit="31457280"
           :zoom-speed="5"
-          :prevent-white-space="false"
+          :prevent-white-space="preventWhiteSpace"
           :show-loading="true"
-          initial-size="contain"
+          :initial-size="initialSize"
           @file-size-exceed="handleCroppaFileSizeExceed"
           @file-type-mismatch="handleCroppaFileTypeMismatch"
           @new-image-drawn="handleNewImageCreate"
@@ -126,6 +126,8 @@ export default {
   props: {
     width: { type: [ String, Number ], default: 480 },
     height: { type: [ String, Number ], default: 320 },
+    preventWhiteSpace: { type: Boolean, default: false },
+    initialSize: { type: String, default: 'contain' },
   },
   data() {
     return {

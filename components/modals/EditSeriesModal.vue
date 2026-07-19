@@ -176,7 +176,7 @@ export default {
       handler(newActive) {
         if (newActive) {
           if (newActive) {
-            this.SeriesData = this.series;
+            this.SeriesData = { ...this.series };
 
             this.SeriesData.price = this.series.price / 100;
 
@@ -266,11 +266,11 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    confirm() {
-      this.editSeries()
+    async confirm() {
+      await this.editSeries()
       this.closeDialog()
     },
-    editSeries() {
+    async editSeries() {
       const formData = new FormData();
       formData.append('type', this.SeriesData.type);
       formData.append('name', this.SeriesData.name);
@@ -284,19 +284,17 @@ export default {
         formData.append('photo[]', this.imgListEdit[i]);
       }
 
-      this.$axios
-        .$post(`v1/series/${this.series.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then((response) => {
-          this.reset();
-          this.$emit('confirm')
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 403) {
-            this.$router.push('/unauthorized');
-          } else {
-            console.error('Error:', error);
-          }
-        });
+      try {
+        await this.$axios.$post(`v1/series/${this.series.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        this.reset();
+        this.$emit('confirm')
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          this.$router.push('/unauthorized');
+        } else {
+          console.error('Error:', error);
+        }
+      }
     },
     closeDialog() {
       this.SeriesData.price = this.series.price*100
@@ -304,7 +302,16 @@ export default {
       this.reset()
     },
     reset() {
-      this.SeriesData = []
+      this.SeriesData = {
+        name: null,
+        description: null,
+        start: null,
+        end: null,
+        price: null,
+        address: null,
+        type: null,
+        media: [],
+      }
       this.imgList = []
       this.imgUrl = []
       this.showGenerateCreatedImageBtn = false

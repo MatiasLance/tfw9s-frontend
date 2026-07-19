@@ -329,7 +329,8 @@ export default {
       pollTimer: null,
       isPolling: false,
       statusDebounceTimer: null,
-      countdownPermanentlyDismissed: false
+      countdownPermanentlyDismissed: false,
+      seriesId: null
     };
   },
   computed: {
@@ -410,6 +411,7 @@ export default {
   async mounted() {
     await this.$nextTick()
     this.series.type = this.$route.query.type
+    this.seriesId = Number(this.$route.query.id)
     await this.retrieveToggleTaxControl()
     await this.retrieveTaxValue()
     await this.retrieveSeries(this.$route.query.id);
@@ -444,8 +446,10 @@ export default {
     handleRegistrationStatus(response) {
       if (this.countdownPermanentlyDismissed) return;
 
+      const data = response.data || response;
+      if (data.seriesId && data.seriesId !== this.seriesId) return;
+
       this.statusDebounceTimer = setTimeout(() => {
-        const data = response.data || response;
         if (data) {
           this.registrationOpensDate = data.date;
           this.showCountdown = data.isShowCountDownTimer;

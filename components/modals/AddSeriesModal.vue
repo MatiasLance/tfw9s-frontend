@@ -106,7 +106,8 @@
                   depressed
                   color="success"
                   class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-                  :disabled="!valid"
+                  :disabled="!valid || submitting"
+                  :loading="submitting"
                   @click="validate"
                   >
                     OK
@@ -144,6 +145,7 @@ export default {
   data() {
     return {
       valid: true,
+      submitting: false,
       showGenerateCreatedImageBtn: false,
       imgUrl: [],
       imgList: [],
@@ -227,7 +229,11 @@ export default {
 
       return `${year}-${month}-${day}`;
     },
-    validate() {
+    async validate() {
+      if (this.submitting) {
+        return false;
+      }
+
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
           duration: 5000,
@@ -261,18 +267,28 @@ export default {
         return false;
       }
 
-      this.confirm();
-      return true;
+      this.submitting = true;
+
+      try {
+        return await this.confirm();
+      } finally {
+        this.submitting = false;
+      }
     },
 
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    confirm() {
-      this.addSeries()
-      this.closeDialog()
+    async confirm() {
+      const seriesAdded = await this.addSeries()
+
+      if (seriesAdded) {
+        this.closeDialog()
+      }
+
+      return seriesAdded
     },
-    addSeries() {
+    async addSeries() {
       const startDate = this.DatePickerToSQL(this.SeriesData.start);
       const endDate = this.DatePickerToSQL(this.SeriesData.end);
       // Check if date conversion was successful
@@ -284,7 +300,7 @@ export default {
           position: 'bottom',
           queue: true,
         });
-        return;
+        return false;
       }
 
       const formData = new FormData();
@@ -300,37 +316,36 @@ export default {
         formData.append('photo[]', this.imgList[i], 'newsThumbnail.png');
       }
 
-      this.$axios
-        .$post('v1/series', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then((response) => {
-          this.reset();
-          this.$emit('confirm', response.data); // Pass the response data to parent
-          this.$oruga.notification.open({
-            message: 'Series added successfully!',
-            variant: 'success',
-            duration: 5000,
-            position: 'bottom',
-            queue: true,
-          });
-        })
-        .catch((error) => {
-          let errorMessage = 'Failed to add series';
-          if (error.response) {
-            if (error.response.status === 403) {
-              this.$router.push('/unauthorized');
-              return;
-            }
-            errorMessage = error.response.data.message || errorMessage;
-          }
-          this.$oruga.notification.open({
-            message: errorMessage,
-            variant: 'danger',
-            duration: 5000,
-            position: 'bottom',
-            queue: true,
-          });
-          console.error('API Error:', error);
+      try {
+        const response = await this.$axios.$post('v1/series', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        this.$emit('confirm', response.data.series);
+        this.$oruga.notification.open({
+          message: 'Series added successfully!',
+          variant: 'success',
+          duration: 5000,
+          position: 'bottom',
+          queue: true,
         });
+        return true;
+      } catch (error) {
+        let errorMessage = 'Failed to add series';
+        if (error.response) {
+          if (error.response.status === 403) {
+            this.$router.push('/unauthorized');
+            return false;
+          }
+          errorMessage = error.response.data.message || errorMessage;
+        }
+        this.$oruga.notification.open({
+          message: errorMessage,
+          variant: 'danger',
+          duration: 5000,
+          position: 'bottom',
+          queue: true,
+        });
+        console.error('API Error:', error);
+        return false;
+      }
     },
     closeDialog() {
       this.$emit('close')
