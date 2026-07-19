@@ -364,7 +364,7 @@
                 <button
                   type="button"
                   class="group absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500/90 text-white shadow-lg backdrop-blur-sm transition-all hover:bg-red-600 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
-                  @click="base64IMG = ''"
+                  @click="removePhoto"
                   aria-label="Remove player photo"
                 >
                   <i class="ri-close-line text-red-300 text-lg transition-transform group-hover:rotate-90"></i>
@@ -373,8 +373,10 @@
 
               <ImageCropper
                 v-else
-                :width="480"
+                :width="320"
                 :height="320"
+                :prevent-white-space="true"
+                initial-size="cover"
                 @upload="handleUpload"
                 class="rugby-cropper-wrapper"
               />
@@ -406,10 +408,10 @@
               type="submit"
               class="w-24 cursor-pointer py-2 text-white"
               :class="{
-                'bg-brand-black': !isLoading && !isPlayerLimitReached,
-                'bg-gray-400': isLoading || isPlayerLimitReached
+                'bg-brand-black': !isLoading && !isPlayerLimitReached && !cropping,
+                'bg-gray-400': isLoading || isPlayerLimitReached || cropping
               }"
-              :disabled="isLoading || !isRegistrationTypeValid"
+              :disabled="isLoading || !isRegistrationTypeValid || cropping"
             >
               <span v-if="!isLoading" class="text-white">Confirm</span>
               <span v-if="isLoading">
@@ -497,7 +499,6 @@ export default {
       showTermsModal: false,
       photo: null,
       cropping: false,
-      base64IMG: '',
       series: [],
       team: {},
       isPlayerLimitReached: false,
@@ -508,6 +509,14 @@ export default {
   computed: {
     phoneNumber() {
       return `${this.phoneCode}${this.contact.phoneDigits}`;
+    },
+    base64IMG: {
+      get() {
+        return this.$store.state.registration.base64IMG;
+      },
+      set(value) {
+        this.$store.commit('registration/setBase64IMG', value);
+      },
     },
     isRegistrationTypeValid() {
       return this.registrationType === 'new';
@@ -556,7 +565,7 @@ export default {
       this.contact.lastName = '';
       this.contact.phoneDigits = '';
       this.contact.email = '';
-      this.base64IMG = '';
+      this.removePhoto();
       this.cropping = false;
       this.hasAgreedToTerms = false;
 
@@ -699,6 +708,7 @@ export default {
       this.cropping = true;
       try {
         if (image && image instanceof Blob) {
+          this.photo = image;
           const reader = new FileReader();
           reader.onloadend = () => {
             const img = new Image();
@@ -733,6 +743,10 @@ export default {
         console.error('Error uploading image:', error);
         this.cropping = false;
       }
+    },
+    removePhoto() {
+      this.photo = null;
+      this.base64IMG = '';
     },
 
     retrieveSeries(id) {

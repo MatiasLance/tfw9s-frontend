@@ -58,7 +58,7 @@
           <img
             :src="getMediaURL(player.media[0], 'player')"
             alt="Player"
-            class="aspect-square max-h-40 w-5/6 rounded-lg border
+            class="aspect-square w-5/6 max-w-40 flex-none border
             border-solid border-gray-300 object-cover shadow-sm"
             @click="$emit('image-click')"
           >
