@@ -31,7 +31,7 @@
           </div>
 
           <!-- 2. Search input -->
-          <form class="flex flex-col min-w-[180px] flex-1" @submit.prevent="retrieveEvents">
+          <form class="flex flex-col min-w-[180px] flex-1" @submit.prevent="applyFilters">
             <label class="text-sm font-bold text-gray-600 uppercase tracking-wide mb-2">Search</label>
             <div class="flex h-9">
               <input
@@ -50,7 +50,7 @@
           </form>
 
           <!-- 3. Series select -->
-          <form class="flex flex-col min-w-[180px] flex-1" @submit.prevent="retrieveEvents">
+          <form class="flex flex-col min-w-[180px] flex-1" @submit.prevent="applyFilters">
             <label class="text-sm font-bold text-gray-600 uppercase tracking-wide mb-2">Series</label>
             <div class="flex h-9">
               <select
@@ -58,7 +58,7 @@
                 class="flex-1 rounded-l bg-gray-100 px-3 text-sm border-none outline-none"
               >
                 <option disabled value="">Select series...</option>
-                <option v-for="s in seriesList" :key="s.id" :value="s.name">
+                <option v-for="s in seriesList" :key="s.id" :value="s.id">
                   {{ s.name }}
                 </option>
               </select>
@@ -82,7 +82,7 @@
           <!-- 4. Show Submitted checkbox -->
             <div class="flex items-center pb-1 min-w-[140px]">
             <label class="flex items-center gap-2 text-sm font-bold text-gray-600 uppercase tracking-wide cursor-pointer">
-              <input v-model="submit" type="checkbox" class="w-4 h-4" @click="filterSubmittedResults" />
+              <input v-model="submit" type="checkbox" class="w-4 h-4" @change="filterSubmittedResults" />
               Show Submitted
             </label>
           </div>
@@ -113,7 +113,6 @@
             class="text-white"
             color="success"
             dark
-            @change="setPage"
           />
         </div>
 
@@ -300,7 +299,8 @@ export default {
       perPage: 10,
       totalPages: 1,
       totalItems: 0,
-      isLoading: false
+      isLoading: false,
+      requestSequence: 0,
     };
   },
   computed: {
@@ -310,7 +310,7 @@ export default {
     },
 
     filteredMatches() {
-      return this.matchList.sort((a, b) => {
+      return [ ...this.matchList ].sort((a, b) => {
         const timeToMinutes = (timeStr) => {
           const [ time, period ] = timeStr.split(' ');
           const [ hours, minutes ] = time.split(':').map(Number);
@@ -332,7 +332,7 @@ export default {
   watch: {
     dateFilter: {
       handler(newDate) {
-        this.retrieveEvents();
+        this.applyFilters();
       },
       immediate: true,
     },
@@ -343,7 +343,7 @@ export default {
     },
     totalPages() {
       if (this.page > this.totalPages) {
-        this.setPage(1)
+        this.page = Math.max(this.totalPages, 1)
       }
     },
   },
@@ -351,16 +351,23 @@ export default {
     this.loadSeries()
   },
   methods: {
+    applyFilters() {
+      if (this.page !== 1) {
+        this.page = 1;
+      } else {
+        this.retrieveEvents();
+      }
+    },
     filterSubmittedResults() {
-      this.page = 1;
-      this.retrieveEvents();
+      this.applyFilters();
     },
     clearSearchSeriesName() {
-      this.series = '',
-      this.retrieveEvents();
-    },
-    setPage() {
-      this.retrieveEvents();
+      this.series = '';
+      if (this.page !== 1) {
+        this.page = 1;
+      } else {
+        this.retrieveEvents();
+      }
     },
     convertTo12HourFormat(timeString) {
       const [ hour, minute ] = timeString.split(':');
@@ -414,7 +421,7 @@ export default {
     manageRevertResultResponse(response) {
       this.$oruga.notification.open({
         duration: 5000,
-        message: response.message,
+        message: response.title || response.message || 'Result reverted successfully',
         position: 'bottom',
         variant: 'success',
         queue: true
@@ -485,6 +492,8 @@ export default {
       return formattedTime;
     },
     formattedDate(dateString) {
+      if (!dateString) return 'Unknown';
+
       const date = new Date(dateString);
       const month = date.getMonth() + 1;
       const day = date.getDate();
@@ -494,23 +503,10 @@ export default {
     retrieveEvents: _debounce(function() {
       this.isLoading = true
       
-      let eventYear = this.dateFilter ? this.dateFilter.getUTCFullYear() : null;
-      let eventMonth = this.dateFilter ? (this.dateFilter.getUTCMonth() + 1) : null;
-      let eventDay = this.dateFilter ? (this.dateFilter.getUTCDate()): null;
-
-      eventDay++;
-
-      const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
-
-      if (eventDay > lastDayOfMonth) {
-        eventDay = 1;
-        eventMonth++;
-
-        if (eventMonth === 13) {
-          eventMonth = 1;
-          eventYear++;
-        }
-      }
+      const requestId = ++this.requestSequence;
+      const eventYear = this.dateFilter ? this.dateFilter.getFullYear() : null;
+      const eventMonth = this.dateFilter ? (this.dateFilter.getMonth() + 1) : null;
+      const eventDay = this.dateFilter ? this.dateFilter.getDate() : null;
 
       const eventMonthStr = eventMonth? eventMonth.toString().padStart(2, '0') : null;
       const eventDayStr = eventDay? eventDay.toString().padStart(2, '0') : null;
@@ -522,12 +518,12 @@ export default {
 
       const query = {
         q: this.query,
-        series_name: this.series,
+        series_id: this.series,
         sort: 'latest',
         page: this.page,
-        per_page: this.perPage,
+        maxEventMatchesPerPage: this.perPage,
         event_date: event_date,
-        submit: this.submit
+        status: this.submit ? 'complete' : 'upcoming',
       };
 
       Object.keys(query).forEach((key) => {
@@ -538,34 +534,42 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
       this.$axios
-        .$get(`v1/events?${queryString}`)
+        .$get(`v1/eventmatches?${queryString}`)
         .then((response) => {
-          const eventList = response.data.events.map(eventMatch => {
+          if (requestId !== this.requestSequence) return;
+
+          this.matchList = response.data.eventMatches.map(match => {
+            const event = match.event || {};
             return {
-              ...eventMatch,
-              eventmatch: eventMatch.eventmatch.map(match => {
-                return {
-                  ...match,
-                  series: eventMatch.series.name || 'Unknown',
-                  matchTime: this.AMPMformat(eventMatch.time),
-                  round: this.roundFormat(eventMatch.round),
-                  agegroup_id: eventMatch.agegroup.name,
-                  event_date: this.formattedDate(eventMatch.event_date),
-                  field: match.field.name || 'Unknown',
-                  submit: !!match.submitted
-                };
-              })
+              ...match,
+              series: event.series ? event.series.name : 'Unknown',
+              matchTime: this.convertTo12HourFormat(event.time || '00:00'),
+              round: this.roundFormat(event.round),
+              agegroup_id: event.agegroup ? event.agegroup.name : 'Unknown',
+              event_date: this.formattedDate(event.event_date),
+              field: match.field ? match.field.name : 'Field TBA',
+              submit: !!match.submitted,
             };
-          });
-          this.matchList = eventList.flatMap(data => {
-            return data.eventmatch;
           });
           this.totalItems = response.data.total_items;
           this.totalPages = response.data.last_page;
-          this.from = response.data.from;
+          this.from = response.data.total_items ? response.data.from : 0;
           this.to = response.data.to;
         })
+        .catch(() => {
+          if (requestId !== this.requestSequence) return;
+
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: 'Results could not be loaded. Please try again.',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        })
         .finally(() => {
+          if (requestId !== this.requestSequence) return;
+
           this.showCustomVueTable = true;
           this.isLoading = false
         });

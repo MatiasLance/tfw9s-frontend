@@ -62,7 +62,7 @@ export default {
     active: {
       handler(newActive) {
         if (newActive) {
-          this.matchData = this.match;
+          this.matchData = JSON.parse(JSON.stringify(this.match));
         }
       },
       immediate: true,
@@ -78,11 +78,13 @@ export default {
       this.$axios
         .$post(`v1/eventmatches/${this.matchData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
-          this.processing = false
           this.$emit('confirm')
         })
         .catch((error) => {
           this.$emit('error', error)
+        })
+        .finally(() => {
+          this.processing = false
         });
     },
     closeDialog() {

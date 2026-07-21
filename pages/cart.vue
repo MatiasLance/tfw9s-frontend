@@ -173,6 +173,8 @@ export default {
     return {
       items: [],
       taxrateValue: 0,
+      cartRequestId: 0,
+      isDestroyed: false,
     };
   },
   computed: {
@@ -219,50 +221,23 @@ export default {
     await this.retrieveTaxValue();
     await this.retrieveToggleTaxControl();
     await this.getItemData();
-    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
+    this.$socket.on('item-list-changed', this.handleItemListChanged);
   },
 
   beforeDestroy() {
+    this.isDestroyed = true;
+    this.cartRequestId += 1;
     this.cullZeroQuantityItems();
     if (this.$socket) {
-      this.$socket.off('render-item-list', this.realTimeRetrieveProducts)
+      this.$socket.off('item-list-changed', this.handleItemListChanged)
     }
   },
 
   methods: {
-    realTimeRetrieveProducts(response) {
-      const payload = JSON.parse(response.data.original);
-      const products = payload.data.items;
-
-      const productMap = new Map(products.map(p => [p.id, p]));
-
-      const removalPromises = [];
-
-      this.cartItems.forEach((cartItem) => {
-        const product = productMap.get(cartItem.id);
-        if (product && !product.is_active) {
-          const { id, size_variant_id, color } = cartItem;
-
-          removalPromises.push(
-            this.$store
-              .dispatch('cart/removeItemFromCart', { id, size_variant_id, color })
-              .then(() => {
-                this.removeItemFromLocalArray(id, size_variant_id, color);
-              })
-              .catch((error) =>
-                this.$oruga.notification.open({
-                  message: error.message,
-                  variant: 'danger',
-                  duration: 5000,
-                })
-              )
-          );
-        }
-      });
-
-      Promise.all(removalPromises).finally(() => {
-        this.$nextTick(() => this.calculatePriceAggregates());
-      });
+    handleItemListChanged() {
+      // The public item endpoint is the source of truth and returns 404 for a
+      // hidden/deleted item, regardless of which page an admin was viewing.
+      this.getItemData();
     },
     getItemColor(item) {
       const cartItem = this.getCartItemFromStore(item);
@@ -327,11 +302,14 @@ export default {
       }
       return item.stock;
     },
-    getItemData() {
-      const itemPromises = this.cartItems.map((cartItem) =>
-        this.$axios
-          .$get(`/v1/items/${cartItem.id}`)
-          .then((response) => {
+    async getItemData() {
+      const requestId = ++this.cartRequestId;
+      const cartSnapshot = [...this.cartItems];
+      let removedUnavailableItem = false;
+
+      const itemPromises = cartSnapshot.map(async (cartItem) => {
+        try {
+          const response = await this.$axios.$get(`/v1/items/${cartItem.id}`);
             const product = response.data.item;
             return {
               ...product,
@@ -344,20 +322,41 @@ export default {
               cartSizeVariantId: cartItem.size_variant_id,
               cartQuantity: cartItem.quantity,
             };
-          })
-          .catch((error) => {
-            console.error(`Failed to fetch product ${cartItem.id}:`, error);
-            return null;
-          })
-      );
+        } catch (error) {
+          console.error(`Failed to fetch product ${cartItem.id}:`, error);
 
-      Promise.all(itemPromises)
-        .then((values) => {
-          this.items = values.filter((item) => item !== null);
-        })
-        .then(() => {
-          this.calculatePriceAggregates();
+          if ([404, 409].includes(error.response?.status)) {
+            removedUnavailableItem = true;
+            const { id, size_variant_id, color } = cartItem;
+            try {
+              await this.$store.dispatch('cart/removeItemFromCart', {
+                id,
+                size_variant_id,
+                color,
+              });
+            } catch (removeError) {
+              console.error(`Failed to remove unavailable product ${id}:`, removeError);
+            }
+          }
+
+          return null;
+        }
+      });
+
+      const values = await Promise.all(itemPromises);
+      if (requestId !== this.cartRequestId || this.isDestroyed) return;
+
+      this.items = values.filter((item) => item !== null);
+      this.calculatePriceAggregates();
+
+      if (removedUnavailableItem) {
+        this.$oruga.notification.open({
+          message: 'An unavailable item was removed from your cart.',
+          variant: 'warning',
+          duration: 5000,
+          queue: true,
         });
+      }
     },
     quantityChanged(changeData) {
       const { id, quantity, size_variant_id, color } = changeData;

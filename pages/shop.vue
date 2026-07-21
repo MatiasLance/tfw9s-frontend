@@ -146,7 +146,7 @@ export default {
   },
   methods: {
     retrieveItems() {
-      this.$refs.products.retrieveProducts()
+      this.$refs.products.refreshFromFirstPage()
     },
 
     async taxList() {

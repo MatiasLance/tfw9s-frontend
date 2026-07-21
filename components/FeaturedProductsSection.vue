@@ -142,10 +142,12 @@ import currency from '~/mixins/currency';
 
 export default {
   name: 'FeaturedProductsSection',
+  components: {
+    BasePagination
+  },
   mixins: [
     currency,
-    handlesMedia,
-    BasePagination
+    handlesMedia
   ],
   data() {
     return {
@@ -158,7 +160,10 @@ export default {
       products: [],
       filterFeaturedProducts: [],
       currentPage: 1,
-      productsPerPage: 8
+      productsPerPage: 8,
+      isProductsLoading: false,
+      productsRequestId: 0,
+      isDestroyed: false
     };
   },
   computed: {
@@ -171,7 +176,7 @@ export default {
       },
     },
     featuredIndexProducts() {
-      return this.products.filter(element => element.is_featured);
+      return this.products;
     },
   },
   watch: {
@@ -182,15 +187,22 @@ export default {
     }
   },
   mounted() {
-    this.retrieveFeaturedItems();
     this.page = 1
+    this.retrieveFeaturedItems();
+    this.$socket.on('item-list-changed', this.handleItemListChanged)
   },
   methods: {
-    retrieveFeaturedItems() {
+    handleItemListChanged() {
+      this.retrieveFeaturedItems()
+    },
+    async retrieveFeaturedItems() {
+      const requestId = ++this.productsRequestId
+      this.isProductsLoading = true
       const query = {
         sort: 'a_to_z',
         page: this.page,
-        maxItemsPerPage: 64
+        featured: true,
+        maxItemsPerPage: this.productsPerPage
       };
 
       // Sanitize and remove null values
@@ -202,22 +214,31 @@ export default {
 
       const queryString = new URLSearchParams(query).toString();
 
-      this.$axios
-        .$get(`v1/items?${queryString}`)
-        .then((response) => {
-          this.products = response.data.items;
-          this.totalItems = response.data.total_items;
-          this.totalPages = response.data.last_page;
-          this.from = response.data.from;
-          this.to = response.data.to;
-        })
-        .finally(() => {
+      try {
+        const response = await this.$axios.$get(`v1/items?${queryString}`)
+        if (requestId !== this.productsRequestId || this.isDestroyed) return
+
+        this.products = response.data.items;
+        this.totalItems = response.data.total_items;
+        this.totalPages = response.data.last_page;
+        this.from = response.data.from;
+        this.to = response.data.to;
+      } finally {
+        if (requestId === this.productsRequestId && !this.isDestroyed) {
           this.isProductsLoading = false;
-        });
+        }
+      }
     },
     setPage(page) {
       this.page = page;
       this.retrieveFeaturedItems();
+    }
+  },
+  beforeDestroy() {
+    this.isDestroyed = true
+    this.productsRequestId += 1
+    if (this.$socket) {
+      this.$socket.off('item-list-changed', this.handleItemListChanged)
     }
   },
 };

@@ -1155,7 +1155,7 @@
                 Confirm Deletion
               </h3>
               <p class="text-sm text-green-400 font-medium truncate max-w-[220px]">
-                {{ item?.name || 'Unnamed Record' }}
+                {{ (item && item.name) || 'Unnamed Record' }}
               </p>
             </div>
             <button 
@@ -1175,7 +1175,7 @@
           <div class="px-6 py-4">
             <div class="rounded-lg bg-gray-800/50 p-4 border border-gray-700/50">
               <p class="text-gray-300 text-sm leading-relaxed">
-                You are about to permanently delete <span class="font-semibold text-white">{{ item?.name || 'this record' }}</span>.
+                You are about to permanently delete <span class="font-semibold text-white">{{ (item && item.name) || 'this record' }}</span>.
               </p>
               <p class="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
                 <i class="ri-warning-line text-yellow-500"></i>
@@ -1289,6 +1289,8 @@ export default {
       variantBuffer: [],
       toggleDebounceTimers: {},
       pendingToggles: new Set(),
+      merchRequestId: 0,
+      isDestroyed: false,
     };
   },
   head() {
@@ -1348,20 +1350,14 @@ export default {
   async mounted() {
     await this.$nextTick()
     this.debouncedSearch = debounce(this.retrieveMerchItems, 800);
-    this.retrieveMerchItems();
     this.page = 1
-    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
+    this.retrieveMerchItems();
+    this.$socket.on('item-list-changed', this.handleItemListChanged);
   },
 
   methods: {
-    realTimeRetrieveProducts(response) {
-      const payload = JSON.parse(response.data.original);
-      this.$store.commit('admin/setTotalItems', payload.data.total_items)
-        this.merchItems = payload.data.items
-        this.totalItems = payload.data.total_items
-        this.totalPages = payload.data.last_page
-        this.from = payload.data.from
-        this.to = payload.data.to
+    handleItemListChanged() {
+      this.retrieveMerchItems()
     },
     
     // Show and hide product sa user side as per ben idea
@@ -1380,12 +1376,15 @@ export default {
       }, 300)
     },
     async performToggle(uid, active) {
-      const previousState = active
       this.pendingToggles.add(uid)
 
-      const itemIndex = this.merchItems.findIndex(item => item.uid === uid)
+      const itemIndex = this.merchItems.findIndex(item => item.id === uid)
+      const previousState = itemIndex === -1
+        ? !active
+        : Boolean(this.merchItems[itemIndex].is_active)
+
       if (itemIndex !== -1) {
-        this.merchItems[itemIndex].active = active
+        this.$set(this.merchItems[itemIndex], 'is_active', active)
       }
 
       try {
@@ -1403,7 +1402,7 @@ export default {
         })
       } catch (error) {
         if (itemIndex !== -1) {
-          this.merchItems[itemIndex].active = previousState
+          this.$set(this.merchItems[itemIndex], 'is_active', previousState)
         }
 
         if (error.response?.status === 429) {
@@ -1482,7 +1481,8 @@ export default {
     closeRemove() {
       this.showRemoveMerchItemModal = false;
     },
-    retrieveMerchItems() {
+    async retrieveMerchItems() {
+      const requestId = ++this.merchRequestId
       this.isMerchItemsLoading = true;
 
       const query = {
@@ -1491,6 +1491,7 @@ export default {
         page: this.page,
         category: this.$store.state.shop.selectedCategory,
         item_variant: this.activeVariantItem,
+        include_inactive: true,
       };
 
       Object.keys(query).forEach((key) => {
@@ -1499,19 +1500,22 @@ export default {
         }
       })
       const queryString = new URLSearchParams(query).toString()
-      this.$axios
-        .$get(`v1/items?${queryString}`)
-        .then((response) => {
-          this.$store.commit('admin/setTotalItems', response.data.total_items)
-          this.merchItems = response.data.items
-          this.totalItems = response.data.total_items
-          this.totalPages = response.data.last_page
-          this.from = response.data.from
-          this.to = response.data.to
-        })
-        .finally(() => {
+      try {
+        const response = await this.$axios.$get(`v1/items?${queryString}`)
+
+        if (requestId !== this.merchRequestId || this.isDestroyed) return
+
+        this.$store.commit('admin/setTotalItems', response.data.total_items)
+        this.merchItems = response.data.items
+        this.totalItems = response.data.total_items
+        this.totalPages = response.data.last_page
+        this.from = response.data.from
+        this.to = response.data.to
+      } finally {
+        if (requestId === this.merchRequestId && !this.isDestroyed) {
           this.isMerchItemsLoading = false;
-        });
+        }
+      }
     },
     addCategoryPicker() {
       this.multipleCategoryCounter += 1
@@ -1915,10 +1919,13 @@ export default {
   },
 
   beforeDestroy() {
+    this.isDestroyed = true
+    this.merchRequestId += 1
     Object.values(this.toggleDebounceTimers).forEach(clearTimeout)
+    this.debouncedSearch?.cancel()
 
     if (this.$socket) {
-      this.$socket.off('rrender-item-list', this.realTimeRetrieveProducts)
+      this.$socket.off('item-list-changed', this.handleItemListChanged)
     }
   }
 };

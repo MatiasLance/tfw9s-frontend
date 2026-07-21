@@ -175,6 +175,7 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.MatchData = JSON.parse(JSON.stringify(this.match));
+          this.isAbandonedMatched = !!this.MatchData.is_abandoned_match;
           
           this.MatchData.team1_name = this.MatchData.team1 ?
             this.MatchData.team1 :
@@ -186,12 +187,10 @@ export default {
         }
       },
       immediate: true,
-      isAbandonedMatched: {
-        handler(isTrue) {
-          if (isTrue) {
-            this.MatchData.is_abandoned_match = isTrue
-          }
-        }
+    },
+    isAbandonedMatched(isTrue) {
+      if (this.MatchData) {
+        this.MatchData.is_abandoned_match = isTrue
       }
     },
   },
@@ -226,10 +225,11 @@ export default {
       this.$axios
         .$post(`v1/eventmatches/update/${this.MatchData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then((response) => {
-          this.processing = false;
           this.$oruga.notification.open({
             duration: 5000,
-            message: 'Match Abandoned: Standings updated with 1 point awarded to each team.',
+            message: this.isAbandonedMatched
+              ? 'Match abandoned: each team receives one standings point.'
+              : 'Score updated successfully.',
             position: 'bottom',
             variant: 'success',
             queue: true,
@@ -242,13 +242,22 @@ export default {
           if (error.response && error.response.status === 403) {
             this.$router.push('/unauthorized');
           } else {
-            console.error('Error:', error);
+            this.$oruga.notification.open({
+              duration: 5000,
+              message: 'The score could not be updated. Please check the values and try again.',
+              position: 'bottom',
+              variant: 'danger',
+              queue: true,
+            });
           }
+        })
+        .finally(() => {
+          this.processing = false;
         });
     },
     handleMatchAbandoned(val) {
       this.isAbandonedMatched = val
-      this.confirmResult();
+      this.validate();
     },
     closeDialog() {
       this.$emit('close')
