@@ -580,7 +580,9 @@ export default {
       quantity: 1,
       imageCarouselSettings: slickSettings,
       selectedSize: null,
-      isLoading: false
+      isLoading: false,
+      itemRequestId: 0,
+      isDestroyed: false
     };
   },
   computed: {
@@ -690,17 +692,13 @@ export default {
   },
   mounted() {
     this.retrieveItem(this.$route.query.id);
-    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
+    this.$socket.on('item-list-changed', this.handleItemListChanged);
   },
 
   methods: {
-    realTimeRetrieveProducts(response) {
-      const payload = JSON.parse(response.data.original);
-      const items = payload.data.items
-      for (let i = 0; i < items.length; i++) {
-        if (parseInt(this.$route.query.id) === items[i].id) {
-          this.product.is_active = items[i].is_active
-        }
+    handleItemListChanged(payload = {}) {
+      if (!payload.item_id || Number(payload.item_id) === Number(this.$route.query.id)) {
+        this.retrieveItem(this.$route.query.id)
       }
     },
 
@@ -764,10 +762,13 @@ export default {
     },
     retrieveItem(itemId) {
       if (!itemId) return;
+      const requestId = ++this.itemRequestId
       this.isLoading = true;
       this.$axios
         .$get(`v1/items/${itemId}`)
         .then((response) => {
+          if (requestId !== this.itemRequestId || this.isDestroyed) return
+
           const item = response && response.data ? response.data.item : response;
           if (!item) {
             this.isLoading = false;
@@ -831,7 +832,19 @@ export default {
           this.isLoading = false;
         })
         .catch((err) => {
+          if (requestId !== this.itemRequestId || this.isDestroyed) return
+
           console.error('Error fetching product:', err);
+          if (err.response?.status === 404) {
+            this.$oruga.notification.open({
+              duration: 5000,
+              message: 'This item is no longer available.',
+              position: 'bottom',
+              variant: 'warning',
+              queue: true,
+            })
+            this.$router.replace('/shop')
+          }
           this.isLoading = false;
         });
     },
@@ -958,8 +971,10 @@ export default {
   },
 
   beforeDestroy() {
+    this.isDestroyed = true
+    this.itemRequestId += 1
     if (this.$socket) {
-      this.$socket.off('render-item-list', this.realTimeRetrieveProducts)
+      this.$socket.off('item-list-changed', this.handleItemListChanged)
     }
   },
 };

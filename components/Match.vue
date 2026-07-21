@@ -62,9 +62,18 @@
 <script>
 export default {
   props: {
-    match: Object,
-    teamList: Array,
-    fieldList: Array,
+    match: {
+      type: Object,
+      required: true,
+    },
+    teamList: {
+      type: Array,
+      default: () => [],
+    },
+    fieldList: {
+      type: Array,
+      default: () => [],
+    },
     isBye: {
       type: Boolean,
       default: false,
@@ -90,17 +99,11 @@ export default {
   },
   computed: {
     formattedTeam() {
-      const teams = this.teamList
-        .map(team => ({
+      return this.teamList.map(team => ({
           text: team.name,
           value: team.id,
           event: team.event_id
         }));
-
-      return [
-        { text: 'Bye', value: 0 },
-        ...teams
-      ];
     },
     formattedField() {
       return this.fieldList.map(field =>
@@ -111,26 +114,38 @@ export default {
         }));
     },
     filteredFields() {
-      return this.formattedField;
+      const query = this.fieldQuery.toLowerCase().trim();
+      return query
+        ? this.formattedField.filter(field => field.text.toLowerCase().includes(query))
+        : this.formattedField;
     },
     filteredTeam1() {
-      return this.formattedTeam;
+      const query = this.team1Query.toLowerCase().trim();
+      return this.formattedTeam.filter(team => {
+        const matchesQuery = !query || team.text.toLowerCase().includes(query);
+        return matchesQuery && team.value !== this.matchData.team2.id;
+      });
     },
     filteredTeam2() {
-      return this.formattedTeam;
+      const query = this.team2Query.toLowerCase().trim();
+      const teams = this.formattedTeam.filter(team => {
+        const matchesQuery = !query || team.text.toLowerCase().includes(query);
+        return matchesQuery && team.value !== this.matchData.team1.id;
+      });
+
+      return [ { text: 'Bye', value: 0 }, ...teams ];
     },
     isMatchAlreadySubmitted() {
-      return this.match.submitted === 1;
+      return !!this.match.submitted;
     }
   },
   watch: {
     match: {
       handler(newMatch) {
-        if (!newMatch.team2 || (Array.isArray(newMatch.team2) && newMatch.team2.length === 0)) {
-          this.matchData.team2.id = { id: 0 };
-        }
+        this.syncMatchToData(newMatch);
       },
-      deep: true
+      deep: true,
+      immediate: true,
     },
     matchData: {
       handler(newMatch) {
@@ -139,19 +154,15 @@ export default {
       deep: true
     }
   },
-  created() {
-    this.syncMatchToData();
-  },
   methods: {
-    syncMatchToData() {
-      const { match } = this;
+    syncMatchToData(match = this.match) {
       this.matchData = {
         id: match.id || null,
         // eslint-disable-next-line camelcase
         field_id: match.field_id || null,
         time: match.time,
         team1: match.team1 && !Array.isArray(match.team1) ? { id: match.team1.id } : { id: null },
-        team2: match.team2 && !Array.isArray(match.team2) ? { id: match.team2.id } : { id: null },
+        team2: match.team2 && !Array.isArray(match.team2) ? { id: match.team2.id } : { id: 0 },
       };
     }
   }

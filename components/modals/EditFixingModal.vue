@@ -520,23 +520,9 @@ export default {
       this.closeDialog()
     },
     editFixing() {
-      let eventYear = this.Event.date.getUTCFullYear();
-      let eventMonth = this.Event.date.getUTCMonth() + 1;
-      let eventDay = this.Event.date.getUTCDate();
-
-      eventDay++;
-
-      const lastDayOfMonth = new Date(eventYear, eventMonth, 0).getDate();
-
-      if (eventDay > lastDayOfMonth) {
-        eventDay = 1;
-        eventMonth++;
-
-        if (eventMonth === 13) {
-          eventMonth = 1;
-          eventYear++;
-        }
-      }
+      const eventYear = this.Event.date.getFullYear();
+      const eventMonth = this.Event.date.getMonth() + 1;
+      const eventDay = this.Event.date.getDate();
 
       const eventMonthStr = eventMonth.toString().padStart(2, '0');
       const eventDayStr = eventDay.toString().padStart(2, '0');

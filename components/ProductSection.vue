@@ -106,7 +106,9 @@ export default {
       isProductsLoading: true,
       products: [],
       isScroll: false,
-      scrollValue: 0
+      scrollValue: 0,
+      productsRequestId: 0,
+      isDestroyed: false
     };
   },
   computed: {
@@ -126,6 +128,7 @@ export default {
   },
   watch: {
     query() {
+      this.page = 1;
       this.debouncedSearch();
     },
     totalPages() {
@@ -136,28 +139,25 @@ export default {
   },
   mounted() {
     this.debouncedSearch = debounce(this.retrieveProducts, 800);
-    this.retrieveProducts();
     this.page = 1
-    this.$nextTick(() => {
-      if (localStorage.getItem('scrollTop') !== null) {
-        this.scrollValue = Number.parseInt(localStorage.getItem('scrollTop'))
-      }
-      this.retrieveProductsWithScroll()
-    })
-    this.$socket.on('render-item-list', this.realTimeRetrieveProducts);
+    if (localStorage.getItem('scrollTop') !== null) {
+      this.scrollValue = Number.parseInt(localStorage.getItem('scrollTop'))
+    }
+    this.retrieveProducts({ restoreScroll: true })
+    this.$socket.on('item-list-changed', this.handleItemListChanged);
   },
   
   methods: {
-    realTimeRetrieveProducts(response) {
-      const payload = JSON.parse(response.data.original);
-      this.products = payload.data.items
-      this.totalItems = payload.data.total_items
-      this.totalPages = payload.data.last_page
-      this.from = payload.data.from
-      this.to = payload.data.to
+    handleItemListChanged() {
+      // Reload this browser's own query. Applying a broadcast list response here
+      // could replace it with another shopper's category, search, or page.
+      this.retrieveProducts()
     },
 
-    retrieveProducts() {
+    async retrieveProducts({ restoreScroll = false } = {}) {
+      const requestId = ++this.productsRequestId
+      this.isProductsLoading = true
+
       const query = {
         q: this.query,
         sort: this.$store.state.shop.sortBy,
@@ -174,59 +174,42 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
 
-      this.$axios
-        .$get(`v1/items?${queryString}`)
-        .then((response) => {
-          this.products = response.data.items
-          this.totalItems = response.data.total_items
-          this.totalPages = response.data.last_page
-          this.from = response.data.from
-          this.to = response.data.to
-        })
-        .finally(() => {
-          this.isProductsLoading = false
-        })
-    },
-    retrieveProductsWithScroll() {
-      this.isProductsLoading = true
-      this.isScroll = this.$route.query.scroll
+      try {
+        const response = await this.$axios.$get(`v1/items?${queryString}`)
 
-      const query = {
-        q: this.$store.state.shop.q,
-        sort: this.$store.state.shop.sortBy,
-        page: this.$store.state.shop.page,
-        category: this.$store.state.shop.selectedCategory,
-      };
+        if (requestId !== this.productsRequestId || this.isDestroyed) return
 
-      // Sanitize and remove null values
-      Object.keys(query).forEach((key) => {
-        if (query[key] == null) {
-          delete query[key]
+        this.products = response.data.items
+        this.totalItems = response.data.total_items
+        this.totalPages = response.data.last_page
+        this.from = response.data.from
+        this.to = response.data.to
+
+        if (this.totalPages > 0 && this.page > this.totalPages) {
+          this.page = this.totalPages
+          return this.retrieveProducts({ restoreScroll })
         }
-      })
 
-      const queryString = new URLSearchParams(query).toString()
-
-      this.$axios
-        .$get(`v1/items?${queryString}`)
-        .then((response) => {
-          this.products = response.data.items
-          this.totalItems = response.data.total_items
-          this.totalPages = response.data.last_page
-          this.from = response.data.from
-          this.to = response.data.to
+        if (restoreScroll) {
+          this.isScroll = this.$route.query.scroll
           this.$nextTick(() => {
             if (this.cartCount > 0 || this.isScroll) {
-              window.scrollTo({
-                top: this.scrollValue,
-                behavior: 'smooth'
-              })
+              window.scrollTo({ top: this.scrollValue, behavior: 'smooth' })
             }
           })
-        })
-        .finally(() => {
+        }
+      } finally {
+        if (requestId === this.productsRequestId && !this.isDestroyed) {
           this.isProductsLoading = false
-        })
+        }
+      }
+    },
+    retrieveProductsWithScroll() {
+      return this.retrieveProducts({ restoreScroll: true })
+    },
+    refreshFromFirstPage() {
+      this.page = 1
+      return this.retrieveProducts()
     },
     setPage(page) {
       this.page = page
@@ -235,8 +218,11 @@ export default {
   },
 
   beforeDestroy() {
+    this.isDestroyed = true
+    this.productsRequestId += 1
+    this.debouncedSearch?.cancel()
     if (this.$socket) {
-      this.$socket.off('rrender-item-list', this.realTimeRetrieveProducts)
+      this.$socket.off('item-list-changed', this.handleItemListChanged)
     }
   },
 };

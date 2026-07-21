@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen min-h-screen bg-gradient-to-br from-gray-900 to-gray-950">
+  <div class="w-full min-h-screen overflow-x-hidden bg-gradient-to-br from-gray-900 to-gray-950">
     <!-- Enhanced Header -->
     <BaseHeader
       class="mx-auto max-w-full gap-4 relative overflow-hidden
@@ -81,6 +81,7 @@
                 <!-- Complete Button -->
                 <button
                   type="button"
+                  :aria-pressed="eventStatus === 'complete'"
                   @click="setEventStatus('complete')"
                   :class="`
                     group relative flex-1 flex items-center justify-center space-x-2 
@@ -119,6 +120,7 @@
                 <!-- Upcoming Button -->
                 <button
                   type="button"
+                  :aria-pressed="eventStatus === 'upcoming'"
                   @click="setEventStatus('upcoming')"
                   :class="`
                     group relative flex-1 flex items-center justify-center space-x-2 
@@ -270,8 +272,10 @@
 
         <div class="col-span-3">
           <section
-            v-if="totalPages > 0 && isLoaded"
-            class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2"
+            v-if="totalPages > 0"
+            class="grid w-full grid-cols-1 gap-6 transition-opacity md:grid-cols-2 lg:grid-cols-2"
+            :class="{ 'opacity-75': isRefreshing }"
+            :aria-busy="isRefreshing"
           >
             <div
               v-for="(match) in filteredMatchList"
@@ -305,16 +309,16 @@
                       </div>
                       <div>
                         <div class="text-lg font-bold text-white">
-                          {{ formatYear(match.event.event_date) }}
+                          {{ formatYear(match.event && match.event.event_date) }}
                         </div>
                         <div class="flex items-center space-x-4 text-sm text-green-300">
                           <span class="flex items-center space-x-1">
                             <i class="ri-time-line"></i>
-                            <span>{{ AMPMformat(match.event.time) }}</span>
+                            <span>{{ AMPMformat(match.event && match.event.time) }}</span>
                           </span>
                           <span class="flex items-center space-x-1">
                             <i class="ri-map-pin-line"></i>
-                            <span>{{ match.field.name }}</span>
+                            <span>{{ match.field ? match.field.name : 'Field TBA' }}</span>
                           </span>
                         </div>
                       </div>
@@ -334,7 +338,8 @@
                         transition-all duration-300 hover:bg-gray-800/70
                       ">
                         <img
-                          :src="getMediaURL(match.team1.media[0])"
+                          v-if="match.team1"
+                          :src="getMediaURL(match.team1.media && match.team1.media[0])"
                           alt="Team 1 logo"
                           class="max-h-20 max-w-full object-contain"
                         />
@@ -344,7 +349,7 @@
                           text-base font-bold text-white truncate 
                           px-2 py-1 bg-gray-800/50 rounded-lg
                         ">
-                          {{ match.team1.name }}
+                          {{ match.team1 ? match.team1.name : 'Team TBA' }}
                         </div>
                       </div>
                     </div>
@@ -373,7 +378,7 @@
                       ">
                         <img
                           v-if="match.team2"
-                          :src="getMediaURL(match.team2.media[0])"
+                          :src="getMediaURL(match.team2.media && match.team2.media[0])"
                           alt="Team 2 logo"
                           class="max-h-20 max-w-full object-contain"
                         />
@@ -415,11 +420,11 @@
                     <!-- Score Display -->
                     <div class="flex items-center justify-center space-x-6 pt-4">
                       <div class="text-center">
-                        <div class="
-                          text-4xl text-white
-                          ${parseInt(match.team1_score) >= parseInt(match.team2_score) 
-                            ? 'text-green-400' : 'text-gray-400'}
-                        ">
+                        <div
+                          class="text-4xl"
+                          :class="Number(match.team1_score) >= Number(match.team2_score)
+                            ? 'text-green-400' : 'text-gray-400'"
+                        >
                           {{ doubleDigitFormat(match.team1_score) }}
                         </div>
                         <div class="text-xs text-gray-400 mt-1">
@@ -435,11 +440,11 @@
                       </div>
                       
                       <div class="text-center">
-                        <div class="
-                          text-4xl text-white
-                          ${parseInt(match.team1_score) <= parseInt(match.team2_score) 
-                            ? 'text-green-400' : 'text-gray-400'}
-                        ">
+                        <div
+                          class="text-4xl"
+                          :class="Number(match.team1_score) <= Number(match.team2_score)
+                            ? 'text-green-400' : 'text-gray-400'"
+                        >
                           {{ doubleDigitFormat(match.team2_score) }}
                         </div>
                         <div class="text-xs text-gray-400 mt-1">
@@ -449,7 +454,7 @@
                     </div>
 
                     <!-- Winning Indicator -->
-                    <div v-if="match.team1_score !== match.team2_score" class="
+                    <div v-if="Number(match.team1_score) !== Number(match.team2_score)" class="
                       mt-4 text-center
                     ">
                       <div class="
@@ -460,8 +465,8 @@
                         <i class="ri-star-fill text-green-400 text-sm"></i>
                         <span class="text-xs font-semibold text-green-300">
                           {{ parseInt(match.team1_score) > parseInt(match.team2_score) 
-                            ? match.team1.name + ' Wins!' 
-                            : match.team2.name + ' Wins!' }}
+                            ? (match.team1 ? match.team1.name : 'Team 1') + ' Wins!'
+                            : (match.team2 ? match.team2.name : 'Team 2') + ' Wins!' }}
                         </span>
                       </div>
                     </div>
@@ -494,7 +499,7 @@
                         ">
                           <i class="ri-time-fill text-blue-400 text-xl"></i>
                           <span class="text-2xl font-black text-blue-300">
-                            {{ AMPMformat(match.event.time) }}
+                            {{ AMPMformat(match.event && match.event.time) }}
                           </span>
                         </div>
                         <div class="text-xs text-gray-400 mt-2">
@@ -513,11 +518,10 @@
                       <span>Match</span>
                     </div>
                     <div class="flex items-center space-x-1 justify-end">
-                      <div class="
-                        w-2 h-2 rounded-full 
-                        ${match.submit ? 'bg-green-500' : 'bg-blue-500'} 
-                        animate-pulse
-                      "></div>
+                      <div
+                        class="w-2 h-2 rounded-full animate-pulse"
+                        :class="match.submitted ? 'bg-green-500' : 'bg-blue-500'"
+                      ></div>
                       <span>{{ match.submitted ? 'Completed' : 'Scheduled' }}</span>
                     </div>
                   </div>
@@ -528,7 +532,7 @@
 
           <!-- Empty State -->
           <section
-            v-if="totalPages === 0"
+            v-if="isLoaded && totalPages === 0"
             class="col-span-1 flex h-80 items-center justify-center 
             md:col-span-3 border-2 border-dashed border-green-500/30 rounded-3xl"
             data-aos="fade-up"
@@ -561,6 +565,7 @@
 </template>
 
 <script>
+import _debounce from 'lodash/debounce';
 import LoadingAnimation from '~/components/loading/LoadingAnimation.vue';
 import handlesMedia from '~/mixins/shop/handlesMedia';
 
@@ -577,7 +582,7 @@ export default {
       matchRoundOption: [
         { text: 'Overall Standings', value: null },
         { text: 'Round', value: 'round' },
-        { text: 'Quater', value: 'quater' },
+        { text: 'Quarter', value: 'quater' },
         { text: 'Semi', value: 'semi' },
         { text: 'Final', value: 'final' },
         { text: 'Pool A Round', value: 'pool_a_round' },
@@ -619,7 +624,6 @@ export default {
         { text: '5:10 PM', value: '17:10' },
         { text: '5:35 PM', value: '17:35' },
         { text: '6:00 PM', value: '18:00' },
-        { text: '6:00 PM', value: '18:00' },
         { text: '6:25 PM', value: '18:25' },
         { text: '6:50 PM', value: '18:50' },
         { text: '7:15 PM', value: '19:15' },
@@ -631,9 +635,11 @@ export default {
         { text: '9:45 PM', value: '21:45' },
         { text: '10:00 PM', value: '22:00' },
       ],
-      selectedRegion: 8,
-      selectedAgeGroup: 12,
-      selectedYear: 2025,
+      selectedRegion: this.$route.query.region ? Number(this.$route.query.region) : null,
+      selectedAgeGroup: this.$route.query.agegroup ? Number(this.$route.query.agegroup) : null,
+      selectedYear: this.$route.query.year
+        ? Number(this.$route.query.year)
+        : null,
       selectedRound: null,
       AgeGroupList: [],
       EventList: [],
@@ -647,6 +653,10 @@ export default {
       totalPages: 0,
       totalItems: 0,
       eventStatus: null,
+      filtersReady: false,
+      isRefreshing: false,
+      requestSequence: 0,
+      debouncedRetrieveEventMatch: null,
     }
   },
   computed: {
@@ -660,16 +670,10 @@ export default {
     formattedYears() {
       const currentYear = new Date().getFullYear();
 
-      return [
-        {
-          text: `Year ${currentYear - 1}`,
-          value: currentYear - 1
-        },
-        {
-          text: `Year ${currentYear}`,
-          value: currentYear
-        }
-      ];
+      const years = Array.from({ length: 12 }, (_, index) => currentYear + 2 - index)
+        .map(year => ({ text: `Year ${year}`, value: year }));
+
+      return [ { text: 'All Years', value: null }, ...years ];
     },
     formattedRegions() {
       const regions = this.RegionList.map(region => ({
@@ -689,169 +693,74 @@ export default {
       });
       return formattedRegions;
     },
-    completedMatches() {
-      const searchTerm = this.searchTeamName.toLowerCase().trim();
-      
-      return this.matchList.filter(match => {
-        if (!match.submitted) return false;
-        
-        if (searchTerm) {
-          const team1Name = match.team1.name.toLowerCase() || '';
-          const team2Name = match.team2.name.toLowerCase() || '';
-          return team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
-        }
-        
-        return true;
-      });
-    },
-  
-    upcomingMatches() {
-      const searchTerm = this.searchTeamName.toLowerCase().trim();
-      
-      return this.matchList.filter(match => {
-        if (match.submitted) return false;
-        
-        if (searchTerm) {
-          const team1Name = match.team1.name.toLowerCase() || '';
-          const team2Name = match.team2.name.toLowerCase() || '';
-          return team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
-        }
-        
-        return true;
-      });
-    },
     filteredMatchList() {
-      if (this.eventStatus === 'complete') {
-        return this.completedMatches;
-      } else if (this.eventStatus === 'upcoming') {
-        return this.upcomingMatches;
-      } else {
-
-        const searchTerm = (this.searchTeamName || '')
-          .toString()
-          .toLowerCase()
-          .trim();
-        
-        if (!searchTerm) {
-          return this.matchList;
-        }
-        
-        return this.matchList.filter(match => {
-          const team1Name = match.team1.name.toLowerCase() || '';
-          const team2Name = match.team2.name.toLowerCase() || '';
-          return team1Name.includes(searchTerm) || team2Name.includes(searchTerm);
-        });
-      }
+      return this.matchList;
     },
     filteredRound() {
       return this.matchRoundOption;
+    },
+    filterSignature() {
+      return JSON.stringify({
+        year: this.selectedYear,
+        agegroup: this.selectedAgeGroup,
+        region: this.selectedRegion,
+        round: this.selectedRound,
+        q: (this.searchTeamName || '').trim(),
+        status: this.eventStatus,
+      });
     }
   },
   watch: {
-    matchList: {
-      handler(newEvents) {
-        if (Array.isArray(newEvents) && newEvents.length > 0) {
-          const firstEvent = newEvents[0];
-          if (firstEvent && firstEvent.event_date) {
-            const eventDate = new Date(firstEvent.event_date);
-            if (!isNaN(eventDate)) {
-              this.selectedYear = eventDate.getFullYear();
-              this.selectedRegion = firstEvent.region_id;
-              this.selectedAgeGroup = firstEvent.agegroup_id;
-              if (!this.selectedRound) {
-                this.selectedRound = firstEvent.event.round
-              }
-              this.retrieveEventMatch()
-            } else {
-              console.error('Invalid event date format');
-            }
-          } else {
-            console.error('Missing or invalid event data');
-          }
-        }
-      },
-      immediate: true,
-    },
-    selectedYear: {
-      handler(newYear) {
-        if (newYear && this.isLoaded) {
-          this.page = 1
-          /*
-           * this.selectedRegion = null
-           * this.selectedAgeGroup = null
-           */
-          this.selectedAgeGroup = this.formattedAgeGroup[0].value || null;
-          this.selectedRegion = this.formattedRegions[0].value || null;
-          this.selectedRound = null
-        }
-      },
-      immediate: true,
-    },
-    selectedAgeGroup: {
-      handler(newYear) {
-        if (newYear && this.isLoaded) {
-          this.page = 1
-          this.selectedRegion = null;
-          this.retrieveEventMatch()
-        }
-      },
-      immediate: true,
-    },
-    selectedRegion: {
-      handler(newEvent) {
-        if (newEvent && this.isLoaded) {
-          this.page = 1
-          this.retrieveEventMatch();
-        } else if (this.isLoaded) {
-          this.matchList = []
-          this.totalPages = 0
-        }
-      },
-      immediate: true,
-    },
-    selectedRound: {
-      handler(newEvent) {
-        if (newEvent && this.isLoaded) {
-          this.page = 1
-          this.retrieveEventMatch()
-        } else if (this.isLoaded) {
-          this.matchList = []
-          this.totalPages = 0
-        }
-      }
-    },
-    searchTeamName(newVal) {
-      if (newVal) {
-        this.page = 1;
-      }
-    },
-    totalPages() {
-      if (this.page > this.totalPages) {
-        this.setPage(1)
-      }
+    filterSignature() {
+      if (!this.filtersReady) return;
+
+      this.page = 1;
+      this.debouncedRetrieveEventMatch();
     },
   },
-  created() {
-    this.retrieveAgeGroups();
-    this.retrieveEventMatch();
-    this.retrieveRegions();
+  async created() {
+    this.debouncedRetrieveEventMatch = _debounce(this.retrieveEventMatch, 300);
+
+    try {
+      await Promise.all([
+        this.retrieveAgeGroups(),
+        this.retrieveRegions(),
+      ]);
+    } catch (error) {
+      this.$oruga.notification.open({
+        duration: 5000,
+        message: 'Some draw filters could not be loaded.',
+        position: 'bottom',
+        variant: 'warning',
+        queue: true,
+      });
+    }
+
+    this.filtersReady = true;
+    await this.retrieveEventMatch();
+  },
+  beforeDestroy() {
+    if (this.debouncedRetrieveEventMatch) {
+      this.debouncedRetrieveEventMatch.cancel();
+    }
   },
   methods: {
     formatYear(date) {
-      const eventDate = new Date(date);
-      return eventDate.toDateString();
+      if (!date) return 'Date TBA';
+
+      const eventDate = new Date(`${date}T00:00:00`);
+      return Number.isNaN(eventDate.getTime()) ? 'Date TBA' : eventDate.toDateString();
     },
     setEventStatus(status) {
       this.eventStatus = this.eventStatus === status ? null : status
     },
     AMPMformat(time) {
-      // eslint-disable-next-line camelcase
-      const matched = this.matchTimeOption.find(data => data.value === time);
-      if (matched) {
-        return matched.text;
-      } else {
-        return 'Unknown';
-      }
+      if (!time || !/^\d{1,2}:\d{2}/.test(time)) return 'Time TBA';
+
+      const [ hourValue, minute ] = time.split(':');
+      const hour = Number(hourValue);
+      const period = hour >= 12 ? 'PM' : 'AM';
+      return `${hour % 12 || 12}:${minute} ${period}`;
     },
     doubleDigitFormat(num) {
       if (num < 10) {
@@ -860,11 +769,10 @@ export default {
         return num.toString();
       }
     },
-    retrieveAgeGroups() {
+    async retrieveAgeGroups() {
       const query = {
-        sort: 'latest',
-        q: this.query,
-        page: this.page,
+        sort: 'a_to_z',
+        maxAgeGroupsPerPage: 100,
       };
 
       Object.keys(query).forEach((key) => {
@@ -875,20 +783,22 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
 
-      this.$axios
-        .$get(`v1/agegroups?${queryString}`)
-        .then((response) => {
-          this.AgeGroupList= response.data.ageGroups;
-        })
+      const response = await this.$axios.$get(`v1/agegroups?${queryString}`);
+      this.AgeGroupList = response.data.ageGroups;
     },
-    retrieveEventMatch() {
-      this.isLoaded = false
+    async retrieveEventMatch() {
+      const requestId = ++this.requestSequence;
+      this.isRefreshing = this.isLoaded;
+
       const query = {
         region: this.selectedRegion,
         agegroup: this.selectedAgeGroup,
         year: this.selectedYear,
         page: this.page,
-        round: this.selectedRound
+        round: this.selectedRound,
+        q: (this.searchTeamName || '').trim() || null,
+        status: this.eventStatus,
+        maxEventMatchesPerPage: this.perPage,
       };
 
       Object.keys(query).forEach((key) => {
@@ -897,25 +807,41 @@ export default {
         }
       })
       const queryString = new URLSearchParams(query).toString()
-      this.$axios
-        .$get(`v1/eventmatches?${queryString}`)
-        .then((response) => {
-          this.matchList = response.data.eventMatches
-          this.totalItems = response.data.total_items;
-          this.totalPages = response.data.last_page;
-          this.from = response.data.from;
-          this.to = response.data.to;
-        })
-        .finally(() => {
-          this.isLoaded = true;
+      try {
+        const response = await this.$axios.$get(`v1/eventmatches?${queryString}`);
+        if (requestId !== this.requestSequence) return;
+
+        if (response.data.last_page > 0 && this.page > response.data.last_page) {
+          this.page = response.data.last_page;
+          return this.retrieveEventMatch();
+        }
+
+        this.matchList = response.data.eventMatches;
+        this.totalItems = response.data.total_items;
+        this.totalPages = response.data.last_page;
+        this.from = response.data.total_items ? response.data.from : 0;
+        this.to = response.data.to;
+      } catch (error) {
+        if (requestId !== this.requestSequence) return;
+
+        this.$oruga.notification.open({
+          duration: 5000,
+          message: 'Draws could not be loaded. Please try again.',
+          position: 'bottom',
+          variant: 'danger',
+          queue: true,
         });
+      } finally {
+        if (requestId === this.requestSequence) {
+          this.isLoaded = true;
+          this.isRefreshing = false;
+        }
+      }
     },
-    retrieveRegions() {
+    async retrieveRegions() {
       const query = {
-        q: this.query,
         sort: 'a_to_z',
-        page: this.page,
-        maxRegionsPerPage: 10,
+        maxRegionsPerPage: 100,
       };
 
       Object.keys(query).forEach((key) => {
@@ -926,13 +852,12 @@ export default {
 
       const queryString = new URLSearchParams(query).toString()
 
-      this.$axios
-        .$get(`v1/regions?${queryString}`)
-        .then((response) => {
-          this.RegionList = response.data.regions;
-        })
+      const response = await this.$axios.$get(`v1/regions?${queryString}`);
+      this.RegionList = response.data.regions;
     },
     setPage(page) {
+      if (page === this.page) return;
+
       this.page = page
       this.retrieveEventMatch()
     },
