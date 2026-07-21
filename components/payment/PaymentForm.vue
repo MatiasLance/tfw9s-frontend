@@ -206,7 +206,11 @@ export default {
       initializationAttempts: 0,
       maxInitializationAttempts: 3,
       timeLeft: 900,
-      timer: null
+      timer: null,
+      componentInitialized: false,
+      initializationRequestId: 0,
+      calculationRequestId: 0,
+      isDestroyed: false
     };
   },
   computed: {
@@ -273,9 +277,9 @@ export default {
   },
   watch: {
     price: {
-      immediate: true,
       handler(newPrice) {
-        if (newPrice !== undefined && newPrice !== null && this.isValidPrice) {
+        if (this.componentInitialized &&
+            newPrice !== undefined && newPrice !== null && this.isValidPrice) {
           this.debouncedPriceUpdate();
         }
       }
@@ -289,6 +293,7 @@ export default {
   },
 
   async mounted() {
+    this.isDestroyed = false;
     await this.initializeComponent();
 
     this.timer = setInterval(() => {
@@ -302,6 +307,9 @@ export default {
   },
 
   beforeDestroy() {
+    this.isDestroyed = true;
+    this.initializationRequestId++;
+    this.calculationRequestId++;
     if (this.debouncedPriceUpdate && this.debouncedPriceUpdate.cancel) {
       this.debouncedPriceUpdate.cancel();
     }
@@ -315,30 +323,48 @@ export default {
      * Main initialization sequence
      */
     async initializeComponent() {
+      const requestId = ++this.initializationRequestId;
+
       try {
         this.isLoading = true;
+        this.componentInitialized = false;
         this.errorMessage = '';
 
         this.initializationTimeout = setTimeout(() => {
-          this.handleInitializationTimeout();
+          this.handleInitializationTimeout(requestId);
         }, INITIALIZATION_TIMEOUT_MS);
 
-        await this.loadPaymentSettings();
+        await Promise.all([
+          this.loadPaymentSettings(),
+          this.loadTaxSettings(),
+        ]);
 
-        await this.loadTaxSettings();
+        if (requestId !== this.initializationRequestId || this.isDestroyed) return;
 
-        await this.initializePaymentCalculation();
+        const calculationSucceeded = await this.initializePaymentCalculation();
+
+        if (requestId !== this.initializationRequestId || this.isDestroyed) return;
+
+        if (!calculationSucceeded) {
+          throw new Error('Unable to calculate the payment amount');
+        }
 
         this.setInitialPaymentMethod();
 
         this.setOriginalAmount();
+        this.componentInitialized = true;
         
       } catch (error) {
-        this.handleInitializationError(error);
+        if (requestId === this.initializationRequestId && !this.isDestroyed) {
+          this.handleInitializationError(error);
+        }
       } finally {
-        this.isLoading = false;
-        if (this.initializationTimeout) {
+        if (requestId === this.initializationRequestId && !this.isDestroyed) {
+          this.isLoading = false;
+        }
+        if (requestId === this.initializationRequestId && this.initializationTimeout) {
           clearTimeout(this.initializationTimeout);
+          this.initializationTimeout = null;
         }
       }
     },
@@ -393,9 +419,11 @@ export default {
      * Initialize payment calculation
      */
     async initializePaymentCalculation() {
+      const requestId = ++this.calculationRequestId;
+
       if (!this.isValidPrice) {
         this.errorMessage = 'Invalid price provided';
-        return;
+        return false;
       }
       
       try {
@@ -419,6 +447,10 @@ export default {
           discountID,
         });
 
+        if (requestId !== this.calculationRequestId || this.isDestroyed) {
+          return false;
+        }
+
         this.overallTotal = Number(response.totalPrice) || 0;
         this.taxAmount = Number(response.taxAmount) || 0;
         this.subTotal = Number(response.subTotal) || 0;
@@ -427,13 +459,21 @@ export default {
         this.$store.commit('cart/setTotal', this.overallTotal);
 
         this.errorMessage = '';
+        return true;
         
       } catch (error) {
+        if (requestId !== this.calculationRequestId || this.isDestroyed) {
+          return false;
+        }
+
         console.error('Payment calculation failed:', error);
         this.errorMessage = 'Failed to calculate payment amount. Please refresh the page.';
         this.showNotification('Payment calculation error', 'danger');
+        return false;
       } finally {
-        this.isProcessing = false;
+        if (requestId === this.calculationRequestId) {
+          this.isProcessing = false;
+        }
       }
     },
     
@@ -506,7 +546,13 @@ export default {
     /**
      * Handle initialization timeout
      */
-    handleInitializationTimeout() {
+    handleInitializationTimeout(requestId) {
+      if (requestId !== this.initializationRequestId || this.isDestroyed) return;
+
+      this.initializationRequestId++;
+      this.calculationRequestId++;
+      this.isProcessing = false;
+      this.componentInitialized = false;
       this.errorMessage = 'Payment initialization is taking longer than expected.';
       this.showNotification('Please check your connection and try again.', 'warning');
       this.isLoading = false;

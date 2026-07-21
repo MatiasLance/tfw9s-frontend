@@ -53,7 +53,7 @@
             Queue Size
           </p>
           <p class="text-lg font-mono font-bold text-white">
-            {{ stats.active_shoppers - stats.total_limit }}
+            {{ stats.queued_shoppers }}
           </p>
         </div>
       </div>
@@ -78,6 +78,8 @@ export default {
         active_shoppers: 0,
         /* eslint-disable camelcase */
         slots_available: 0,
+        /* eslint-disable camelcase */
+        queued_shoppers: 0,
         /* eslint-disable camelcase */
         total_limit: 20 
       },
