@@ -154,6 +154,14 @@ export default {
       type: String,
       required: true
     },
+    loungeToken: {
+      type: String,
+      required: true
+    },
+    clientId: {
+      type: String,
+      required: true
+    },
   },
   
   data() {
@@ -499,7 +507,10 @@ export default {
               ...this.registrationInformation,
               card_token: token
             },
-            discountcode: ''
+            discountcode: '',
+            /* eslint-disable camelcase */
+            lounge_token: this.loungeToken,
+            client_id: this.clientId
           },
           {
             timeout: 30000, // 30 second timeout

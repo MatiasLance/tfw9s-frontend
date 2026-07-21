@@ -136,7 +136,10 @@ export default {
   data() {
     return {
       currentServerTime: 0,
+      serverTimeAtSync: 0,
+      clientTimeAtSync: 0,
       mounted: false,
+      completionTriggered: false,
       days: 0,
       hours: 0,
       minutes: 0,
@@ -187,29 +190,51 @@ export default {
     targetDate: {
       immediate: true,
       handler() {
-        this.currentServerTime = this.$dayjs.tz(this.serverTime, "Australia/Sydney").valueOf();
-        this.resetTimer();
+        if (!this.serverTime) return;
+
+        this.syncServerTime(this.serverTime);
+        if (this.mounted) this.resetTimer();
       }
     },
 
     serverTime(newValue) {
-      this.currentServerTime = this.$dayjs.tz(newValue, "Australia/Sydney").valueOf();
+      if (!newValue) return;
+
+      this.syncServerTime(newValue);
+      if (this.mounted) this.resetTimer();
     }
   },
   mounted() {
     this.mounted = true;
-    this.currentServerTime = this.$dayjs.tz(this.serverTime, "Australia/Sydney").valueOf();
+    this.syncServerTime(this.serverTime);
     this.startTimer();
+  },
+  activated() {
+    if (this.mounted) this.startTimer();
+  },
+  deactivated() {
+    this.cleanupTimer();
   },
   beforeDestroy() {
     this.cleanupTimer();
   },
   methods: {
+    syncServerTime(value) {
+      this.serverTimeAtSync = this.$dayjs
+        .tz(value, "Australia/Sydney")
+        .valueOf();
+      this.clientTimeAtSync = Date.now();
+      this.currentServerTime = this.serverTimeAtSync;
+      this.completionTriggered = false;
+    },
+
     startTimer() {
+      this.cleanupTimer();
       this.updateTimer();
-      
+
+      if (this.isComplete) return;
+
       this.interval = setInterval(() => {
-        this.currentServerTime += 1000;
         this.updateTimer();
       }, 1000);
     },
@@ -227,42 +252,46 @@ export default {
     },
     
     updateTimer() {
-      requestAnimationFrame(() => {
-        const previous = {
-          d: this.days,
-          h: this.hours,
-          m: this.minutes,
-          s: this.seconds
-        };
-        
-        if (this.isComplete) {
-          this.triggerCompletion();
-          return;
-        }
+      this.currentServerTime = this.serverTimeAtSync +
+        (Date.now() - this.clientTimeAtSync);
 
-        const diff = Math.max(
-          0,
-          this.targetDateTime - this.currentServerTime
-        );
+      const previous = {
+        d: this.days,
+        h: this.hours,
+        m: this.minutes,
+        s: this.seconds
+      };
 
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      if (this.isComplete) {
+        this.triggerCompletion();
+        return;
+      }
 
-        this.days = days;
-        this.hours = hours;
-        this.minutes = minutes;
-        this.seconds = seconds;
+      const diff = Math.max(
+        0,
+        this.targetDateTime - this.currentServerTime
+      );
 
-        this.diffs.days = previous.d !== days;
-        this.diffs.hours = previous.h !== hours;
-        this.diffs.minutes = previous.m !== minutes;
-        this.diffs.seconds = previous.s !== seconds;
-      });
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      this.days = days;
+      this.hours = hours;
+      this.minutes = minutes;
+      this.seconds = seconds;
+
+      this.diffs.days = previous.d !== days;
+      this.diffs.hours = previous.h !== hours;
+      this.diffs.minutes = previous.m !== minutes;
+      this.diffs.seconds = previous.s !== seconds;
     },
     
     triggerCompletion() {
+      if (this.completionTriggered) return;
+
+      this.completionTriggered = true;
       this.cleanupTimer();
 
       this.$nextTick(() => {

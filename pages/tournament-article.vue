@@ -2,9 +2,14 @@
   <div class="flex min-h-screen w-screen items-center bg-gradient-to-br 
               from-gray-900 to-gray-950 text-white">
     
+    <!-- Countdown overlay (does NOT destroy form) -->
     <ClientOnly>
       <CountDownTimer
-        v-if="showCountdown && series.type !== 'competitions' && registrationOpensDate !== null"
+        v-if="showCountdown &&
+          series.type !== 'competitions' &&
+          registrationOpensDate !== null &&
+          serverTime !== null"
+        :key="`${seriesId}-${registrationOpensDate}`"
         :target-date="registrationOpensDate"
         :server-time="serverTime"
         @dismiss="handleCountdownDismiss"
@@ -388,9 +393,9 @@ export default {
     },
   },
   watch: {
-    $route(to) {
-      if (to.query.id) {
-        this.retrieveSeries(to.query.id);
+    async $route(to) {
+      if (to.name === 'tournament-article' && to.query.id) {
+        await this.refreshTournamentPage(to.query.id, to.query.type);
       }
 
       window.scrollTo({
@@ -412,14 +417,32 @@ export default {
     await this.$nextTick()
     this.series.type = this.$route.query.type
     this.seriesId = Number(this.$route.query.id)
-    await this.retrieveToggleTaxControl()
-    await this.retrieveTaxValue()
-    await this.retrieveSeries(this.$route.query.id);
-    await this.retrieveRegistrationFormStatus(this.$route.query.id);
+    await Promise.all([
+      this.retrieveSeries(this.$route.query.id),
+      this.retrieveRegistrationFormStatus(this.$route.query.id),
+      this.retrievePricingConfiguration(),
+    ]);
     this.$socket.on('registration-form-status', this.handleRegistrationStatus);
   },
 
   methods: {
+    async refreshTournamentPage(id, type) {
+      // This page is cached by <Nuxt keep-alive>. Reset countdown state whenever
+      // client-side navigation activates a tournament article again.
+      this.countdownPermanentlyDismissed = false;
+      this.showCountdown = false;
+      this.registrationOpensDate = null;
+      this.serverTime = null;
+      this.seriesId = Number(id);
+      this.series.type = type || '';
+
+      await Promise.all([
+        this.retrieveSeries(id),
+        this.retrieveRegistrationFormStatus(id),
+      ]);
+      this.series.type = type || this.article.type || '';
+    },
+
     handleRegistration(article) {
       if (article.type === 'weekly') {
         this.$oruga.notification.open({
@@ -538,8 +561,10 @@ export default {
 
     retrieveSeries(Id) {
       this.isLoading = true;
-      this.$axios
-        .$get(`v1/series/${Id}`)
+      return this.$axios
+        .$get(`v1/series/${Id}`, {
+          params: { includeTeams: false },
+        })
         .then((response) => {
           const series = response.data.series;
 
@@ -608,37 +633,29 @@ export default {
 
     },
 
-    retrieveToggleTaxControl() {
-      const endpoint = 'v1/toggletax'
-      this.$axios
-        .$get(endpoint)
-        .then((response) => {
-          this.toggleControl1 = response.toggleControl1
-          this.toggleControl2 = response.toggleControl2
-          this.$store.commit('master/setToggleControl1', response.toggleControl1)
-          this.$store.commit('master/setToggleControl2', response.toggleControl2)
-        })
-        .catch((err) => {
-          this.$oruga.notification.open({
-            message: err.message,
-            duration: 5000,
-            variant: 'danger',
-            queue: true,
-            position: 'bottom'
-          })
-        })
-    },
-
-    async retrieveTaxValue() {
+    async retrievePricingConfiguration() {
       try {
-        const response = await this.$axios.$get('v1/tax')
-        this.addTaxOnCartPrice = response.addTaxValue
-        this.includeTaxOnCartPrice = response.includeTaxValue
+        const [toggleResponse, taxResponse] = await Promise.all([
+          this.$axios.$get('v1/toggletax'),
+          this.$axios.$get('v1/tax'),
+        ]);
+
+        this.toggleControl1 = toggleResponse.toggleControl1
+        this.toggleControl2 = toggleResponse.toggleControl2
+        this.$store.commit('master/setToggleControl1', toggleResponse.toggleControl1)
+        this.$store.commit('master/setToggleControl2', toggleResponse.toggleControl2)
+
+        this.addTaxOnCartPrice = taxResponse.addTaxValue
+        this.includeTaxOnCartPrice = taxResponse.includeTaxValue
         const taxAmount = this.toggleControl1 ?
           this.addTaxOnCartPrice :
           (this.toggleControl2 ? this.includeTaxOnCartPrice : 0);
         this.$store.commit('cart/setTax', taxAmount);
         this.taxrateValue = this.tax / 100
+
+        if (this.article && this.article.price !== undefined) {
+          this.calculatePriceAggregates();
+        }
       } catch (err) {
         this.$oruga.notification.open({
           message: err.message,
