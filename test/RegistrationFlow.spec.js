@@ -156,4 +156,62 @@ describe('registration flow stability', () => {
     IndividualInformationForm.methods.continueAfterDuplicateWarning.call(vm)
     expect(emitNewPlayerSubmission).toHaveBeenCalledTimes(1)
   })
+
+  test('the existing-card autocomplete uses the privacy-safe fuzzy endpoint', async () => {
+    const matches = [{
+      player_name: 'John Smith',
+      first_name: 'John',
+      last_name: 'Smith',
+      masked_phone: '***678',
+      score: 100,
+    }]
+    const $get = jest.fn().mockResolvedValue({ data: { matches } })
+    const vm = {
+      cardSearchQuery: '  JOHN SMITH ',
+      cardSuggestions: [],
+      showCardSuggestions: false,
+      cardSearchLoading: false,
+      cardSearchCompleted: false,
+      cardAbortController: null,
+      $axios: {
+        $get,
+        isCancel: jest.fn().mockReturnValue(false),
+      },
+    }
+
+    await IndividualInformationForm.methods.onCardSearchInput.call(vm)
+
+    expect($get).toHaveBeenCalledWith('v1/players/player-card/matches', {
+      params: { q: 'JOHN SMITH', limit: 8 },
+      signal: expect.any(AbortSignal),
+    })
+    expect(vm.cardSuggestions).toEqual(matches)
+    expect(vm.showCardSuggestions).toBe(true)
+    expect(vm.cardSearchCompleted).toBe(true)
+  })
+
+  test('selecting a card keeps only non-sensitive lookup fields in browser state', () => {
+    const vm = {
+      selectedCardPlayer: null,
+      player: { firstName: '', lastName: '', dob: '2015-01-01' },
+      cardSearchQuery: '',
+      showCardSuggestions: true,
+    }
+    const match = {
+      player_name: 'John Smith',
+      first_name: 'John',
+      last_name: 'Smith',
+      masked_phone: '***678',
+      team_name: 'Gosford Falcons',
+      age_group: '10',
+    }
+
+    IndividualInformationForm.methods.selectCardPlayer.call(vm, match)
+
+    expect(vm.selectedCardPlayer).toEqual(match)
+    expect(vm.selectedCardPlayer).not.toHaveProperty('phone_number')
+    expect(vm.selectedCardPlayer).not.toHaveProperty('email')
+    expect(vm.selectedCardPlayer).not.toHaveProperty('date_of_birth')
+    expect(vm.player.dob).toBe('')
+  })
 })
