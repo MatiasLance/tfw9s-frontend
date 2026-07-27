@@ -24,7 +24,7 @@
                     group
                     flex w-full items-center justify-center
                     rounded-lg
-                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                    bg-green-600
                     p-2.5
                     font-semibold text-white
                     transition-transform duration-200
@@ -33,13 +33,14 @@
                     shadow-md hover:shadow-lg"
                   @click="addNews"
                 >
-                  <i
-                  class="
-                  ri-add-line mr-2
-                  text-lg transition-transform
-                  group-hover:rotate-90"
-                  ></i>
-                  <span>Add News</span>
+                  <span class="text-gray-50">
+                    <i
+                    class="ri-add-line mr-2
+                    text-lg transition-transform
+                    group-hover:rotate-90"
+                    ></i>
+                    Add News
+                  </span>
                 </button>
               </div>
 
@@ -163,32 +164,37 @@
                       class="
                         inline-flex items-center gap-2
                         px-3 py-2 rounded-md
-                        bg-green-100 text-brand-green
-                        hover:bg-green-200
-                        active:bg-green-300
+                        bg-green-600 text-brand-green
+                        hover:bg-green-700
+                        active:bg-green-700
                         transition-colors
                         text-sm font-medium
                       "
                       @click="editNews(news.id)"
                     >
-                      <i class="ri-edit-line"></i>
-                      <span>Edit</span>
+                      
+                      <span class="text-gray-50">
+                        <i class="ri-edit-line"></i>
+                        Edit
+                      </span>
                     </button>
                     <button
                       type="button"
                       class="
                         inline-flex items-center gap-2
                         px-3 py-2 rounded-md
-                        bg-red-100 text-brand-red
-                        hover:bg-red-200
-                        active:bg-red-300
+                        bg-red-600 text-brand-red
+                        hover:bg-red-700
+                        active:bg-red-700
                         transition-colors
                         text-sm font-medium
                       "
                       @click="removeNews(news.id)"
                     >
-                      <i class="ri-delete-bin-5-line"></i>
-                      <span>Remove</span>
+                      <span class="text-gray-50">
+                        <i class="ri-delete-bin-5-line"></i>
+                        Remove
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -209,291 +215,518 @@
           </div>
         </article>
       </div>
-      <!-- Add Modal Component -->
+      <!-- Add news modal -->
       <OModal
         :active="showAddNewsModal"
-        @close="showAddNewsModal = false"
+        :width="'1080px'"
+        class="news-editor-modal"
+        @close="close"
       >
-        <div class="
-          relative rounded-lg shadow-xl overflow-hidden
-          bg-white transition-all duration-300 transform"
+        <div
+          class="news-dialog w-full overflow-hidden rounded-2xl bg-white"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="add-news-title"
+        >
+          <header
+            class="relative overflow-hidden bg-gradient-to-br
+            from-brand-black via-brand-grey-2 to-green-900 px-6 py-7
+            text-white sm:px-8"
           >
-          <!-- Close Button -->
-          <button
-            type="button"
-            class="
-            absolute top-4
-            right-4 text-gray-500
-            hover:text-gray-800
-            dark:text-gray-400
-            dark:hover:text-white"
-            @click="showAddNewsModal = false"
-          >
-            <i class="ri-close-line text-xl"></i>
-          </button>
+            <div
+              class="absolute -right-16 -top-20 h-56 w-56 rounded-full
+              border-[32px] border-white/5"
+            ></div>
+            <div
+              class="absolute -bottom-20 right-36 h-44 w-44 rounded-full
+              bg-brand-green/10 blur-3xl"
+            ></div>
+            <div class="relative flex items-start justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex h-12 w-12 shrink-0 items-center justify-center
+                  rounded-2xl bg-brand-green text-brand-black shadow-lg"
+                >
+                  <i class="ri-newspaper-line text-2xl"></i>
+                </div>
+                <div>
+                  <div
+                    class="mb-2 inline-flex items-center gap-2 rounded-full
+                    bg-white/10 px-3 py-1 text-xs font-bold uppercase
+                    tracking-wider text-green-100"
+                  >
+                    <span class="h-1.5 w-1.5 rounded-full bg-brand-green"></span>
+                    Newsroom
+                  </div>
+                  <h2 id="add-news-title" class="text-2xl font-black sm:text-3xl">
+                    Create a news story
+                  </h2>
+                  <p class="mt-2 max-w-xl text-sm leading-6 text-gray-300">
+                    Turn the latest update into a polished story for your audience.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="flex h-10 w-10 shrink-0 items-center justify-center
+                rounded-full bg-white/10 text-white transition
+                hover:rotate-90 hover:bg-white/20 focus:outline-none
+                focus:ring-2 focus:ring-brand-green"
+                aria-label="Close create news dialog"
+                @click="close"
+              >
+                <i class="ri-close-line text-2xl"></i>
+              </button>
+            </div>
+          </header>
 
-          <!-- Form -->
           <VForm
             ref="form"
             v-model="valid"
             lazy-validation
-            class="p-4 md:p-6"
+            class="bg-gray-50"
           >
-            <h3 class="text-xl font-bold text-gray-800 light:text-dark mb-2">
-              Add News
-            </h3>
-            <hr class="my-4 border-gray-200 dark:border-gray-700" />
-
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <!-- Headline -->
-              <div class="col-span-3">
+            <div class="space-y-5 p-5 sm:p-8">
+              <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    1
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-900">
+                      Story headline
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Lead with a concise title that tells readers what matters.
+                    </p>
+                  </div>
+                </div>
                 <label
-                for="headline"
-                class="
-                mb-1 block text-sm
-                font-medium text-gray-700
-                light:text-dark"
+                  for="add-news-headline"
+                  class="mb-2 block text-sm font-semibold text-gray-700"
                 >
-                  Headline:
+                  Headline <span class="text-red-500">*</span>
                 </label>
                 <VTextField
-                  id="news"
+                  id="add-news-headline"
                   v-model="news.headline"
-                  label="Enter Headline"
+                  label="Enter a compelling headline"
+                  prepend-inner-icon="ri-double-quotes-l"
                   :rules="rules"
                   type="text"
                   solo
-                  class="w-full focus:ring focus:ring-green-200"
-                  :dark="$store.getters.isDarkMode"
                 />
-              </div>
+              </section>
 
-              <!-- Content -->
-              <div class="col-span-3">
+              <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    2
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <h3 class="font-bold text-gray-900">
+                        Story content
+                      </h3>
+                      <span
+                        class="inline-flex items-center gap-1 rounded-full
+                        bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500"
+                      >
+                        <i class="ri-text"></i>
+                        Rich text editor
+                      </span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Structure the story with headings, links, and readable paragraphs.
+                    </p>
+                  </div>
+                </div>
                 <label
-                for="content"
-                class="
-                mb-1 block text-sm font-medium
-                text-gray-700 light:text-dark"
+                  for="add-news-content"
+                  class="mb-2 block text-sm font-semibold text-gray-700"
                 >
-                  Content:
+                  Article body <span class="text-red-500">*</span>
                 </label>
                 <Tiptap
-                  id="content"
+                  id="add-news-content"
                   v-model="news.content"
+                  class="news-rich-editor"
                 />
-              </div>
+              </section>
 
-              <!-- Image Upload -->
-              <div class="col-span-3">
+              <section
+                class="news-image-section rounded-2xl border
+                border-gray-200 bg-white p-5 shadow-sm"
+              >
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    3
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-900">
+                      Featured image
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Add a strong visual that represents the story at a glance.
+                    </p>
+                  </div>
+                </div>
                 <ImageUpload @update-image="updateImage" />
+              </section>
+            </div>
+
+            <footer
+              class="flex flex-col-reverse gap-3 border-t border-gray-200
+              bg-white px-5 py-5 sm:flex-row sm:items-center sm:justify-between
+              sm:px-8"
+            >
+              <p class="text-center text-xs text-gray-500 sm:text-left">
+                <i class="ri-shield-check-line mr-1 text-green-600"></i>
+                Review the headline, content, and image before publishing.
+              </p>
+              <div class="flex flex-col-reverse gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  class="inline-flex min-h-[48px] items-center justify-center
+                  rounded-xl border border-gray-300 bg-white px-6 font-semibold
+                  text-gray-700 transition hover:bg-gray-50 focus:outline-none
+                  focus:ring-2 focus:ring-gray-300"
+                  @click="close"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex min-h-[48px] items-center justify-center
+                  gap-2 rounded-xl bg-brand-green px-7 font-bold
+                  text-brand-black shadow-lg shadow-green-200 transition
+                  hover:-translate-y-0.5 hover:bg-green-500 hover:shadow-xl
+                  focus:outline-none focus:ring-2 focus:ring-brand-green
+                  focus:ring-offset-2 disabled:cursor-not-allowed
+                  disabled:opacity-50 disabled:shadow-none"
+                  :disabled="!valid"
+                  @click="validate('Add')"
+                >
+                  <i class="ri-send-plane-fill text-lg"></i>
+                  Publish story
+                </button>
               </div>
-            </div>
-
-            <hr class="my-6 border-gray-200 dark:border-gray-700" />
-
-            <!-- Actions -->
-            <div class="flex flex-col-reverse justify-end gap-3 sm:flex-row">
-              <!-- Cancel Button -->
-              <button
-                type="button"
-                @click="close"
-                class="
-                  group relative w-full
-                  rounded-md px-5 py-3
-                  bg-[#050505] text-white
-                  font-semibold text-sm uppercase tracking-wider
-                  shadow-md hover:shadow-lg
-                  transition-all duration-300
-                  overflow-hidden
-                  before:absolute before:inset-0 before:bg-white
-                  before:opacity-0 before:w-full before:h-full
-                  hover:before:opacity-10
-                  sm:w-auto
-                "
-              >
-                <span class="relative z-10">Cancel</span>
-              </button>
-
-              <!-- Save News Button -->
-              <button
-                type="button"
-                :disabled="!valid"
-                @click="validate('Add')"
-                class="
-                  group relative w-full
-                  rounded-md px-5 py-3
-                  bg-[#5ecb3e] text-white
-                  font-semibold text-sm uppercase tracking-wider
-                  shadow-md hover:shadow-lg
-                  transition-all duration-300
-                  overflow-hidden
-                  before:absolute before:inset-0 before:bg-white
-                  before:opacity-0 before:w-full before:h-full
-                  hover:before:opacity-20
-                  active:bg-green-700
-                  disabled:opacity-60 disabled:cursor-not-allowed
-                  sm:w-auto
-                "
-              >
-                <span class="relative z-10">Save News</span>
-              </button>
-            </div>
+            </footer>
           </VForm>
         </div>
       </OModal>
 
-      <!-- Edit Modal Component -->
+      <!-- Edit news modal -->
       <OModal
         :active="showEditNewsModal"
-        @close="showEditNewsModal = false"
+        :width="'1080px'"
+        class="news-editor-modal"
+        @close="closeEdit"
       >
-      <VForm
-        ref="form"
-        v-model="valid"
-        lazy-validation
-        class="p-2 md:p-4"
+        <div
+          class="news-dialog w-full overflow-hidden rounded-2xl bg-white"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-news-title"
+        >
+          <header
+            class="relative overflow-hidden bg-gradient-to-br
+            from-brand-black via-brand-grey-2 to-green-900 px-6 py-7
+            text-white sm:px-8"
+          >
+            <div
+              class="absolute -right-16 -top-20 h-56 w-56 rounded-full
+              border-[32px] border-white/5"
+            ></div>
+            <div class="relative flex items-start justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex h-12 w-12 shrink-0 items-center justify-center
+                  rounded-2xl bg-brand-green text-brand-black shadow-lg"
+                >
+                  <i class="ri-draft-line text-2xl"></i>
+                </div>
+                <div>
+                  <div
+                    class="mb-2 inline-flex items-center gap-2 rounded-full
+                    bg-white/10 px-3 py-1 text-xs font-bold uppercase
+                    tracking-wider text-green-100"
+                  >
+                    <span class="h-1.5 w-1.5 rounded-full bg-brand-green"></span>
+                    Story editor
+                  </div>
+                  <h2 id="edit-news-title" class="text-2xl font-black sm:text-3xl">
+                    Refine this news story
+                  </h2>
+                  <p class="mt-2 max-w-xl text-sm leading-6 text-gray-300">
+                    Keep the story accurate, engaging, and visually current.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="flex h-10 w-10 shrink-0 items-center justify-center
+                rounded-full bg-white/10 text-white transition
+                hover:rotate-90 hover:bg-white/20 focus:outline-none
+                focus:ring-2 focus:ring-brand-green"
+                aria-label="Close edit news dialog"
+                @click="closeEdit"
+              >
+                <i class="ri-close-line text-2xl"></i>
+              </button>
+            </div>
+          </header>
+
+          <VForm
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            class="bg-gray-50"
+          >
+            <div class="space-y-5 p-5 sm:p-8">
+              <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    1
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-900">
+                      Story headline
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Adjust the title while keeping the story easy to identify.
+                    </p>
+                  </div>
+                </div>
+                <label
+                  for="edit-news-headline"
+                  class="mb-2 block text-sm font-semibold text-gray-700"
+                >
+                  Headline <span class="text-red-500">*</span>
+                </label>
+                <VTextField
+                  id="edit-news-headline"
+                  v-model="news.headline"
+                  label="Enter a compelling headline"
+                  prepend-inner-icon="ri-double-quotes-l"
+                  :rules="rules"
+                  type="text"
+                  solo
+                />
+              </section>
+
+              <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    2
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <h3 class="font-bold text-gray-900">
+                        Story content
+                      </h3>
+                      <span
+                        class="inline-flex items-center gap-1 rounded-full
+                        bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500"
+                      >
+                        <i class="ri-edit-box-line"></i>
+                        Editing
+                      </span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Review the details and improve clarity where needed.
+                    </p>
+                  </div>
+                </div>
+                <label
+                  for="edit-news-content"
+                  class="mb-2 block text-sm font-semibold text-gray-700"
+                >
+                  Article body <span class="text-red-500">*</span>
+                </label>
+                <Tiptap
+                  id="edit-news-content"
+                  v-model="news.content"
+                  class="news-rich-editor"
+                />
+              </section>
+
+              <section
+                class="news-image-section rounded-2xl border
+                border-gray-200 bg-white p-5 shadow-sm"
+              >
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    3
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-900">
+                      Featured image
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Refine the current visual or upload a replacement.
+                    </p>
+                  </div>
+                </div>
+                <ImageUploadEdit
+                  :imglistedit="imgListEdit"
+                  :imgurledit="imgUrlEdit"
+                  @update-image-edit="updateImageEdit"
+                />
+              </section>
+            </div>
+
+            <footer
+              class="flex flex-col-reverse gap-3 border-t border-gray-200
+              bg-white px-5 py-5 sm:flex-row sm:items-center sm:justify-between
+              sm:px-8"
+            >
+              <p class="text-center text-xs text-gray-500 sm:text-left">
+                <i class="ri-history-line mr-1 text-green-600"></i>
+                Saved changes will appear on the public news page.
+              </p>
+              <div class="flex flex-col-reverse gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  class="inline-flex min-h-[48px] items-center justify-center
+                  rounded-xl border border-gray-300 bg-white px-6 font-semibold
+                  text-gray-700 transition hover:bg-gray-50 focus:outline-none
+                  focus:ring-2 focus:ring-gray-300"
+                  @click="closeEdit"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex min-h-[48px] items-center justify-center
+                  gap-2 rounded-xl bg-brand-green px-7 font-bold
+                  text-brand-black shadow-lg shadow-green-200 transition
+                  hover:-translate-y-0.5 hover:bg-green-500 hover:shadow-xl
+                  focus:outline-none focus:ring-2 focus:ring-brand-green
+                  focus:ring-offset-2 disabled:cursor-not-allowed
+                  disabled:opacity-50 disabled:shadow-none"
+                  :disabled="!valid"
+                  @click="validate('Edit')"
+                >
+                  <i class="ri-save-3-line text-lg"></i>
+                  Save changes
+                </button>
+              </div>
+            </footer>
+          </VForm>
+        </div>
+      </OModal>
+
+      <!-- Remove news modal -->
+      <OModal
+        :active="showRemoveNewsModal"
+        :width="'540px'"
+        class="news-editor-modal news-delete-modal"
+        @close="closeRemove"
       >
-        <h3 class="text-swd-red mb-3 font-bold">
-          Edit News
-        </h3>
-        <hr class="my-3">
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div class="col-span-3">
-            <label for="headline" class="mb-1 block">
-              Headline:
-            </label>
-            <VTextField
-              id="news"
-              v-model="news.headline"
-              label="Enter Headline"
-              :rules="rules"
-              type="text"
-              solo
-              />
-          </div>
-
-          <div class="col-span-3">
-            <label for="content" class="mb-1 block">
-              Content:
-            </label>
-            <Tiptap
-              id="content"
-              v-model="news.content"
-              />
-          </div>
-
-          <div class="col-span-3">
-            <ImageUploadEdit
-              :imglistedit="imgListEdit"
-              :imgurledit="imgUrlEdit"
-              @update-image-edit="updateImageEdit"
-              />
-          </div>
-        </div>
-        <hr class="my-3">
-        <div class="block lg:flex lg:justify-end lg:items-center gap-4">
-          <!-- Confirm Button -->
-          <button
-            type="button"
-            :disabled="!valid"
-            @click="validate('Edit')"
-            class="
-              group relative w-full
-              rounded-md px-5 py-3
-              bg-[#5ecb3e] text-white
-              font-semibold text-sm uppercase tracking-wider
-              overflow-hidden shadow-md hover:shadow-lg
-              transition-all duration-300
-              before:absolute before:inset-0 before:bg-white
-              before:opacity-0 before:w-full before:h-full
-              hover:before:opacity-20
-              disabled:opacity-60 disabled:cursor-not-allowed
-              lg:w-48 lg:my-2"
-          >
-            <span class="relative z-10">Confirm</span>
-          </button>
-
-          <!-- Cancel Button -->
-          <button
-            type="button"
-            @click="closeEdit"
-            class="
-              group relative w-full
-              rounded-md px-5 py-3
-              bg-[#050505] text-white
-              font-semibold text-sm uppercase tracking-wider
-              overflow-hidden shadow-md hover:shadow-lg
-              transition-all duration-300
-              before:absolute before:inset-0 before:bg-white
-              before:opacity-0 before:w-full before:h-full
-              hover:before:opacity-10
-              lg:w-48 lg:my-2"
-          >
-            <span class="relative z-10">Cancel</span>
-          </button>
-        </div>
-      </VForm>
-    </OModal>
-    <!-- Remove Modal Component -->
-    <OModal
-      :active="showRemoveNewsModal"
-      @close="showRemoveNewsModal = false"
-    >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-        <h3 class="text-swd-red mb-3 font-bold">
-          Remove News
-        </h3>
-        <hr class="my-3">
-        <p class="text-center text-lg">
-        <span>Are you sure you want to delete the news</span>
-        <span class="font-semibold">headline: {{ news.headline }} </span>?
-        </p>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-center">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-800
-              lg:mx-4 lg:w-48
-              "
-            @click="remove(editingNo)"
+        <div
+          class="news-dialog w-full overflow-hidden rounded-2xl bg-white"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="remove-news-title"
+          aria-describedby="remove-news-description"
+        >
+          <div class="relative overflow-hidden px-6 pb-6 pt-8 text-center sm:px-8">
+            <button
+              type="button"
+              class="absolute right-4 top-4 flex h-10 w-10 items-center
+              justify-center rounded-full text-gray-400 transition
+              hover:rotate-90 hover:bg-gray-100 hover:text-gray-700
+              focus:outline-none focus:ring-2 focus:ring-gray-300"
+              aria-label="Close remove news dialog"
+              @click="closeRemove"
             >
-            Yes, remove it
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-              "
-            @click="closeRemove"
+              <i class="ri-close-line text-2xl"></i>
+            </button>
+            <div class="relative mx-auto mb-5 h-20 w-20">
+              <div
+                class="absolute inset-0 animate-pulse rounded-3xl bg-red-100"
+              ></div>
+              <div
+                class="relative flex h-20 w-20 rotate-3 items-center
+                justify-center rounded-3xl border-8 border-red-50 bg-red-100
+                text-red-600 shadow-lg shadow-red-100"
+              >
+                <i class="ri-article-line -rotate-3 text-3xl"></i>
+              </div>
+            </div>
+            <p class="mb-2 text-xs font-bold uppercase tracking-widest text-red-500">
+              Remove publication
+            </p>
+            <h2 id="remove-news-title" class="text-2xl font-black text-gray-900">
+              Delete this news story?
+            </h2>
+            <p
+              id="remove-news-description"
+              class="mx-auto mt-3 max-w-sm text-sm leading-6 text-gray-500"
             >
-            No
-          </button>
+              The story
+              <strong class="font-bold text-gray-900">“{{ news.headline }}”</strong>
+              will be removed from the news listing.
+            </p>
+            <div
+              class="mt-5 flex items-start gap-3 rounded-2xl border
+              border-red-100 bg-red-50/70 p-4 text-left"
+            >
+              <i class="ri-alert-line mt-0.5 text-xl text-red-600"></i>
+              <p class="text-xs leading-5 text-red-700">
+                Readers will no longer be able to access this story. This action
+                cannot be undone.
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex flex-col-reverse gap-3 border-t border-gray-200
+            bg-gray-50 px-6 py-5 sm:flex-row sm:px-8"
+          >
+            <button
+              type="button"
+              class="inline-flex min-h-[50px] flex-1 items-center justify-center
+              rounded-xl border border-gray-300 bg-white px-5 font-semibold
+              text-gray-700 transition hover:bg-gray-100 focus:outline-none
+              focus:ring-2 focus:ring-gray-300"
+              @click="closeRemove"
+            >
+              Keep story
+            </button>
+            <button
+              type="button"
+              class="inline-flex min-h-[50px] flex-1 items-center justify-center
+              gap-2 rounded-xl bg-red-600 px-5 font-bold text-white
+              shadow-lg shadow-red-200 transition hover:-translate-y-0.5
+              hover:bg-red-700 hover:shadow-xl focus:outline-none
+              focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              @click="remove(editingNo)"
+            >
+              <i class="ri-delete-bin-line text-lg"></i>
+              Delete story
+            </button>
+          </div>
         </div>
-      </div>
-    </OModal>
+      </OModal>
     </div>
 </template>
 
@@ -920,23 +1153,139 @@ export default {
 
 ::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
 > .v-input__control > .v-input__slot {
-box-shadow: none;
-border: 1px rgb(243 244 246 / var(--tw-border-opacity));
-background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-padding: 0.5rem 0.75rem;
-width: 100%;
-appearance: none;
-border-radius: 0;
-transition: border-color 0.3s;
+  min-height: 54px;
+  width: 100%;
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background-color: #f9fafb;
+  box-shadow: none;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+::v-deep .v-text-field.v-input--is-focused
+> .v-input__control > .v-input__slot {
+  border-color: #5ecb3e;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgb(94 203 62 / 15%);
+}
+
+::v-deep .v-text-field .v-input__prepend-inner {
+  margin-right: 0.4rem;
+}
+
+::v-deep .v-text-field .v-input__prepend-inner .v-icon {
+  color: #6b7280;
+  font-size: 1.2rem;
+}
+
+::v-deep .v-text-field.v-input--is-focused .v-input__prepend-inner .v-icon {
+  color: #438f2d;
 }
 
 ::v-deep .v-text-field input::placeholder {
-font-size: 1rem !important;
-font-family: inherit !important;
-color: rgb(104, 104, 104) !important;
+  color: #9ca3af !important;
+  font-family: inherit !important;
+  font-size: 0.95rem !important;
 }
 
-.custom-btn {
-  height: 50px !important;
+.news-editor-modal ::v-deep .o-modal__content {
+  max-height: calc(100vh - 2rem);
+  border-radius: 1rem;
+  background: transparent;
+  box-shadow: 0 30px 80px rgb(0 0 0 / 40%);
+}
+
+.news-editor-modal ::v-deep .o-modal__close {
+  display: none;
+}
+
+.news-editor-modal ::v-deep .o-modal__overlay {
+  background:
+    radial-gradient(circle at 50% 15%, rgb(94 203 62 / 12%), transparent 32%),
+    rgb(5 5 5 / 80%);
+  backdrop-filter: blur(5px);
+}
+
+.news-delete-modal ::v-deep .o-modal__overlay {
+  background:
+    radial-gradient(circle at 50% 15%, rgb(239 68 68 / 10%), transparent 30%),
+    rgb(5 5 5 / 80%);
+}
+
+.news-dialog {
+  animation: news-dialog-enter 0.28s ease-out;
+}
+
+.news-rich-editor {
+  overflow: hidden;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem;
+  background: #fff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.news-rich-editor:focus-within {
+  border-color: #5ecb3e !important;
+  box-shadow: 0 0 0 3px rgb(94 203 62 / 12%);
+}
+
+.news-rich-editor ::v-deep .ProseMirror {
+  min-height: 320px;
+  padding: 0.75rem;
+}
+
+.news-rich-editor ::v-deep hr {
+  margin: 0;
+  border-color: #e5e7eb;
+}
+
+.news-image-section ::v-deep .rugby-croppa-container {
+  border-color: #d1fae5;
+  background: linear-gradient(135deg, #f9fafb, #f0fdf4);
+  box-shadow: none;
+}
+
+.news-image-section ::v-deep .croppa-container {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.news-image-section ::v-deep .rugby-control-btn {
+  border-radius: 0.65rem;
+  box-shadow: none;
+}
+
+@keyframes news-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .news-editor-modal ::v-deep .o-modal__content {
+    max-height: calc(100vh - 1rem);
+    margin: 0.5rem;
+  }
+
+  .news-rich-editor ::v-deep .ProseMirror {
+    min-height: 260px;
+  }
+
+  .news-image-section ::v-deep .croppa-container,
+  .news-image-section ::v-deep canvas {
+    height: auto !important;
+    max-width: 100% !important;
+  }
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
-    <div class="h-full bg-[#1A1A1B]">
+    <div class="min-h-screen w-screen bg-gradient-to-br from-[#111712]
+    via-[#1A1A1B] to-[#0d120e]">
       <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
         <div
           class="
@@ -43,9 +44,7 @@
                 type="button"
                 class="
                   w-full rounded-md
-                  bg-gradient-to-br
-                  from-[#5EE738] via-[#3e872a]
-                  to-[#050505] p-1.5
+                  bg-green-600 p-2.5
                   text-center
                   font-semibold
                   text-white
@@ -58,8 +57,10 @@
                 justify-center"
                 aria-hidden="true"
                 >
-                  <i class="ri-arrow-go-back-line"></i>
-                  <span class="ml-[5px]">Discount Code</span>
+                  <span class="ml-[5px] text-gray-50">
+                    <i class="ri-arrow-go-back-line"></i>
+                    Discount Code
+                  </span>
                 </span>
               </button>
               </div>

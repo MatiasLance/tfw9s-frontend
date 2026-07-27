@@ -227,10 +227,10 @@ export default {
       ageGroupList: [],
       seriesList: [],
       selectedEvent: null,
-      selectedAgeGroup: 7,
-      selectedSeries: 9,
+      selectedAgeGroup: null,
+      selectedSeries: null,
       selectedRound: null,
-      selectedYear: 2025,
+      selectedYear: new Date().getFullYear(),
       isLoading: true,
       page: 1,
       perPage: 10,
@@ -262,18 +262,7 @@ export default {
     },
 
     filteredRound() {
-      if (!this.team.length) {
-        return [ MATCH_ROUND_OPTIONS[0] ];
-      }
-
-      const rounds = this.team.map(team => team.round).filter(Boolean);
-      const uniqueRounds = [ ...new Set(rounds) ];
-      uniqueRounds.unshift(null);
-
-      return MATCH_ROUND_OPTIONS.filter(option =>
-        uniqueRounds.includes(option.value)
-      );
-      // return MATCH_ROUND_OPTIONS;
+      return MATCH_ROUND_OPTIONS;
     },
 
     filteredTeamsByRound() {
@@ -347,8 +336,8 @@ export default {
     },
 
     totalPages() {
-      if (this.page > this.totalPages) {
-        this.setPage(1)
+      if (this.page > Math.max(this.totalPages, 1)) {
+        this.page = 1;
       }
     },
   },
@@ -364,8 +353,16 @@ export default {
         await Promise.all([
           this.retrieveAgeGroups(),
           this.retrieveSeries(),
-          this.retrieveTeamPosition()
         ]);
+        this.selectedAgeGroup = this.selectedAgeGroup
+          || this.ageGroupList.find(ageGroup => ageGroup.name === '6')?.id
+          || this.ageGroupList[0]?.id
+          || null;
+        this.selectedSeries = this.selectedSeries
+          || this.seriesList.find(series => series.name === 'Weekly Series')?.id
+          || this.seriesList[0]?.id
+          || null;
+        await this.retrieveTeamPosition();
       } catch (error) {
         console.error('Error initializing data:', error);
         this.isLoading = false;
@@ -375,7 +372,6 @@ export default {
     handleFilterChange() {
       this.isLoading = true;
       this.page = 1;
-      this.selectedRound = null;
 
       clearTimeout(this._filterTimeout);
       this._filterTimeout = setTimeout(() => {
@@ -463,15 +459,16 @@ export default {
         }
       });
 
-      return new URLSearchParams(baseParams).toString();
+      return baseParams;
     },
 
     async retrieveTeamPosition() {
       this.isLoading = true;
       
       try {
-        const queryString = this.buildQueryParams();
-        const response = await this.$axios.$get(`v1/teampositions/list?${queryString}`);
+        const response = await this.$axios.$get('v1/teampositions/list', {
+          params: this.buildQueryParams(),
+        });
 
         this.team = response.data.all_positions.map((team, index) => ({
           ...team,
@@ -488,6 +485,8 @@ export default {
         this.calculateAllTeamStats();
       } catch (error) {
         console.error('Error retrieving team positions:', error);
+        this.team = [];
+        this.allTeamStats = [];
       } finally {
         this.isLoading = false;
       }
@@ -495,8 +494,9 @@ export default {
 
     async retrieveAgeGroups() {
       try {
-        const queryString = this.buildQueryParams();
-        const response = await this.$axios.$get(`v1/agegroups?${queryString}`);
+        const response = await this.$axios.$get('v1/agegroups', {
+          params: this.buildQueryParams(),
+        });
         this.ageGroupList = response.data.ageGroups || [];
       } catch (error) {
         console.error('Error retrieving age groups:', error);

@@ -1,6 +1,7 @@
 <template>
   <div class="input-group relative flex w-full flex-row items-stretch">
     <input
+      :id="inputId"
       :value="value"
       type="search"
       class="
@@ -25,8 +26,8 @@
         focus:text-gray-50 focus:outline-none
         focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
       "
-      placeholder="Search tournaments..."
-      aria-label="Search"
+      :placeholder="placeholder"
+      :aria-label="ariaLabel"
       aria-describedby="button-addon2"
       @input="$emit('input', $event.target.value)"
     />
@@ -68,6 +69,18 @@ export default {
       type: String,
       required: false,
       default: '',
+    },
+    inputId: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
+      type: String,
+      default: 'Search tournaments...',
+    },
+    ariaLabel: {
+      type: String,
+      default: 'Search',
     },
   },
 }

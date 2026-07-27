@@ -349,7 +349,7 @@ export default {
                   date: event.event_date,
                   // eslint-disable-next-line camelcase
                   field: this.findField(event.field_id),
-                  submit: match.submitted === 1
+                  submit: this.toBoolean(match.submitted)
                 };
               })
             };
@@ -365,6 +365,15 @@ export default {
         .finally(() => {
           this.showCustomVueTable = true;
         });
+    },
+    toBoolean(value) {
+      if (typeof value === 'string') {
+        return [ '1', 'true', 'on', 'yes' ].includes(
+          value.trim().toLowerCase()
+        );
+      }
+
+      return value === true || value === 1;
     },
   }
 };

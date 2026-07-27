@@ -1,5 +1,6 @@
 import PaymentForm from '@/components/payment/PaymentForm.vue'
 import RegisterPage from '@/pages/register.vue'
+import IndividualInformationForm from '@/components/registration/IndividualInformationForm.vue'
 
 const deferred = () => {
   let resolve
@@ -96,5 +97,63 @@ describe('registration flow stability', () => {
     expect(vm.overallTotal).toBe(1200)
     expect(vm.taxAmount).toBe(200)
     expect(vm.subTotal).toBe(1000)
+  })
+
+  test('opens the Player Card warning only for high-confidence typed matches', async () => {
+    const matches = [
+      {
+        player_name: 'John Smith',
+        masked_phone: '***678',
+        score: 88,
+      },
+      {
+        player_name: 'Johnny Smith',
+        masked_phone: '***123',
+        score: 80,
+      },
+    ]
+    const vm = {
+      player: { firstName: 'Jon', lastName: 'Smith' },
+      newPlayerSearchQuery: 'Jon Smith',
+      normalizedNewPlayerName: 'jon smith',
+      duplicateAbortController: null,
+      duplicateSearchLoading: false,
+      duplicateSuggestions: [],
+      duplicateMatches: [],
+      duplicateBypassName: '',
+      lastWarnedPlayerName: '',
+      showDuplicateWarning: false,
+      duplicateWarningFromSubmit: false,
+      $axios: {
+        $get: jest.fn().mockResolvedValue({ data: { matches } }),
+        isCancel: jest.fn().mockReturnValue(false),
+      },
+    }
+
+    await IndividualInformationForm.methods.fetchPotentialCardMatches.call(vm)
+
+    expect(vm.duplicateSuggestions).toEqual(matches)
+    expect(vm.duplicateMatches).toEqual([matches[0]])
+    expect(vm.showDuplicateWarning).toBe(true)
+    expect(vm.duplicateWarningFromSubmit).toBe(false)
+  })
+
+  test('Continue Anyway submits only when the warning interrupted form submission', () => {
+    const emitNewPlayerSubmission = jest.fn()
+    const vm = {
+      duplicateWarningFromSubmit: false,
+      normalizedNewPlayerName: 'john smith',
+      duplicateBypassName: '',
+      showDuplicateWarning: true,
+      emitNewPlayerSubmission,
+    }
+
+    IndividualInformationForm.methods.continueAfterDuplicateWarning.call(vm)
+    expect(emitNewPlayerSubmission).not.toHaveBeenCalled()
+
+    vm.duplicateWarningFromSubmit = true
+    vm.showDuplicateWarning = true
+    IndividualInformationForm.methods.continueAfterDuplicateWarning.call(vm)
+    expect(emitNewPlayerSubmission).toHaveBeenCalledTimes(1)
   })
 })

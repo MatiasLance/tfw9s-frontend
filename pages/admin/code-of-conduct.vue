@@ -1,418 +1,624 @@
 <!-- eslint-disable max-len -->
 <template>
-    <div class="min-h-full bg-[#1A1A1B]">
-      <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black">
-         <!-- Breadcrumbs and Title -->
-        <BreadCrumbs title="Code of Conduct Setting"/>
-      </BaseHeader>
-      <div class="mx-auto max-w-screen-xl px-4 py-7">
-        <div data-aos="fade-up">
-          <div class="grid grid-cols-1 gap-4">
-            <div class="col-span-1 flex items-center">
-              <button
-                type="button"
-                class="
-                w-full rounded-md
-                bg-gradient-to-br
-                from-[#5EE738] via-[#3e872a]
-                to-[#050505] py-1.5
-                text-center
-                font-semibold
-                text-white
-                sm:w-36"
-                @click="openAddContentDialog"
-              >
-                +
-              </button>
-            </div>
+  <div class="min-h-screen bg-gradient-to-br from-[#111712]
+    via-[#1A1A1B] to-[#0d120e]">
+    <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black shadow-md">
+      <BreadCrumbs title="Code of Conduct Setting"/>
+    </BaseHeader>
 
-            <section v-if="totalPages > 0" class="mb-10" data-aos="fade-up">
-                <div
-                class="
-                flex flex-wrap
-                items-center
-                justify-between gap-4
-                rounded-lg bg-white
-                px-6 py-4 text-black
-                shadow-md"
-                >
-                  <!-- Showing Results Info -->
-                  <div class="flex items-center space-x-2 text-sm md:text-base">
-                    <i class="ri-information-line text-lg text-green-400"></i>
-                    <span>
-                      Showing <span class="font-semibold">{{ from }}</span>–
-                      <span class="font-semibold">{{ to }}</span>
-                      of <span class="font-semibold">{{ totalItems }}</span> results
-                    </span>
-                  </div>
-
-                  <!-- Pagination Component -->
-                  <div class="flex shrink-0">
-                    <BasePagination
-                      :active-page="page"
-                      :total-pages="totalPages"
-                      @change="setPage"
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section class="col-span-1 overflow-x-scroll md:overflow-x-hidden">
-                <div class="min-w-[640px] grid grid-cols-1 gap-4 md:gap-6">
-                  <div
-                    v-for="(content, index) in ContentList"
-                    :key="content.id"
-                    class="
-                      rounded-lg border border-gray-200 bg-white p-5 shadow-sm
-                      transition duration-300 hover:border-green-500 hover:shadow-md
-                    "
-                    data-aos="fade-up"
-                    data-aos-offset="0"
-                  >
-                    <!-- Title + Status -->
-                    <div class="mb-4 flex items-center justify-between">
-                      <h3 class="text-xl font-bold text-gray-800">
-                        Guideline {{ index + 1 }}
-                      </h3>
-                      <span v-if="content.isActive">
-                        <ActiveChip />
-                      </span>
-                    </div>
-
-                    <!-- Content Preview -->
-                    <div class="mb-6 line-clamp-4 text-gray-600" v-html="content.content"></div>
-
-                    <!-- Actions -->
-                    <div class="flex justify-end space-x-3">
-                      <BaseButton
-                        v-if="!content.isActive"
-                        @click="setActive(content.id)"
-                        class="
-                          flex items-center gap-2 rounded-md
-                          border border-gray-300
-                          bg-gray-800 px-4 py-2
-                          text-sm font-medium
-                          text-gray-800
-                          transition
-                          hover:bg-gray-700
-                        "
-                      >
-                        <i class="ri-check-line text-white text-2xl"></i> Set as Active
-                      </BaseButton>
-
-                      <BaseButton
-                        v-else
-                        @click="deactivate(content.id)"
-                        class="
-                          flex items-center gap-2 rounded-md
-                          border border-gray-300
-                          bg-gray-800 px-4 py-2
-                          text-sm font-medium
-                          text-gray-800
-                          transition
-                          hover:bg-gray-700
-                        "
-                      >
-                        <i class="ri-close-circle-line text-white text-2xl"></i> Deactivate
-                      </BaseButton>
-
-                      <BaseButton
-                        @click="openEditContentDialog(content)"
-                        class="
-                          flex items-center gap-2 rounded-md
-                          border border-green-200
-                          bg-green-600 px-4 py-2
-                          text-sm font-medium
-                          text-white
-                          transition
-                          hover:bg-green-700
-                        "
-                      >
-                        <i class="ri-edit-line text-white text-xl"></i> Edit
-                      </BaseButton>
-
-                      <BaseButton
-                        @click="openDeleteContentDialog(content)"
-                        class="
-                          flex items-center gap-2 rounded-md
-                          border border-red-200
-                          bg-red-600 px-4 py-2
-                          text-sm font-medium
-                          text-white
-                          transition
-                          hover:bg-red-700
-                        "
-                      >
-                        <i class="ri-delete-bin-line text-white text-xl"></i> Delete
-                      </BaseButton>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section
-                v-if="totalPages === 0"
-                class="
-                  col-span-1
-                  flex
-                  flex-col
-                  items-center
-                  justify-center
-                  rounded-xl
-                  bg-gray-50
-                  p-8
-                  text-center
-                  font-semibold
-                  text-gray-600
-                  shadow-inner
-                  transition-all
-                  duration-300
-                  md:col-span-3
-                  h-60"
-              >
-                <!-- Icon -->
-                <i class="
-                ri-sticky-note-line
-                text-4xl text-green-500
-                mb-3 animate-pulse"
-                ></i>
-
-                <!-- Message -->
-                <h3 class="text-lg">
-                  No Code of Conduct Available
-                </h3>
-                <p class="mt-1 text-sm text-gray-500">
-                  Try adding some code of conduct or adjusting your search.
-                </p>
-              </section>
-            </div>
-        </div>
-      </div>
-      <OModal
-      :active="showAddContentModal"
-      @close="closeAddContentDialog"
+    <main class="mx-auto w-full max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+      <section
+        class="relative mb-7 overflow-hidden rounded-3xl border
+        border-white/10 bg-gradient-to-br from-brand-grey-2 via-brand-black
+        to-green-900 p-6 shadow-2xl shadow-black/30 sm:p-8"
+        data-aos="fade-up"
       >
-        <VForm
-        ref="form" v-model="valid" lazy-validation
-        class="p-2 md:p-4"
+        <div
+          class="absolute -right-16 -top-20 h-64 w-64 rounded-full
+          border-[36px] border-brand-green/10"
+        ></div>
+        <div
+          class="absolute -bottom-20 right-40 h-52 w-52 rounded-full
+          bg-brand-green/10 blur-3xl"
+        ></div>
+
+        <div
+          class="relative flex flex-col gap-7 lg:flex-row
+          lg:items-end lg:justify-between"
         >
-         <h3
-       class="
-       mb-3
-       font-bold"
-       >
-           Add Content
-         </h3>
-         <hr class="my-3  lg:w-[918px]"/>
-         <div class="grid grid-cols-1">
-           <div class="col-span-1">
-             <label for="headline" class="mb-1 block">
-               Content:
-             </label>
-             <Tiptap
-             id="content"
-             v-model="contentData.content"
-             />
-           </div>
-         </div>
-         <hr class="my-3  lg:w-[918px]"/>
-         <div class="block lg:flex lg:flex-auto lg:justify-end">
-           <button
-             type="button"
-             class="
-               my-2
-               inline-block
-               w-full
-               border border-transparent
-               bg-brand-green
-               py-3
-               px-5
-               text-center
-               font-bold
-               text-white
-               hover:bg-green-700
-               lg:mx-4 lg:w-48
-             "
-             :disabled="!valid"
-             @click="validate('Add')"
-           >
-             OK
-           </button>
-           <button
-             type="button"
-             class="
-               my-2
-               inline-block
-               w-full
-               border border-transparent
-               bg-brand-red
-               py-3
-               px-5
-               text-center
-               font-bold
-               text-white
-               hover:bg-[#B1271B]
-               lg:mx-4 lg:w-48
-             "
-             @click="closeAddContentDialog"
-           >
-             Cancel
-           </button>
-         </div>
-        </VForm>
-     </OModal>
-     <OModal
-     :active="showEditContentModal"
-     @close="closeEditContentDialog"
-     >
-      <VForm
-      ref="form" v-model="valid" lazy-validation
-      class="p-2 md:p-4"
+          <div class="max-w-2xl">
+            <div
+              class="mb-4 inline-flex items-center gap-2 rounded-full
+              border border-brand-green/20 bg-brand-green/10 px-3 py-1.5
+              text-xs font-bold uppercase tracking-widest text-green-300"
+            >
+              <span class="h-2 w-2 animate-pulse rounded-full bg-brand-green"></span>
+              Community standards
+            </div>
+            <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl">
+              Shape a respectful sporting community
+            </h1>
+            <p class="mt-3 max-w-xl text-sm leading-6 text-gray-300 sm:text-base">
+              Create and manage the conduct guidelines that set expectations
+              for every player, coach, official, and supporter.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="group inline-flex min-h-[52px] items-center justify-center
+            gap-3 rounded-2xl bg-brand-green px-6 font-black text-brand-black
+            shadow-xl shadow-green-950/30 transition hover:-translate-y-0.5
+            hover:bg-green-400 focus:outline-none focus:ring-2
+            focus:ring-brand-green focus:ring-offset-2 focus:ring-offset-brand-black"
+            @click="openAddContentDialog"
+          >
+            <span
+              class="flex h-8 w-8 items-center justify-center rounded-full
+              bg-brand-black/10 transition group-hover:rotate-90"
+            >
+              <i class="ri-add-line text-xl"></i>
+            </span>
+            Add guideline
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3"
+        aria-label="Code of conduct overview"
       >
-        <h3
-      class="
-      mb-3
-      font-bold"
+        <article
+          class="rounded-2xl border border-gray-200 bg-white p-5
+          shadow-xl shadow-black/10"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-2xl
+              bg-green-50 text-green-700"
+            >
+              <i class="ri-file-list-3-line text-2xl"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-black text-gray-900">{{ totalItems }}</p>
+              <p class="text-xs font-bold uppercase tracking-wider text-gray-500">
+                Total guidelines
+              </p>
+            </div>
+          </div>
+        </article>
+        <article
+          class="rounded-2xl border border-gray-200 bg-white p-5
+          shadow-xl shadow-black/10"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-2xl
+              bg-blue-50 text-blue-700"
+            >
+              <i class="ri-pages-line text-2xl"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-black text-gray-900">
+                {{ totalPages || 0 }}
+              </p>
+              <p class="text-xs font-bold uppercase tracking-wider text-gray-500">
+                Content pages
+              </p>
+            </div>
+          </div>
+        </article>
+        <article
+          class="rounded-2xl border border-gray-200 bg-white p-5
+          shadow-xl shadow-black/10"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-2xl"
+              :class="hasActiveGuideline
+                ? 'bg-emerald-50 text-emerald-700'
+                : 'bg-amber-50 text-amber-700'"
+            >
+              <i
+                class="text-2xl"
+                :class="hasActiveGuideline
+                  ? 'ri-checkbox-circle-line'
+                  : 'ri-alert-line'"
+              ></i>
+            </div>
+            <div>
+              <p class="text-lg font-black text-gray-900">
+                {{ hasActiveGuideline ? 'Published' : 'Needs review' }}
+              </p>
+              <p class="text-xs font-bold uppercase tracking-wider text-gray-500">
+                Current page status
+              </p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section
+        v-if="totalPages > 0"
+        class="mb-6 flex flex-col gap-4 rounded-2xl border border-gray-200
+        bg-white px-5 py-4 shadow-xl shadow-black/10 sm:flex-row
+        sm:items-center sm:justify-between"
+        data-aos="fade-up"
       >
-          Edit Content
-        </h3>
-        <hr class="my-3  lg:w-[918px]"/>
-        <div class="grid grid-cols-1">
-          <div class="col-span-1">
-            <label for="headline" class="mb-1 block">
-              Content:
-            </label>
-            <Tiptap
-            id="content"
-            v-model="contentData.content"
-            />
+        <div class="flex items-center gap-3 text-sm text-gray-600">
+          <div
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl
+            bg-green-50 text-green-700"
+          >
+            <i class="ri-information-line text-lg"></i>
+          </div>
+          <span>
+            Showing <strong class="text-gray-900">{{ from }}</strong>–
+            <strong class="text-gray-900">{{ to }}</strong> of
+            <strong class="text-gray-900">{{ totalItems }}</strong> guidelines
+          </span>
+        </div>
+        <BasePagination
+          :active-page="page"
+          :total-pages="totalPages"
+          @change="setPage"
+        />
+      </section>
+
+      <section v-if="isLoading" class="space-y-4" aria-label="Loading guidelines">
+        <div
+          v-for="placeholder in 3"
+          :key="placeholder"
+          class="animate-pulse rounded-3xl border border-white/10 bg-white/10 p-6"
+        >
+          <div class="mb-5 h-6 w-40 rounded bg-white/20"></div>
+          <div class="space-y-3">
+            <div class="h-3 w-full rounded bg-white/10"></div>
+            <div class="h-3 w-5/6 rounded bg-white/10"></div>
           </div>
         </div>
-        <hr class="my-3  lg:w-[918px]"/>
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-700
-              lg:mx-4 lg:w-48
-            "
-            :disabled="!valid"
-            @click="validate('Edit')"
-          >
-            OK
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-[#B1271B]
-              lg:mx-4 lg:w-48
-            "
-            @click="closeEditContentDialog"
-          >
-            Cancel
-          </button>
+      </section>
+
+      <section v-else-if="ContentList.length" class="space-y-5">
+        <article
+          v-for="(content, index) in ContentList"
+          :key="content.id"
+          class="group relative overflow-hidden rounded-3xl border bg-white
+          p-5 shadow-xl shadow-black/15 transition duration-300
+          hover:-translate-y-0.5 hover:shadow-2xl sm:p-7"
+          :class="content.isActive
+            ? 'border-green-300'
+            : 'border-gray-200 hover:border-green-200'"
+          data-aos="fade-up"
+          data-aos-offset="0"
+        >
+          <div
+            class="absolute inset-y-0 left-0 w-1.5 transition-all"
+            :class="content.isActive
+              ? 'bg-brand-green'
+              : 'bg-gray-200 group-hover:bg-green-300'"
+          ></div>
+          <div
+            class="absolute -right-10 -top-10 h-32 w-32 rounded-full
+            bg-green-50 transition group-hover:scale-125"
+          ></div>
+
+          <div class="relative">
+            <header
+              class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start
+              sm:justify-between"
+            >
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex h-12 w-12 shrink-0 items-center justify-center
+                  rounded-2xl font-black"
+                  :class="content.isActive
+                    ? 'bg-brand-green text-brand-black'
+                    : 'bg-gray-100 text-gray-600'"
+                >
+                  {{ (page - 1) * perPage + index + 1 }}
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="text-xl font-black text-gray-900">
+                      Conduct guideline
+                    </h2>
+                    <span
+                      v-if="content.isActive"
+                      class="inline-flex items-center gap-1.5 rounded-full
+                      bg-green-50 px-3 py-1 text-xs font-bold uppercase
+                      tracking-wide text-green-700"
+                    >
+                      <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
+                      Active
+                    </span>
+                    <span
+                      v-else
+                      class="rounded-full bg-gray-100 px-3 py-1 text-xs
+                      font-bold uppercase tracking-wide text-gray-500"
+                    >
+                      Draft
+                    </span>
+                  </div>
+                  <p class="mt-1 text-sm text-gray-500">
+                    Guideline ID #{{ content.id }}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                v-if="!content.isActive"
+                type="button"
+                class="inline-flex min-h-[42px] items-center justify-center
+                gap-2 rounded-xl border border-gray-300 bg-gray-50 px-4
+                text-sm font-bold text-gray-700 transition hover:border-green-300
+                hover:bg-green-50 hover:text-green-700 focus:outline-none
+                focus:ring-2 focus:ring-green-300"
+                @click="setActive(content.id)"
+              >
+                <i class="ri-checkbox-circle-line text-lg"></i>
+                Set as active
+              </button>
+              <button
+                v-else
+                type="button"
+                class="inline-flex min-h-[42px] items-center justify-center
+                gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4
+                text-sm font-bold text-amber-700 transition hover:bg-amber-100
+                focus:outline-none focus:ring-2 focus:ring-amber-300"
+                @click="deactivate(content.id)"
+              >
+                <i class="ri-pause-circle-line text-lg"></i>
+                Deactivate
+              </button>
+            </header>
+
+            <div
+              class="guideline-preview mb-6 rounded-2xl border border-gray-100
+              bg-gray-50 p-5 text-sm leading-7 text-gray-600 sm:p-6"
+              v-html="content.content"
+            ></div>
+
+            <footer
+              class="flex flex-col gap-3 border-t border-gray-100 pt-5
+              sm:flex-row sm:items-center sm:justify-between"
+            >
+              <p class="flex items-center gap-2 text-xs text-gray-400">
+                <i class="ri-shield-check-line text-base text-green-600"></i>
+                Keep this language clear, fair, and easy to understand.
+              </p>
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  class="inline-flex min-h-[42px] flex-1 items-center
+                  justify-center gap-2 rounded-xl border border-green-200
+                  bg-green-50 px-4 text-sm font-bold text-green-700 transition
+                  hover:bg-green-600 hover:text-white focus:outline-none
+                  focus:ring-2 focus:ring-green-300 sm:flex-none"
+                  @click="openEditContentDialog(content)"
+                >
+                  <i class="ri-edit-line text-lg"></i>
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex min-h-[42px] flex-1 items-center
+                  justify-center gap-2 rounded-xl border border-red-200
+                  bg-red-50 px-4 text-sm font-bold text-red-600 transition
+                  hover:bg-red-600 hover:text-white focus:outline-none
+                  focus:ring-2 focus:ring-red-300 sm:flex-none"
+                  @click="openDeleteContentDialog(content)"
+                >
+                  <i class="ri-delete-bin-line text-lg"></i>
+                  Delete
+                </button>
+              </div>
+            </footer>
+          </div>
+        </article>
+      </section>
+
+      <section
+        v-else
+        class="relative overflow-hidden rounded-3xl border border-dashed
+        border-green-300 bg-white p-8 text-center shadow-xl shadow-black/10
+        sm:p-14"
+      >
+        <div class="absolute inset-x-0 top-0 h-1 bg-brand-green"></div>
+        <div
+          class="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl
+          bg-green-50 text-green-600"
+        >
+          <i class="ri-shield-star-line text-4xl"></i>
         </div>
-      </VForm>
-    </OModal>
+        <h2 class="mt-5 text-2xl font-black text-gray-900">
+          Start your code of conduct
+        </h2>
+        <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
+          Add your first guideline to communicate the standards that help
+          everyone feel safe, respected, and welcome.
+        </p>
+        <button
+          type="button"
+          class="mt-6 inline-flex min-h-[48px] items-center justify-center
+          gap-2 rounded-xl bg-green-600 px-6 font-bold text-white transition
+          hover:-translate-y-0.5 hover:bg-green-700 focus:outline-none
+          focus:ring-2 focus:ring-brand-green"
+          @click="openAddContentDialog"
+        >
+          <span class="text-gray-50">
+            <i class="ri-add-circle-line text-xl"></i>
+            Create first guideline
+          </span>
+        </button>
+      </section>
+    </main>
+
     <OModal
-    :active="showDeleteContentModal"
-    @close="closeDeleteContentDialog"
+      :active="showAddContentModal || showEditContentModal"
+      :width="960"
+      @close="closeEditorDialog"
     >
-     <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-       <h3
-     class="
-     mb-3
-     font-bold"
-     >
-         Delete Content
-       </h3>
-       <hr class="my-3  lg:w-[918px]"/>
-       <div class="grid grid-cols-1">
-         <div class="col-span-1">
-           <label for="headline" class="mb-1 block">
-            <span>Are you sure you want to delete this guideline</span>
-           </label>
-         </div>
-       </div>
-       <hr class="my-3  lg:w-[918px]"/>
-       <div class="block lg:flex lg:flex-auto lg:justify-end">
-         <button
-           type="button"
-           class="
-             my-2
-             inline-block
-             w-full
-             border border-transparent
-             bg-brand-green
-             py-3
-             px-5
-             text-center
-             font-bold
-             text-white
-             hover:bg-green-700
-             lg:mx-4 lg:w-48
-           "
-           @click="DeleteContent"
-         >
-           OK
-         </button>
-         <button
-           type="button"
-           class="
-             my-2
-             inline-block
-             w-full
-             border border-transparent
-             bg-brand-red
-             py-3
-             px-5
-             text-center
-             font-bold
-             text-white
-             hover:bg-[#B1271B]
-             lg:mx-4 lg:w-48
-           "
-           @click="closeDeleteContentDialog"
-           >
-           Cancel
-         </button>
-       </div>
-     </div>
-   </OModal>
-    </div>
+      <div
+        class="mx-auto flex w-full max-w-4xl flex-col overflow-hidden
+        rounded-3xl bg-white shadow-2xl"
+        style="max-height: 90vh"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="guideline-editor-title"
+      >
+        <header
+          class="relative shrink-0 overflow-hidden bg-gradient-to-br
+          from-brand-grey-2 via-brand-black to-green-900 p-5 text-white sm:p-7"
+        >
+          <div
+            class="absolute -right-12 -top-16 h-44 w-44 rounded-full
+            border-[28px] border-brand-green/10"
+          ></div>
+          <div class="relative flex items-start justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <div
+                class="flex h-12 w-12 shrink-0 items-center justify-center
+                rounded-2xl bg-brand-green text-brand-black"
+              >
+                <i
+                  class="text-2xl"
+                  :class="showEditContentModal
+                    ? 'ri-edit-2-line'
+                    : 'ri-file-add-line'"
+                ></i>
+              </div>
+              <div>
+                <p
+                  class="mb-1 text-xs font-bold uppercase tracking-widest
+                  text-green-300"
+                >
+                  Conduct editor
+                </p>
+                <h2 id="guideline-editor-title" class="text-2xl font-black">
+                  {{ showEditContentModal ? 'Refine guideline' : 'Add a guideline' }}
+                </h2>
+                <p class="mt-2 max-w-xl text-sm leading-6 text-gray-300">
+                  {{ showEditContentModal
+                    ? 'Improve the message while keeping expectations clear and constructive.'
+                    : 'Write a clear standard that members can understand and follow.' }}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="flex h-10 w-10 shrink-0 items-center justify-center
+              rounded-full bg-white/10 text-white transition hover:rotate-90
+              hover:bg-white/20 focus:outline-none focus:ring-2
+              focus:ring-brand-green"
+              aria-label="Close guideline editor"
+              @click="closeEditorDialog"
+            >
+              <i class="ri-close-line text-2xl"></i>
+            </button>
+          </div>
+        </header>
+
+        <VForm
+          ref="form"
+          v-model="valid"
+          lazy-validation
+          class="flex min-h-0 flex-1 flex-col bg-gray-50"
+        >
+          <div class="min-h-0 flex-1 overflow-y-auto p-5 sm:p-7">
+            <section
+              class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+            >
+              <div class="mb-4 flex items-start gap-3">
+                <div
+                  class="flex h-10 w-10 shrink-0 items-center justify-center
+                  rounded-xl bg-green-50 text-green-700"
+                >
+                  <i class="ri-quill-pen-line text-xl"></i>
+                </div>
+                <div>
+                  <label for="content" class="font-bold text-gray-900">
+                    Guideline content <span class="text-red-500">*</span>
+                  </label>
+                  <p class="mt-1 text-sm text-gray-500">
+                    Use short paragraphs and direct language for better readability.
+                  </p>
+                </div>
+              </div>
+              <div
+                class="guideline-editor overflow-hidden rounded-2xl border-2
+                border-gray-200 transition focus-within:border-brand-green
+                focus-within:ring-4 focus-within:ring-green-100"
+              >
+                <Tiptap
+                  id="content"
+                  v-model="contentData.content"
+                />
+              </div>
+            </section>
+
+            <div
+              class="mt-4 flex items-start gap-3 rounded-2xl border
+              border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-800"
+            >
+              <i class="ri-lightbulb-line mt-0.5 text-xl text-blue-600"></i>
+              <p>
+                Focus on positive expectations, specific actions, and language
+                that applies consistently to every member of the community.
+              </p>
+            </div>
+          </div>
+
+          <footer
+            class="flex shrink-0 flex-col-reverse gap-3 border-t
+            border-gray-200 bg-white px-5 py-4 sm:flex-row
+            sm:justify-end sm:px-7"
+          >
+            <button
+              type="button"
+              class="inline-flex min-h-[48px] items-center justify-center gap-2
+              rounded-xl border border-gray-300 bg-white px-6 font-bold
+              text-gray-700 transition hover:bg-gray-50 focus:outline-none
+              focus:ring-2 focus:ring-gray-300"
+              @click="closeEditorDialog"
+            >
+              <i class="ri-close-line text-lg"></i>
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="inline-flex min-h-[48px] items-center justify-center gap-2
+              rounded-xl bg-brand-green px-7 font-black text-brand-black
+              shadow-lg shadow-green-200 transition hover:-translate-y-0.5
+              hover:bg-green-500 focus:outline-none focus:ring-2
+              focus:ring-brand-green disabled:cursor-not-allowed
+              disabled:opacity-50"
+              :disabled="!valid"
+              @click="validate(showEditContentModal ? 'Edit' : 'Add')"
+            >
+              <i
+                class="text-lg"
+                :class="showEditContentModal
+                  ? 'ri-save-3-line'
+                  : 'ri-add-circle-line'"
+              ></i>
+              {{ showEditContentModal ? 'Save changes' : 'Add guideline' }}
+            </button>
+          </footer>
+        </VForm>
+      </div>
+    </OModal>
+
+    <OModal
+      :active="showDeleteContentModal"
+      :width="520"
+      @close="closeDeleteContentDialog"
+    >
+      <div
+        class="mx-auto w-full max-w-lg overflow-hidden rounded-3xl
+        bg-white shadow-2xl"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="delete-guideline-title"
+      >
+        <header
+          class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-5 text-white"
+        >
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div
+                class="flex h-11 w-11 items-center justify-center rounded-2xl
+                bg-white/15"
+              >
+                <i class="ri-delete-bin-6-line text-2xl"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-red-100">
+                  Permanent action
+                </p>
+                <h2 id="delete-guideline-title" class="text-xl font-black">
+                  Delete guideline?
+                </h2>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="flex h-9 w-9 items-center justify-center rounded-full
+              bg-white/10 transition hover:bg-white/20 focus:outline-none
+              focus:ring-2 focus:ring-white"
+              aria-label="Close delete guideline dialog"
+              @click="closeDeleteContentDialog"
+            >
+              <i class="ri-close-line text-xl"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="px-6 py-7 text-center">
+          <div
+            class="mx-auto flex h-20 w-20 items-center justify-center
+            rounded-full bg-red-50 text-red-600"
+          >
+            <i class="ri-error-warning-line text-4xl"></i>
+          </div>
+          <h3 class="mt-5 text-xl font-black text-gray-900">
+            This cannot be undone
+          </h3>
+          <p class="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">
+            The guideline will be permanently removed. If it is active,
+            it may also disappear from the public code of conduct immediately.
+          </p>
+          <div
+            class="mt-5 rounded-2xl border border-red-100 bg-red-50 px-4 py-3
+            text-left text-sm font-semibold text-red-800"
+          >
+            <i class="ri-file-warning-line mr-2"></i>
+            Guideline ID #{{ contentData.id || '—' }}
+          </div>
+        </div>
+
+        <footer
+          class="flex flex-col-reverse gap-3 border-t border-gray-200
+          bg-gray-50 px-6 py-4 sm:flex-row sm:justify-end"
+        >
+          <button
+            type="button"
+            class="inline-flex min-h-[46px] items-center justify-center gap-2
+            rounded-xl border border-gray-300 bg-white px-5 font-bold
+            text-gray-700 transition hover:bg-gray-100 focus:outline-none
+            focus:ring-2 focus:ring-gray-300"
+            @click="closeDeleteContentDialog"
+          >
+            Keep guideline
+          </button>
+          <button
+            type="button"
+            class="inline-flex min-h-[46px] items-center justify-center gap-2
+            rounded-xl bg-red-600 px-5 font-bold text-white shadow-lg
+            shadow-red-200 transition hover:-translate-y-0.5 hover:bg-red-700
+            focus:outline-none focus:ring-2 focus:ring-red-400"
+            @click="DeleteContent"
+          >
+            <i class="ri-delete-bin-line text-lg"></i>
+            Delete permanently
+          </button>
+        </footer>
+      </div>
+    </OModal>
+  </div>
 </template>
 
 <script>
 import Tiptap from '~/components/Wysiwyg/Tiptap'
-import ActiveChip from '~/components/chips/ActiveChip';
+
 export default {
   components: {
     Tiptap,
-    ActiveChip
   },
   data() {
     return {
       valid: true,
+      isLoading: true,
       showAddContentModal: false,
       showEditContentModal: false,
       showDeleteContentModal: false,
@@ -442,6 +648,11 @@ export default {
       ],
     };
   },
+  computed: {
+    hasActiveGuideline() {
+      return this.ContentList.some(content => content.isActive)
+    },
+  },
   watch: {
     totalPages() {
       if (this.page > this.totalPages) {
@@ -457,6 +668,11 @@ export default {
   },
   methods: {
     validate(type) {
+      const plainContent = (this.contentData.content || '')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .trim()
+
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
           duration: 5000,
@@ -466,7 +682,7 @@ export default {
           queue: true,
         });
         return false;
-      } else if (this.contentData.content === '<p></p>') {
+      } else if (!plainContent) {
         this.$oruga.notification.open({
           duration: 5000,
           message: 'Fill out Guideline Content',
@@ -485,29 +701,38 @@ export default {
         return false;
       }
     },
-    setPage() {
-      this.retrieveGuidelines();
+    setPage(newPage) {
+      if (newPage !== this.page) {
+        this.page = newPage
+      }
     },
-    openAddContentDialog(a) {
+    openAddContentDialog() {
+      this.reset()
       this.showAddContentModal = true
     },
     openEditContentDialog(data) {
-      this.contentData = data
+      this.contentData = { ...data }
       this.showEditContentModal = true
     },
     openDeleteContentDialog(data) {
-      this.contentData = data
+      this.contentData = { ...data }
       this.showDeleteContentModal = true
     },
-    closeAddContentDialog(a) {
+    closeAddContentDialog() {
+      this.reset()
       this.showAddContentModal = false
     },
-    closeEditContentDialog(data) {
-      this.contentData = ({})
+    closeEditContentDialog() {
+      this.reset()
       this.showEditContentModal = false
     },
-    closeDeleteContentDialog(data) {
-      this.contentData = ({})
+    closeEditorDialog() {
+      this.reset()
+      this.showAddContentModal = false
+      this.showEditContentModal = false
+    },
+    closeDeleteContentDialog() {
+      this.reset()
       this.showDeleteContentModal = false
     },
     setActive(id) {
@@ -647,11 +872,12 @@ export default {
       this.contentData = { content: '<p></p>' }
     },
     retrieveGuidelines() {
+      this.isLoading = true
       const query = {
         q: this.query,
         page: this.page,
         type: 'Code_of_conduct',
-        maxContentPerPage: 10,
+        maxContentPerPage: this.perPage,
       };
 
       Object.keys(query).forEach((key) => {
@@ -671,43 +897,57 @@ export default {
           this.from = response.data.from;
           this.to = response.data.to;
         })
+        .catch((err) => {
+          this.$oruga.notification.open({
+            duration: 5000,
+            message: err.message || 'Unable to load code of conduct guidelines',
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          });
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
     },
   }
 };
 </script>
 
 <style scoped>
-.croppa-container {
-  background-color: #abb8c3;
-  border: 3px solid #1C1B1C;
-}
-.o-inputit__item--danger {
-  background-color: #e73538 !important;
+.guideline-preview {
+  max-height: 12rem;
+  overflow: hidden;
+  position: relative;
 }
 
-.part-item__actions [class^="ri-"] {
-  padding-right: 0.25rem;
+.guideline-preview::after {
+  background: linear-gradient(transparent, rgb(249 250 251));
+  bottom: 0;
+  content: '';
+  height: 2.5rem;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
 }
 
-::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
-> .v-input__control > .v-input__slot {
-box-shadow: none;
-border: 1px rgb(243 244 246 / var(--tw-border-opacity));
-background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-padding: 0.5rem 0.75rem;
-width: 100%;
-appearance: none;
-border-radius: 0;
-transition: border-color 0.3s;
+.guideline-preview ::v-deep p:last-child {
+  margin-bottom: 0;
 }
 
-::v-deep .v-text-field input::placeholder {
-font-size: 1rem !important;
-font-family: inherit !important;
-color: rgb(104, 104, 104) !important;
+.guideline-preview ::v-deep ul,
+.guideline-preview ::v-deep ol {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
 }
 
-.custom-btn {
-  height: 50px !important;
+.guideline-editor ::v-deep .ProseMirror {
+  min-height: 17rem;
+  padding: 0.5rem;
+}
+
+.guideline-editor ::v-deep > div {
+  border: 0;
 }
 </style>
