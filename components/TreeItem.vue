@@ -1,3 +1,4 @@
+<!-- eslint-disable max-len -->
 <template>
   <li v-show="!isPendingDeletion" class="group text-white">
     <div
@@ -28,6 +29,7 @@
           @click.stop="selected = !selected"
         >
       </span>
+
       <template v-if="isFolder">
         <span
           :class="`
@@ -42,6 +44,7 @@
           <i class="ri-arrow-right-s-fill"></i>
         </span>
       </template>
+
       <template v-else>
         <span
           class="
@@ -63,74 +66,72 @@
         {{ item.name }}
       </span>
 
-      <span>
-        <VEditDialog
-          @save="createDialogSave"
-          @cancel="createDialogCancel"
-          @open="createDialogOpen"
+      <VEditDialog
+        @save="createDialogSave"
+        @cancel="createDialogCancel"
+        @open="createDialogOpen"
+      >
+        <button
+          type="button"
+          class="
+            flex
+            h-6 w-4
+            flex-wrap
+            items-center
+            justify-center
+            rounded
+            text-sm
+            hover:bg-gray-100
+            sm:w-6
+          "
         >
-          <button
-            type="button"
-            class="
-              flex
-              h-6 w-4
-              flex-wrap
-              items-center
-              justify-center
-              rounded
-              text-sm
-              hover:bg-gray-100
-              sm:w-6
-            "
-          >
-            <i class="ri-add-fill"></i>
-          </button>
-          <template #input>
-            <VTextField
-              v-model="editableText"
-              :rules="[max14chars]"
-              label="Edit"
-              single-line
-              counter="14"
-              maxlength="14"
-            ></VTextField>
-          </template>
-        </VEditDialog>
-      </span>
-      <span>
-        <VEditDialog
-          @save="editDialogSave"
-          @cancel="editDialogCancel"
-          @open="editDialogOpen"
+          <i class="ri-add-fill"></i>
+        </button>
+        <template #input>
+          <VTextField
+            v-model="editableText"
+            :rules="[max14chars]"
+            label="Edit"
+            single-line
+            counter="14"
+            maxlength="14"
+          ></VTextField>
+        </template>
+      </VEditDialog>
+
+      <VEditDialog
+        @save="editDialogSave"
+        @cancel="editDialogCancel"
+        @open="editDialogOpen"
+      >
+        <button
+          type="button"
+          class="
+            flex
+            h-6 w-4
+            flex-wrap
+            items-center
+            justify-center
+            rounded
+            text-sm
+            hover:bg-gray-100
+            sm:w-6
+          "
         >
-          <button
-            type="button"
-            class="
-              flex
-              h-6 w-4
-              flex-wrap
-              items-center
-              justify-center
-              rounded
-              text-sm
-              hover:bg-gray-100
-              sm:w-6
-            "
-          >
-            <i class="ri-pencil-line"></i>
-          </button>
-          <template #input>
-            <VTextField
-              v-model="editableText"
-              :rules="[max14chars]"
-              label="Edit"
-              single-line
-              counter="14"
-              maxlength="14"
-            ></VTextField>
-          </template>
-        </VEditDialog>
-      </span>
+          <i class="ri-pencil-line"></i>
+        </button>
+        <template #input>
+          <VTextField
+            v-model="editableText"
+            :rules="[max14chars]"
+            label="Edit"
+            single-line
+            counter="14"
+            maxlength="14"
+          ></VTextField>
+        </template>
+      </VEditDialog>
+
       <button
         type="button"
         class="
@@ -160,58 +161,153 @@
       ></TreeItem>
     </ul>
 
-    <div>
-      <OModal :active="deleteDialog" @close="closeDeleteDialog">
-        <div class="w-full rounded bg-white sm:w-[440px]">
-          <div class="p-4 text-brand-black">
-            <div class="text-lg leading-tight">
-              Are you sure you want to delete
-              <span class="font-bold text-brand-black">{{ item.name }}</span>
-              category along with all its subcategories?
+    <OModal
+      :active="deleteDialog"
+      :width="'520px'"
+      class="category-delete-modal"
+      @close="closeDeleteDialog"
+    >
+      <div
+        class="delete-dialog w-full overflow-hidden rounded-3xl bg-white"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="delete-category-title"
+        aria-describedby="delete-category-description"
+        :aria-busy="isDeleting ? 'true' : 'false'"
+      >
+        <div class="relative overflow-hidden px-6 pb-6 pt-8 text-center sm:px-8">
+          <div
+            class="absolute -right-12 -top-14 h-36 w-36 rounded-full
+            border-[24px] border-red-50"
+          ></div>
+          <div
+            class="absolute -bottom-16 -left-12 h-36 w-36 rounded-full
+            bg-red-50 blur-2xl"
+          ></div>
+
+          <button
+            type="button"
+            class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center
+            justify-center rounded-full text-gray-400 transition
+            hover:rotate-90 hover:bg-gray-100 hover:text-gray-700
+            focus:outline-none focus:ring-2 focus:ring-gray-300
+            disabled:cursor-not-allowed disabled:opacity-40"
+            :disabled="isDeleting"
+            aria-label="Close delete category dialog"
+            @click="closeDeleteDialog"
+          >
+            <i class="ri-close-line text-2xl"></i>
+          </button>
+
+          <div class="relative mx-auto mb-5 h-20 w-20">
+            <div
+              class="absolute inset-0 animate-pulse rounded-3xl
+              bg-red-100"
+            ></div>
+            <div
+              class="relative flex h-20 w-20 rotate-3 items-center
+              justify-center rounded-3xl border-8 border-red-50 bg-red-100
+              text-red-600 shadow-lg shadow-red-100"
+            >
+              <i class="ri-delete-bin-6-line -rotate-3 text-3xl"></i>
             </div>
           </div>
-          <hr>
+
           <div
-            class="
-              flex items-center
-              justify-end
-              gap-2
-              px-4
-              pt-2
-            "
+            class="mb-3 inline-flex items-center gap-2 rounded-full
+            bg-red-50 px-3 py-1 text-xs font-bold uppercase
+            tracking-widest text-red-600"
           >
-            <button
-              type="button"
-              class="
-                rounded
-                px-2
-                py-1
-                text-brand-black
-                hover:bg-gray-500
-                hover:text-white
-              "
-              @click="closeDeleteDialog"
+            <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+            Permanent action
+          </div>
+
+          <h2
+            id="delete-category-title"
+            class="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl"
+          >
+            Delete this category?
+          </h2>
+          <p
+            id="delete-category-description"
+            class="mx-auto mt-3 max-w-sm text-sm leading-6 text-gray-500"
+          >
+            You are about to permanently remove
+            <strong class="font-bold text-gray-900">“{{ item.name }}”</strong>
+            from your category tree.
+          </p>
+
+          <div
+            class="relative mt-6 flex items-start gap-3 rounded-2xl
+            border border-red-100 bg-red-50/70 p-4 text-left"
+          >
+            <div
+              class="flex h-9 w-9 shrink-0 items-center justify-center
+              rounded-xl bg-white text-red-600 shadow-sm"
             >
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="
-                rounded
-                px-2
-                py-1
-                text-brand-black
-                hover:bg-brand-black
-                hover:text-white
-              "
-              @click="deleteCategory"
-            >
-              Delete
-            </button>
+              <i class="ri-alert-line text-xl"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-red-900">
+                What will happen?
+              </p>
+              <p class="mt-1 text-xs leading-5 text-red-700">
+                <template v-if="descendantCount">
+                  {{ descendantCount }}
+                  nested
+                  {{ descendantCount === 1 ? 'subcategory' : 'subcategories' }}
+                  will also be deleted.
+                </template>
+                <template v-else>
+                  This category will be removed from the current hierarchy.
+                </template>
+                This cannot be undone.
+              </p>
+            </div>
           </div>
         </div>
-      </OModal>
-    </div>
+
+        <div
+          class="flex flex-col-reverse gap-3 border-t border-gray-200
+          bg-gray-50 px-6 py-5 sm:flex-row sm:px-8"
+        >
+          <button
+            type="button"
+            class="inline-flex min-h-[50px] flex-1 items-center justify-center
+            gap-2 rounded-xl border border-gray-500 bg-gray-500 px-5
+            font-semibold text-gray-700 transition hover:border-gray-600
+            hover:bg-gray-600 focus:outline-none focus:ring-2
+            focus:ring-gray-600 disabled:cursor-not-allowed
+            disabled:opacity-50"
+            :disabled="isDeleting"
+            @click="closeDeleteDialog"
+          >
+            <i class="ri-arrow-go-back-line text-lg"></i>
+            Keep category
+          </button>
+          <button
+            type="button"
+            class="inline-flex min-h-[50px] flex-1 items-center justify-center
+            gap-2 rounded-xl bg-red-600 px-5 font-bold text-white
+            shadow-lg shadow-red-200 transition hover:-translate-y-0.5
+            hover:bg-red-700 hover:shadow-xl focus:outline-none focus:ring-2
+            focus:ring-red-500 focus:ring-offset-2
+            disabled:cursor-wait disabled:opacity-70 disabled:shadow-none"
+            :disabled="isDeleting"
+            @click="deleteCategory"
+          >
+            <i
+              :class="isDeleting
+                ? 'ri-loader-4-line animate-spin'
+                : 'ri-delete-bin-line'"
+              class="text-lg"
+            ></i>
+            {{ isDeleting ? 'Deleting…' : 'Delete category' }}
+          </button>
+        </div>
+      </div>
+    </OModal>
+
   </li>
 </template>
 
@@ -219,6 +315,11 @@
 import 'remixicon/fonts/remixicon.css';
 import rules from '../mixins/treeitem/rules';
 import categoryList from '~/mixins/shop/categories'
+
+const countDescendants = (children) => children.reduce(
+  (total, child) => total + 1 + countDescendants(child.children || []),
+  0
+);
 
 export default {
   name: 'TreeItem', // necessary for self-reference
@@ -239,6 +340,7 @@ export default {
       deleteDialog: false,
       isSelected: false,
       isPendingDeletion: false,
+      isDeleting: false,
     };
   },
   computed: {
@@ -257,6 +359,9 @@ export default {
     },
     isFolder() {
       return this.item.children && this.item.children.length > 0;
+    },
+    descendantCount() {
+      return countDescendants(this.item.children || []);
     },
     folderStateClass() {
       return this.isOpen ? 'rotate-90' : ''
@@ -314,14 +419,16 @@ export default {
       this.editableText = ''
     },
     deleteCategory() {
-      this.isPendingDeletion = true
+      if (this.isDeleting) {
+        return;
+      }
+
+      this.isDeleting = true
       this.$axios
         .$delete(`/v1/categories/${this.item.id}`)
         .then((response) => {
-          this.retrieveCategories()
-            .then(() => {
-              this.closeDeleteDialog()
-            })
+          this.isPendingDeletion = true
+          return this.retrieveCategories()
         })
         .catch(() => {
           this.isPendingDeletion = false
@@ -334,11 +441,20 @@ export default {
             queue: true,
           });
         })
+        .finally(() => {
+          this.isDeleting = false
+          if (this.isPendingDeletion) {
+            this.closeDeleteDialog()
+          }
+        })
     },
     openDeleteDialog() {
       this.deleteDialog = true
     },
     closeDeleteDialog() {
+      if (this.isDeleting) {
+        return;
+      }
       this.deleteDialog = false
     },
   },
@@ -376,5 +492,47 @@ input[type="checkbox"]::after {
 /* Show checkmark when checkbox is checked */
 input[type="checkbox"]:checked::after {
   visibility: visible;
+}
+
+.category-delete-modal ::v-deep .o-modal__overlay {
+  background:
+    radial-gradient(circle at 50% 20%, rgb(239 68 68 / 10%), transparent 32%),
+    rgb(5 5 5 / 78%);
+  backdrop-filter: blur(5px);
+}
+
+.category-delete-modal ::v-deep .o-modal__content {
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: transparent;
+  box-shadow: 0 30px 80px rgb(0 0 0 / 40%);
+}
+
+.category-delete-modal ::v-deep .o-modal__close {
+  display: none;
+}
+
+.delete-dialog {
+  animation: delete-dialog-enter 0.28s ease-out;
+}
+
+@keyframes delete-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .category-delete-modal ::v-deep .o-modal__content {
+    max-height: calc(100vh - 1rem);
+    margin: 0.5rem;
+    border-radius: 1.25rem;
+  }
 }
 </style>

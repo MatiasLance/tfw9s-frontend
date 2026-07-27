@@ -182,9 +182,11 @@
                           flex items-center justify-center gap-3 
                           group/btn shadow-lg hover:shadow-xl"
                   >
-                    <span>Read Full Story</span>
-                    <i class="ri-arrow-right-line transition-transform 
+                    <span class="text-gray-50">
+                      Read Full Story
+                      <i class="ri-arrow-right-line transition-transform 
                               duration-300 group-hover/btn:translate-x-1"></i>
+                    </span>
                   </button>
                 </NuxtLink>
               </div>

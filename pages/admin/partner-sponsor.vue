@@ -20,26 +20,18 @@
               <div class="flex flex-wrap justify-start gap-2">
                 <button
                   type="button"
-                  class="
-                    group
-                    flex w-full items-center justify-center
-                    rounded-lg
-                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
-                    p-2.5
-                    font-semibold text-white
-                    transition-transform duration-200
-                    hover:scale-[1.02]
-                    sm:w-60
-                    shadow-md hover:shadow-lg"
+                  class="bg-green-600 hover:bg-green-700 font-bold 
+                      py-3 px-6 rounded-xl transition-all duration-300 
+                      flex items-center gap-2 w-full sm:w-auto justify-center"
                   @click="addPartnerSponsor"
                 >
-                  <i
-                  class="
-                  ri-add-line mr-2
-                  text-lg transition-transform
-                  group-hover:rotate-90"
-                  ></i>
-                  <span>Add Partner Sponsor</span>
+                  <span class="text-gray-50">
+                    <i class="ri-add-line mr-2
+                    text-lg transition-transform
+                    group-hover:rotate-90"
+                    ></i>
+                    Add Partner Sponsor
+                  </span>
                 </button>
               </div>
 
@@ -167,16 +159,18 @@
                   class="
                     inline-flex items-center gap-2
                     px-3 py-2 rounded-md
-                    bg-green-100 text-brand-green
-                    hover:bg-green-200
-                    active:bg-green-300
+                    bg-green-600 text-brand-green
+                    hover:bg-green-700
+                    active:bg-green-700
                     transition-colors
                     text-sm font-medium
                   "
                   @click="editSponsor(sponsor.id)"
                 >
-                  <i class="ri-edit-line"></i>
-                  <span>Edit</span>
+                  <span class="text-gray-50">
+                    <i class="ri-edit-line"></i>
+                    Edit
+                  </span>
                 </button>
 
                 <button
@@ -184,15 +178,15 @@
                   class="
                     inline-flex items-center gap-2
                     px-3 py-2 rounded-md
-                    bg-red-100 text-brand-red
-                    hover:bg-red-200
-                    active:bg-red-300
+                    bg-red-600 text-brand-red
+                    hover:bg-red-700
+                    active:bg-red-700
                     transition-colors
                     text-sm font-medium
                   "
                   @click="removeSponsor(sponsor.id)"
                 >
-                  <span class="text-white">
+                  <span class="text-gray-50">
                     <i class="ri-delete-bin-5-line"></i>
                     Remove
                   </span>
@@ -202,322 +196,471 @@
           </article>
         </div>
       </div>
-       <!-- showAdd modal component -->
-       <OModal
-       :active="showAddSponsorsModal"
-       @close="showAddSponsorsModal = false"
-       >
-        <VForm
-        ref="form" v-model="valid" lazy-validation
-        class="p-2 md:p-4"
-        >
-          <h3
-        class="
-        mb-3
-        font-bold"
-        >
-            Add Partner Sponsor
-          </h3>
-          <hr class="my-3">
-          <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <div class="col-span-1 md:col-span-2">
-              <label for="sponsorname" class="mb-1 block">
-                Company Name:
-              </label>
-              <VTextField
-              id="name"
-              v-model="sponsor.company_name"
-              label="Enter Company Name"
-              :rules="rules"
-              type="text"
-              solo
-              />
-            </div>
-            <div class="col-span-1 md:col-span-2">
-              <label for="sponsorname" class="mb-1 block">
-                Hyperlink:
-              </label>
-              <VTextField
-              id="name"
-              v-model="sponsor.link"
-              label="Enter Link"
-              :rules="rules"
-              type="url"
-              solo
-              />
-            </div>
-            <div class="col-span-1" hidden>
-              <label for="sponsorfirst" class="mb-1 block">
-                Firstname:
-              </label>
-              <VTextField
-                id="name"
-                v-model="sponsor.first_name"
-                label="Enter Firstname"
-                type="text"
-                solo
-              />
-            </div>
-            <div class="col-span-1" hidden>
-              <label for="sponsorlast" class="mb-1 block">
-                Lastname:
-              </label>
-              <VTextField
-              id="name"
-              v-model="sponsor.last_name"
-              label="Enter Lastname"
-              type="text"
-              solo
-              />
-            </div>
-            <div class="col-span-1 md:col-span-2" hidden>
-              <label for="sponsordescription" class="mb-1 block">
-                Description:
-              </label>
-              <Tiptap
-              id="content"
-              v-model="sponsor.description"
-              />
-            </div>
-            <div class="col-span-1 md:col-span-2">
-              <ImageUpload
-                @update-image="updateImage"
-              />
-            </div>
-          </div>
-          <hr class="my-3">
-          <div class="block lg:flex lg:flex-auto lg:justify-end">
-            <button
-              type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-green
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-green-700
-                lg:mx-4 lg:w-48
-              "
-              :disabled="!valid"
-              @click="validate('Add')"
-            >
-              OK
-            </button>
-            <button
-              type="button"
-              class="
-                my-2
-                inline-block
-                w-full
-                border border-transparent
-                bg-brand-red
-                py-3
-                px-5
-                text-center
-                font-bold
-                text-white
-                hover:bg-[#B1271B]
-                lg:mx-4 lg:w-48
-              "
-              @click="close"
-            >
-              Cancel
-            </button>
-          </div>
-        </VForm>
-      </OModal>
-      <!-- Show Edit News -->
+      <!-- Add sponsor modal -->
       <OModal
-      :active="showEditSponsorsModal"
-      @close="showEditSponsorsModal = false"
-    >
-      <VForm
-      ref="form" v-model="valid" lazy-validation
-      class="p-2 md:p-4"
+        :active="showAddSponsorsModal"
+        :width="'960px'"
+        class="partner-sponsor-modal"
+        @close="close"
       >
-        <h3 class="text-swd-red mb-3 font-bold">
-          Edit Partner Sponsor
-        </h3>
-        <hr class="my-3">
-        <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-          <div class="col-span-1 md:col-span-2">
-            <label for="sponsorname" class="mb-1 block">
-              Company Name:
-            </label>
-            <VTextField
-            id="name"
-            v-model="sponsor.company_name"
-            label="Enter Company Name"
-            :rules="rules"
-            type="text"
-            solo
-            />
-          </div>
-          <div class="col-span-1 md:col-span-2">
-            <label for="sponsorname" class="mb-1 block">
-              Hyperlink:
-            </label>
-            <VTextField
-              id="name"
-              v-model="sponsor.link"
-              label="Enter Link"
-              :rules="rules"
-              type="url"
-              solo
-            />
-          </div>
-          <div class="col-span-1" hidden>
-            <label for="sponsorfirst" class="mb-1 block">
-              Firstname:
-            </label>
-            <VTextField
-            id="name"
-            v-model="sponsor.first_name"
-            label="Enter Firstname"
-            :rules="rules"
-            type="text"
-            solo
-            />
-          </div>
-          <div class="col-span-1" hidden>
-            <label for="sponsorlast" class="mb-1 block">
-              Lastname:
-            </label>
-            <VTextField
-            id="name"
-            v-model="sponsor.last_name"
-            label="Enter Lastname"
-            :rules="rules"
-            type="text"
-            solo
-            />
-          </div>
-          <div class="col-span-1 md:col-span-2" hidden>
-            <label for="sponsordescription" class="mb-1 block">
-              Description:
-            </label>
-            <Tiptap
-            id="content"
-            v-model="sponsor.description"
-            />
-          </div>
-          <div class="col-span-1 md:col-span-2">
-            <ImageUploadEdit
-              :imglistedit="imgListEdit"
-              :imgurledit="imgUrlEdit"
-              @update-image-edit="updateImageEdit"
-              />
-          </div>
-        </div>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-end">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-800
-              lg:mx-4 lg:w-48
-            "
-            :disabled="!valid"
-            @click="validate('Edit')"
+        <div
+          class="sponsor-dialog w-full overflow-hidden rounded-2xl bg-white"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="add-sponsor-title"
+        >
+          <header
+            class="relative overflow-hidden bg-gradient-to-br
+            from-brand-black via-brand-grey-2 to-green-900 px-6 py-7
+            text-white sm:px-8"
           >
-            Confirm
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-            "
-            @click="closeEdit"
+            <div
+              class="absolute -right-12 -top-16 h-48 w-48 rounded-full
+              border-[28px] border-white/5"
+            ></div>
+            <div
+              class="absolute -bottom-16 right-32 h-32 w-32 rounded-full
+              bg-brand-green/10 blur-2xl"
+            ></div>
+            <div class="relative flex items-start justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex h-12 w-12 shrink-0 items-center justify-center
+                  rounded-2xl bg-brand-green text-brand-black shadow-lg
+                  shadow-green-950/30"
+                >
+                  <i class="ri-hand-heart-line text-2xl"></i>
+                </div>
+                <div>
+                  <div
+                    class="mb-2 inline-flex items-center gap-2 rounded-full
+                    bg-white/10 px-3 py-1 text-xs font-semibold uppercase
+                    tracking-wider text-green-100"
+                  >
+                    <span class="h-1.5 w-1.5 rounded-full bg-brand-green"></span>
+                    New partnership
+                  </div>
+                  <h2 id="add-sponsor-title" class="text-2xl font-bold sm:text-3xl">
+                    Add partner sponsor
+                  </h2>
+                  <p class="mt-2 max-w-xl text-sm leading-6 text-gray-300">
+                    Showcase a supporting organization with its logo and website.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="flex h-10 w-10 shrink-0 items-center justify-center
+                rounded-full bg-white/10 text-white transition
+                hover:rotate-90 hover:bg-white/20 focus:outline-none
+                focus:ring-2 focus:ring-brand-green"
+                aria-label="Close add sponsor dialog"
+                @click="close"
+              >
+                <i class="ri-close-line text-2xl"></i>
+              </button>
+            </div>
+          </header>
+
+          <VForm
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            class="bg-gray-50"
           >
-            Cancel
-          </button>
-        </div>
-      </VForm>
-    </OModal>
-    <!-- showRemoveProduct modal component -->
-    <OModal
-      :active="showRemoveSponsorsModal"
-      @close="showRemoveSponsorsModal = false"
-    >
-      <div class="w-full rounded bg-white p-2 sm:w-[890px] sm:p-4">
-        <h3 class="text-swd-red mb-3 font-bold">
-          Remove Sponsor {{ sponsor.company_name }}
-        </h3>
-        <hr class="my-3">
-        <p class="text-center text-lg font-semibold">
-          Are you sure you want to delete this ?
-        </p>
-        <hr class="my-3">
-        <div class="block lg:flex lg:flex-auto lg:justify-center">
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-green
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-green-800
-              lg:mx-4 lg:w-48
-              "
-            @click="remove(editingNo)"
+            <div class="space-y-6 p-5 sm:p-8">
+              <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    1
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-900">
+                      Sponsor details
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Add the public name and destination for this sponsor.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2">
+                  <div>
+                    <label
+                      for="add-sponsor-company"
+                      class="mb-2 block text-sm font-semibold text-gray-700"
+                    >
+                      Company name <span class="text-red-500">*</span>
+                    </label>
+                    <VTextField
+                      id="add-sponsor-company"
+                      v-model="sponsor.company_name"
+                      label="e.g. Acme Sports"
+                      prepend-inner-icon="ri-building-4-line"
+                      :rules="rules"
+                      type="text"
+                      solo
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="add-sponsor-link"
+                      class="mb-2 block text-sm font-semibold text-gray-700"
+                    >
+                      Website <span class="text-red-500">*</span>
+                    </label>
+                    <VTextField
+                      id="add-sponsor-link"
+                      v-model="sponsor.link"
+                      label="https://example.com"
+                      prepend-inner-icon="ri-links-line"
+                      :rules="rules"
+                      type="url"
+                      solo
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section class="sponsor-upload rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    2
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-900">
+                      Brand image
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Upload a clear, high-quality logo. PNG or WebP works best.
+                    </p>
+                  </div>
+                </div>
+                <ImageUpload @update-image="updateImage" />
+              </section>
+            </div>
+
+            <footer
+              class="flex flex-col-reverse gap-3 border-t border-gray-200
+              bg-white px-5 py-5 sm:flex-row sm:items-center sm:justify-between
+              sm:px-8"
             >
-            Yes, remove it
-          </button>
-          <button
-            type="button"
-            class="
-              my-2
-              inline-block
-              w-full
-              border border-transparent
-              bg-brand-red
-              py-3
-              px-5
-              text-center
-              font-bold
-              text-white
-              hover:bg-brand-dred
-              lg:mx-4 lg:w-48
-              "
-            @click="closeRemove"
-            >
-            No
-          </button>
+              <p class="text-center text-xs text-gray-500 sm:text-left">
+                <i class="ri-shield-check-line mr-1 text-green-600"></i>
+                You can update these details at any time.
+              </p>
+              <div class="flex flex-col-reverse gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  class="inline-flex min-h-[48px] items-center justify-center
+                  rounded-xl border border-gray-300 bg-white px-6 font-semibold
+                  text-gray-700 transition hover:bg-gray-50
+                  focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  @click="close"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex min-h-[48px] items-center justify-center
+                  gap-2 rounded-xl bg-brand-green px-7 font-bold
+                  text-brand-black shadow-lg shadow-green-200 transition
+                  hover:-translate-y-0.5 hover:bg-green-500 hover:shadow-xl
+                  focus:outline-none focus:ring-2 focus:ring-brand-green
+                  focus:ring-offset-2 disabled:cursor-not-allowed
+                  disabled:opacity-50 disabled:shadow-none"
+                  :disabled="!valid"
+                  @click="validate('Add')"
+                >
+                  <i class="ri-add-circle-line text-xl"></i>
+                  Add sponsor
+                </button>
+              </div>
+            </footer>
+          </VForm>
         </div>
-      </div>
-    </OModal>
+      </OModal>
+
+      <!-- Edit sponsor modal -->
+      <OModal
+        :active="showEditSponsorsModal"
+        :width="'960px'"
+        class="partner-sponsor-modal"
+        @close="closeEdit"
+      >
+        <div
+          class="sponsor-dialog w-full overflow-hidden rounded-2xl bg-white"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-sponsor-title"
+        >
+          <header
+            class="relative overflow-hidden bg-gradient-to-br
+            from-brand-black via-brand-grey-2 to-green-900 px-6 py-7
+            text-white sm:px-8"
+          >
+            <div
+              class="absolute -right-12 -top-16 h-48 w-48 rounded-full
+              border-[28px] border-white/5"
+            ></div>
+            <div class="relative flex items-start justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex h-12 w-12 shrink-0 items-center justify-center
+                  rounded-2xl bg-brand-green text-brand-black shadow-lg
+                  shadow-green-950/30"
+                >
+                  <i class="ri-edit-2-line text-2xl"></i>
+                </div>
+                <div>
+                  <div
+                    class="mb-2 inline-flex items-center gap-2 rounded-full
+                    bg-white/10 px-3 py-1 text-xs font-semibold uppercase
+                    tracking-wider text-green-100"
+                  >
+                    <span class="h-1.5 w-1.5 rounded-full bg-brand-green"></span>
+                    Sponsor profile
+                  </div>
+                  <h2 id="edit-sponsor-title" class="text-2xl font-bold sm:text-3xl">
+                    Edit partner sponsor
+                  </h2>
+                  <p class="mt-2 max-w-xl text-sm leading-6 text-gray-300">
+                    Keep the sponsor's public information and branding up to date.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="flex h-10 w-10 shrink-0 items-center justify-center
+                rounded-full bg-white/10 text-white transition
+                hover:rotate-90 hover:bg-white/20 focus:outline-none
+                focus:ring-2 focus:ring-brand-green"
+                aria-label="Close edit sponsor dialog"
+                @click="closeEdit"
+              >
+                <i class="ri-close-line text-2xl"></i>
+              </button>
+            </div>
+          </header>
+
+          <VForm
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            class="bg-gray-50"
+          >
+            <div class="space-y-6 p-5 sm:p-8">
+              <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="mb-5 flex items-start gap-3">
+                  <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center
+                    rounded-xl bg-green-50 font-bold text-green-700"
+                  >
+                    1
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-900">
+                      Sponsor details
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Review the company name and linked website.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2">
+                  <div>
+                    <label
+                      for="edit-sponsor-company"
+                      class="mb-2 block text-sm font-semibold text-gray-700"
+                    >
+                      Company name <span class="text-red-500">*</span>
+                    </label>
+                    <VTextField
+                      id="edit-sponsor-company"
+                      v-model="sponsor.company_name"
+                      label="e.g. Acme Sports"
+                      prepend-inner-icon="ri-building-4-line"
+                      :rules="rules"
+                      type="text"
+                      solo
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="edit-sponsor-link"
+                      class="mb-2 block text-sm font-semibold text-gray-700"
+                    >
+                      Website <span class="text-red-500">*</span>
+                    </label>
+                    <VTextField
+                      id="edit-sponsor-link"
+                      v-model="sponsor.link"
+                      label="https://example.com"
+                      prepend-inner-icon="ri-links-line"
+                      :rules="rules"
+                      type="url"
+                      solo
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section class="sponsor-upload rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <div class="px-5 pt-5">
+                  <div class="flex items-start gap-3">
+                    <div
+                      class="flex h-9 w-9 shrink-0 items-center justify-center
+                      rounded-xl bg-green-50 font-bold text-green-700"
+                    >
+                      2
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">
+                        Brand image
+                      </h3>
+                      <p class="mt-1 text-sm text-gray-500">
+                        Refine the existing logo or upload a replacement.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <ImageUploadEdit
+                  :imglistedit="imgListEdit"
+                  :imgurledit="imgUrlEdit"
+                  @update-image-edit="updateImageEdit"
+                />
+              </section>
+            </div>
+
+            <footer
+              class="flex flex-col-reverse gap-3 border-t border-gray-200
+              bg-white px-5 py-5 sm:flex-row sm:items-center sm:justify-between
+              sm:px-8"
+            >
+              <p class="text-center text-xs text-gray-500 sm:text-left">
+                <i class="ri-history-line mr-1 text-green-600"></i>
+                Changes will appear after saving.
+              </p>
+              <div class="flex flex-col-reverse gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  class="inline-flex min-h-[48px] items-center justify-center
+                  rounded-xl border border-gray-300 bg-white px-6 font-semibold
+                  text-gray-700 transition hover:bg-gray-50
+                  focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  @click="closeEdit"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex min-h-[48px] items-center justify-center
+                  gap-2 rounded-xl bg-brand-green px-7 font-bold
+                  text-brand-black shadow-lg shadow-green-200 transition
+                  hover:-translate-y-0.5 hover:bg-green-500 hover:shadow-xl
+                  focus:outline-none focus:ring-2 focus:ring-brand-green
+                  focus:ring-offset-2 disabled:cursor-not-allowed
+                  disabled:opacity-50 disabled:shadow-none"
+                  :disabled="!valid"
+                  @click="validate('Edit')"
+                >
+                  <i class="ri-save-3-line text-xl"></i>
+                  Save changes
+                </button>
+              </div>
+            </footer>
+          </VForm>
+        </div>
+      </OModal>
+
+      <!-- Remove sponsor modal -->
+      <OModal
+        :active="showRemoveSponsorsModal"
+        :width="'520px'"
+        class="partner-sponsor-modal partner-sponsor-delete-modal"
+        @close="closeRemove"
+      >
+        <div
+          class="sponsor-dialog w-full overflow-hidden rounded-2xl bg-white"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="remove-sponsor-title"
+          aria-describedby="remove-sponsor-description"
+        >
+          <div class="relative px-6 pb-6 pt-8 text-center sm:px-8">
+            <button
+              type="button"
+              class="absolute right-4 top-4 flex h-9 w-9 items-center
+              justify-center rounded-full text-gray-400 transition
+              hover:bg-gray-100 hover:text-gray-700 focus:outline-none
+              focus:ring-2 focus:ring-gray-300"
+              aria-label="Close remove sponsor dialog"
+              @click="closeRemove"
+            >
+              <i class="ri-close-line text-xl"></i>
+            </button>
+            <div class="relative mx-auto mb-5 h-20 w-20">
+              <div
+                class="absolute inset-0 animate-ping rounded-full
+                bg-red-100 opacity-60"
+              ></div>
+              <div
+                class="relative flex h-20 w-20 items-center justify-center
+                rounded-full border-8 border-red-50 bg-red-100 text-red-600"
+              >
+                <i class="ri-delete-bin-6-line text-3xl"></i>
+              </div>
+            </div>
+            <p class="mb-2 text-xs font-bold uppercase tracking-widest text-red-500">
+              Permanent action
+            </p>
+            <h2 id="remove-sponsor-title" class="text-2xl font-bold text-gray-900">
+              Remove {{ sponsor.company_name }}?
+            </h2>
+            <p
+              id="remove-sponsor-description"
+              class="mx-auto mt-3 max-w-sm text-sm leading-6 text-gray-500"
+            >
+              This sponsor and its logo will disappear from the public partner
+              listing. This action cannot be undone.
+            </p>
+          </div>
+          <div
+            class="flex flex-col-reverse gap-3 border-t border-gray-200
+            bg-gray-50 px-6 py-5 sm:flex-row sm:justify-center"
+          >
+            <button
+              type="button"
+              class="inline-flex min-h-[48px] flex-1 items-center
+              justify-center rounded-xl border border-gray-300 bg-white px-5
+              font-semibold text-gray-700 transition hover:bg-gray-100
+              focus:outline-none focus:ring-2 focus:ring-gray-300"
+              @click="closeRemove"
+            >
+              Keep sponsor
+            </button>
+            <button
+              type="button"
+              class="inline-flex min-h-[48px] flex-1 items-center
+              justify-center gap-2 rounded-xl bg-red-600 px-5 font-bold
+              text-white shadow-lg shadow-red-200 transition
+              hover:-translate-y-0.5 hover:bg-red-700 focus:outline-none
+              focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              @click="remove(editingNo)"
+            >
+              <i class="ri-delete-bin-line text-lg"></i>
+              Remove sponsor
+            </button>
+          </div>
+        </div>
+      </OModal>
     </div>
 </template>
 
@@ -533,13 +676,11 @@ import aosMixin from '@/mixins/aos';
 import currencyMixin from '@/mixins/currency';
 import ImageUpload from '~/components/ImageUploadSolo'
 import ImageUploadEdit from '~/components/ImageUploadEditSolo'
-import Tiptap from '~/components/Wysiwyg/Tiptap';
 
 const toNumber = (str) => +str;
 export default {
   buildModules: [ '@nuxtjs/moment' ],
   components: {
-    Tiptap,
     BasePagination,
     SearchBar,
     ImageUpload,
@@ -1021,10 +1162,6 @@ export default {
 </script>
 
 <style scoped>
-.croppa-container {
-  background-color: #abb8c3;
-  border: 3px solid #1C1B1C;
-}
 .o-inputit__item--danger {
   background-color: #e73538 !important;
 }
@@ -1035,24 +1172,115 @@ export default {
 
 ::v-deep .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
 > .v-input__control > .v-input__slot {
-box-shadow: none;
-border: 1px rgb(243 244 246 / var(--tw-border-opacity));
-background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-padding: 0.5rem 0.75rem;
-width: 100%;
-appearance: none;
-border-radius: 0;
-transition: border-color 0.3s;
+  min-height: 52px;
+  width: 100%;
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background-color: #f9fafb;
+  box-shadow: none;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+::v-deep .v-text-field.v-input--is-focused
+> .v-input__control > .v-input__slot {
+  border-color: #5ecb3e;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgb(94 203 62 / 15%);
+}
+
+::v-deep .v-text-field .v-input__prepend-inner {
+  margin-right: 0.4rem;
+}
+
+::v-deep .v-text-field .v-input__prepend-inner .v-icon {
+  color: #6b7280;
+  font-size: 1.2rem;
+}
+
+::v-deep .v-text-field.v-input--is-focused .v-input__prepend-inner .v-icon {
+  color: #438f2d;
 }
 
 ::v-deep .v-text-field input::placeholder {
-font-size: 1rem !important;
-font-family: inherit !important;
-color: rgb(104, 104, 104) !important;
+  color: #9ca3af !important;
+  font-family: inherit !important;
+  font-size: 0.95rem !important;
 }
 
-.custom-btn {
-  height: 50px !important;
+.partner-sponsor-modal ::v-deep .o-modal__content {
+  max-height: calc(100vh - 2rem);
+  border-radius: 1rem;
+  background: transparent;
+  box-shadow: 0 30px 80px rgb(0 0 0 / 35%);
+}
+
+.partner-sponsor-modal ::v-deep .o-modal__close {
+  display: none;
+}
+
+.partner-sponsor-modal ::v-deep .o-modal__overlay {
+  background:
+    radial-gradient(circle at 50% 15%, rgb(94 203 62 / 12%), transparent 30%),
+    rgb(5 5 5 / 78%);
+  backdrop-filter: blur(5px);
+}
+
+.sponsor-dialog {
+  animation: sponsor-dialog-enter 0.28s ease-out;
+}
+
+.sponsor-upload ::v-deep > div {
+  max-width: none;
+}
+
+.sponsor-upload ::v-deep .croppa-container {
+  max-width: 100%;
+  overflow: hidden;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.75rem;
+  background-color: #f9fafb;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.sponsor-upload ::v-deep .croppa-container:hover {
+  border-color: #5ecb3e;
+  background-color: #f0fdf4;
+}
+
+.sponsor-upload ::v-deep .v-btn {
+  min-width: 42px;
+  border-radius: 0.65rem;
+  box-shadow: none;
+}
+
+@keyframes sponsor-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .partner-sponsor-modal ::v-deep .o-modal__content {
+    max-height: calc(100vh - 1rem);
+    margin: 0.5rem;
+  }
+
+  .sponsor-upload ::v-deep .croppa-container,
+  .sponsor-upload ::v-deep canvas {
+    height: auto !important;
+    max-width: 100% !important;
+  }
 }
 </style>
 

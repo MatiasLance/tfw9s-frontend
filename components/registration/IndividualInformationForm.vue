@@ -288,6 +288,7 @@
                 placeholder="Player First Name"
                 required
                 class="w-full appearance-none rounded-lg border border-gray-200 bg-gray-200 px-3 py-2.5 text-sm text-black placeholder:text-black transition-colors duration-200 hover:border-gray-400 focus:border-green-500 focus:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500/20"
+                @input="debouncedDuplicateSearch"
               />
             </div>
 
@@ -304,7 +305,45 @@
                 placeholder="Player Last Name"
                 required
                 class="w-full appearance-none rounded-lg border border-gray-200 bg-gray-200 px-3 py-2.5 text-sm text-black placeholder:text-black transition-colors duration-200 hover:border-gray-400 focus:border-green-500 focus:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500/20"
+                @input="debouncedDuplicateSearch"
               />
+            </div>
+
+            <div
+              v-if="duplicateSearchLoading || duplicateSuggestions.length > 0"
+              class="relative -mt-2 mb-4 lg:col-span-2"
+            >
+              <p
+                v-if="duplicateSearchLoading"
+                class="flex items-center gap-2 text-xs text-gray-500"
+              >
+                <i class="ri-loader-4-line animate-spin"></i>
+                Checking for an existing Player Card…
+              </p>
+              <div
+                v-else
+                class="overflow-hidden rounded-lg border border-amber-200 bg-amber-50 shadow-sm"
+              >
+                <p class="border-b border-amber-200 px-3 py-2 text-xs font-semibold text-amber-900">
+                  Possible existing Player Cards
+                </p>
+                <button
+                  v-for="(match, index) in duplicateSuggestions"
+                  :key="`${match.player_name}-${match.masked_phone}-${index}`"
+                  type="button"
+                  class="flex w-full items-center justify-between gap-3 border-b border-amber-100 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-amber-100"
+                  @click="openDuplicateWarning"
+                >
+                  <span>
+                    <span class="block font-semibold text-gray-900">{{ match.player_name }}</span>
+                    <span class="text-xs text-gray-600">
+                      {{ match.masked_phone }}
+                      <template v-if="match.team_name"> · {{ match.team_name }}</template>
+                    </span>
+                  </span>
+                  <span class="text-xs font-semibold text-amber-800">Review</span>
+                </button>
+              </div>
             </div>
 
             <div class="mb-4">
@@ -451,6 +490,70 @@
           </div>
         </template>
       </Modal>
+
+      <Modal :show="showDuplicateWarning" @close="closeDuplicateWarning">
+        <template #header>
+          <div class="flex items-center gap-3">
+            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
+              <i class="ri-alert-line text-xl text-amber-700"></i>
+            </span>
+            <h3 class="text-lg font-bold text-gray-900">You may already have a Player Card</h3>
+          </div>
+        </template>
+        <template #body>
+          <div class="space-y-4 text-gray-700">
+            <p>
+              If your name appears below, you likely already own a Player Card and
+              <strong>do not need to purchase another one</strong>.
+            </p>
+            <p class="text-sm">
+              Please verify using the last three digits of the registered phone number.
+            </p>
+
+            <div class="overflow-hidden rounded-lg border border-gray-200">
+              <div
+                v-for="(match, index) in duplicateMatches"
+                :key="`warning-${match.player_name}-${match.masked_phone}-${index}`"
+                class="grid grid-cols-1 gap-1 border-b border-gray-200 bg-white px-4 py-3 last:border-b-0 sm:grid-cols-3 sm:gap-3"
+              >
+                <div>
+                  <span class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Player</span>
+                  <span class="font-semibold text-gray-900">{{ match.player_name }}</span>
+                </div>
+                <div>
+                  <span class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Phone</span>
+                  <span class="font-mono text-gray-900">{{ match.masked_phone }}</span>
+                </div>
+                <div>
+                  <span class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Team / Age Group</span>
+                  <span class="text-gray-900">
+                    {{ match.team_name || 'Not provided' }}
+                    <template v-if="match.age_group"> · {{ match.age_group }}</template>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template #footer>
+          <div class="flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              class="rounded-lg border border-green-700 px-5 py-2.5 text-sm font-semibold text-green-800 hover:bg-green-50"
+              @click="useExistingPlayerCard"
+            >
+              I Already Have My Player Card
+            </button>
+            <button
+              type="button"
+              class="rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-black"
+              @click="continueAfterDuplicateWarning"
+            >
+              Continue Anyway
+            </button>
+          </div>
+        </template>
+      </Modal>
     </form>
   </div>
 </template>
@@ -479,6 +582,15 @@ export default {
 
       cardDebounceTimer: null,
       cardAbortController: null,
+      duplicateSuggestions: [],
+      duplicateMatches: [],
+      duplicateSearchLoading: false,
+      showDuplicateWarning: false,
+      duplicateWarningFromSubmit: false,
+      duplicateDebounceTimer: null,
+      duplicateAbortController: null,
+      lastWarnedPlayerName: '',
+      duplicateBypassName: '',
 
       contact: {
         firstName: '',
@@ -532,6 +644,14 @@ export default {
         sug.date_of_birth === this.dobFilterQuery
       );
     },
+    newPlayerSearchQuery() {
+      return `${this.player.firstName} ${this.player.lastName}`
+        .trim()
+        .replace(/\s+/g, ' ');
+    },
+    normalizedNewPlayerName() {
+      return this.newPlayerSearchQuery.toLocaleLowerCase();
+    },
   },
   mounted() {
     if (this.isUnderMaintenance) return;
@@ -548,6 +668,10 @@ export default {
     clearTimeout(this.cardDebounceTimer);
     if (this.cardAbortController) {
       this.cardAbortController.abort();
+    }
+    clearTimeout(this.duplicateDebounceTimer);
+    if (this.duplicateAbortController) {
+      this.duplicateAbortController.abort();
     }
   },
   methods: {
@@ -568,11 +692,22 @@ export default {
       this.removePhoto();
       this.cropping = false;
       this.hasAgreedToTerms = false;
+      this.duplicateSuggestions = [];
+      this.duplicateMatches = [];
+      this.showDuplicateWarning = false;
+      this.duplicateWarningFromSubmit = false;
+      this.lastWarnedPlayerName = '';
+      this.duplicateBypassName = '';
 
       clearTimeout(this.cardDebounceTimer);
       if (this.cardAbortController) {
         this.cardAbortController.abort();
         this.cardAbortController = null;
+      }
+      clearTimeout(this.duplicateDebounceTimer);
+      if (this.duplicateAbortController) {
+        this.duplicateAbortController.abort();
+        this.duplicateAbortController = null;
       }
     },
 
@@ -633,7 +768,122 @@ export default {
       }
     },
 
-    selectCardPlayer(suggestion) {  
+    debouncedDuplicateSearch() {
+      clearTimeout(this.duplicateDebounceTimer);
+
+      if (this.duplicateAbortController) {
+        this.duplicateAbortController.abort();
+      }
+
+      if (this.newPlayerSearchQuery.length < 2) {
+        this.duplicateSuggestions = [];
+        this.duplicateSearchLoading = false;
+        return;
+      }
+
+      this.duplicateDebounceTimer = setTimeout(() => {
+        this.fetchPotentialCardMatches();
+      }, 450);
+    },
+
+    async fetchPotentialCardMatches(openWarning = false) {
+      const query = this.newPlayerSearchQuery;
+      if (query.length < 2) return [];
+
+      if (this.duplicateAbortController) {
+        this.duplicateAbortController.abort();
+      }
+
+      this.duplicateAbortController = new AbortController();
+      const signal = this.duplicateAbortController.signal;
+      this.duplicateSearchLoading = true;
+
+      try {
+        const response = await this.$axios.$get('v1/players/player-card/matches', {
+          params: { q: query, limit: 8 },
+          signal,
+        });
+        if (signal.aborted) return [];
+
+        const data = response.data || response;
+        const matches = data.matches || [];
+        this.duplicateSuggestions = matches;
+
+        const hasCompleteName =
+          this.player.firstName.trim().length >= 2 &&
+          this.player.lastName.trim().length >= 2;
+        const highConfidenceMatches = matches.filter(match => match.score >= 84);
+        const shouldWarnAutomatically =
+          hasCompleteName &&
+          highConfidenceMatches.length > 0 &&
+          this.lastWarnedPlayerName !== this.normalizedNewPlayerName &&
+          this.duplicateBypassName !== this.normalizedNewPlayerName;
+
+        if (openWarning && matches.length > 0) {
+          this.duplicateMatches = matches;
+          this.showDuplicateWarning = true;
+          this.duplicateWarningFromSubmit = true;
+          this.lastWarnedPlayerName = this.normalizedNewPlayerName;
+        } else if (shouldWarnAutomatically) {
+          this.duplicateMatches = highConfidenceMatches;
+          this.showDuplicateWarning = true;
+          this.duplicateWarningFromSubmit = false;
+          this.lastWarnedPlayerName = this.normalizedNewPlayerName;
+        }
+
+        return matches;
+      } catch (error) {
+        if (this.$axios.isCancel(error) || error?.name === 'AbortError') {
+          return [];
+        }
+
+        console.error('Error checking existing Player Cards:', error);
+        return [];
+      } finally {
+        if (this.duplicateAbortController?.signal === signal) {
+          this.duplicateAbortController = null;
+          this.duplicateSearchLoading = false;
+        }
+      }
+    },
+
+    openDuplicateWarning() {
+      this.duplicateMatches = this.duplicateSuggestions;
+      this.showDuplicateWarning = this.duplicateMatches.length > 0;
+      this.duplicateWarningFromSubmit = false;
+      this.lastWarnedPlayerName = this.normalizedNewPlayerName;
+    },
+
+    closeDuplicateWarning() {
+      this.showDuplicateWarning = false;
+      this.duplicateWarningFromSubmit = false;
+    },
+
+    useExistingPlayerCard() {
+      this.showDuplicateWarning = false;
+      this.duplicateWarningFromSubmit = false;
+      this.setRegistrationType(null);
+      this.$oruga.notification.open({
+        duration: 6000,
+        message: 'No purchase was started. Your existing Player Card remains valid.',
+        position: 'bottom',
+        variant: 'info',
+        queue: true,
+      });
+    },
+
+    continueAfterDuplicateWarning() {
+      const shouldSubmit = this.duplicateWarningFromSubmit;
+      this.duplicateBypassName = this.normalizedNewPlayerName;
+      this.showDuplicateWarning = false;
+      this.duplicateWarningFromSubmit = false;
+
+      if (shouldSubmit) {
+        this.emitNewPlayerSubmission();
+      }
+    },
+
+    selectCardPlayer(suggestion) {
       this.selectedCardPlayer = {
         id: suggestion.id,
         parentFirstName: suggestion.parent_first_name,
@@ -684,8 +934,21 @@ export default {
         discountCodeId: this.player.discountCodeId,
       });
     },
-    submit() {
+    async submit() {
       if (this.registrationType !== 'new') return;
+
+      if (this.duplicateBypassName !== this.normalizedNewPlayerName) {
+        await this.fetchPotentialCardMatches(true);
+
+        if (this.showDuplicateWarning) {
+          return;
+        }
+      }
+
+      this.emitNewPlayerSubmission();
+      return false;
+    },
+    emitNewPlayerSubmission() {
       this.$emit('submit', {
         contactFirstName: this.contact.firstName,
         contactLastName: this.contact.lastName,
@@ -702,7 +965,6 @@ export default {
         renewal: false,
         playerId: null
       });
-      return false;
     },
     handleUpload(image) {
       this.cropping = true;

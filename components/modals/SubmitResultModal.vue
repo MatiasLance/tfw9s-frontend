@@ -37,7 +37,6 @@
 
 <script>
 /* eslint-disable camelcase */
-import 'vue-croppa/dist/vue-croppa.css';
 
 export default {
   name: 'SubmitResultModal',
@@ -72,11 +71,16 @@ export default {
   methods: {
     SubmitResult() {
       this.processing = true
-      const formData = new FormData();
-      formData.append('team1_score', this.matchData.team1_score);
-      formData.append('team2_score', this.matchData.team2_score);
+      const payload = {
+        team1_score: Number(this.matchData.team1_score),
+        team2_score: Number(this.matchData.team2_score),
+        is_abandoned_match: this.toBoolean(
+          this.matchData.is_abandoned_match
+        ),
+      };
+
       this.$axios
-        .$post(`v1/eventmatches/${this.matchData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .$post(`v1/eventmatches/${this.matchData.id}`, payload)
         .then((response) => {
           this.$emit('confirm')
         })
@@ -89,6 +93,15 @@ export default {
     },
     closeDialog() {
       this.$emit('close')
+    },
+    toBoolean(value) {
+      if (typeof value === 'string') {
+        return [ '1', 'true', 'on', 'yes' ].includes(
+          value.trim().toLowerCase()
+        );
+      }
+
+      return value === true || value === 1;
     },
   }
 }

@@ -18,7 +18,7 @@
               {{ displayTeam1Name }}
             </label>
             <VTextField
-              v-model="MatchData.team1_score"
+              v-model.number="MatchData.team1_score"
               type="number"
               placeholder="0"
               solo
@@ -40,7 +40,7 @@
               {{ displayTeam2Name }}
             </label>
             <VTextField
-              v-model="MatchData.team2_score"
+              v-model.number="MatchData.team2_score"
               type="number"
               placeholder="0"
               solo
@@ -125,7 +125,6 @@
 
 <script>
 /* eslint-disable camelcase */
-import 'vue-croppa/dist/vue-croppa.css';
 
 export default {
   name: 'ManageResultModal',
@@ -147,6 +146,9 @@ export default {
       MatchData: {
         team1: [],
         team2: [],
+        team1_score: 0,
+        team2_score: 0,
+        is_abandoned_match: false,
       },
       rules: [ 
         value => (value !== null &&
@@ -175,7 +177,11 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.MatchData = JSON.parse(JSON.stringify(this.match));
-          this.isAbandonedMatched = !!this.MatchData.is_abandoned_match;
+          this.MatchData.team1_score = Number(this.MatchData.team1_score);
+          this.MatchData.team2_score = Number(this.MatchData.team2_score);
+          this.isAbandonedMatched = this.toBoolean(
+            this.MatchData.is_abandoned_match
+          );
           
           this.MatchData.team1_name = this.MatchData.team1 ?
             this.MatchData.team1 :
@@ -218,12 +224,14 @@ export default {
       this.saveResult()
     },
     saveResult() {
-      const formData = new FormData();
-      formData.append('team1_score', this.MatchData.team1_score);
-      formData.append('team2_score', this.MatchData.team2_score);
-      formData.append('is_abandoned_match', this.isAbandonedMatched);
+      const payload = {
+        team1_score: Number(this.MatchData.team1_score),
+        team2_score: Number(this.MatchData.team2_score),
+        is_abandoned_match: Boolean(this.isAbandonedMatched),
+      };
+
       this.$axios
-        .$post(`v1/eventmatches/update/${this.MatchData.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .$post(`v1/eventmatches/update/${this.MatchData.id}`, payload)
         .then((response) => {
           this.$oruga.notification.open({
             duration: 5000,
@@ -258,6 +266,15 @@ export default {
     handleMatchAbandoned(val) {
       this.isAbandonedMatched = val
       this.validate();
+    },
+    toBoolean(value) {
+      if (typeof value === 'string') {
+        return [ '1', 'true', 'on', 'yes' ].includes(
+          value.trim().toLowerCase()
+        );
+      }
+
+      return value === true || value === 1;
     },
     closeDialog() {
       this.$emit('close')

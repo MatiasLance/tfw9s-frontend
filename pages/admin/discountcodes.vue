@@ -1,6 +1,7 @@
 <!-- eslint-disable max-len -->
 <template>
-    <div class="h-full  bg-[#1A1A1B]">
+    <div class="min-h-screen w-screen bg-gradient-to-br from-[#111712]
+    via-[#1A1A1B] to-[#0d120e]">
       <BaseHeader class="bg-gradient-to-r from-brand-green to-brand-black shadow-md">
         <!-- Breadcrumbs and Title -->
          <BreadCrumbs title="Discount Code Setting"/>
@@ -24,7 +25,7 @@
                     group
                     flex w-full items-center justify-center
                     rounded-lg
-                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                    bg-green-600
                     p-2.5
                     font-semibold text-white
                     transition-transform duration-200
@@ -33,13 +34,14 @@
                     shadow-md hover:shadow-lg"
                   @click="addDiscountCode"
                 >
-                  <i
-                  class="
-                  ri-add-line mr-2
-                  text-lg transition-transform
-                  group-hover:rotate-90"
-                  ></i>
-                  <span>Add Discount Code</span>
+                  <span class="text-gray-50">
+                    <i
+                    class="ri-add-line mr-2
+                    text-lg transition-transform
+                    group-hover:rotate-90"
+                    ></i>
+                    Add Discount Code
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -47,7 +49,7 @@
                     group
                     flex w-full items-center justify-center
                     rounded-lg
-                    bg-gradient-to-r from-green-500 via-lime-500 to-emerald-700
+                    bg-green-600
                     p-2.5
                     font-semibold text-white
                     transition-transform duration-200
@@ -56,13 +58,14 @@
                     shadow-md hover:shadow-lg"
                   @click="goToDiscountCodeTable"
                 >
-                  <i
-                  class="
-                  ri-add-line mr-2
-                  text-lg transition-transform
-                  group-hover:rotate-90"
-                  ></i>
-                  <span>Discount Table</span>
+                  <span class="text-gray-50">
+                    <i
+                    class="ri-add-line mr-2
+                    text-lg transition-transform
+                    group-hover:rotate-90"
+                    ></i>
+                    Discount Table
+                  </span>
                 </button>
               </div>
 
