@@ -120,38 +120,42 @@
               @input="debouncedCardSearch"
             />
 
-            <div v-if="showDobFilter" class="mt-3">
-              <label class="mb-1.5 flex items-center gap-1 text-sm font-semibold uppercase tracking-wide text-black">
-                <i class="ri-calendar-line text-green-600"></i>
-                Filter by Date of Birth
-              </label>
-              <input
-                v-model="dobFilterQuery"
-                type="date"
-                placeholder="yyyy-mm-dd"
-                class="w-full appearance-none rounded-lg border border-gray-200 bg-gray-200 px-3 py-2.5 text-sm text-black placeholder:text-black transition-colors duration-200 hover:border-gray-400 focus:border-green-500 focus:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500/20 [color-scheme:light]"
-              />
-            </div>
+            <p
+              v-if="cardSearchLoading"
+              class="mt-2 flex items-center gap-2 text-xs text-gray-500"
+            >
+              <i class="ri-loader-4-line animate-spin"></i>
+              Looking for existing Player Cards…
+            </p>
 
             <ul
-              v-if="showCardSuggestions && filteredSuggestions.length > 0"
+              v-if="showCardSuggestions && cardSuggestions.length > 0"
               class="absolute z-10 mt-1 w-full rounded-lg border border-green-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.1)] max-h-48 overflow-y-auto ring-1 ring-green-500/10"
             >
               <li
-                v-for="sug in filteredSuggestions"
-                :key="sug.id"
+                v-for="(sug, index) in cardSuggestions"
+                :key="`${sug.player_name}-${sug.masked_phone}-${index}`"
                 class="flex items-center justify-between px-3 py-2 cursor-pointer text-sm text-black transition-colors hover:bg-green-50 hover:text-green-800"
-                @mousedown.prevent="selectCardPlayer(sug)"
+                @mousedown.prevent="reviewCardMatch(sug)"
               >
                 <span>
-                  {{ sug.first_name }} {{ sug.last_name }}
-                  <span v-if="sug.date_of_birth" class="ml-2 text-xs text-gray-400">
-                    ({{ sug.date_of_birth }})
+                  <span class="block font-semibold">{{ sug.player_name }}</span>
+                  <span class="text-xs text-gray-500">
+                    {{ sug.masked_phone }}
+                    <template v-if="sug.team_name"> · {{ sug.team_name }}</template>
                   </span>
                 </span>
                 <i class="ri-arrow-right-s-line text-green-500"></i>
               </li>
             </ul>
+
+            <p
+              v-if="cardSearchCompleted && !cardSearchLoading && cardSuggestions.length === 0"
+              class="mt-2 text-xs text-gray-600"
+            >
+              No likely Player Card was found. Check the spelling, or choose
+              “I am a new player” if you do not already have one.
+            </p>
           </div>
 
           <div v-if="selectedCardPlayer" class="mt-4">
@@ -159,10 +163,10 @@
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm font-semibold text-gray-800">
-                    {{ selectedCardPlayer.first_name }} {{ selectedCardPlayer.last_name }}
+                    {{ selectedCardPlayer.player_name }}
                   </p>
-                  <p v-if="selectedCardPlayer.date_of_birth" class="text-xs text-gray-500 mt-0.5">
-                    DOB: {{ selectedCardPlayer.date_of_birth }}
+                  <p class="text-xs text-gray-500 mt-0.5">
+                    Registered phone: {{ selectedCardPlayer.masked_phone }}
                   </p>
                 </div>
                 <button
@@ -175,14 +179,91 @@
               </div>
             </div>
 
+            <p class="mb-3 text-sm text-gray-600">
+              Enter the current parent/contact details to continue this registration.
+              These details are not returned by the Player Card search.
+            </p>
+
+            <div class="grid gap-x-3 lg:grid-cols-2">
+              <div class="mb-4">
+                <label for="card-contact-first-name" class="mb-1.5 block text-sm font-semibold uppercase tracking-wide text-black">
+                  Parent First Name*
+                </label>
+                <input
+                  id="card-contact-first-name"
+                  v-model.trim="contact.firstName"
+                  type="text"
+                  required
+                  class="w-full rounded-lg border border-gray-200 bg-gray-200 px-3 py-2.5 text-sm text-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20"
+                />
+              </div>
+              <div class="mb-4">
+                <label for="card-contact-last-name" class="mb-1.5 block text-sm font-semibold uppercase tracking-wide text-black">
+                  Parent Last Name*
+                </label>
+                <input
+                  id="card-contact-last-name"
+                  v-model.trim="contact.lastName"
+                  type="text"
+                  required
+                  class="w-full rounded-lg border border-gray-200 bg-gray-200 px-3 py-2.5 text-sm text-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20"
+                />
+              </div>
+              <div class="mb-4">
+                <label for="card-contact-phone" class="mb-1.5 block text-sm font-semibold uppercase tracking-wide text-black">
+                  Parent Phone Number*
+                </label>
+                <div class="flex">
+                  <span class="rounded-l-lg border border-r-0 border-gray-200 bg-gray-100 px-3 py-2.5 text-sm text-gray-700">{{ phoneCode }}</span>
+                  <input
+                    id="card-contact-phone"
+                    v-model.trim="contact.phoneDigits"
+                    type="tel"
+                    inputmode="numeric"
+                    placeholder="412345678"
+                    required
+                    class="w-full rounded-r-lg border border-gray-200 bg-gray-200 px-3 py-2.5 text-sm text-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20"
+                  />
+                </div>
+              </div>
+              <div class="mb-4">
+                <label for="card-contact-email" class="mb-1.5 block text-sm font-semibold uppercase tracking-wide text-black">
+                  Parent Email*
+                </label>
+                <input
+                  id="card-contact-email"
+                  v-model.trim="contact.email"
+                  type="email"
+                  required
+                  class="w-full rounded-lg border border-gray-200 bg-gray-200 px-3 py-2.5 text-sm text-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20"
+                />
+              </div>
+              <div class="mb-4 lg:col-span-2">
+                <label for="card-player-dob" class="mb-1.5 block text-sm font-semibold uppercase tracking-wide text-black">
+                  Player Date of Birth*
+                </label>
+                <input
+                  id="card-player-dob"
+                  v-model="player.dob"
+                  type="date"
+                  required
+                  class="w-full rounded-lg border border-gray-200 bg-gray-200 px-3 py-2.5 text-sm text-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 [color-scheme:light]"
+                />
+              </div>
+            </div>
+
             <button
               type="button"
-              class="w-full rounded-lg bg-gradient-to-tr from-[#5EE738] to-[#050505] px-6 py-3 font-semibold text-white shadow-lg hover:scale-105 transition-transform focus:outline-none focus:ring-2 focus:ring-green-500"
+              class="w-full rounded-lg bg-green-700 px-6 py-3 font-semibold
+              text-white shadow-lg hover:scale-105 transition-transform
+              focus:outline-none focus:ring-2 focus:ring-green-500"
+              :class="{ 'cursor-not-allowed opacity-60': !isCardRegistrationValid }"
+              :disabled="!isCardRegistrationValid || isLoading"
               @click="proceedToPayment"
             >
-              <i class="ri-arrow-right-line mr-2 text-white"></i>
-              <span class="text-white">
+              <span class="text-gray-50">
                 Continue to Payment
+                <i class="ri-arrow-right-line mr-2"></i>
               </span>
             </button>
           </div>
@@ -542,14 +623,16 @@
               class="rounded-lg border border-green-700 px-5 py-2.5 text-sm font-semibold text-green-800 hover:bg-green-50"
               @click="useExistingPlayerCard"
             >
-              I Already Have My Player Card
+              I Found My Player Card
             </button>
             <button
               type="button"
               class="rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-black"
               @click="continueAfterDuplicateWarning"
             >
+            <span class="text-gray-50">
               Continue Anyway
+            </span>
             </button>
           </div>
         </template>
@@ -577,8 +660,8 @@ export default {
       cardSuggestions: [],
       showCardSuggestions: false,
       selectedCardPlayer: null,
-      dobFilterQuery: '',
-      showDobFilter: false,
+      cardSearchLoading: false,
+      cardSearchCompleted: false,
 
       cardDebounceTimer: null,
       cardAbortController: null,
@@ -591,6 +674,8 @@ export default {
       duplicateAbortController: null,
       lastWarnedPlayerName: '',
       duplicateBypassName: '',
+      duplicateWarningContext: 'new',
+      pendingCardMatch: null,
 
       contact: {
         firstName: '',
@@ -633,16 +718,20 @@ export default {
     isRegistrationTypeValid() {
       return this.registrationType === 'new';
     },
+    isCardRegistrationValid() {
+      return Boolean(
+        this.selectedCardPlayer &&
+        this.contact.firstName.trim() &&
+        this.contact.lastName.trim() &&
+        /^\d{8,12}$/.test(this.contact.phoneDigits.replace(/\D/g, '')) &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.contact.email.trim()) &&
+        this.player.dob &&
+        this.player.teamName &&
+        this.player.ageGroup
+      );
+    },
     hasToken() {
       return Boolean(this.$route.query.token);
-    },
-    filteredSuggestions() {
-      if (!this.dobFilterQuery) {
-        return this.cardSuggestions;
-      }
-      return this.cardSuggestions.filter(sug =>
-        sug.date_of_birth === this.dobFilterQuery
-      );
     },
     newPlayerSearchQuery() {
       return `${this.player.firstName} ${this.player.lastName}`
@@ -683,8 +772,8 @@ export default {
       this.cardSearchQuery = '';
       this.cardSuggestions = [];
       this.selectedCardPlayer = null;
-      this.dobFilterQuery = '';
-      this.showDobFilter = false;
+      this.cardSearchLoading = false;
+      this.cardSearchCompleted = false;
       this.contact.firstName = '';
       this.contact.lastName = '';
       this.contact.phoneDigits = '';
@@ -698,6 +787,8 @@ export default {
       this.duplicateWarningFromSubmit = false;
       this.lastWarnedPlayerName = '';
       this.duplicateBypassName = '';
+      this.duplicateWarningContext = 'new';
+      this.pendingCardMatch = null;
 
       clearTimeout(this.cardDebounceTimer);
       if (this.cardAbortController) {
@@ -723,36 +814,30 @@ export default {
 
     async onCardSearchInput() {
       const query = this.cardSearchQuery.trim();
-      if (query.length < 3) {
+      if (query.length < 2) {
         this.cardSuggestions = [];
         this.showCardSuggestions = false;
-        this.showDobFilter = false;
-        this.dobFilterQuery = '';
+        this.cardSearchCompleted = false;
+        this.cardSearchLoading = false;
         return;
       }
 
       this.cardAbortController = new AbortController();
       const signal = this.cardAbortController.signal;
+      this.cardSearchLoading = true;
+      this.cardSearchCompleted = false;
 
       try {
-        const response = await this.$axios.$get('v1/players/name/suggest', {
-          params: { q: query },
+        const response = await this.$axios.$get('v1/players/player-card/matches', {
+          params: { q: query, limit: 8 },
           signal,
         });
         if (signal.aborted) return;
         const data = response.data || response;
-        const suggestions = data.suggestions || [];
+        const suggestions = data.matches || [];
         this.cardSuggestions = suggestions;
         this.showCardSuggestions = suggestions.length > 0;
-
-        const nameCounts = {};
-        suggestions.forEach(s => {
-          const full = `${s.first_name} ${s.last_name}`.toLowerCase();
-          nameCounts[full] = (nameCounts[full] || 0) + 1;
-        });
-        this.showDobFilter = Object.values(nameCounts).some(count => count >= 2);
-
-        this.dobFilterQuery = '';
+        this.cardSearchCompleted = true;
       } catch (error) {
         if (this.$axios.isCancel(error) || error?.name === 'AbortError') {
           return;
@@ -760,10 +845,12 @@ export default {
         console.error('Error fetching card suggestions:', error);
         this.cardSuggestions = [];
         this.showCardSuggestions = false;
-        this.showDobFilter = false;
       } finally {
         if (this.cardAbortController && this.cardAbortController.signal === signal) {
           this.cardAbortController = null;
+        }
+        if (!signal.aborted) {
+          this.cardSearchLoading = false;
         }
       }
     },
@@ -823,11 +910,13 @@ export default {
           this.duplicateMatches = matches;
           this.showDuplicateWarning = true;
           this.duplicateWarningFromSubmit = true;
+          this.duplicateWarningContext = 'new';
           this.lastWarnedPlayerName = this.normalizedNewPlayerName;
         } else if (shouldWarnAutomatically) {
           this.duplicateMatches = highConfidenceMatches;
           this.showDuplicateWarning = true;
           this.duplicateWarningFromSubmit = false;
+          this.duplicateWarningContext = 'new';
           this.lastWarnedPlayerName = this.normalizedNewPlayerName;
         }
 
@@ -851,28 +940,50 @@ export default {
       this.duplicateMatches = this.duplicateSuggestions;
       this.showDuplicateWarning = this.duplicateMatches.length > 0;
       this.duplicateWarningFromSubmit = false;
+      this.duplicateWarningContext = 'new';
       this.lastWarnedPlayerName = this.normalizedNewPlayerName;
     },
 
     closeDuplicateWarning() {
       this.showDuplicateWarning = false;
       this.duplicateWarningFromSubmit = false;
+      this.pendingCardMatch = null;
     },
 
     useExistingPlayerCard() {
+      const isCardLookup = this.duplicateWarningContext === 'card';
+      const selectedMatch = this.pendingCardMatch;
+      const searchName = this.newPlayerSearchQuery;
       this.showDuplicateWarning = false;
       this.duplicateWarningFromSubmit = false;
-      this.setRegistrationType(null);
-      this.$oruga.notification.open({
-        duration: 6000,
-        message: 'No purchase was started. Your existing Player Card remains valid.',
-        position: 'bottom',
-        variant: 'info',
-        queue: true,
-      });
+      this.pendingCardMatch = null;
+
+      if (isCardLookup && selectedMatch) {
+        this.selectCardPlayer(selectedMatch);
+        return;
+      }
+
+      this.setRegistrationType('card');
+      this.cardSearchQuery = searchName;
+      this.onCardSearchInput();
     },
 
     continueAfterDuplicateWarning() {
+      if (this.duplicateWarningContext === 'card') {
+        const searchName = this.cardSearchQuery;
+        this.showDuplicateWarning = false;
+        this.duplicateWarningFromSubmit = false;
+        this.pendingCardMatch = null;
+        this.setRegistrationType('new');
+
+        const parts = searchName.trim().replace(/\s+/g, ' ').split(' ');
+        this.player.firstName = parts.shift() || '';
+        this.player.lastName = parts.join(' ');
+        this.duplicateBypassName = this.normalizedNewPlayerName;
+        this.debouncedDuplicateSearch();
+        return;
+      }
+
       const shouldSubmit = this.duplicateWarningFromSubmit;
       this.duplicateBypassName = this.normalizedNewPlayerName;
       this.showDuplicateWarning = false;
@@ -883,25 +994,29 @@ export default {
       }
     },
 
+    reviewCardMatch(match) {
+      this.pendingCardMatch = match;
+      this.duplicateMatches = [match];
+      this.duplicateWarningContext = 'card';
+      this.duplicateWarningFromSubmit = false;
+      this.showDuplicateWarning = true;
+      this.showCardSuggestions = false;
+    },
+
     selectCardPlayer(suggestion) {
       this.selectedCardPlayer = {
-        id: suggestion.id,
-        parentFirstName: suggestion.parent_first_name,
-        parentLastName: suggestion.parent_last_name,
-        phoneNumber: suggestion.phone_number,
-        email: suggestion.email,
+        player_name: suggestion.player_name,
+        masked_phone: suggestion.masked_phone,
         first_name: suggestion.first_name,
         last_name: suggestion.last_name,
-        date_of_birth: suggestion.date_of_birth || '',
-        ageGroupId: suggestion.ageGroup_id
+        team_name: suggestion.team_name,
+        age_group: suggestion.age_group,
       };
       this.player.firstName = suggestion.first_name;
       this.player.lastName = suggestion.last_name;
-      this.player.dob = suggestion.date_of_birth || '';
-      this.cardSearchQuery = `${suggestion.first_name} ${suggestion.last_name}`;
+      this.player.dob = '';
+      this.cardSearchQuery = suggestion.player_name;
       this.showCardSuggestions = false;
-      this.showDobFilter = false;
-      this.dobFilterQuery = '';
     },
     clearCardPlayer() {
       this.selectedCardPlayer = null;
@@ -909,10 +1024,9 @@ export default {
       this.player.firstName = '';
       this.player.lastName = '';
       this.player.dob = '';
-      this.dobFilterQuery = '';
-      this.showDobFilter = false;
       this.cardSuggestions = [];
       this.showCardSuggestions = false;
+      this.cardSearchCompleted = false;
     },
     hideCardSuggestions() {
       setTimeout(() => {
@@ -920,18 +1034,22 @@ export default {
       }, 200);
     },
     proceedToPayment() {
+      if (!this.isCardRegistrationValid) return;
+
       this.$emit('submit', {
-        contactFirstName: this.selectedCardPlayer.parentFirstName,
-        contactLastName: this.selectedCardPlayer.parentLastName,
-        contactPhoneNumber: this.selectedCardPlayer.phoneNumber,
-        contactEmail: this.selectedCardPlayer.email,
+        contactFirstName: this.contact.firstName,
+        contactLastName: this.contact.lastName,
+        contactPhoneNumber: this.phoneNumber,
+        contactEmail: this.contact.email,
         playerFirstName: this.selectedCardPlayer.first_name,
         playerLastName: this.selectedCardPlayer.last_name,
-        dob: this.selectedCardPlayer.date_of_birth,
+        dob: this.player.dob,
         teamName: this.teams.find(t => t.name.toLowerCase() === this.player.teamName.toLowerCase())?.id,
-        ageGroup: this.selectedCardPlayer.ageGroupId,
+        ageGroup: this.player.ageGroup,
         price: this.price,
         discountCodeId: this.player.discountCodeId,
+        renewal: true,
+        playerId: null,
       });
     },
     async submit() {

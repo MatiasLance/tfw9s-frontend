@@ -113,10 +113,18 @@
             <p class="text-gray-300 text-center">
               {{ bannerText }}
             </p>
+            <button
+              type="button"
+              @click="resetAndVerify"
+              class="inline-flex items-center rounded-lg bg-red-600 px-6 py-3 font-semibold text-white hover:bg-red-700 transition-colors"
+            >
+              <i class="ri-refresh-line mr-2"></i>
+              Check This Payment Again
+            </button>
             <NuxtLink to="/tournaments">
               <span class="inline-flex items-center rounded-lg bg-red-600 px-6 py-3 font-semibold text-white hover:bg-red-700 transition-colors">
                 <i class="ri-arrow-go-back-line mr-2"></i>
-                Try Checkout Again
+                Back to Tournaments
               </span>
             </NuxtLink>
           </div>
@@ -227,8 +235,8 @@ export default {
           throw new Error('Payment was declined or failed')
         }
       } catch (err) {
-        this.status = 'failed'
-        this.bannerText = err.message || 'System error'
+        this.status = 'processing'
+        this.bannerText = 'Your payment may already be complete. Checking again is safe and will not create another charge.'
         this.isVerifying = false
       }
     },
