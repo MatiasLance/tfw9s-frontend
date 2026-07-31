@@ -359,6 +359,11 @@ export default {
           throw new Error('Invalid server response')
         }
 
+        if (response.alreadyPaid) {
+          await this.redirectToExistingPayment(response.paymentIntentId)
+          return
+        }
+
         if (Number(response.amount) === 0) {
           await this.handleZeroAmountPayment(response)
           return
@@ -416,6 +421,19 @@ export default {
           console.error(`Missing required field in response: ${field}`, response)
         }
         return hasField
+      })
+    },
+
+    async redirectToExistingPayment(paymentIntentId) {
+      this.$store.commit('registration/setPaymentIntent', paymentIntentId)
+      await this.$router.push({
+        path: '/thank-you1',
+        query: {
+          seriesType: this.seriestype,
+          payment_intent: paymentIntentId,
+          payment_intent_client_secret: this.clientSecret || undefined,
+          redirect_status: 'succeeded'
+        }
       })
     },
 

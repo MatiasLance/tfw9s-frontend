@@ -1,6 +1,7 @@
 import PaymentForm from '@/components/payment/PaymentForm.vue'
 import RegisterPage from '@/pages/register.vue'
 import IndividualInformationForm from '@/components/registration/IndividualInformationForm.vue'
+import StripeCheckout from '@/components/registration/StripeCheckout.vue'
 
 const deferred = () => {
   let resolve
@@ -213,5 +214,29 @@ describe('registration flow stability', () => {
     expect(vm.selectedCardPlayer).not.toHaveProperty('email')
     expect(vm.selectedCardPlayer).not.toHaveProperty('date_of_birth')
     expect(vm.player.dob).toBe('')
+  })
+
+  test('an already-paid checkout returns to verification without confirming another payment', async () => {
+    const commit = jest.fn()
+    const push = jest.fn().mockResolvedValue()
+    const vm = {
+      seriestype: 'weekly',
+      clientSecret: null,
+      $store: { commit },
+      $router: { push },
+    }
+
+    await StripeCheckout.methods.redirectToExistingPayment.call(vm, 'pi_original')
+
+    expect(commit).toHaveBeenCalledWith('registration/setPaymentIntent', 'pi_original')
+    expect(push).toHaveBeenCalledWith({
+      path: '/thank-you1',
+      query: {
+        seriesType: 'weekly',
+        payment_intent: 'pi_original',
+        payment_intent_client_secret: undefined,
+        redirect_status: 'succeeded',
+      },
+    })
   })
 })

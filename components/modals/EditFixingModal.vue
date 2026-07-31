@@ -241,7 +241,8 @@
             depressed
             color="success"
             class="custom-btn w-full md:w-[185px] lg:w-[185px]"
-            :disabled="!valid"
+            :disabled="!valid || isSaving"
+            :loading="isSaving"
             @click="validate"
             >
               OK
@@ -265,6 +266,10 @@
 import 'vue-croppa/dist/vue-croppa.css';
 import Match from '~/components/Match.vue';
 import currencyMixin from '@/mixins/currency';
+import {
+  fixtureTimeOptions,
+  normalizeFixtureTime
+} from '~/utils/fixtureTime';
 
 export default {
   name: 'EditFixingModal',
@@ -310,6 +315,7 @@ export default {
       mindate: null,
       maxdate: null,
       valid: true,
+      isSaving: false,
       seriesQuery: '',
       managerQuery: '',
       regionQuery: '',
@@ -323,44 +329,7 @@ export default {
           isBye: false
         }
       ],
-      matchTime: null,
-      matchTimeOption: [
-        { text: '8:00 AM', value: '8:00' },
-        { text: '8:25 AM', value: '8:25' },
-        { text: '8:50 AM', value: '8:50' },
-        { text: '9:15 AM', value: '9:15' },
-        { text: '9:40 AM', value: '9:40' },
-        { text: '10:05 AM', value: '10:05' },
-        { text: '10:30 AM', value: '10:30' },
-        { text: '10:55 AM', value: '10:55' },
-        { text: '11:20 AM', value: '11:20' },
-        { text: '11:45 AM', value: '11:45' },
-        { text: '12:10 PM', value: '12:10' },
-        { text: '12:35 PM', value: '12:35' },
-        { text: '1:00 PM', value: '13:00' },
-        { text: '1:25 PM', value: '13:25' },
-        { text: '1:50 PM', value: '13:50' },
-        { text: '2:15 PM', value: '14:15' },
-        { text: '2:40 PM', value: '14:40' },
-        { text: '3:05 PM', value: '15:05' },
-        { text: '3:30 PM', value: '15:30' },
-        { text: '3:55 PM', value: '15:55' },
-        { text: '4:20 PM', value: '16:20' },
-        { text: '4:45 PM', value: '16:45' },
-        { text: '5:10 PM', value: '17:10' },
-        { text: '5:35 PM', value: '17:35' },
-        { text: '6:00 PM', value: '18:00' },
-        { text: '6:25 PM', value: '18:25' },
-        { text: '6:50 PM', value: '18:50' },
-        { text: '7:15 PM', value: '19:15' },
-        { text: '7:40 PM', value: '19:40' },
-        { text: '8:05 PM', value: '20:05' },
-        { text: '8:30 PM', value: '20:30' },
-        { text: '8:55 PM', value: '20:55' },
-        { text: '9:20 PM', value: '21:20' },
-        { text: '9:45 PM', value: '21:45' },
-        { text: '10:00 PM', value: '22:00' },
-      ],
+      matchTimeOption: fixtureTimeOptions,
       matchRoundOption: [
         { text: 'Round', value: 'round' },
         { text: 'Semi', value: 'semi' },
@@ -430,6 +399,7 @@ export default {
       handler(newActive) {
         if (newActive) {
           this.Event = JSON.parse(JSON.stringify(this.event));
+          this.Event.time = normalizeFixtureTime(this.Event.time);
 
           if (this.Event.date) {
             this.Event.date = new Date(this.Event.date);
@@ -462,26 +432,6 @@ export default {
       },
       immediate: true,
     },
-    multipleMatch: {
-      handler(newVal, oldVal) {
-        if (newVal.length > 0) {
-          const firstMatchTime = newVal.map(match => {
-            if (!match.time) return null;
-            const matchTime = new Date(match.time);
-            return matchTime.toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-            });
-          })[0];
-          
-          if (firstMatchTime) {
-            this.matchTime = firstMatchTime;
-          }
-        }
-      },
-      deep: true
-    },
   },
   methods: {
     formattedDate(dateString) {
@@ -489,7 +439,7 @@ export default {
       date.setHours(0, 0, 0, 0);
       return date;
     },
-    validate() {
+    async validate() {
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
           duration: 5000,
@@ -508,18 +458,48 @@ export default {
           queue: true,
         });
       } else {
-        this.confirmFixing();
-        return true;
+        return this.confirmFixing();
       }
     },
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    confirmFixing() {
-      this.editFixing()
-      this.closeDialog()
+    async confirmFixing() {
+      if (this.isSaving) return false
+
+      this.isSaving = true
+
+      try {
+        await this.editFixing()
+        this.reset()
+        this.$emit('confirm')
+        return true
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          this.$router.push('/unauthorized')
+        } else {
+          const errors = error.response && error.response.data
+            ? error.response.data.errors
+            : null
+          const message = errors
+            ? Object.values(errors).flat().join(' ')
+            : 'Unable to update the fixture. Please try again.'
+
+          this.$oruga.notification.open({
+            duration: 5000,
+            message,
+            position: 'bottom',
+            variant: 'danger',
+            queue: true,
+          })
+        }
+
+        return false
+      } finally {
+        this.isSaving = false
+      }
     },
-    editFixing() {
+    async editFixing() {
       const eventYear = this.Event.date.getFullYear();
       const eventMonth = this.Event.date.getMonth() + 1;
       const eventDay = this.Event.date.getDate();
@@ -530,7 +510,7 @@ export default {
       const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
       const formData = new FormData();
-      formData.append('time', this.Event.time || '');
+      formData.append('time', normalizeFixtureTime(this.Event.time) || '');
       formData.append('round', this.Event.round || '');
       formData.append('region_id', this.Event.region_id || '');
       formData.append('agegroup_id', this.Event.agegroup_id || '');
@@ -543,25 +523,16 @@ export default {
         const team2Id = match.isBye ? 0 : (match.team2 ? match.team2.id : '');
 
         formData.append(`matches[${i}][id]`, match.id || '');
-        formData.append(`matches[${i}][time]`, this.matchTime || '');
         formData.append(`matches[${i}][field_id]`, match.field_id || '');
         formData.append(`matches[${i}][team1]`, team1Id);
         formData.append(`matches[${i}][team2]`, team2Id);
       }
       
-      this.$axios
-        .$post(`v1/events/${this.Event.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then((response) => {
-          this.reset()
-          this.$emit('confirm')
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 403) {
-            this.$router.push('/unauthorized');
-          } else {
-            console.error('Error:', error);
-          }
-        });
+      return this.$axios.$post(
+        `v1/events/${this.Event.id}`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      )
     },
     closeDialog() {
       this.reset()

@@ -302,6 +302,10 @@
 /* eslint-disable camelcase */
 import 'vue-croppa/dist/vue-croppa.css';
 import currencyMixin from '@/mixins/currency';
+import {
+  fixtureTimeOptions,
+  normalizeFixtureTime
+} from '~/utils/fixtureTime';
 
 export default {
   name: 'AddFixingModal',
@@ -338,44 +342,7 @@ export default {
   },
   data() {
     return {
-      matchTime: null,
-      matchTimeOption: [
-        { text: '8:00 AM', value: '8:00' },
-        { text: '8:25 AM', value: '8:25' },
-        { text: '8:50 AM', value: '8:50' },
-        { text: '9:15 AM', value: '9:15' },
-        { text: '9:40 AM', value: '9:40' },
-        { text: '10:05 AM', value: '10:05' },
-        { text: '10:30 AM', value: '10:30' },
-        { text: '10:55 AM', value: '10:55' },
-        { text: '11:20 AM', value: '11:20' },
-        { text: '11:45 AM', value: '11:45' },
-        { text: '12:10 PM', value: '12:10' },
-        { text: '12:35 PM', value: '12:35' },
-        { text: '1:00 PM', value: '13:00' },
-        { text: '1:25 PM', value: '13:25' },
-        { text: '1:50 PM', value: '13:50' },
-        { text: '2:15 PM', value: '14:15' },
-        { text: '2:40 PM', value: '14:40' },
-        { text: '3:05 PM', value: '15:05' },
-        { text: '3:30 PM', value: '15:30' },
-        { text: '3:55 PM', value: '15:55' },
-        { text: '4:20 PM', value: '16:20' },
-        { text: '4:45 PM', value: '16:45' },
-        { text: '5:10 PM', value: '17:10' },
-        { text: '5:35 PM', value: '17:35' },
-        { text: '6:00 PM', value: '18:00' },
-        { text: '6:25 PM', value: '18:25' },
-        { text: '6:50 PM', value: '18:50' },
-        { text: '7:15 PM', value: '19:15' },
-        { text: '7:40 PM', value: '19:40' },
-        { text: '8:05 PM', value: '20:05' },
-        { text: '8:30 PM', value: '20:30' },
-        { text: '8:55 PM', value: '20:55' },
-        { text: '9:20 PM', value: '21:20' },
-        { text: '9:45 PM', value: '21:45' },
-        { text: '10:00 PM', value: '22:00' },
-      ],
+      matchTimeOption: fixtureTimeOptions,
       matchRoundOption: [
         { text: 'Round', value: 'round' },
         { text: 'Semi', value: 'semi' },
@@ -491,14 +458,6 @@ export default {
       date.setHours(0, 0, 0, 0);
       return date;
     },
-    reformatTime(timeString) {
-      const [
-        hours,
-        minutes
-      ] = timeString.split(':');
-      const formattedTime = `${hours}:${minutes}`;
-      return formattedTime;
-    },
     validate() {
       if (!this.$refs.form.validate()) {
         this.$oruga.notification.open({
@@ -540,7 +499,7 @@ export default {
       const event_date = `${eventYear}-${eventMonthStr}-${eventDayStr}`;
 
       const formData = new FormData();
-      formData.append('time', this.Event.time);
+      formData.append('time', normalizeFixtureTime(this.Event.time) || '');
       formData.append('round', this.Event.round);
       formData.append('region_id', this.Event.region_id);
       formData.append('agegroup_id', this.Event.agegroup_id);
@@ -549,7 +508,6 @@ export default {
 
       for (let i = 0; i < this.multipleMatch.length; i++) {
         const match = this.multipleMatch[i];
-        formData.append(`matches[${i}][time]`, this.matchTime);
         formData.append(`matches[${i}][field_id]`, match.field_id);
         formData.append(`matches[${i}][team1]`, match.team1);
         formData.append(`matches[${i}][team2]`, match.isBye ? 0: match.team2);
