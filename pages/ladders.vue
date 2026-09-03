@@ -163,11 +163,114 @@
             class="w-full"
             data-aos="fade-up" data-aos-offset="0"
           >
-            <VueTable
-              :columns="dataColumns"
-              :data="allTeamStats"
-              class="border"
-            />
+            <div
+              class="overflow-hidden rounded-2xl border border-green-500/20
+                     bg-gray-900/80 shadow-xl"
+            >
+              <div
+                class="flex flex-col gap-2 border-b border-green-500/20
+                       bg-green-900/40 px-4 py-3 sm:flex-row
+                       sm:items-center sm:justify-between"
+              >
+                <h2 class="text-lg font-bold text-white">
+                  Progressive Ladder
+                </h2>
+                <p class="text-xs text-gray-300">
+                  <span class="mr-3">
+                    <i class="ri-arrow-up-s-fill text-green-400"></i> Up
+                  </span>
+                  <span class="mr-3">
+                    <i class="ri-arrow-down-s-fill text-red-400"></i> Down
+                  </span>
+                  <span class="mr-3">
+                    <i class="ri-subtract-line text-gray-400"></i> No change
+                  </span>
+                  <span>
+                    <i class="ri-star-s-fill text-sky-400"></i> New
+                  </span>
+                </p>
+              </div>
+
+              <div class="block w-full overflow-x-auto">
+                <table
+                  class="w-full min-w-[760px] table-auto border-collapse"
+                >
+                  <thead>
+                    <tr class="bg-gray-950/80">
+                      <th
+                        class="whitespace-nowrap px-3 py-3 text-center
+                               text-[11px] font-semibold uppercase
+                               tracking-wide text-green-400"
+                      >
+                        Move
+                      </th>
+                      <th
+                        v-for="column in dataColumns"
+                        :key="column.name"
+                        class="whitespace-nowrap px-3 py-3 text-center
+                               text-[11px] font-semibold uppercase
+                               tracking-wide text-green-400"
+                      >
+                        {{ column.label }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="team in allTeamStats"
+                      :key="team.team_id"
+                      class="border-t border-green-500/10
+                             transition-colors duration-200
+                             hover:bg-green-500/5"
+                      :class="ladderRowClass(team.pos)"
+                    >
+                      <td class="px-3 py-3 text-center align-middle">
+                        <span
+                          class="inline-flex items-center justify-center
+                                 gap-0.5"
+                          :class="movementClass(team)"
+                          :aria-label="movementLabel(team)"
+                          :title="movementLabel(team)"
+                        >
+                          <i :class="movementIcon(team)"></i>
+                          <span
+                            v-if="team.rankChange"
+                            class="text-xs font-bold"
+                          >
+                            {{ Math.abs(team.rankChange) }}
+                          </span>
+                        </span>
+                      </td>
+                      <td
+                        class="px-3 py-3 text-center align-middle
+                               text-sm font-bold"
+                        :class="positionClass(team.pos)"
+                      >
+                        {{ team.pos }}
+                      </td>
+                      <td
+                        class="px-3 py-3 text-left align-middle
+                               text-sm font-semibold text-white"
+                      >
+                        {{ team.team }}
+                      </td>
+                      <td
+                        v-for="column in statColumns"
+                        :key="column.name"
+                        class="px-3 py-3 text-center align-middle
+                               text-[13px] text-gray-200"
+                        :class="{
+                          'font-bold text-green-400':
+                            column.name === 'points'
+                        }"
+                      >
+                        {{ formatStat(team, column.name) }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </section>
 
         </div>
@@ -177,7 +280,6 @@
 </template>
 
 <script>
-import VueTable from '~/components/tables/VueTable.vue';
 import LoadingAnimation from '~/components/loading/LoadingAnimation.vue';
 
 // Constants moved outside component for better organization
@@ -216,7 +318,6 @@ const DATA_COLUMNS = [
 export default {
   name: 'ladders',
   components: {
-    VueTable,
     LoadingAnimation
   },
   
@@ -289,6 +390,12 @@ export default {
 
     dataColumns() {
       return DATA_COLUMNS;
+    },
+
+    statColumns() {
+      return DATA_COLUMNS.filter(column =>
+        column.name !== 'pos' && column.name !== 'team'
+      );
     },
   },
 
@@ -383,14 +490,16 @@ export default {
       return [ ...new Set(this.filteredTeamsByRound.map(event => event.team_id)) ];
     },
 
-    calculateTeamStats(teamId) {
-      const teamEvents = this.filteredTeamsByRound.filter(event => event.team_id === teamId);
+    calculateTeamStats(teamId, teamEvents = null) {
+      const events = teamEvents || this.filteredTeamsByRound.filter(
+        event => event.team_id === teamId
+      );
       
-      if (teamEvents.length === 0) {
+      if (events.length === 0) {
         return null;
       }
       /* eslint-disable camelcase */
-      const stats = teamEvents.reduce((acc, event) => ({
+      const stats = events.reduce((acc, event) => ({
         team_id: teamId,
         team: event.team,
         played: acc.played + (event.win + event.loss + event.draw),
@@ -404,7 +513,7 @@ export default {
         points: acc.points + event.points,
       }), {
         team_id: teamId,
-        team: teamEvents[0].team,
+        team: events[0].team,
         played: 0,
         win: 0,
         loss: 0,
@@ -418,13 +527,34 @@ export default {
       return stats;
     },
 
-    calculateAllTeamStats() {
-      const uniqueTeamIds = this.getUniqueTeamIds();
-      const stats = uniqueTeamIds
-        .map(teamId => this.calculateTeamStats(teamId))
-        .filter(Boolean);
+    getEventDate(entry) {
+      const raw = entry && entry.event && entry.event.event_date;
+      return raw ? String(raw).slice(0, 10) : '';
+    },
 
-      const sortedData = stats.sort((a, b) => {
+    getLatestEventDate(events) {
+      const dates = events
+        .map(entry => this.getEventDate(entry))
+        .filter(Boolean)
+        .sort();
+
+      return dates.length ? dates[dates.length - 1] : null;
+    },
+
+    getPreviousTeamEvents(events) {
+      const latestDate = this.getLatestEventDate(events);
+      if (!latestDate) {
+        return [];
+      }
+
+      return events.filter(entry => {
+        const date = this.getEventDate(entry);
+        return date && date < latestDate;
+      });
+    },
+
+    rankTeams(stats) {
+      return [...stats].sort((a, b) => {
         if (b.points !== a.points) {
           return b.points - a.points;
         }
@@ -432,12 +562,133 @@ export default {
           return b.difference - a.difference;
         }
         return a.team.localeCompare(b.team);
-      });
-
-      this.allTeamStats = sortedData.map((team, index) => ({
+      }).map((team, index) => ({
         ...team,
         pos: index + 1,
       }));
+    },
+
+    buildRankLookup(events) {
+      const teamIds = [...new Set(events.map(event => event.team_id))];
+      const stats = teamIds
+        .map(teamId => this.calculateTeamStats(
+          teamId,
+          events.filter(event => event.team_id === teamId)
+        ))
+        .filter(Boolean);
+
+      return this.rankTeams(stats).reduce((lookup, team) => {
+        lookup[team.team_id] = team.pos;
+        return lookup;
+      }, {});
+    },
+
+    calculateAllTeamStats() {
+      const uniqueTeamIds = this.getUniqueTeamIds();
+      const stats = uniqueTeamIds
+        .map(teamId => this.calculateTeamStats(teamId))
+        .filter(Boolean);
+      const ranked = this.rankTeams(stats);
+      const previousEvents = this.getPreviousTeamEvents(this.filteredTeamsByRound);
+      const previousRankByTeamId = previousEvents.length
+        ? this.buildRankLookup(previousEvents)
+        : {};
+
+      this.allTeamStats = ranked.map(team => {
+        const previousPos = previousRankByTeamId[team.team_id];
+        const hasPrevious = previousPos != null;
+        const rankChange = hasPrevious ? previousPos - team.pos : 0;
+        let movement = 'same';
+
+        if (!hasPrevious && previousEvents.length > 0) {
+          movement = 'new';
+        } else if (rankChange > 0) {
+          movement = 'up';
+        } else if (rankChange < 0) {
+          movement = 'down';
+        }
+
+        return {
+          ...team,
+          previousPos: hasPrevious ? previousPos : null,
+          rankChange,
+          movement,
+        };
+      });
+    },
+
+    formatStat(team, columnName) {
+      const value = team[columnName];
+      if (columnName === 'difference' && Number(value) > 0) {
+        return `+${value}`;
+      }
+      return value;
+    },
+
+    ladderRowClass(pos) {
+      if (pos === 1) {
+        return 'bg-yellow-400/10';
+      }
+      if (pos === 2) {
+        return 'bg-gray-300/10';
+      }
+      if (pos === 3) {
+        return 'bg-amber-700/10';
+      }
+      return '';
+    },
+
+    positionClass(pos) {
+      if (pos === 1) {
+        return 'text-yellow-300';
+      }
+      if (pos === 2) {
+        return 'text-gray-200';
+      }
+      if (pos === 3) {
+        return 'text-amber-500';
+      }
+      return 'text-white';
+    },
+
+    movementClass(team) {
+      if (team.movement === 'up') {
+        return 'text-green-400';
+      }
+      if (team.movement === 'down') {
+        return 'text-red-400';
+      }
+      if (team.movement === 'new') {
+        return 'text-sky-400';
+      }
+      return 'text-gray-500';
+    },
+
+    movementIcon(team) {
+      if (team.movement === 'up') {
+        return 'ri-arrow-up-s-fill text-lg';
+      }
+      if (team.movement === 'down') {
+        return 'ri-arrow-down-s-fill text-lg';
+      }
+      if (team.movement === 'new') {
+        return 'ri-star-s-fill text-sm';
+      }
+      return 'ri-subtract-line text-sm';
+    },
+
+    movementLabel(team) {
+      if (team.movement === 'up') {
+        return `Moved up ${team.rankChange} ${team.rankChange === 1 ? 'place' : 'places'}`;
+      }
+      if (team.movement === 'down') {
+        const places = Math.abs(team.rankChange);
+        return `Moved down ${places} ${places === 1 ? 'place' : 'places'}`;
+      }
+      if (team.movement === 'new') {
+        return 'New to the ladder';
+      }
+      return 'Position unchanged';
     },
 
     buildQueryParams(additionalParams = {}) {
