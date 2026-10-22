@@ -413,7 +413,10 @@ export default {
               team2: event.team2,
               cachedTeam2: null,
               submitted: event.submitted,
-              isBye: false
+              // A stored bye has no opposing team (team2 is null), so the
+              // checkbox must reflect that on reopen instead of defaulting
+              // to a normal match.
+              isBye: !event.team2
             }));
           } else {
             this.multipleMatch = [];
