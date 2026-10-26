@@ -153,7 +153,7 @@ export default {
             payment_method: 'square',
             items: this.cart,
             metadata: {
-              ...this.registrationInformation,
+              ...this.shippingInformation,
               // eslint-disable-next-line camelcase
               card_token: result.token
             },
@@ -191,7 +191,7 @@ export default {
             payment_method: 'afterpay',
             items: this.cart,
             metadata: {
-              ...this.registrationInformation,
+              ...this.shippingInformation,
               // eslint-disable-next-line camelcase
               card_token: result.token
             },
