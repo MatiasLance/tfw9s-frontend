@@ -445,10 +445,12 @@
               <button
                 type="button"
                 class="inline-flex min-h-[48px] items-center justify-center
-                rounded-xl px-5 font-semibold text-gray-500 transition
-                hover:bg-gray-100 hover:text-gray-800 focus:outline-none
-                focus:ring-2 focus:ring-gray-300 disabled:cursor-not-allowed
-                disabled:opacity-40"
+                rounded-xl border border-gray-300 bg-gray-100 px-5
+                font-semibold text-gray-900 transition-colors
+                hover:border-gray-400 hover:bg-gray-200 hover:text-gray-950
+                focus:outline-none focus:ring-2 focus:ring-gray-300
+                disabled:cursor-not-allowed disabled:border-gray-200
+                disabled:bg-gray-50 disabled:text-gray-500 disabled:opacity-100"
                 :disabled="isSaving || !hasChanges"
                 @click="resetChanges"
               >
