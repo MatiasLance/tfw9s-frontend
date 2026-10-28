@@ -20,32 +20,69 @@ export const state = () => ({
   }
 })
 
+function normalizeId(value) {
+  if (value === undefined || value === null || value === '') return null
+
+  const numeric = Number(value)
+  return Number.isFinite(numeric) ? numeric : value
+}
+
+function normalizeVariant(value) {
+  if (value === undefined || value === null || value === '') return null
+  return value
+}
+
+/**
+ * Build a stable, collision-proof identity for a cart line.
+ *
+ * A JSON tuple is used instead of joining values with a separator so that
+ * values containing '-' (e.g. a colour named "Navy-Blue") can never produce
+ * the same key as a different combination. The item id is always required;
+ * variant and colour are explicit nulls when absent, so a plain product and a
+ * variant of the same product can never share a key.
+ */
 function cartItemKey(id, size_variant_id = null, color = null) {
-  const parts = [id]
-  if (size_variant_id) parts.push(size_variant_id)
-  if (color) parts.push(color)
-  return parts.join('-')
+  return JSON.stringify([
+    normalizeId(id),
+    normalizeId(size_variant_id),
+    normalizeVariant(color)
+  ])
 }
 
 function getItemKey(item) {
   return cartItemKey(item.id, item.size_variant_id, item.color)
 }
 
+function toQuantity(value) {
+  const quantity = Number(value)
+  return Number.isFinite(quantity) && quantity > 0 ? Math.floor(quantity) : 1
+}
+
+function toStockLimit(value) {
+  if (value === undefined || value === null || value === '') return null
+
+  const stock = Number(value)
+  return Number.isFinite(stock) ? stock : null
+}
+
 export const mutations = {
   addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku, color, image, use_image }) {
-    const itemKey = cartItemKey(id, size_variant_id, color)
+    const normalizedId = normalizeId(id)
+    const itemKey = cartItemKey(normalizedId, size_variant_id, color)
 
     const index = state.cart.findIndex(item => {
       return getItemKey(item) === itemKey
     })
 
     if (index >= 0) {
-      state.cart[index].quantity += quantity
+      // Same product + variant + colour: increase the existing line.
+      state.cart[index].quantity += toQuantity(quantity)
     } else {
+      // A different product (or variant/colour): append a new line item.
       const cartItem = {
-        id,
-        quantity,
-        ...(size_variant_id && { size_variant_id }),
+        id: normalizedId,
+        quantity: toQuantity(quantity),
+        ...(size_variant_id && { size_variant_id: size_variant_id }),
         ...(size && { size }),
         ...(variant_sku && { variant_sku }),
         ...(color && { color }),
@@ -78,7 +115,8 @@ export const mutations = {
     })
 
     if (index >= 0) {
-      state.cart[index].quantity = quantity
+      const nextQuantity = Number(quantity)
+      state.cart[index].quantity = Number.isFinite(nextQuantity) ? nextQuantity : 0
     }
   },
 
@@ -130,9 +168,17 @@ export const actions = {
   addItemToCart({ state, commit },
     { id, quantity = 1, stock, shippingOption, size_variant_id, size, variant_sku, color, image, use_image }) {
     return new Promise((resolve, reject) => {
-      const itemKey = cartItemKey(id, size_variant_id, color)
+      const normalizedId = normalizeId(id)
 
-      let newStockAmount = quantity
+      if (normalizedId === null) {
+        reject(new Error('A product is required to add an item to the cart'))
+        return
+      }
+
+      const amount = toQuantity(quantity)
+      const itemKey = cartItemKey(normalizedId, size_variant_id, color)
+
+      let newStockAmount = amount
       const index = state.cart.findIndex(item => {
         return getItemKey(item) === itemKey
       })
@@ -141,12 +187,14 @@ export const actions = {
         newStockAmount += state.cart[index].quantity
       }
 
-      if (newStockAmount > stock) {
+      // Only enforce the limit when a real stock number was supplied.
+      const availableStock = toStockLimit(stock)
+      if (availableStock !== null && newStockAmount > availableStock) {
         reject(new Error('Item quantity in cart cannot exceed item stock'))
       } else {
         commit('addCartItem', {
-          id,
-          quantity,
+          id: normalizedId,
+          quantity: amount,
           shippingOption,
           size_variant_id,
           size,
@@ -174,7 +222,8 @@ export const actions = {
         return getItemKey(item) === itemKey
       })
 
-      if (index >= 0 && quantity > stock) {
+      const availableStock = toStockLimit(stock)
+      if (index >= 0 && availableStock !== null && quantity > availableStock) {
         reject(new Error('Item quantity in cart cannot exceed item stock'))
       } else {
         commit('setCartItemQuantity', { id, size_variant_id, color, quantity })
@@ -218,6 +267,7 @@ export const getters = {
   },
 
   getProductCartItems: (state) => (id) => {
-    return state.cart.filter(item => item.id === id)
+    const normalizedId = normalizeId(id)
+    return state.cart.filter(item => normalizeId(item.id) === normalizedId)
   }
 }

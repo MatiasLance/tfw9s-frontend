@@ -228,7 +228,8 @@ export default {
         .dispatch('cart/addItemToCart', {
           id: this.uid,
           quantity: 1,
-          stock: this.stock
+          stock: this.stock,
+          shippingOption: 0,
         })
         .then(() => {
           this.$oruga.notification.open({

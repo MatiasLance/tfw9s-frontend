@@ -262,18 +262,19 @@ export default {
       return cartItem ? cartItem.color : null;
     },
     getCartItemKey(item) {
-      const cartItem = this.getCartItemFromStore(item);
-      const parts = [item.id];
-      if (cartItem) {
-        if (cartItem.size_variant_id) parts.push(cartItem.size_variant_id);
-        if (cartItem.color) parts.push(cartItem.color);
-      }
-      return parts.join('-');
+      // Derive the key from the cart line snapshot captured when the product
+      // was fetched. Using the store lookup here risks duplicate keys (and
+      // therefore dropped rows) if the lookup ever fails.
+      return JSON.stringify([
+        item._cartItemId ?? null,
+        item._sizeVariantId ?? null,
+        item._color ?? null,
+      ]);
     },
     getCartItemFromStore(item) {
       return this.cartItems.find(
         (cartItem) =>
-          cartItem.id === item._cartItemId &&
+          String(cartItem.id) === String(item._cartItemId) &&
           (cartItem.size_variant_id == item._sizeVariantId ||
             (!cartItem.size_variant_id && !item._sizeVariantId)) &&
           (cartItem.color == item._color || (!cartItem.color && !item._color))
@@ -361,7 +362,13 @@ export default {
         }
       });
 
-      const values = await Promise.all(itemPromises);
+      let values;
+      try {
+        values = await Promise.all(itemPromises);
+      } catch (err) {
+        console.error('Failed to load cart items:', err);
+        values = [];
+      }
       if (requestId !== this.cartRequestId || this.isDestroyed) return;
 
       this.items = values.filter((item) => item !== null);
