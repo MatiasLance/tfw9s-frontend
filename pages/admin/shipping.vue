@@ -119,7 +119,7 @@
           </span>
         </span>
         <h1 class="flex flex-row text-3xl font-bold text-white lg:text-6xl">
-          Shipping Note
+          Shipping Settings
         </h1>
       </div>
     </BaseHeader>
@@ -147,6 +147,16 @@
                     Delivery
                   </label>
                   <Tiptap v-model="deliveryNote" class="" />
+                  <label class="mb-1 mt-4 block font-semibold text-gray-700">
+                    Delivery charge (AUD)
+                  </label>
+                  <input
+                    v-model.number="deliveryCharge"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    class="w-full border border-gray-200 bg-gray-100 py-2 px-3 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                  />
                 </div>
               </div>
             </div>
@@ -157,6 +167,16 @@
                     Self Pickup
                   </label>
                   <Tiptap v-model="pickupNote" class="" />
+                  <label class="mb-1 mt-4 block font-semibold text-gray-700">
+                    Pickup charge (AUD)
+                  </label>
+                  <input
+                    v-model.number="pickupCharge"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    class="w-full border border-gray-200 bg-gray-100 py-2 px-3 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                  />
                 </div>
               </div>
             </div>
@@ -245,6 +265,8 @@ export default {
     return {
       deliveryNote: '',
       pickupNote: '',
+      deliveryCharge: 0,
+      pickupCharge: 0,
       shippingType: 'delivery',
       isOpen: false,
     };
@@ -264,62 +286,82 @@ export default {
     },
   },
   mounted() {
-    this.retrieveShippingNotes();
-    this.$axios
-      .$get('/v1/orders/shipping-notes')
-      .then((response) => {
-        this.deliveryNote = response.data.options.delivery_note;
-        this.pickupNote = response.data.options.pickup_note;
-      });
+    this.retrieveShippingSettings();
     document.addEventListener('click', this.closeTab);
   },
   beforeDestroy() {
     document.removeEventListener('click', this.closeTab);
   },
   methods: {
-    retrieveShippingNotes() {
-      this.$axios
-        .$get('/v1/orders/shipping-notes/')
-        .then((response) => {
-          this.deliveryNote = response.data.options.delivery_note;
-          this.pickupNote = response.data.options.pickup_note;
-        });
-    },
-    editShippingNotes() {
-      if (!this.isFormEmpty()) {
-        const form = new FormData();
-        form.append('_method', 'PATCH');
-        form.append('delivery_note', this.deliveryNote);
-        form.append('pickup_note', this.pickupNote);
-        this.$axios
-          .$post('v1/orders/shipping-notes/update', form)
-          .then((response) => {
-            this.$oruga.notification.open({
-              message: response.title,
-              variant: 'success',
-              duration: 5000,
-              position: 'bottom',
-              queue: true,
-            });
-            this.retrieveShippingNotes();
-          });
-      } else {
-        this.$oruga.notification.open({
-          message: 'Must not be empty.',
-          variant: 'danger',
-          duration: 5000,
-          position: 'bottom',
-          queue: true,
-        });
+    async retrieveShippingSettings() {
+      try {
+        const response = await this.$axios.$get('/v1/orders/shipping-settings');
+        const options = response.data?.options || {};
+        const charges = response.data?.charges || {};
+
+        this.deliveryNote = options.delivery_note || '';
+        this.pickupNote = options.pickup_note || '';
+        this.deliveryCharge =
+          Number(charges.delivery ?? options.delivery_charge ?? 0) / 100;
+        this.pickupCharge =
+          Number(charges.pickup ?? options.pickup_charge ?? 0) / 100;
+      } catch (error) {
+        this.showNotification(
+          error.response?.data?.message ||
+            'Unable to load shipping settings.',
+          'danger'
+        );
       }
     },
-    isFormEmpty() {
+    async editShippingNotes() {
+      if (!this.isFormValid()) {
+        this.showNotification(
+          'Shipping charges must be zero or greater.',
+          'danger'
+        );
+        return;
+      }
+
+      try {
+        const response = await this.$axios.$patch(
+          'v1/orders/shipping-settings',
+          {
+            delivery_note: this.deliveryNote || '',
+            pickup_note: this.pickupNote || '',
+            delivery_charge: Math.round(Number(this.deliveryCharge) * 100),
+            pickup_charge: Math.round(Number(this.pickupCharge) * 100),
+          }
+        );
+
+        this.showNotification(
+          response.title || 'Shipping settings updated.',
+          'success'
+        );
+        await this.retrieveShippingSettings();
+      } catch (error) {
+        this.showNotification(
+          error.response?.data?.message ||
+            'Unable to update shipping settings.',
+          'danger'
+        );
+      }
+    },
+    isFormValid() {
       return (
-        this.deliveryNote === '' ||
-        typeof this.deliveryNote === 'undefined' ||
-        this.pickupNote === '' ||
-        typeof this.pickupNote === 'undefined'
+        Number(this.deliveryCharge) >= 0 &&
+        Number(this.pickupCharge) >= 0 &&
+        Number.isFinite(Number(this.deliveryCharge)) &&
+        Number.isFinite(Number(this.pickupCharge))
       );
+    },
+    showNotification(message, variant) {
+      this.$oruga.notification.open({
+        message,
+        variant,
+        duration: 5000,
+        position: 'bottom',
+        queue: true,
+      });
     },
     toggle() {
       this.isOpen = !this.isOpen;

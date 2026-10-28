@@ -114,6 +114,13 @@
                     <span>Tax:</span>
                     <span>{{ formatCurrency(taxAmount) }}</span>
                   </li>
+                  <li class="flex justify-between text-gray-300">
+                    <span>Shipping:</span>
+                    <span class="text-right text-sm">
+                      Delivery {{ formatCurrency(shippingRates.delivery) }} ·
+                      Pickup {{ formatCurrency(shippingRates.pickup) }}
+                    </span>
+                  </li>
                   <li class="flex justify-between text-white border-t 
                             border-gray-600 pt-4 text-xl font-bold">
                     <span>Grand Total:</span>
@@ -122,6 +129,9 @@
                     </span>
                   </li>
                 </ul>
+                <p class="mt-3 text-xs text-gray-400">
+                  Shipping is calculated at checkout.
+                </p>
               </div>
 
               <!-- Action Buttons -->
@@ -215,11 +225,19 @@ export default {
         this.$store.commit('master/setToggleControl2', val);
       },
     },
+    shippingRates() {
+      return this.$store.state.order.shippingRates || { delivery: 0, pickup: 0 };
+    },
   },
 
   async mounted() {
     await this.retrieveTaxValue();
     await this.retrieveToggleTaxControl();
+    try {
+      await this.$store.dispatch('order/fetchShippingRates');
+    } catch (error) {
+      console.error('Failed to load shipping rates:', error);
+    }
     await this.getItemData();
     this.$socket.on('item-list-changed', this.handleItemListChanged);
   },

@@ -151,6 +151,9 @@
           <span class="font-semibold text-gray-800">Ship To My Address</span>
           <span class="text-sm text-gray-500">We'll deliver to your registered address</span>
         </div>
+        <span class="ml-auto font-semibold text-gray-800">
+          {{ deliveryRate > 0 ? formatRate(deliveryRate) : 'FREE' }}
+        </span>
 
         <input
           v-model="shipOption"
@@ -197,6 +200,9 @@
           <span class="font-semibold text-gray-800">Pickup From Event</span>
           <span class="text-sm text-gray-500">Collect your order at the event venue</span>
         </div>
+        <span class="ml-auto font-semibold text-gray-800">
+          {{ pickupRate > 0 ? formatRate(pickupRate) : 'FREE' }}
+        </span>
 
         <input
           v-model="shipOption"
@@ -207,6 +213,25 @@
           aria-label="Pickup from event"
         />
       </label>
+    </div>
+
+    <div
+      v-if="shipOption"
+      class="mb-5 rounded-lg border border-gray-200 bg-gray-50 p-4"
+    >
+      <div class="flex justify-between text-sm text-gray-600">
+        <span>Shipping</span>
+        <span class="font-semibold text-gray-800">
+          {{ selectedShippingRate > 0 ? formatRate(selectedShippingRate) : 'FREE' }}
+        </span>
+      </div>
+      <div class="mt-2 flex justify-between text-base font-bold text-gray-900">
+        <span>Estimated total</span>
+        <span>{{ formatRate(estimatedTotal) }}</span>
+      </div>
+      <p class="mt-1 text-xs text-gray-500">
+        Final total is confirmed on the payment step.
+      </p>
     </div>
 
     <div
@@ -423,9 +448,30 @@ export default {
       get() {
         return `${this.phoneCode}${this.phoneDigits}`
       },
-    }
+    },
+    shippingRates() {
+      return this.$store.state.order.shippingRates || { delivery: 0, pickup: 0 }
+    },
+    deliveryRate() {
+      return Number(this.shippingRates.delivery) || 0
+    },
+    pickupRate() {
+      return Number(this.shippingRates.pickup) || 0
+    },
+    selectedShippingRate() {
+      if (this.shipOption === 'delivery') return this.deliveryRate
+      if (this.shipOption === 'pickup') return this.pickupRate
+      return 0
+    },
+    estimatedTotal() {
+      const cartTotal = Number(this.$store.state.cart.total) || 0
+      return cartTotal + this.selectedShippingRate
+    },
   },
   methods: {
+    formatRate(value) {
+      return `$${(Number(value) || 0).toFixed(2)}`
+    },
     submit() {
       this.$emit('submit', {
         firstName: this.firstName,

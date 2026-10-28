@@ -12,6 +12,10 @@ export const state = () => ({
     remarks: ''
   },
   paymentMethod: '',
+  shippingRates: {
+    delivery: 0,
+    pickup: 0
+  },
   toggleMasterSetting1: true,
   toggleMasterSetting2: true
 })
@@ -22,6 +26,12 @@ export const mutations = {
   },
   setPickupNote(state, pickup) {
     state.pickupNote = pickup
+  },
+  setShippingRates(state, rates) {
+    state.shippingRates = {
+      delivery: Number(rates.delivery) || 0,
+      pickup: Number(rates.pickup) || 0
+    }
   },
   setShippingInformation(state, shippingInformation) {
     state.shippingInformation.firstName = shippingInformation.firstName
@@ -42,4 +52,25 @@ export const mutations = {
   setToggleMasterSetting2(state, settingValue) {
     state.toggleMasterSetting2 = settingValue
   },
+}
+
+export const actions = {
+  async fetchShippingRates({ commit }) {
+    const response = await this.$axios.$get('/v1/orders/shipping-notes')
+    const options = response?.data?.options || {}
+    const charges = response?.data?.charges || {}
+    const toDollars = (cents, fallback) => {
+      const value = cents ?? fallback
+      return (Number(value) || 0) / 100
+    }
+
+    const rates = {
+      delivery: toDollars(charges.delivery, options.delivery_charge),
+      pickup: toDollars(charges.pickup, options.pickup_charge)
+    }
+
+    commit('setShippingRates', rates)
+
+    return rates
+  }
 }
