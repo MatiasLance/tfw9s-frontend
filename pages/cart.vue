@@ -259,7 +259,17 @@ export default {
     },
     getItemColor(item) {
       const cartItem = this.getCartItemFromStore(item);
-      return cartItem ? cartItem.color : null;
+      // Use the color stored in the cart (from when the item was added)
+      if (cartItem?.color) return cartItem.color;
+      // Fallback: try to look up from the API response (if variant relationships are loaded)
+      if (cartItem?.color) {
+        const colors = item.availableColors;
+        if (Array.isArray(colors) && colors.length > 0) {
+          const colorVariant = colors.find((c) => c.name === cartItem.color);
+          if (colorVariant) return colorVariant.name;
+        }
+      }
+      return null;
     },
     getCartItemKey(item) {
       // Derive the key from the cart line snapshot captured when the product
@@ -286,10 +296,12 @@ export default {
     },
     getItemSize(item) {
       const cartItem = this.getCartItemFromStore(item);
+      // Use the size stored in the cart (from when the item was added)
       if (cartItem?.size) return cartItem.size;
+      // Fallback: try to look up from the API response (if variant relationships are loaded)
       if (cartItem?.size_variant_id) {
         const sizeVariant = this.findSizeVariant(item, cartItem.size_variant_id);
-        return sizeVariant ? sizeVariant.size || sizeVariant.value : null;
+        if (sizeVariant) return sizeVariant.size || sizeVariant.value;
       }
       return null;
     },
@@ -299,7 +311,7 @@ export default {
     },
     findSizeVariant(item, sizeVariantId) {
       const sizes = item.availableSizes;
-      if (Array.isArray(sizes)) {
+      if (Array.isArray(sizes) && sizes.length > 0) {
         return sizes.find((s) => s.id === parseInt(sizeVariantId));
       }
       return null;
