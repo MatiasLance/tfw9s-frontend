@@ -452,9 +452,17 @@ export default {
       this.$store
         .dispatch('cart/addItemToCart', {
           id: this.uid,
+          name: this.name,
+          price: this.price,
+          saleprice: this.saleprice,
+          is_on_sale: this.isOnSale,
+          show_rrp: this.isRrp,
+          categories: this.categories,
+          media: [{ url: this.path }],
           quantity: 1,
           stock: this.stock,
           shippingOption: 0,
+          is_active: this.isActive
         })
         .then(() => {
           this.$oruga.notification.open({

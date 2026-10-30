@@ -238,6 +238,8 @@ export default {
     } catch (error) {
       console.error('Failed to load shipping rates:', error);
     }
+    // Initialize items from cart store immediately so cart renders even if API fails
+    this.initializeItemsFromCart();
     await this.getItemData();
     this.$socket.on('item-list-changed', this.handleItemListChanged);
   },
@@ -252,6 +254,31 @@ export default {
   },
 
   methods: {
+    initializeItemsFromCart() {
+      // Populate items from cart store immediately so cart renders without waiting for API
+      this.items = this.cartItems.map((cartItem) => ({
+        id: cartItem.id,
+        name: cartItem.name || `Product #${cartItem.id}`,
+        price: cartItem.price || 0,
+        saleprice: cartItem.saleprice || null,
+        is_on_sale: cartItem.is_on_sale || false,
+        show_rrp: cartItem.show_rrp || false,
+        categories: cartItem.categories || [],
+        media: cartItem.media || [{ url: cartItem.image || '/images/placeholder.png' }],
+        stock: cartItem.stock || 0,
+        is_active: cartItem.is_active !== false,
+        // Cart-specific snapshot fields
+        _cartItemId: cartItem.id,
+        _sizeVariantId: cartItem.size_variant_id,
+        _quantity: cartItem.quantity,
+        _color: cartItem.color,
+        _image: cartItem.image,
+        _use_image: cartItem.use_image,
+        cartSizeVariantId: cartItem.size_variant_id,
+        cartQuantity: cartItem.quantity,
+      }));
+      this.calculatePriceAggregates();
+    },
     handleItemListChanged() {
       // The public item endpoint is the source of truth and returns 404 for a
       // hidden/deleted item, regardless of which page an admin was viewing.
@@ -341,18 +368,18 @@ export default {
       const itemPromises = cartSnapshot.map(async (cartItem) => {
         try {
           const response = await this.$axios.$get(`/v1/items/${cartItem.id}`);
-            const product = response.data.item;
-            return {
-              ...product,
-              _cartItemId: cartItem.id,
-              _sizeVariantId: cartItem.size_variant_id,
-              _quantity: cartItem.quantity,
-              _color: cartItem.color,
-              _image: cartItem.image,
-              _use_image: cartItem.use_image,
-              cartSizeVariantId: cartItem.size_variant_id,
-              cartQuantity: cartItem.quantity,
-            };
+          const product = response.data.item;
+          return {
+            ...product,
+            _cartItemId: cartItem.id,
+            _sizeVariantId: cartItem.size_variant_id,
+            _quantity: cartItem.quantity,
+            _color: cartItem.color,
+            _image: cartItem.image,
+            _use_image: cartItem.use_image,
+            cartSizeVariantId: cartItem.size_variant_id,
+            cartQuantity: cartItem.quantity,
+          };
         } catch (error) {
           console.error(`Failed to fetch product ${cartItem.id}:`, error);
 
@@ -383,7 +410,17 @@ export default {
       }
       if (requestId !== this.cartRequestId || this.isDestroyed) return;
 
-      this.items = values.filter((item) => item !== null);
+      // Enhance existing items with API data, but keep cart store data as fallback
+      const apiItems = values.filter((item) => item !== null);
+      this.items = this.items.map((localItem) => {
+        const apiItem = apiItems.find((api) => api._cartItemId === localItem._cartItemId &&
+                                               api._sizeVariantId === localItem._sizeVariantId &&
+                                               api._color === localItem._color);
+        if (apiItem) {
+          return { ...localItem, ...apiItem };
+        }
+        return localItem;
+      });
       this.calculatePriceAggregates();
 
       if (removedUnavailableItem) {

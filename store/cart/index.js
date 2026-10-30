@@ -66,7 +66,7 @@ function toStockLimit(value) {
 }
 
 export const mutations = {
-  addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku, color, image, use_image }) {
+  addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku, color, image, use_image, name, price, saleprice, is_on_sale, show_rrp, categories, media, stock, is_active }) {
     const normalizedId = normalizeId(id)
     const itemKey = cartItemKey(normalizedId, size_variant_id, color)
 
@@ -87,7 +87,16 @@ export const mutations = {
         ...(variant_sku && { variant_sku }),
         ...(color && { color }),
         ...(image && { image }),
-        ...(use_image && { use_image })
+        ...(use_image && { use_image }),
+        ...(name && { name }),
+        ...(price !== undefined && { price }),
+        ...(saleprice !== undefined && { saleprice }),
+        ...(is_on_sale !== undefined && { is_on_sale }),
+        ...(show_rrp !== undefined && { show_rrp }),
+        ...(categories && { categories }),
+        ...(media && { media }),
+        ...(stock !== undefined && { stock }),
+        ...(is_active !== undefined && { is_active })
       }
       state.cart.push(cartItem)
       state.shippingOptions.push(shippingOption)
