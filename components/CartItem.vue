@@ -197,7 +197,7 @@ export default {
     },
     isActive: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {

@@ -171,6 +171,11 @@ import BaseHeader from '../components/base/BaseHeader.vue';
 import CartItem from '~/components/CartItem';
 import currencyMixin from '~/mixins/currency';
 import handlesMedia from '~/mixins/shop/handlesMedia';
+import {
+  buildCartLineSnapshot,
+  cartLineKey,
+  mergeCartLine,
+} from '~/utils/cartLines';
 
 export default {
   name: 'cart',
@@ -181,7 +186,9 @@ export default {
   mixins: [currencyMixin, handlesMedia],
   data() {
     return {
-      items: [],
+      // Fresh product data from the API, keyed by cart line identity. The cart
+      // list itself is a computed property derived from Vuex state.
+      enrichedProducts: {},
       taxrateValue: 0,
       cartRequestId: 0,
       isDestroyed: false,
@@ -192,6 +199,19 @@ export default {
       get() {
         return this.$store.state.cart.cart;
       },
+    },
+    /**
+     * Render-ready cart lines derived directly from Vuex state. Every line in
+     * the store is represented here, whether or not it has a size/colour
+     * variant and whether or not the product API responded.
+     */
+    items() {
+      const enriched = this.enrichedProducts || {};
+
+      return (this.cartItems || []).map((cartItem) => {
+        const snapshot = buildCartLineSnapshot(cartItem);
+        return mergeCartLine(snapshot, enriched[cartLineKey(snapshot)]);
+      });
     },
     taxAmount: {
       get() {
@@ -230,6 +250,16 @@ export default {
     },
   },
 
+  watch: {
+    items: {
+      handler() {
+        this.calculatePriceAggregates();
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
+
   async mounted() {
     await this.retrieveTaxValue();
     await this.retrieveToggleTaxControl();
@@ -238,8 +268,7 @@ export default {
     } catch (error) {
       console.error('Failed to load shipping rates:', error);
     }
-    // Initialize items from cart store immediately so cart renders even if API fails
-    this.initializeItemsFromCart();
+    // The cart renders from Vuex immediately; this only enriches product data.
     await this.getItemData();
     this.$socket.on('item-list-changed', this.handleItemListChanged);
   },
@@ -254,87 +283,36 @@ export default {
   },
 
   methods: {
-    initializeItemsFromCart() {
-      // Populate items from cart store immediately so cart renders without waiting for API
-      this.items = this.cartItems.map((cartItem) => ({
-        id: cartItem.id,
-        name: cartItem.name || `Product #${cartItem.id}`,
-        price: cartItem.price || 0,
-        saleprice: cartItem.saleprice || null,
-        is_on_sale: cartItem.is_on_sale || false,
-        show_rrp: cartItem.show_rrp || false,
-        categories: cartItem.categories || [],
-        media: cartItem.media || [{ url: cartItem.image || '/images/placeholder.png' }],
-        stock: cartItem.stock || 0,
-        is_active: cartItem.is_active !== false,
-        // Cart-specific snapshot fields
-        _cartItemId: cartItem.id,
-        _sizeVariantId: cartItem.size_variant_id,
-        _quantity: cartItem.quantity,
-        _color: cartItem.color,
-        _image: cartItem.image,
-        _use_image: cartItem.use_image,
-        cartSizeVariantId: cartItem.size_variant_id,
-        cartQuantity: cartItem.quantity,
-      }));
-      this.calculatePriceAggregates();
-    },
     handleItemListChanged() {
       // The public item endpoint is the source of truth and returns 404 for a
       // hidden/deleted item, regardless of which page an admin was viewing.
       this.getItemData();
     },
     getItemColor(item) {
-      const cartItem = this.getCartItemFromStore(item);
-      // Use the color stored in the cart (from when the item was added)
-      if (cartItem?.color) return cartItem.color;
-      // Fallback: try to look up from the API response (if variant relationships are loaded)
-      if (cartItem?.color) {
-        const colors = item.availableColors;
-        if (Array.isArray(colors) && colors.length > 0) {
-          const colorVariant = colors.find((c) => c.name === cartItem.color);
-          if (colorVariant) return colorVariant.name;
-        }
-      }
-      return null;
+      // Colour is snapshotted on the cart line when it is added.
+      return item._color ?? null;
     },
     getCartItemKey(item) {
-      // Derive the key from the cart line snapshot captured when the product
-      // was fetched. Using the store lookup here risks duplicate keys (and
-      // therefore dropped rows) if the lookup ever fails.
-      return JSON.stringify([
-        item._cartItemId ?? null,
-        item._sizeVariantId ?? null,
-        item._color ?? null,
-      ]);
-    },
-    getCartItemFromStore(item) {
-      return this.cartItems.find(
-        (cartItem) =>
-          String(cartItem.id) === String(item._cartItemId) &&
-          (cartItem.size_variant_id == item._sizeVariantId ||
-            (!cartItem.size_variant_id && !item._sizeVariantId)) &&
-          (cartItem.color == item._color || (!cartItem.color && !item._color))
-      );
+      // Identity comes from the line snapshot, never from a store lookup, so
+      // variant and non-variant rows always receive distinct keys.
+      return cartLineKey(item);
     },
     getQuantity(item) {
-      const cartItem = this.getCartItemFromStore(item);
-      return cartItem ? cartItem.quantity : 0;
+      if (item.cartQuantity !== undefined) return item.cartQuantity;
+      if (item._quantity !== undefined) return item._quantity;
+      return 0;
     },
     getItemSize(item) {
-      const cartItem = this.getCartItemFromStore(item);
-      // Use the size stored in the cart (from when the item was added)
-      if (cartItem?.size) return cartItem.size;
-      // Fallback: try to look up from the API response (if variant relationships are loaded)
-      if (cartItem?.size_variant_id) {
-        const sizeVariant = this.findSizeVariant(item, cartItem.size_variant_id);
+      // Size is snapshotted on the cart line when it is added.
+      if (item.size) return item.size;
+      if (item._sizeVariantId) {
+        const sizeVariant = this.findSizeVariant(item, item._sizeVariantId);
         if (sizeVariant) return sizeVariant.size || sizeVariant.value;
       }
       return null;
     },
     getSizeVariantId(item) {
-      const cartItem = this.getCartItemFromStore(item);
-      return cartItem ? cartItem.size_variant_id : null;
+      return item._sizeVariantId ?? null;
     },
     findSizeVariant(item, sizeVariantId) {
       const sizes = item.availableSizes;
@@ -344,12 +322,11 @@ export default {
       return null;
     },
     getItemPrice(item) {
-      const cartItem = this.getCartItemFromStore(item);
-      if (cartItem?.size_variant_id) {
-        const sizeVariant = this.findSizeVariant(item, cartItem.size_variant_id);
+      if (item._sizeVariantId) {
+        const sizeVariant = this.findSizeVariant(item, item._sizeVariantId);
         if (sizeVariant?.price) return sizeVariant.price;
       }
-      return item.price;
+      return item.price ?? 0;
     },
     /* eslint-disable camelcase */
     getItemStock(item) {
@@ -365,63 +342,69 @@ export default {
       const cartSnapshot = [...this.cartItems];
       let removedUnavailableItem = false;
 
-      const itemPromises = cartSnapshot.map(async (cartItem) => {
-        try {
-          const response = await this.$axios.$get(`/v1/items/${cartItem.id}`);
-          const product = response.data.item;
-          return {
-            ...product,
-            _cartItemId: cartItem.id,
-            _sizeVariantId: cartItem.size_variant_id,
-            _quantity: cartItem.quantity,
-            _color: cartItem.color,
-            _image: cartItem.image,
-            _use_image: cartItem.use_image,
-            cartSizeVariantId: cartItem.size_variant_id,
-            cartQuantity: cartItem.quantity,
-          };
-        } catch (error) {
-          console.error(`Failed to fetch product ${cartItem.id}:`, error);
+      const fetched = await Promise.all(
+        cartSnapshot.map(async (cartItem) => {
+          const key = cartLineKey(buildCartLineSnapshot(cartItem));
 
-          if ([404, 409].includes(error.response?.status)) {
-            removedUnavailableItem = true;
-            const { id, size_variant_id, color } = cartItem;
-            try {
-              await this.$store.dispatch('cart/removeItemFromCart', {
-                id,
-                size_variant_id,
-                color,
-              });
-            } catch (removeError) {
-              console.error(`Failed to remove unavailable product ${id}:`, removeError);
+          try {
+            const response = await this.$axios.$get(`/v1/items/${cartItem.id}`);
+            const product = response?.data?.item;
+            return { key, product: product || null, removed: false };
+          } catch (error) {
+            console.error(`Failed to fetch product ${cartItem.id}:`, error);
+
+            const status = error.response?.status;
+            const payload = error.response?.data;
+            // Only treat a 404/409 as "product removed" when the API actually
+            // answered. An HTML 404 (misrouted proxy, wrong base URL) must not
+            // wipe the cart.
+            const isApiResponse =
+              payload &&
+              typeof payload === 'object' &&
+              ('status' in payload || 'message' in payload);
+
+            if ([404, 409].includes(status) && isApiResponse) {
+              removedUnavailableItem = true;
+              try {
+                await this.$store.dispatch('cart/removeItemFromCart', {
+                  id: cartItem.id,
+                  size_variant_id: cartItem.size_variant_id,
+                  color: cartItem.color,
+                });
+              } catch (removeError) {
+                console.error(
+                  `Failed to remove unavailable product ${cartItem.id}:`,
+                  removeError
+                );
+              }
+              return { key, product: null, removed: true };
             }
+
+            return { key, product: null, removed: false };
           }
+        })
+      );
 
-          return null;
-        }
-      });
-
-      let values;
-      try {
-        values = await Promise.all(itemPromises);
-      } catch (err) {
-        console.error('Failed to load cart items:', err);
-        values = [];
-      }
       if (requestId !== this.cartRequestId || this.isDestroyed) return;
 
-      // Enhance existing items with API data, but keep cart store data as fallback
-      const apiItems = values.filter((item) => item !== null);
-      this.items = this.items.map((localItem) => {
-        const apiItem = apiItems.find((api) => api._cartItemId === localItem._cartItemId &&
-                                               api._sizeVariantId === localItem._sizeVariantId &&
-                                               api._color === localItem._color);
-        if (apiItem) {
-          return { ...localItem, ...apiItem };
+      fetched.forEach(({ key, product, removed }) => {
+        if (product) {
+          this.$set(this.enrichedProducts, key, product);
+        } else if (removed) {
+          this.$delete(this.enrichedProducts, key);
         }
-        return localItem;
+        // Transient failures keep the previous enrichment (or the snapshot).
       });
-      this.calculatePriceAggregates();
+
+      // Drop enrichment for lines that are no longer in the cart.
+      const activeKeys = new Set(
+        (this.cartItems || []).map((cartItem) =>
+          cartLineKey(buildCartLineSnapshot(cartItem))
+        )
+      );
+      Object.keys(this.enrichedProducts).forEach((key) => {
+        if (!activeKeys.has(key)) this.$delete(this.enrichedProducts, key);
+      });
 
       if (removedUnavailableItem) {
         this.$oruga.notification.open({
@@ -434,13 +417,16 @@ export default {
     },
     quantityChanged(changeData) {
       const { id, quantity, size_variant_id, color } = changeData;
+      const lineKey = cartLineKey({ id, size_variant_id, color });
+      const cartItem = this.items.find((item) => cartLineKey(item) === lineKey);
+
       this.$store
         .dispatch('cart/updateCartItemQuantity', {
           id,
           size_variant_id: size_variant_id || null,
           color: color || null,
           quantity,
-          stock: this.getItemStock({ id, size_variant_id, color }),
+          stock: this.getItemStock(cartItem),
         })
         .then(() => this.$nextTick(() => this.calculatePriceAggregates()))
         .catch((error) =>
@@ -456,12 +442,11 @@ export default {
       const size_variant_id = removeData.size_variant_id || null;
       const color = removeData.color || null;
 
+      // The cart list is computed from Vuex, so removing the store line
+      // removes the row automatically.
       this.$store
         .dispatch('cart/removeItemFromCart', { id, size_variant_id, color })
-        .then(() => {
-          this.removeItemFromLocalArray(id, size_variant_id, color);
-          this.$nextTick(() => this.calculatePriceAggregates());
-        })
+        .then(() => this.$nextTick(() => this.calculatePriceAggregates()))
         .catch((error) =>
           this.$oruga.notification.open({
             message: error.message,
@@ -469,19 +454,6 @@ export default {
             duration: 5000,
           })
         );
-    },
-    removeItemFromLocalArray(id, size_variant_id, color) {
-      this.items = this.items.filter((item) => {
-        const cartItem = this.getCartItemFromStore(item);
-        if (!cartItem) return false;
-        const sameId = cartItem.id === id;
-        const sameSize =
-          (size_variant_id == null && cartItem.size_variant_id == null) ||
-          cartItem.size_variant_id == size_variant_id;
-        const sameColor =
-          (color == null && cartItem.color == null) || cartItem.color == color;
-        return !(sameId && sameSize && sameColor);
-      });
     },
     calculatePriceAggregates() {
       const itemCostData = this.items.map((item) => {

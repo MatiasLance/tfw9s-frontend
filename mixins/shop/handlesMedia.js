@@ -3,6 +3,8 @@ export default {
     getMediaURL(media, tab) {
       if (media && media.path) {
         return `${this.$config.baseURL}/storage/${media.path}`
+      } else if (media && media.url) {
+        return media.url
       } else if (typeof media === 'string') {
         return media;
       } else {

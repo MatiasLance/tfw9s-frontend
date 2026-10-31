@@ -65,8 +65,46 @@ function toStockLimit(value) {
   return Number.isFinite(stock) ? stock : null
 }
 
+/**
+ * Pick the descriptive fields of a cart line, ignoring values that were not
+ * supplied. Identity fields (id, size_variant_id, color) are handled
+ * separately by the mutation.
+ */
+function lineDetails({
+  size,
+  variant_sku,
+  image,
+  use_image,
+  name,
+  price,
+  saleprice,
+  is_on_sale,
+  show_rrp,
+  categories,
+  media,
+  stock,
+  is_active
+}) {
+  return {
+    ...(size && { size }),
+    ...(variant_sku && { variant_sku }),
+    ...(image && { image }),
+    ...(use_image !== undefined && { use_image }),
+    ...(name && { name }),
+    ...(price !== undefined && { price }),
+    ...(saleprice !== undefined && { saleprice }),
+    ...(is_on_sale !== undefined && { is_on_sale }),
+    ...(show_rrp !== undefined && { show_rrp }),
+    ...(categories && { categories }),
+    ...(media && { media }),
+    ...(stock !== undefined && { stock }),
+    ...(is_active !== undefined && { is_active })
+  }
+}
+
 export const mutations = {
-  addCartItem(state, { id, quantity, shippingOption, size_variant_id, size, variant_sku, color, image, use_image, name, price, saleprice, is_on_sale, show_rrp, categories, media, stock, is_active }) {
+  addCartItem(state, payload) {
+    const { id, quantity, shippingOption, size_variant_id, color } = payload
     const normalizedId = normalizeId(id)
     const itemKey = cartItemKey(normalizedId, size_variant_id, color)
 
@@ -75,28 +113,22 @@ export const mutations = {
     })
 
     if (index >= 0) {
-      // Same product + variant + colour: increase the existing line.
-      state.cart[index].quantity += toQuantity(quantity)
+      // Same product + variant + colour: increase the existing line and fill in
+      // any metadata the line did not have yet. Replacing the object keeps the
+      // change reactive for keys that did not previously exist.
+      state.cart.splice(index, 1, {
+        ...state.cart[index],
+        ...lineDetails(payload),
+        quantity: state.cart[index].quantity + toQuantity(quantity)
+      })
     } else {
       // A different product (or variant/colour): append a new line item.
       const cartItem = {
         id: normalizedId,
         quantity: toQuantity(quantity),
         ...(size_variant_id && { size_variant_id: size_variant_id }),
-        ...(size && { size }),
-        ...(variant_sku && { variant_sku }),
         ...(color && { color }),
-        ...(image && { image }),
-        ...(use_image && { use_image }),
-        ...(name && { name }),
-        ...(price !== undefined && { price }),
-        ...(saleprice !== undefined && { saleprice }),
-        ...(is_on_sale !== undefined && { is_on_sale }),
-        ...(show_rrp !== undefined && { show_rrp }),
-        ...(categories && { categories }),
-        ...(media && { media }),
-        ...(stock !== undefined && { stock }),
-        ...(is_active !== undefined && { is_active })
+        ...lineDetails(payload)
       }
       state.cart.push(cartItem)
       state.shippingOptions.push(shippingOption)
@@ -174,8 +206,9 @@ export const mutations = {
 }
 
 export const actions = {
-  addItemToCart({ state, commit },
-    { id, quantity = 1, stock, shippingOption, size_variant_id, size, variant_sku, color, image, use_image }) {
+  addItemToCart({ state, commit }, payload) {
+    const { id, quantity = 1, stock, size_variant_id, color } = payload
+
     return new Promise((resolve, reject) => {
       const normalizedId = normalizeId(id)
 
@@ -202,15 +235,9 @@ export const actions = {
         reject(new Error('Item quantity in cart cannot exceed item stock'))
       } else {
         commit('addCartItem', {
+          ...payload,
           id: normalizedId,
-          quantity: amount,
-          shippingOption,
-          size_variant_id,
-          size,
-          variant_sku,
-          color,
-          image,
-          use_image
+          quantity: amount
         })
         commit('setShippingAvailability')
         resolve()
@@ -252,6 +279,14 @@ export const actions = {
 }
 
 export const getters = {
+  cartItems(state) {
+    return state.cart
+  },
+
+  getCartItems(state) {
+    return state.cart
+  },
+
   cartCount(state) {
     return state.cart.reduce((total, item) => total + item.quantity, 0)
   },

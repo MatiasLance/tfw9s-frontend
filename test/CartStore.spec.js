@@ -142,6 +142,68 @@ describe('cart store line items', () => {
     expect(state.cart[1]).toMatchObject({ id: 2, quantity: 4 })
   })
 
+  test('keeps a variant line separate from the non-variant line of the same product', async () => {
+    const { state, dispatch } = createCartStore()
+
+    await dispatch('addItemToCart', { id: 63, quantity: 1, stock: 10 })
+    await dispatch('addItemToCart', {
+      id: 63,
+      quantity: 1,
+      stock: 10,
+      size_variant_id: 12,
+      size: 'S',
+    })
+    await dispatch('addItemToCart', {
+      id: 63,
+      quantity: 1,
+      stock: 10,
+      size_variant_id: 13,
+      size: 'M',
+    })
+
+    expect(state.cart).toHaveLength(3)
+    expect(state.cart.map((item) => item.size_variant_id)).toEqual([
+      undefined,
+      12,
+      13,
+    ])
+    expect(getters.cartCount(state)).toBe(3)
+  })
+
+  test('re-adding a line fills in metadata it was missing', async () => {
+    const { state, dispatch } = createCartStore()
+
+    // Quick add: only identity fields.
+    await dispatch('addItemToCart', { id: 29, quantity: 1, stock: 10 })
+    // Product page: same line, now with full metadata.
+    await dispatch('addItemToCart', {
+      id: 29,
+      quantity: 1,
+      stock: 10,
+      name: 'Home Jersey',
+      price: 89.95,
+      categories: [{ id: 1, name: 'Jerseys' }],
+    })
+
+    expect(state.cart).toHaveLength(1)
+    expect(state.cart[0]).toMatchObject({
+      id: 29,
+      quantity: 2,
+      name: 'Home Jersey',
+      price: 89.95,
+    })
+    expect(state.cart[0].categories).toEqual([{ id: 1, name: 'Jerseys' }])
+  })
+
+  test('exposes the reactive cart array through getters', async () => {
+    const { state, dispatch } = createCartStore()
+
+    await dispatch('addItemToCart', { id: 1, quantity: 1, stock: 10 })
+
+    expect(getters.getCartItems(state)).toBe(state.cart)
+    expect(getters.cartItems(state)).toBe(state.cart)
+  })
+
   test('getProductCartItems returns every line for a product', async () => {
     const { state, dispatch } = createCartStore()
 
