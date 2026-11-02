@@ -216,25 +216,6 @@
     </div>
 
     <div
-      v-if="shipOption"
-      class="mb-5 rounded-lg border border-gray-200 bg-gray-50 p-4"
-    >
-      <div class="flex justify-between text-sm text-gray-600">
-        <span>Shipping</span>
-        <span class="font-semibold text-gray-800">
-          {{ selectedShippingRate > 0 ? formatRate(selectedShippingRate) : 'FREE' }}
-        </span>
-      </div>
-      <div class="mt-2 flex justify-between text-base font-bold text-gray-900">
-        <span>Estimated total</span>
-        <span>{{ formatRate(estimatedTotal) }}</span>
-      </div>
-      <p class="mt-1 text-xs text-gray-500">
-        Final total is confirmed on the payment step.
-      </p>
-    </div>
-
-    <div
     v-if="shipOption === 'delivery'"
     class="grid gap-x-3 md:grid-cols-3"
     >
@@ -457,15 +438,6 @@ export default {
     },
     pickupRate() {
       return Number(this.shippingRates.pickup) || 0
-    },
-    selectedShippingRate() {
-      if (this.shipOption === 'delivery') return this.deliveryRate
-      if (this.shipOption === 'pickup') return this.pickupRate
-      return 0
-    },
-    estimatedTotal() {
-      const cartTotal = Number(this.$store.state.cart.total) || 0
-      return cartTotal + this.selectedShippingRate
     },
   },
   methods: {
