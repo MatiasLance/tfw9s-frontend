@@ -235,8 +235,8 @@
                         </span>
                       </div>
                       <p class="mt-2 max-w-md text-sm leading-6 text-gray-500">
-                        Applied when customers choose delivery and every item
-                        in the cart can be shipped.
+                        Applied to every merchandise order where the customer
+                        chooses delivery.
                       </p>
                     </div>
                     <div class="relative w-full shrink-0 sm:w-44">
