@@ -141,15 +141,14 @@
           </li>
           
           <!-- Shipping -->
-          <li v-if="shippingInformation.shipOption === 'pickup'"
-          class="flex justify-between border-b pb-2"
-          >
+          <li class="flex justify-between border-b pb-2">
             <span>Shipping:</span>
-            <span class="text-green-600 font-medium">FREE</span>
-          </li>
-          <li v-else class="flex justify-between border-b pb-2">
-            <span>Shipping:</span>
-            <span class="font-medium">{{ formatCurrency(shippingPreTax) }}</span>
+            <span v-if="shippingPreTax <= 0" class="text-green-600 font-medium">
+              FREE
+            </span>
+            <span v-else class="font-medium">
+              {{ formatCurrency(shippingPreTax) }}
+            </span>
           </li>
           
           <!-- Discount Applied -->
@@ -325,6 +324,12 @@ export default {
     async initializeComponent() {
       try {
         this.isProcessing = true;
+
+        try {
+          await this.$store.dispatch('order/fetchShippingRates');
+        } catch (shippingError) {
+          console.error('Failed to refresh shipping rates:', shippingError);
+        }
 
         await this.retrieveToggleTaxControl();
 
@@ -624,8 +629,15 @@ export default {
     calculateFallbackTotals() {
       try {
         const taxRate = this.tax || 0;
-        const shipping = this.shippingInformation &&
-         this.shippingInformation.shipOption === 'pickup' ? 0 : 10;
+        const shipOption = this.shippingInformation && this.shippingInformation.shipOption;
+        const rates = this.$store.state.order.shippingRates || { delivery: 0, pickup: 0 };
+        let shipping = 0;
+
+        if (shipOption === 'delivery') {
+          shipping = Number(rates.delivery) || 0;
+        } else if (shipOption === 'pickup') {
+          shipping = Number(rates.pickup) || 0;
+        }
         
         this.subTotal = this.subtotal || 0;
         this.taxAmount = this.subTotal * (taxRate / 100);

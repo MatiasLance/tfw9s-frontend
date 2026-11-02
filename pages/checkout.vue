@@ -91,6 +91,13 @@ export default {
       isStepperLoading: false,
     };
   },
+  async mounted() {
+    try {
+      await this.$store.dispatch('order/fetchShippingRates');
+    } catch (error) {
+      console.error('Failed to load shipping rates:', error);
+    }
+  },
   computed: {
     shippingInformation: {
       get() {

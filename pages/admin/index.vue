@@ -345,9 +345,11 @@
               </h3>
               <p class="mt-2 text-sm leading-6 text-gray-500">
                 {{
-                  panel.count !== -1
-                    ? 'Review and manage the records currently available in this area.'
-                    : 'Open this area to review and update its current configuration.'
+                  panel.description
+                    ? panel.description
+                    : panel.count !== -1
+                      ? 'Review and manage the records currently available in this area.'
+                      : 'Open this area to review and update its current configuration.'
                 }}
               </p>
             </div>
@@ -535,6 +537,14 @@ export default {
           count: -1
         },
         {
+          title: 'Shipping & Fulfillment',
+          icon: 'truck-line',
+          route: '/admin/shipping',
+          description: 'Configure delivery charges, pickup options, and local fulfillment rates.',
+          desc: 'Manage',
+          count: -1
+        },
+        {
           title: 'Terms And Condition',
           icon: 'ri-article-line',
           route: '/admin/terms-and-condition',
@@ -554,7 +564,7 @@ export default {
       case 'MASTER':
         return this.panels.filter(panel => {
           return [
-            'News', 'Partner Sponsor', 'Tax', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping Settings', 'Shipping Master Controls', 'FAQ', 'Team Folder', 'Home Page Info', 'Payment', 'Terms And Condition'
+            'News', 'Partner Sponsor', 'Tax', 'Code of Conduct', 'Rules', 'Insurance', 'Discount Codes', 'Shipping & Fulfillment', 'FAQ', 'Team Folder', 'Home Page Info', 'Payment', 'Terms And Condition'
           ].includes(panel.title)
         })
       case 'DRAWS':

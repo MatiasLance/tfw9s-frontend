@@ -896,12 +896,20 @@ export default {
           
           const cartItem = {
             id: this.product.id,
+            name: this.product.name,
+            price: this.product.price,
+            saleprice: this.product.saleprice,
+            is_on_sale: this.product.is_on_sale,
+            show_rrp: this.product.show_rrp,
+            categories: this.product.categories,
+            media: this.product.media,
             quantity: parseInt(this.quantity),
             stock: this.maxQuantity,
             shippingOption: 0,
             color: colorName,
             image: image,
-            use_image: colorObj.use_image
+            use_image: colorObj.use_image,
+            is_active: this.product.is_active
           };
 
           if (this.selectedSize) {
@@ -934,9 +942,17 @@ export default {
 
       const cartItem = {
         id: this.product.id,
+        name: this.product.name,
+        price: this.product.price,
+        saleprice: this.product.saleprice,
+        is_on_sale: this.product.is_on_sale,
+        show_rrp: this.product.show_rrp,
+        categories: this.product.categories,
+        media: this.product.media,
         quantity: parseInt(this.quantity),
         stock: this.maxQuantity,
-        shippingOption: 0
+        shippingOption: 0,
+        is_active: this.product.is_active
       };
 
       if (this.selectedSize) {

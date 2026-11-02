@@ -151,6 +151,9 @@
           <span class="font-semibold text-gray-800">Ship To My Address</span>
           <span class="text-sm text-gray-500">We'll deliver to your registered address</span>
         </div>
+        <span class="ml-auto font-semibold text-gray-800">
+          {{ deliveryRate > 0 ? formatRate(deliveryRate) : 'FREE' }}
+        </span>
 
         <input
           v-model="shipOption"
@@ -197,6 +200,9 @@
           <span class="font-semibold text-gray-800">Pickup From Event</span>
           <span class="text-sm text-gray-500">Collect your order at the event venue</span>
         </div>
+        <span class="ml-auto font-semibold text-gray-800">
+          {{ pickupRate > 0 ? formatRate(pickupRate) : 'FREE' }}
+        </span>
 
         <input
           v-model="shipOption"
@@ -423,9 +429,21 @@ export default {
       get() {
         return `${this.phoneCode}${this.phoneDigits}`
       },
-    }
+    },
+    shippingRates() {
+      return this.$store.state.order.shippingRates || { delivery: 0, pickup: 0 }
+    },
+    deliveryRate() {
+      return Number(this.shippingRates.delivery) || 0
+    },
+    pickupRate() {
+      return Number(this.shippingRates.pickup) || 0
+    },
   },
   methods: {
+    formatRate(value) {
+      return `$${(Number(value) || 0).toFixed(2)}`
+    },
     submit() {
       this.$emit('submit', {
         firstName: this.firstName,
